@@ -6,9 +6,12 @@ class ApiClient {
   private token: string | null = null;
 
   constructor() {
+    const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:3001';
+    const timeout = process.env.NEXT_PUBLIC_API_TIMEOUT ? parseInt(process.env.NEXT_PUBLIC_API_TIMEOUT, 10) : 10000;
+    
     this.client = axios.create({
-      baseURL: process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:3001',
-      timeout: parseInt(process.env.NEXT_PUBLIC_API_TIMEOUT || '10000'),
+      baseURL,
+      timeout: isNaN(timeout) ? 10000 : timeout,
       headers: {
         'Content-Type': 'application/json',
       },
