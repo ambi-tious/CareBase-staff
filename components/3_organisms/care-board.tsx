@@ -4,7 +4,9 @@ import Image from "next/image"
 import Link from "next/link" // Import Link
 import { useState, useEffect, useRef } from "react"
 import { Button } from "@/components/ui/button"
-import { careBoardData, careCategories, type CareEvent, type CareCategoryKey } from "@/mocks/care-board-data"
+import { careCategories, type CareEvent, type CareCategoryKey, type Resident } from "@/mocks/care-board-data"
+import { residentService } from "@/services/resident-service"
+import { handleApiError } from "@/lib/error-handler"
 import { ChevronLeft, ChevronRight, Clock, ClipboardEdit, BookOpen, CalendarIcon } from "lucide-react"
 import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover"
 import { Calendar } from "@/components/ui/calendar"
@@ -14,7 +16,7 @@ import { ja } from "date-fns/locale"
 type ActiveTabView = "time" | "user"
 
 // Component for Time Base View - 24時間縦スクロール対応
-function TimeBaseView() {
+function TimeBaseView({ residents }: { residents: Resident[] }) {
   const scrollContainerRef = useRef<HTMLDivElement>(null)
 
   // 24時間分のタイムスロットを生成（30分間隔）
@@ -77,7 +79,7 @@ function TimeBaseView() {
         {/* Adjusted max-height */}
         <div
           className="grid relative" // relative for sticky positioning context
-          style={{ gridTemplateColumns: `80px repeat(${careBoardData.length}, minmax(120px, 1fr))` }} // Adjusted minmax for resident column
+          style={{ gridTemplateColumns: `80px repeat(${residents.length}, minmax(120px, 1fr))` }} // Adjusted minmax for resident column
         >
           {/* Top-left corner (empty or title) */}
           <div className="sticky top-0 left-0 bg-carebase-blue text-white z-30 flex items-center justify-center p-2 border-b border-r border-gray-300">
@@ -85,7 +87,7 @@ function TimeBaseView() {
           </div>
 
           {/* Resident names header (sticky top) */}
-          {careBoardData.map((resident) => (
+          {residents.map((resident) => (
             <div
               key={resident.id}
               className="sticky top-0 bg-carebase-blue text-white z-20 flex flex-col items-center p-2 border-b border-r border-gray-300"
@@ -124,7 +126,7 @@ function TimeBaseView() {
                 {time}
               </div>
               {/* Event cells for each resident */}
-              {careBoardData.map((resident) => (
+              {residents.map((resident) => (
                 <div
                   key={`${resident.id}-${time}`}
                   className={`border-r border-gray-200 ${time === currentTime ? "bg-yellow-50" : ""}`}
@@ -141,7 +143,7 @@ function TimeBaseView() {
 }
 
 // Component for User Base View (new logic)
-function UserBaseView() {
+function UserBaseView({ residents }: { residents: Resident[] }) {
   const getEventForCategory = (residentEvents: CareEvent[], categoryKey: CareCategoryKey): CareEvent | undefined => {
     return residentEvents.find((event) => event.categoryKey === categoryKey)
   }
@@ -163,7 +165,7 @@ function UserBaseView() {
             {category.label}
           </div>
         ))}
-        {careBoardData.map((resident) => (
+        {residents.map((resident) => (
           <div key={resident.id} className="contents">
             <div className="flex items-center gap-2 p-2 border-b border-r border-gray-200 bg-gray-50 sticky left-0 z-[5]">
               <Link href={`/residents/${resident.id}`} className="flex items-center gap-2 group">
@@ -214,6 +216,26 @@ function UserBaseView() {
 export function CareBoard() {
   const [activeView, setActiveView] = useState<ActiveTabView>("time")
   const [selectedDate, setSelectedDate] = useState<Date>(new Date())
+  const [residents, setResidents] = useState<Resident[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    const fetchResidents = async () => {
+      try {
+        setLoading(true)
+        setError(null)
+        const data = await residentService.getResidents()
+        setResidents(data)
+      } catch (err) {
+        setError(handleApiError(err))
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchResidents()
+  }, [])
 
   return (
     <div className="p-4 md:p-6 bg-carebase-bg min-h-screen">
@@ -297,7 +319,24 @@ export function CareBoard() {
         </div>
       </div>
 
-      {activeView === "time" ? <TimeBaseView /> : <UserBaseView />}
+      {loading ? (
+        <div className="bg-white rounded-lg shadow-sm p-8 text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-carebase-blue mx-auto mb-4"></div>
+          <p className="text-gray-600">利用者データを読み込み中...</p>
+        </div>
+      ) : error ? (
+        <div className="bg-white rounded-lg shadow-sm p-8 text-center">
+          <p className="text-red-600 mb-4">{error}</p>
+          <Button 
+            onClick={() => window.location.reload()} 
+            className="bg-carebase-blue hover:bg-carebase-blue-dark"
+          >
+            再読み込み
+          </Button>
+        </div>
+      ) : (
+        activeView === "time" ? <TimeBaseView residents={residents} /> : <UserBaseView residents={residents} />
+      )}
 
       <div className="fixed bottom-6 right-6 z-10">
         <Button className="h-16 w-16 rounded-full bg-carebase-blue shadow-lg hover:bg-carebase-blue-dark md:h-12 md:w-auto md:px-6 md:py-3 font-semibold">
