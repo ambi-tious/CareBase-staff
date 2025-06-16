@@ -1,8 +1,8 @@
-import type { ReactNode } from "react"
-import { AppHeader } from "@/components/3_organisms/layout/app-header"
+import type { ReactNode } from 'react';
+import { AppHeader } from '@/components/3_organisms/layout/app-header';
 
 interface MainLayoutProps {
-  children: ReactNode
+  children: ReactNode;
 }
 
 export default function MainLayout({ children }: MainLayoutProps) {
@@ -11,5 +11,5 @@ export default function MainLayout({ children }: MainLayoutProps) {
       <AppHeader />
       <main>{children}</main>
     </div>
-  )
+  );
 }

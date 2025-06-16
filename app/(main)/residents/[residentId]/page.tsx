@@ -1,15 +1,15 @@
-import { getResidentById } from "@/mocks/care-board-data"
-import { Button } from "@/components/ui/button"
-import { Clock } from "lucide-react"
-import { ResidentProfileHeader } from "@/components/3_organisms/resident/resident-profile-header"
-import { ResidentDetailTabs } from "@/components/3_organisms/resident/resident-detail-tabs"
+import { getResidentById } from '@/mocks/care-board-data';
+import { Button } from '@/components/ui/button';
+import { Clock } from 'lucide-react';
+import { ResidentProfileHeader } from '@/components/3_organisms/resident/resident-profile-header';
+import { ResidentDetailTabs } from '@/components/3_organisms/resident/resident-detail-tabs';
 
 export default function ResidentDetailPage({ params }: { params: { residentId: string } }) {
-  const residentIdNum = Number.parseInt(params.residentId, 10)
-  const resident = getResidentById(residentIdNum)
+  const residentIdNum = Number.parseInt(params.residentId, 10);
+  const resident = getResidentById(residentIdNum);
 
   if (!resident) {
-    return <div className="p-6 text-center text-red-500">ご利用者が見つかりません。</div>
+    return <div className="p-6 text-center text-red-500">ご利用者が見つかりません。</div>;
   }
 
   return (
@@ -24,5 +24,5 @@ export default function ResidentDetailPage({ params }: { params: { residentId: s
         </Button>
       </div>
     </div>
-  )
+  );
 }

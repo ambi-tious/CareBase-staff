@@ -1,10 +1,10 @@
-"use client"
+'use client';
 
-import "@testing-library/jest-dom"
-import jest from "jest"
+import '@testing-library/jest-dom';
+import jest from 'jest';
 
 // Mock Next.js router
-jest.mock("next/navigation", () => ({
+jest.mock('next/navigation', () => ({
   useRouter() {
     return {
       push: jest.fn(),
@@ -13,33 +13,33 @@ jest.mock("next/navigation", () => ({
       back: jest.fn(),
       forward: jest.fn(),
       refresh: jest.fn(),
-    }
+    };
   },
   useSearchParams() {
-    return new URLSearchParams()
+    return new URLSearchParams();
   },
   usePathname() {
-    return ""
+    return '';
   },
-}))
+}));
 
 // Mock Next.js Image component
-jest.mock("next/image", () => ({
+jest.mock('next/image', () => ({
   __esModule: true,
   default: (props) => {
     // eslint-disable-next-line @next/next/no-img-element
-    return <img {...props} />
+    return <img {...props} />;
   },
-}))
+}));
 
 // Mock Next.js Link component
-jest.mock("next/link", () => ({
+jest.mock('next/link', () => ({
   __esModule: true,
   default: ({ children, href, ...props }) => {
     return (
       <a href={href} {...props}>
         {children}
       </a>
-    )
+    );
   },
-}))
+}));

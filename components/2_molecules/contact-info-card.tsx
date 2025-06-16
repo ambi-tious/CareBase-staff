@@ -1,11 +1,11 @@
-import type React from "react"
-import type { ContactPerson } from "@/mocks/care-board-data"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Edit3, Phone, Mail, MapPin } from "lucide-react"
+import type React from 'react';
+import type { ContactPerson } from '@/mocks/care-board-data';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Edit3, Phone, Mail, MapPin } from 'lucide-react';
 
 interface ContactCardProps {
-  contact: ContactPerson
+  contact: ContactPerson;
 }
 
 export const ContactInfoCard: React.FC<ContactCardProps> = ({ contact }) => {
@@ -15,7 +15,9 @@ export const ContactInfoCard: React.FC<ContactCardProps> = ({ contact }) => {
         <div className="flex items-center gap-2">
           <span
             className={`px-2 py-0.5 text-xs font-semibold rounded-full ${
-              contact.type === "緊急連絡先" ? "bg-red-100 text-red-700" : "bg-blue-100 text-blue-700"
+              contact.type === '緊急連絡先'
+                ? 'bg-red-100 text-red-700'
+                : 'bg-blue-100 text-blue-700'
             }`}
           >
             {contact.type}
@@ -62,5 +64,5 @@ export const ContactInfoCard: React.FC<ContactCardProps> = ({ contact }) => {
         </div>
       </CardContent>
     </Card>
-  )
-}
+  );
+};

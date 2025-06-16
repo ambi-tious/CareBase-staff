@@ -1,11 +1,11 @@
-import type React from "react"
-import type { MedicalInstitution } from "@/mocks/care-board-data"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader } from "@/components/ui/card"
-import { Edit3, Phone, MapPin } from "lucide-react"
+import type React from 'react';
+import type { MedicalInstitution } from '@/mocks/care-board-data';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Edit3, Phone, MapPin } from 'lucide-react';
 
 interface MedicalInstitutionCardProps {
-  institution: MedicalInstitution
+  institution: MedicalInstitution;
 }
 
 export const MedicalInstitutionCard: React.FC<MedicalInstitutionCardProps> = ({ institution }) => {
@@ -45,5 +45,5 @@ export const MedicalInstitutionCard: React.FC<MedicalInstitutionCardProps> = ({ 
         </div>
       </CardContent>
     </Card>
-  )
-}
+  );
+};

@@ -1,26 +1,33 @@
-"use client"
+'use client';
 
-import type React from "react"
-import type { Team } from "@/mocks/staff-data"
-import { Card, CardContent } from "@/components/ui/card"
+import type React from 'react';
+import type { Team } from '@/mocks/staff-data';
+import { Card, CardContent } from '@/components/ui/card';
 
 interface TeamSelectorProps {
-  teams: Team[]
-  selectedTeamId?: string
-  onTeamSelect: (teamId: string) => void
-  className?: string
+  teams: Team[];
+  selectedTeamId?: string;
+  onTeamSelect: (teamId: string) => void;
+  className?: string;
 }
 
-export const TeamSelector: React.FC<TeamSelectorProps> = ({ teams, selectedTeamId, onTeamSelect, className = "" }) => {
+export const TeamSelector: React.FC<TeamSelectorProps> = ({
+  teams,
+  selectedTeamId,
+  onTeamSelect,
+  className = '',
+}) => {
   return (
     <div className={`space-y-3 ${className}`}>
-      <h3 className="text-lg font-semibold text-carebase-text-primary mb-4">チームを選択してください</h3>
+      <h3 className="text-lg font-semibold text-carebase-text-primary mb-4">
+        チームを選択してください
+      </h3>
       <div className="grid gap-3">
         {teams.map((team) => (
           <Card
             key={team.id}
             className={`cursor-pointer transition-all hover:shadow-md ${
-              selectedTeamId === team.id ? "ring-2 ring-carebase-blue bg-carebase-blue-light" : ""
+              selectedTeamId === team.id ? 'ring-2 ring-carebase-blue bg-carebase-blue-light' : ''
             }`}
             onClick={() => onTeamSelect(team.id)}
           >
@@ -42,5 +49,5 @@ export const TeamSelector: React.FC<TeamSelectorProps> = ({ teams, selectedTeamI
         ))}
       </div>
     </div>
-  )
-}
+  );
+};

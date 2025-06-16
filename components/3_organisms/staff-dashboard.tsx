@@ -1,6 +1,6 @@
-import { dashboardMenu } from "@/mocks/dashboard-menu"
-import { CategoryCard } from "@/components/2_molecules/category-card"
-import { NavigationLink } from "@/components/2_molecules/navigation-link"
+import { dashboardMenu } from '@/mocks/dashboard-menu';
+import { CategoryCard } from '@/components/2_molecules/category-card';
+import { NavigationLink } from '@/components/2_molecules/navigation-link';
 
 export function StaffDashboard() {
   return (
@@ -15,5 +15,5 @@ export function StaffDashboard() {
         ))}
       </div>
     </div>
-  )
+  );
 }

@@ -1,6 +1,6 @@
-import Link from "next/link"
-import { ChevronRight } from "lucide-react"
-import type { NavLink } from "@/mocks/dashboard-menu"
+import Link from 'next/link';
+import { ChevronRight } from 'lucide-react';
+import type { NavLink } from '@/mocks/dashboard-menu';
 
 export function NavigationLink({ label, href, icon: Icon }: NavLink) {
   return (
@@ -18,5 +18,5 @@ export function NavigationLink({ label, href, icon: Icon }: NavLink) {
         <ChevronRight className="h-5 w-5 text-carebase-white" />
       </div>
     </Link>
-  )
+  );
 }

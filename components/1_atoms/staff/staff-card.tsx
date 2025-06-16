@@ -1,40 +1,45 @@
-"use client"
+'use client';
 
-import type React from "react"
-import type { Staff } from "@/mocks/staff-data"
-import { Card, CardContent } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { User } from "lucide-react"
+import type React from 'react';
+import type { Staff } from '@/mocks/staff-data';
+import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { User } from 'lucide-react';
 
 interface StaffCardProps {
-  staff: Staff
-  isSelected?: boolean
-  onClick?: () => void
-  className?: string
+  staff: Staff;
+  isSelected?: boolean;
+  onClick?: () => void;
+  className?: string;
 }
 
-export const StaffCard: React.FC<StaffCardProps> = ({ staff, isSelected = false, onClick, className = "" }) => {
+export const StaffCard: React.FC<StaffCardProps> = ({
+  staff,
+  isSelected = false,
+  onClick,
+  className = '',
+}) => {
   const getRoleBadgeColor = (role: string) => {
     switch (role) {
-      case "施設長":
-        return "bg-purple-100 text-purple-700"
-      case "主任介護職員":
-        return "bg-blue-100 text-blue-700"
-      case "看護師":
-        return "bg-green-100 text-green-700"
-      case "介護職員":
-        return "bg-orange-100 text-orange-700"
-      case "事務職員":
-        return "bg-gray-100 text-gray-700"
+      case '施設長':
+        return 'bg-purple-100 text-purple-700';
+      case '主任介護職員':
+        return 'bg-blue-100 text-blue-700';
+      case '看護師':
+        return 'bg-green-100 text-green-700';
+      case '介護職員':
+        return 'bg-orange-100 text-orange-700';
+      case '事務職員':
+        return 'bg-gray-100 text-gray-700';
       default:
-        return "bg-gray-100 text-gray-700"
+        return 'bg-gray-100 text-gray-700';
     }
-  }
+  };
 
   return (
     <Card
       className={`cursor-pointer transition-all hover:shadow-md ${
-        isSelected ? "ring-2 ring-carebase-blue bg-carebase-blue-light" : ""
+        isSelected ? 'ring-2 ring-carebase-blue bg-carebase-blue-light' : ''
       } ${className}`}
       onClick={onClick}
     >
@@ -44,7 +49,7 @@ export const StaffCard: React.FC<StaffCardProps> = ({ staff, isSelected = false,
             <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center">
               {staff.avatar ? (
                 <img
-                  src={staff.avatar || "/placeholder.svg"}
+                  src={staff.avatar || '/placeholder.svg'}
                   alt={staff.name}
                   className="w-12 h-12 rounded-full object-cover"
                 />
@@ -64,5 +69,5 @@ export const StaffCard: React.FC<StaffCardProps> = ({ staff, isSelected = false,
         </div>
       </CardContent>
     </Card>
-  )
-}
+  );
+};

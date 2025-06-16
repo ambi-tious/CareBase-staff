@@ -1,31 +1,33 @@
-"use client"
+'use client';
 
-import type React from "react"
-import type { Group } from "@/mocks/staff-data"
-import { Card, CardContent } from "@/components/ui/card"
+import type React from 'react';
+import type { Group } from '@/mocks/staff-data';
+import { Card, CardContent } from '@/components/ui/card';
 
 interface GroupSelectorProps {
-  groups: Group[]
-  selectedGroupId?: string
-  onGroupSelect: (groupId: string) => void
-  className?: string
+  groups: Group[];
+  selectedGroupId?: string;
+  onGroupSelect: (groupId: string) => void;
+  className?: string;
 }
 
 export const GroupSelector: React.FC<GroupSelectorProps> = ({
   groups,
   selectedGroupId,
   onGroupSelect,
-  className = "",
+  className = '',
 }) => {
   return (
     <div className={`space-y-3 ${className}`}>
-      <h3 className="text-lg font-semibold text-carebase-text-primary mb-4">グループを選択してください</h3>
+      <h3 className="text-lg font-semibold text-carebase-text-primary mb-4">
+        グループを選択してください
+      </h3>
       <div className="grid gap-3">
         {groups.map((group) => (
           <Card
             key={group.id}
             className={`cursor-pointer transition-all hover:shadow-md ${
-              selectedGroupId === group.id ? "ring-2 ring-carebase-blue bg-carebase-blue-light" : ""
+              selectedGroupId === group.id ? 'ring-2 ring-carebase-blue bg-carebase-blue-light' : ''
             }`}
             onClick={() => onGroupSelect(group.id)}
           >
@@ -47,5 +49,5 @@ export const GroupSelector: React.FC<GroupSelectorProps> = ({
         ))}
       </div>
     </div>
-  )
-}
+  );
+};

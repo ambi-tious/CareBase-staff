@@ -1,11 +1,11 @@
-import type React from "react"
-import type { HomeCareOffice } from "@/mocks/care-board-data"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader } from "@/components/ui/card"
-import { Edit3, Phone, MapPin } from "lucide-react"
+import type React from 'react';
+import type { HomeCareOffice } from '@/mocks/care-board-data';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Edit3, Phone, MapPin } from 'lucide-react';
 
 interface HomeCareOfficeCardProps {
-  office: HomeCareOffice
+  office: HomeCareOffice;
 }
 
 export const HomeCareOfficeCard: React.FC<HomeCareOfficeCardProps> = ({ office }) => {
@@ -45,5 +45,5 @@ export const HomeCareOfficeCard: React.FC<HomeCareOfficeCardProps> = ({ office }
         </div>
       </CardContent>
     </Card>
-  )
-}
+  );
+};

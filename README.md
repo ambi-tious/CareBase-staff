@@ -10,6 +10,7 @@ CareBaseは、介護現場の記録・情報共有を効率化するSaaS型Web�
 CareBaseは、多忙な介護スタッフでも直感的かつ迅速に操作できる、高速で信頼性の高いUIを提供します。
 
 ### ターゲットユーザー
+
 - **施設職員**（介護職員、看護師、施設長など）
   - 日々のデータ入力と確認
   - タブレットや共有PCでの利用を想定
@@ -32,40 +33,45 @@ CareBaseは、多忙な介護スタッフでも直感的かつ迅速に操作で
 ## 📁 ディレクトリ構造
 
 \`\`\`
-├── app/                    # Next.js App Router
-│   ├── (main)/            # メインレイアウトグループ
-│   │   ├── residents/     # 利用者関連ページ
-│   │   └── layout.tsx     # メインレイアウト
-│   ├── api/               # APIルート（モック）
-│   └── globals.css        # グローバルスタイル
-├── components/            # UIコンポーネント（Atomic Design）
-│   ├── 1_atoms/          # 最小単位のコンポーネント
-│   ├── 2_molecules/      # 複数のAtomで構成
-│   ├── 3_organisms/      # 自立したUIセクション
-│   └── ui/               # shadcn/ui コンポー��ント
-├── docs/                 # プロジェクトドキュメント
-├── mocks/                # モックデータ
-├── lib/                  # ユーティリティ関数
-└── public/               # 静的ファイル
+├── app/ # Next.js App Router
+│ ├── (main)/ # メインレイアウトグループ
+│ │ ├── residents/ # 利用者関連ページ
+│ │ └── layout.tsx # メインレイアウト
+│ ├── api/ # APIルート（モック）
+│ └── globals.css # グローバルスタイル
+├── components/ # UIコンポーネント（Atomic Design）
+│ ├── 1_atoms/ # 最小単位のコンポーネント
+│ ├── 2_molecules/ # 複数のAtomで構成
+│ ├── 3_organisms/ # 自立したUIセクション
+│ └── ui/ # shadcn/ui コンポー��ント
+├── docs/ # プロジェクトドキュメント
+├── mocks/ # モックデータ
+├── lib/ # ユーティリティ関数
+└── public/ # 静的ファイル
 \`\`\`
 
 ## 🚀 セットアップ
 
 ### 前提条件
+
 - Node.js 22.x (LTS)
 - npm または yarn
 
 ### インストール
 
 \`\`\`bash
+
 # リポジトリをクローン
+
 git clone <repository-url>
 cd carebase-frontend
 
 # 依存関係をインストール
+
 npm install
 
 # 開発サーバーを起動
+
 npm run dev
 \`\`\`
 
@@ -81,6 +87,7 @@ npm run dev
 ## 🏗 開発ガイドライン
 
 ### Atomic Design
+
 UIコンポーネントは Atomic Design の階層に従って実装します：
 
 - **Atoms** (`1_atoms/`): 最小単位のコンポーネント
@@ -88,6 +95,7 @@ UIコンポーネントは Atomic Design の階層に従って実装します：
 - **Organisms** (`3_organisms/`): 自立したUIセクション
 
 ### コーディング規約
+
 - TypeScriptの型定義を必須とする
 - ESLint/Prettierによるコード品質管理
 - コンポーネントのprops型を明示的に定義
@@ -96,33 +104,43 @@ UIコンポーネントは Atomic Design の階層に従って実装します：
 ## 🎨 主要機能
 
 ### ケアボード
+
 - **時間ベース表示**: 24時間のタイムライン表示
 - **利用者ベース表示**: 利用者ごとのケア項目一覧
 
 ### 利用者管理
+
 - 利用者詳細情報の表示・編集
 - 家族情報、医療機関情報の管理
 - 個別ポイント管理
 
 ### レスポンシブデザイン
+
 - タブレット・PC両対応
 - モバイルファーストアプローチ
 
 ## 🚀 デプロ��
 
 ### Vercel（推奨）
+
 \`\`\`bash
+
 # Vercel CLIを使用
+
 npm i -g vercel
 vercel
 \`\`\`
 
 ### 手動デプロイ
+
 \`\`\`bash
+
 # ビルド
+
 npm run build
 
 # 本番サーバー起動
+
 npm start
 \`\`\`
 
@@ -145,4 +163,4 @@ npm start
 
 ---
 
-*このプロジェクトは [v0.dev](https://v0.dev) を使用して開発されています。*
+_このプロジェクトは [v0.dev](https://v0.dev) を使用して開発されています。_

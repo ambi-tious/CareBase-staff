@@ -1,30 +1,37 @@
-import type React from "react"
-import type { Resident } from "@/mocks/care-board-data"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { PlusCircle, Settings } from "lucide-react"
-import { ContactInfoCard } from "@/components/2_molecules/contact-info-card"
-import { HomeCareOfficeCard } from "@/components/2_molecules/home-care-office-card"
-import { MedicalInstitutionCard } from "@/components/2_molecules/medical-institution-card"
-import { MedicationCard } from "@/components/2_molecules/medication-card"
-import { IndividualPointCard } from "@/components/2_molecules/individual-point-card"
+import type React from 'react';
+import type { Resident } from '@/mocks/care-board-data';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import { PlusCircle, Settings } from 'lucide-react';
+import { ContactInfoCard } from '@/components/2_molecules/contact-info-card';
+import { HomeCareOfficeCard } from '@/components/2_molecules/home-care-office-card';
+import { MedicalInstitutionCard } from '@/components/2_molecules/medical-institution-card';
+import { MedicationCard } from '@/components/2_molecules/medication-card';
+import { IndividualPointCard } from '@/components/2_molecules/individual-point-card';
 
 interface ResidentDetailTabsProps {
-  resident: Resident
+  resident: Resident;
 }
 
 export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident }) => {
   const detailTabs = [
-    { value: "family", label: "ご家族情報" },
-    { value: "homeCare", label: "居宅介護支援事業所" },
-    { value: "medical", label: "かかりつけ医療機関" },
-    { value: "history", label: "既往歴" },
-    { value: "medicationInfo", label: "お薬情報" },
-    { value: "medicationStatus", label: "服薬状況" },
-    { value: "points", label: "個別ポイント" },
-  ]
+    { value: 'family', label: 'ご家族情報' },
+    { value: 'homeCare', label: '居宅介護支援事業所' },
+    { value: 'medical', label: 'かかりつけ医療機関' },
+    { value: 'history', label: '既往歴' },
+    { value: 'medicationInfo', label: 'お薬情報' },
+    { value: 'medicationStatus', label: '服薬状況' },
+    { value: 'points', label: '個別ポイント' },
+  ];
 
   return (
     <Tabs defaultValue="family" className="w-full">
@@ -93,7 +100,7 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
                     <TableRow key={history.id}>
                       <TableCell className="text-center">{history.date}</TableCell>
                       <TableCell className="whitespace-pre-line">{history.condition}</TableCell>
-                      <TableCell>{history.notes || "-"}</TableCell>
+                      <TableCell>{history.notes || '-'}</TableCell>
                       <TableCell className="text-center">
                         <Button variant="outline" size="sm">
                           編集する
@@ -112,7 +119,9 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
 
       <TabsContent value="medicationInfo">
         {resident.medicationInfo && resident.medicationInfo.length > 0 ? (
-          resident.medicationInfo.map((medication) => <MedicationCard key={medication.id} medication={medication} />)
+          resident.medicationInfo.map((medication) => (
+            <MedicationCard key={medication.id} medication={medication} />
+          ))
         ) : (
           <p className="text-center text-gray-500 py-8">お薬情報はありません。</p>
         )}
@@ -136,7 +145,7 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
                     <TableRow key={status.id}>
                       <TableCell className="text-center">{status.date}</TableCell>
                       <TableCell>{status.content}</TableCell>
-                      <TableCell>{status.notes || "-"}</TableCell>
+                      <TableCell>{status.notes || '-'}</TableCell>
                       <TableCell className="text-center">
                         <Button variant="outline" size="sm">
                           編集する
@@ -175,5 +184,5 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
         )}
       </TabsContent>
     </Tabs>
-  )
-}
+  );
+};

@@ -1,13 +1,13 @@
-import type React from "react"
-import type { MedicationInfo } from "@/mocks/care-board-data"
-import Image from "next/image"
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { Edit3 } from "lucide-react"
+import type React from 'react';
+import type { MedicationInfo } from '@/mocks/care-board-data';
+import Image from 'next/image';
+import Link from 'next/link';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { Edit3 } from 'lucide-react';
 
 interface MedicationCardProps {
-  medication: MedicationInfo
+  medication: MedicationInfo;
 }
 
 export const MedicationCard: React.FC<MedicationCardProps> = ({ medication }) => (
@@ -17,14 +17,17 @@ export const MedicationCard: React.FC<MedicationCardProps> = ({ medication }) =>
         <div className="flex-shrink-0">
           <div className="relative w-24 h-24 bg-gray-200 rounded-lg overflow-hidden">
             <Image
-              src={medication.imageUrl || "/placeholder.svg?height=96&width=96&query=medication"}
+              src={medication.imageUrl || '/placeholder.svg?height=96&width=96&query=medication'}
               alt={medication.medicationName}
               fill
-              style={{ objectFit: "cover" }}
+              style={{ objectFit: 'cover' }}
               className="rounded-lg"
             />
           </div>
-          <Link href="#" className="text-xs text-carebase-blue hover:underline mt-1 block text-center">
+          <Link
+            href="#"
+            className="text-xs text-carebase-blue hover:underline mt-1 block text-center"
+          >
             画像を変更
           </Link>
         </div>
@@ -58,4 +61,4 @@ export const MedicationCard: React.FC<MedicationCardProps> = ({ medication }) =>
       </div>
     </CardContent>
   </Card>
-)
+);

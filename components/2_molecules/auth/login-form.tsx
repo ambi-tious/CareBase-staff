@@ -1,58 +1,62 @@
-"use client"
+'use client';
 
-import type React from "react"
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Alert, AlertDescription } from "@/components/ui/alert"
-import { Loader2, AlertCircle, CheckCircle } from "lucide-react"
+import type React from 'react';
+import { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Loader2, AlertCircle, CheckCircle } from 'lucide-react';
 
 interface LoginFormProps {
-  onLogin: (credentials: { facilityId: string; password: string }) => Promise<boolean>
-  isLoading?: boolean
-  className?: string
+  onLogin: (credentials: { facilityId: string; password: string }) => Promise<boolean>;
+  isLoading?: boolean;
+  className?: string;
 }
 
-export const LoginForm: React.FC<LoginFormProps> = ({ onLogin, isLoading = false, className = "" }) => {
-  const [facilityId, setFacilityId] = useState("")
-  const [password, setPassword] = useState("")
+export const LoginForm: React.FC<LoginFormProps> = ({
+  onLogin,
+  isLoading = false,
+  className = '',
+}) => {
+  const [facilityId, setFacilityId] = useState('');
+  const [password, setPassword] = useState('');
   const [message, setMessage] = useState<{
-    type: "success" | "error" | null
-    text: string
-  }>({ type: null, text: "" })
+    type: 'success' | 'error' | null;
+    text: string;
+  }>({ type: null, text: '' });
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setMessage({ type: null, text: "" })
+    e.preventDefault();
+    setMessage({ type: null, text: '' });
 
     if (!facilityId.trim() || !password.trim()) {
       setMessage({
-        type: "error",
-        text: "施設IDとパスワードを入力してください。",
-      })
-      return
+        type: 'error',
+        text: '施設IDとパスワードを入力してください。',
+      });
+      return;
     }
 
     try {
-      const success = await onLogin({ facilityId, password })
+      const success = await onLogin({ facilityId, password });
       if (success) {
         setMessage({
-          type: "success",
-          text: "ログインに成功しました。",
-        })
+          type: 'success',
+          text: 'ログインに成功しました。',
+        });
       } else {
         setMessage({
-          type: "error",
-          text: "施設IDまたはパスワードが正しくありません。",
-        })
+          type: 'error',
+          text: '施設IDまたはパスワードが正しくありません。',
+        });
       }
     } catch (error) {
       setMessage({
-        type: "error",
-        text: "ログイン中にエラーが発生しました。もう一度お試しください。",
-      })
+        type: 'error',
+        text: 'ログイン中にエラーが発生しました。もう一度お試しください。',
+      });
     }
-  }
+  };
 
   return (
     <Card className={`w-full max-w-md ${className}`}>
@@ -91,30 +95,42 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onLogin, isLoading = false
           </div>
 
           {message.type && (
-            <Alert className={message.type === "error" ? "border-red-200 bg-red-50" : "border-green-200 bg-green-50"}>
-              {message.type === "error" ? (
+            <Alert
+              className={
+                message.type === 'error'
+                  ? 'border-red-200 bg-red-50'
+                  : 'border-green-200 bg-green-50'
+              }
+            >
+              {message.type === 'error' ? (
                 <AlertCircle className="h-4 w-4 text-red-600" />
               ) : (
                 <CheckCircle className="h-4 w-4 text-green-600" />
               )}
-              <AlertDescription className={message.type === "error" ? "text-red-700" : "text-green-700"}>
+              <AlertDescription
+                className={message.type === 'error' ? 'text-red-700' : 'text-green-700'}
+              >
                 {message.text}
               </AlertDescription>
             </Alert>
           )}
 
-          <Button type="submit" className="w-full bg-carebase-blue hover:bg-carebase-blue-dark" disabled={isLoading}>
+          <Button
+            type="submit"
+            className="w-full bg-carebase-blue hover:bg-carebase-blue-dark"
+            disabled={isLoading}
+          >
             {isLoading ? (
               <>
                 <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                 ログイン中...
               </>
             ) : (
-              "ログイン"
+              'ログイン'
             )}
           </Button>
         </form>
       </CardContent>
     </Card>
-  )
-}
+  );
+};

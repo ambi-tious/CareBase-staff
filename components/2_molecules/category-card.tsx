@@ -1,10 +1,10 @@
-import type { ReactNode } from "react"
-import type { LucideIcon } from "lucide-react"
+import type { ReactNode } from 'react';
+import type { LucideIcon } from 'lucide-react';
 
 interface CategoryCardProps {
-  title: string
-  icon: LucideIcon
-  children: ReactNode
+  title: string;
+  icon: LucideIcon;
+  children: ReactNode;
 }
 
 export function CategoryCard({ title, icon: Icon, children }: CategoryCardProps) {
@@ -18,5 +18,5 @@ export function CategoryCard({ title, icon: Icon, children }: CategoryCardProps)
       </div>
       <div className="flex flex-col gap-3">{children}</div>
     </div>
-  )
+  );
 }

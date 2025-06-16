@@ -1,16 +1,23 @@
-"use client"
+'use client';
 
-import Link from "next/link"
-import { Logo } from "@/components/1_atoms/common/logo"
-import { Button, buttonVariants } from "@/components/ui/button" // Import buttonVariants
-import { User, Users, Menu, X } from "lucide-react"
-import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle, SheetClose } from "@/components/ui/sheet"
-import { StaffDashboard } from "@/components/3_organisms/dashboard/staff-dashboard"
-import { useState } from "react"
-import { cn } from "@/lib/utils" // Import cn
+import Link from 'next/link';
+import { Logo } from '@/components/1_atoms/common/logo';
+import { Button, buttonVariants } from '@/components/ui/button'; // Import buttonVariants
+import { User, Users, Menu, X } from 'lucide-react';
+import {
+  Sheet,
+  SheetContent,
+  SheetTrigger,
+  SheetHeader,
+  SheetTitle,
+  SheetClose,
+} from '@/components/ui/sheet';
+import { StaffDashboard } from '@/components/3_organisms/dashboard/staff-dashboard';
+import { useState } from 'react';
+import { cn } from '@/lib/utils'; // Import cn
 
 export function AppHeader() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
     <header className="sticky top-0 z-20 w-full border-b bg-carebase-white/80 backdrop-blur-md">
@@ -36,7 +43,10 @@ export function AppHeader() {
 
           <Sheet open={isMenuOpen} onOpenChange={setIsMenuOpen}>
             <SheetTrigger
-              className={cn(buttonVariants({ variant: "ghost", size: "icon" }), "hover:bg-carebase-blue-light")}
+              className={cn(
+                buttonVariants({ variant: 'ghost', size: 'icon' }),
+                'hover:bg-carebase-blue-light'
+              )}
               aria-label="メニューを開く"
               onClick={() => setIsMenuOpen(true)} // Explicitly set open state on click
             >
@@ -47,10 +57,12 @@ export function AppHeader() {
               className="sm:max-w-full bg-carebase-bg p-0 overflow-y-auto" // Adjusted width class
             >
               <SheetHeader className="flex flex-row items-center justify-between py-2 px-4 sticky top-0 bg-carebase-bg z-10 border-b">
-                <SheetTitle className="text-xl font-bold text-carebase-text-primary">メニュー</SheetTitle>
+                <SheetTitle className="text-xl font-bold text-carebase-text-primary">
+                  メニュー
+                </SheetTitle>
                 <SheetClose asChild>
                   <Button variant="ghost" size="icon">
-                    {" "}
+                    {' '}
                     {/* Removed onClick, SheetClose handles it */}
                     <X className="h-6 w-6" />
                     <span className="sr-only">Close menu</span>
@@ -65,5 +77,5 @@ export function AppHeader() {
         </div>
       </div>
     </header>
-  )
+  );
 }

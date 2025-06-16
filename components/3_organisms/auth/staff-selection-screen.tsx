@@ -1,95 +1,98 @@
-"use client"
+'use client';
 
-import type React from "react"
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Alert, AlertDescription } from "@/components/ui/alert"
-import { SelectionStep } from "@/components/1_atoms/staff/selection-step"
-import { GroupSelector } from "@/components/2_molecules/auth/group-selector"
-import { TeamSelector } from "@/components/2_molecules/auth/team-selector"
-import { StaffSelector } from "@/components/2_molecules/auth/staff-selector"
-import { organizationData, getGroupById, getTeamById, getStaffById } from "@/mocks/staff-data"
-import type { Staff } from "@/mocks/staff-data"
-import { ArrowLeft, AlertCircle } from "lucide-react"
+import type React from 'react';
+import { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { SelectionStep } from '@/components/1_atoms/staff/selection-step';
+import { GroupSelector } from '@/components/2_molecules/auth/group-selector';
+import { TeamSelector } from '@/components/2_molecules/auth/team-selector';
+import { StaffSelector } from '@/components/2_molecules/auth/staff-selector';
+import { organizationData, getGroupById, getTeamById, getStaffById } from '@/mocks/staff-data';
+import type { Staff } from '@/mocks/staff-data';
+import { ArrowLeft, AlertCircle } from 'lucide-react';
 
 interface StaffSelectionScreenProps {
-  onStaffSelected: (staff: Staff) => void
-  onBack?: () => void
-  className?: string
+  onStaffSelected: (staff: Staff) => void;
+  onBack?: () => void;
+  className?: string;
 }
 
 export const StaffSelectionScreen: React.FC<StaffSelectionScreenProps> = ({
   onStaffSelected,
   onBack,
-  className = "",
+  className = '',
 }) => {
-  const [selectedGroupId, setSelectedGroupId] = useState<string>("")
-  const [selectedTeamId, setSelectedTeamId] = useState<string>("")
-  const [selectedStaffId, setSelectedStaffId] = useState<string>("")
-  const [error, setError] = useState<string>("")
+  const [selectedGroupId, setSelectedGroupId] = useState<string>('');
+  const [selectedTeamId, setSelectedTeamId] = useState<string>('');
+  const [selectedStaffId, setSelectedStaffId] = useState<string>('');
+  const [error, setError] = useState<string>('');
 
-  const selectedGroup = selectedGroupId ? getGroupById(selectedGroupId) : null
-  const selectedTeam = selectedGroupId && selectedTeamId ? getTeamById(selectedGroupId, selectedTeamId) : null
+  const selectedGroup = selectedGroupId ? getGroupById(selectedGroupId) : null;
+  const selectedTeam =
+    selectedGroupId && selectedTeamId ? getTeamById(selectedGroupId, selectedTeamId) : null;
   const selectedStaff =
     selectedGroupId && selectedTeamId && selectedStaffId
       ? getStaffById(selectedGroupId, selectedTeamId, selectedStaffId)
-      : null
+      : null;
 
   const handleGroupSelect = (groupId: string) => {
-    setSelectedGroupId(groupId)
-    setSelectedTeamId("")
-    setSelectedStaffId("")
-    setError("")
-  }
+    setSelectedGroupId(groupId);
+    setSelectedTeamId('');
+    setSelectedStaffId('');
+    setError('');
+  };
 
   const handleTeamSelect = (teamId: string) => {
-    setSelectedTeamId(teamId)
-    setSelectedStaffId("")
-    setError("")
-  }
+    setSelectedTeamId(teamId);
+    setSelectedStaffId('');
+    setError('');
+  };
 
   const handleStaffSelect = (staffId: string) => {
-    setSelectedStaffId(staffId)
-    setError("")
-  }
+    setSelectedStaffId(staffId);
+    setError('');
+  };
 
   const handleConfirm = () => {
     if (!selectedStaff) {
-      setError("スタッフが選択されていません。")
-      return
+      setError('スタッフが選択されていません。');
+      return;
     }
 
     if (!selectedStaff.isActive) {
-      setError("選択されたスタッフは現在利用できません。")
-      return
+      setError('選択されたスタッフは現在利用できません。');
+      return;
     }
 
-    onStaffSelected(selectedStaff)
-  }
+    onStaffSelected(selectedStaff);
+  };
 
   const handleReset = () => {
-    setSelectedGroupId("")
-    setSelectedTeamId("")
-    setSelectedStaffId("")
-    setError("")
-  }
+    setSelectedGroupId('');
+    setSelectedTeamId('');
+    setSelectedStaffId('');
+    setError('');
+  };
 
   const getCurrentStep = () => {
-    if (!selectedGroupId) return 1
-    if (!selectedTeamId) return 2
-    if (!selectedStaffId) return 3
-    return 4
-  }
+    if (!selectedGroupId) return 1;
+    if (!selectedTeamId) return 2;
+    if (!selectedStaffId) return 3;
+    return 4;
+  };
 
-  const currentStep = getCurrentStep()
+  const currentStep = getCurrentStep();
 
   return (
     <div className={`max-w-2xl w-full mx-auto ${className}`}>
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
-            <CardTitle className="text-xl font-bold text-carebase-text-primary">スタッフ選択</CardTitle>
+            <CardTitle className="text-xl font-bold text-carebase-text-primary">
+              スタッフ選択
+            </CardTitle>
             {onBack && (
               <Button variant="outline" onClick={onBack}>
                 <ArrowLeft className="w-4 h-4 mr-2" />
@@ -161,16 +164,22 @@ export const StaffSelectionScreen: React.FC<StaffSelectionScreenProps> = ({
             {currentStep === 4 && selectedStaff && (
               <div className="text-center py-8">
                 <div className="mb-6">
-                  <h3 className="text-xl font-semibold text-carebase-text-primary mb-2">選択完了</h3>
+                  <h3 className="text-xl font-semibold text-carebase-text-primary mb-2">
+                    選択完了
+                  </h3>
                   <p className="text-gray-600">以下のスタッフでログインします：</p>
                 </div>
                 <div className="max-w-md mx-auto">
                   <Card className="border-2 border-carebase-blue bg-carebase-blue-light">
                     <CardContent className="p-6">
                       <div className="text-center">
-                        <h4 className="text-lg font-semibold text-carebase-text-primary">{selectedStaff.name}</h4>
+                        <h4 className="text-lg font-semibold text-carebase-text-primary">
+                          {selectedStaff.name}
+                        </h4>
                         <p className="text-sm text-gray-600 mb-2">{selectedStaff.furigana}</p>
-                        <p className="text-sm font-medium text-carebase-blue">{selectedStaff.role}</p>
+                        <p className="text-sm font-medium text-carebase-blue">
+                          {selectedStaff.role}
+                        </p>
                         <p className="text-xs text-gray-500 mt-2">
                           {selectedGroup.name} - {selectedTeam.name}
                         </p>
@@ -198,5 +207,5 @@ export const StaffSelectionScreen: React.FC<StaffSelectionScreenProps> = ({
         </CardContent>
       </Card>
     </div>
-  )
-}
+  );
+};

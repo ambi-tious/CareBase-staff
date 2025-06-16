@@ -1,13 +1,13 @@
-import type React from "react"
-import type { Resident } from "@/mocks/care-board-data"
-import Image from "next/image"
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { InfoRow } from "@/components/1_atoms/info-row"
+import type React from 'react';
+import type { Resident } from '@/mocks/care-board-data';
+import Image from 'next/image';
+import Link from 'next/link';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { InfoRow } from '@/components/1_atoms/info-row';
 
 interface ResidentProfileHeaderProps {
-  resident: Resident
+  resident: Resident;
 }
 
 export const ResidentProfileHeader: React.FC<ResidentProfileHeaderProps> = ({ resident }) => {
@@ -19,14 +19,20 @@ export const ResidentProfileHeader: React.FC<ResidentProfileHeaderProps> = ({ re
           <div className="flex flex-col items-center lg:items-start lg:w-1/4">
             <div className="relative w-40 h-40 md:w-48 md:h-48 rounded-lg overflow-hidden mb-4 shadow-md">
               <Image
-                src={resident.avatarUrl || "/placeholder.svg?height=192&width=192&query=resident+avatar"}
+                src={
+                  resident.avatarUrl ||
+                  '/placeholder.svg?height=192&width=192&query=resident+avatar'
+                }
                 alt={resident.name}
                 fill
-                style={{ objectFit: "cover" }}
+                style={{ objectFit: 'cover' }}
                 className="rounded-lg"
               />
             </div>
-            <Link href="#" className="text-sm text-carebase-blue hover:underline mb-4 self-center lg:self-start">
+            <Link
+              href="#"
+              className="text-sm text-carebase-blue hover:underline mb-4 self-center lg:self-start"
+            >
               画像を更新
             </Link>
             <Button className="w-full mb-3 bg-carebase-blue hover:bg-carebase-blue-dark font-semibold py-3 text-base">
@@ -73,7 +79,10 @@ export const ResidentProfileHeader: React.FC<ResidentProfileHeaderProps> = ({ re
               </div>
             </div>
             <div className="mt-0">
-              <InfoRow label="認定有効期間" value={`${resident.certValidityStart} ~ ${resident.certValidityEnd}`} />
+              <InfoRow
+                label="認定有効期間"
+                value={`${resident.certValidityStart} ~ ${resident.certValidityEnd}`}
+              />
             </div>
             <div className="mt-2">
               <InfoRow label="住所" value={resident.address} />
@@ -82,5 +91,5 @@ export const ResidentProfileHeader: React.FC<ResidentProfileHeaderProps> = ({ re
         </div>
       </CardContent>
     </Card>
-  )
-}
+  );
+};
