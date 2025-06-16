@@ -1,11 +1,11 @@
-import type React from "react"
-import { AppHeader } from "@/components/3_organisms/app-header"
+import type { ReactNode } from "react"
+import { AppHeader } from "@/components/3_organisms/layout/app-header"
 
-export default function MainLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+interface MainLayoutProps {
+  children: ReactNode
+}
+
+export default function MainLayout({ children }: MainLayoutProps) {
   return (
     <div className="min-h-screen bg-carebase-bg">
       <AppHeader />
