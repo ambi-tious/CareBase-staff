@@ -7,19 +7,20 @@ import {
 } from '@/mocks/documents-data';
 
 interface DocumentCategoryPageProps {
-  params: {
+  params: Promise<{
     category: string;
-  };
+  }>;
 }
 
-export default function DocumentCategoryPage({ params }: DocumentCategoryPageProps) {
-  const category = getCategoryByKey(params.category);
+export default async function DocumentCategoryPage({ params }: DocumentCategoryPageProps) {
+  const { category: categoryKey } = await params;
+  const category = getCategoryByKey(categoryKey);
 
   if (!category) {
     notFound();
   }
 
-  const documents = getDocumentsByCategory(params.category);
+  const documents = getDocumentsByCategory(categoryKey);
 
   return (
     <div className="p-4 md:p-6 bg-carebase-bg min-h-screen">
@@ -34,10 +35,6 @@ export default function DocumentCategoryPage({ params }: DocumentCategoryPagePro
       <DocumentList
         items={documents}
         categoryName={category.name}
-        onItemClick={(item) => {
-          console.log('Item clicked:', item);
-          // TODO: Implement item click handling
-        }}
       />
     </div>
   );
