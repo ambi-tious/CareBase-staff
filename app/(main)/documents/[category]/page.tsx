@@ -7,13 +7,13 @@ import {
 } from '@/mocks/documents-data';
 
 interface DocumentCategoryPageProps {
-  params: Promise<{
+  params: {
     category: string;
-  }>;
+  };
 }
 
 export default async function DocumentCategoryPage({ params }: DocumentCategoryPageProps) {
-  const { category: categoryKey } = await params;
+  const { category: categoryKey } = params;
   const category = getCategoryByKey(categoryKey);
 
   if (!category) {
