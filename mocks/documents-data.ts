@@ -1,5 +1,5 @@
 import type { LucideIcon } from 'lucide-react';
-import { Folder, FileText, Calendar, Users, AlertTriangle, FileWarning } from 'lucide-react';
+import { FileText, Calendar, AlertTriangle, FileWarning } from 'lucide-react';
 
 export interface DocumentFolder {
   id: string;

@@ -5,26 +5,21 @@ import { useState } from 'react';
 import type { DocumentItem } from '@/mocks/documents-data';
 import { DocumentItemCard } from '@/components/2_molecules/documents/document-item-card';
 import { DocumentToolbar } from '@/components/2_molecules/documents/document-toolbar';
-import { BreadcrumbNavigation } from '@/components/2_molecules/documents/breadcrumb-navigation';
 
 interface DocumentListProps {
   items: DocumentItem[];
-  categoryName: string;
   onItemClick?: (item: DocumentItem) => void;
   className?: string;
 }
 
 export const DocumentList: React.FC<DocumentListProps> = ({
   items,
-  categoryName,
   onItemClick,
   className = '',
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [sortBy, setSortBy] = useState('name');
-
-  const breadcrumbItems = [{ label: categoryName, path: '/' }];
 
   const filteredItems = items.filter((item) =>
     item.name.toLowerCase().includes(searchQuery.toLowerCase())
@@ -53,15 +48,8 @@ export const DocumentList: React.FC<DocumentListProps> = ({
     console.log('Upload file');
   };
 
-  const handleNavigate = (path: string) => {
-    // TODO: Implement navigation
-    console.log('Navigate to:', path);
-  };
-
   return (
     <div className={`space-y-6 ${className}`}>
-      <BreadcrumbNavigation items={breadcrumbItems} onNavigate={handleNavigate} />
-
       <DocumentToolbar
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}

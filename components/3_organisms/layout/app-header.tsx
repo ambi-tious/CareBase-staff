@@ -48,13 +48,13 @@ export function AppHeader() {
                 'hover:bg-carebase-blue-light'
               )}
               aria-label="メニューを開く"
-              onClick={() => setIsMenuOpen(true)} // Explicitly set open state on click
+              onClick={() => setIsMenuOpen(true)}
             >
               <Menu className="h-6 w-6 text-carebase-blue" />
             </SheetTrigger>
             <SheetContent
               side="right"
-              className="sm:max-w-full bg-carebase-bg p-0 overflow-y-auto" // Adjusted width class
+              className="sm:max-w-full bg-carebase-bg p-0 overflow-y-auto"
             >
               <SheetHeader className="flex flex-row items-center justify-between py-2 px-4 sticky top-0 bg-carebase-bg z-10 border-b">
                 <SheetTitle className="text-xl font-bold text-carebase-text-primary">
@@ -62,16 +62,12 @@ export function AppHeader() {
                 </SheetTitle>
                 <SheetClose asChild>
                   <Button variant="ghost" size="icon">
-                    {' '}
-                    {/* Removed onClick, SheetClose handles it */}
                     <X className="h-6 w-6" />
                     <span className="sr-only">Close menu</span>
                   </Button>
                 </SheetClose>
               </SheetHeader>
-              <div>
-                <StaffDashboard />
-              </div>
+              <StaffDashboard setIsMenuOpen={setIsMenuOpen} />
             </SheetContent>
           </Sheet>
         </div>
