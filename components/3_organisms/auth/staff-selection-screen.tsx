@@ -2,6 +2,7 @@
 
 import type React from 'react';
 import { useState } from 'react';
+import { useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -17,17 +18,45 @@ interface StaffSelectionScreenProps {
   onStaffSelected: (staff: Staff) => void;
   onBack?: () => void;
   className?: string;
+  initialStep?: 'group' | 'team' | 'staff';
 }
 
 export const StaffSelectionScreen: React.FC<StaffSelectionScreenProps> = ({
   onStaffSelected,
   onBack,
   className = '',
+  initialStep = 'group',
 }) => {
   const [selectedGroupId, setSelectedGroupId] = useState<string>('');
   const [selectedTeamId, setSelectedTeamId] = useState<string>('');
   const [selectedStaffId, setSelectedStaffId] = useState<string>('');
   const [error, setError] = useState<string>('');
+
+  // Load previous selection from localStorage if returning from header click
+  useEffect(() => {
+    try {
+      const data = localStorage.getItem('carebase_selected_staff_data');
+      if (data && initialStep !== 'group') {
+        const selectedData = JSON.parse(data);
+        // Find the group and team IDs based on the selected staff
+        for (const group of organizationData) {
+          for (const team of group.teams) {
+            const staff = team.staff.find(s => s.id === selectedData.staff.id);
+            if (staff) {
+              setSelectedGroupId(group.id);
+              setSelectedTeamId(team.id);
+              if (initialStep === 'staff') {
+                setSelectedStaffId(staff.id);
+              }
+              return;
+            }
+          }
+        }
+      }
+    } catch (error) {
+      console.error('Failed to load previous selection:', error);
+    }
+  }, [initialStep]);
 
   const selectedGroup = selectedGroupId ? getGroupById(selectedGroupId) : null;
   const selectedTeam =
