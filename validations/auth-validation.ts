@@ -6,7 +6,25 @@
  */
 
 import { z } from 'zod';
-import { facilityIdSchema, passwordSchema, staffIdSchema, tokenSchema } from '@/lib/rpc-validation';
+
+// Common validation schemas
+const facilityIdSchema = z.string()
+  .min(1, '施設IDは必須です')
+  .max(50, '施設IDは50文字以内で入力してください')
+  .regex(/^[a-zA-Z0-9_-]+$/, '施設IDは英数字、アンダースコア、ハイフンのみ使用可能です');
+
+const passwordSchema = z.string()
+  .min(8, 'パスワードは8文字以上で入力してください')
+  .max(128, 'パスワードは128文字以内で入力してください')
+  .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/, 'パスワードは大文字、小文字、数字をそれぞれ1文字以上含む必要があります');
+
+const staffIdSchema = z.string()
+  .min(1, '職員IDは必須です')
+  .max(50, '職員IDは50文字以内で入力してください');
+
+const tokenSchema = z.string()
+  .min(1, 'トークンは必須です')
+  .regex(/^[A-Za-z0-9._-]+$/, '無効なトークン形式です');
 
 // Login form validation
 export const loginFormSchema = z.object({
