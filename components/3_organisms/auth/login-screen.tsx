@@ -1,14 +1,15 @@
 'use client';
 
 import type React from 'react';
-import { useState } from 'react';
 import { LoginForm } from '@/components/2_molecules/auth/login-form';
 import { Button } from '@/components/ui/button';
 import { Logo } from '@/components/1_atoms/common/logo';
 import { Users } from 'lucide-react';
+import { useAuth } from '@/hooks/useAuth';
+import type { LoginCredentials } from '@/types/auth';
 
 interface LoginScreenProps {
-  onLogin: (credentials: { facilityId: string; password: string }) => Promise<boolean>;
+  onLogin: (credentials: LoginCredentials) => Promise<boolean>;
   onStaffSelection?: () => void;
   className?: string;
 }
@@ -18,20 +19,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
   onStaffSelection,
   className = '',
 }) => {
-  const [isLoading, setIsLoading] = useState(false);
-
-  const handleLogin = async (formCredentials: { facilityId: string; password: string }) => {
-    setIsLoading(true);
-    try {
-      const result = await onLogin({
-        facilityId: formCredentials.facilityId,
-        password: formCredentials.password,
-      });
-      return result;
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const { isLoading } = useAuth();
 
   return (
     <div
@@ -44,7 +32,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
         </div>
 
         {/* Login Form */}
-        <LoginForm onLogin={handleLogin} isLoading={isLoading} />
+        <LoginForm onLogin={onLogin} isLoading={isLoading} />
 
         {/* Footer */}
         <div className="text-center text-xs text-gray-500">
