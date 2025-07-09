@@ -6,11 +6,10 @@ CareBase-staffアプリケーションにおける認証システムの設計文
 ## 目次
 1. [UI/UXデザイン](#uiuxデザイン)
 2. [データモデル設計](#データモデル設計)
-3. [API設計](#api設計)
-4. [コンポーネント設計](#コンポーネント設計)
-5. [状態管理設計](#状態管理設計)
-6. [バリデーション設計](#バリデーション設計)
-7. [テストケース設計](#テストケース設計)
+3. [コンポーネント設計](#コンポーネント設計)
+4. [状態管理設計](#状態管理設計)
+5. [バリデーション設計](#バリデーション設計)
+6. [テストケース設計](#テストケース設計)
 
 ---
 
@@ -123,99 +122,6 @@ const staffSelectionSchema = z.object({
   teamId: z.string().min(1, 'チームを選択してください'),
   staffId: z.string().min(1, 'スタッフを選択してください')
 });
-```
-
----
-
-## API設計
-
-### エンドポイント仕様
-
-#### 1. ログイン認証
-```typescript
-POST /api/auth/login
-Content-Type: application/json
-
-// リクエスト
-{
-  "facilityId": "admin",
-  "password": "password"
-}
-
-// レスポンス（成功）
-{
-  "success": true,
-  "token": "jwt_token_here",
-  "facilityId": "admin",
-  "message": "ログインに成功しました"
-}
-
-// レスポンス（失敗）
-{
-  "success": false,
-  "message": "施設IDまたはパスワードが正しくありません"
-}
-```
-
-#### 2. 職員データ取得
-```typescript
-GET /api/staff/groups
-Authorization: Bearer <token>
-
-// レスポンス
-{
-  "success": true,
-  "data": [
-    {
-      "id": "group-1",
-      "name": "介護フロア A",
-      "description": "1階 介護フロア",
-      "teams": [
-        {
-          "id": "team-1",
-          "name": "夜勤チーム",
-          "description": "夜間担当",
-          "staff": [
-            {
-              "id": "staff-1",
-              "name": "田中 花子",
-              "furigana": "タナカ ハナコ",
-              "role": "主任看護師",
-              "employeeId": "EMP001",
-              "isActive": true
-            }
-          ]
-        }
-      ]
-    }
-  ]
-}
-```
-
-#### 3. 職員選択・セッション確立
-```typescript
-POST /api/auth/select-staff
-Content-Type: application/json
-Authorization: Bearer <token>
-
-// リクエスト
-{
-  "staffId": "staff-1",
-  "groupId": "group-1",
-  "teamId": "team-1"
-}
-
-// レスポンス
-{
-  "success": true,
-  "sessionToken": "session_jwt_token",
-  "staff": {
-    "id": "staff-1",
-    "name": "田中 花子",
-    "role": "主任看護師"
-  },
-  "message": "職員選択が完了しました"
-}
 ```
 
 ---
@@ -505,7 +411,6 @@ test.describe('Login Flow', () => {
 ### ✅ 完了項目
 - [x] **UI/UXデザイン**: ログイン画面・職員選択画面のレイアウト設計完了
 - [x] **データモデル設計**: 認証・職員データ構造の定義完了
-- [x] **API設計**: モック API エンドポイントの仕様設計完了
 - [x] **コンポーネント設計**: Atomic Design パターンでの実装完了
 - [x] **状態管理設計**: React hooks による状態管理実装完了
 - [x] **バリデーション設計**: 入力検証・エラーハンドリング実装完了
