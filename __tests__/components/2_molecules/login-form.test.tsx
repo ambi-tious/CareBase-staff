@@ -12,8 +12,10 @@ describe('LoginForm', () => {
   it('renders login form correctly', () => {
     render(<LoginForm onLogin={mockOnLogin} />);
 
-    expect(screen.getByText('ログイン')).toBeInTheDocument();
-    expect(screen.getByLabelText('ユーザー名')).toBeInTheDocument();
+    // Use getAllByText to handle multiple elements with same text
+    const loginTexts = screen.getAllByText('ログイン');
+    expect(loginTexts).toHaveLength(2); // Title and button
+    expect(screen.getByLabelText('施設ID')).toBeInTheDocument();
     expect(screen.getByLabelText('パスワード')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /ログイン/i })).toBeInTheDocument();
   });
@@ -25,7 +27,7 @@ describe('LoginForm', () => {
     fireEvent.click(submitButton);
 
     await waitFor(() => {
-      expect(screen.getByText('ユーザー名とパスワードを入力してください。')).toBeInTheDocument();
+      expect(screen.getByText('施設IDとパスワードを入力してください。')).toBeInTheDocument();
     });
 
     expect(mockOnLogin).not.toHaveBeenCalled();
@@ -35,17 +37,17 @@ describe('LoginForm', () => {
     mockOnLogin.mockResolvedValue(true);
     render(<LoginForm onLogin={mockOnLogin} />);
 
-    const usernameInput = screen.getByLabelText('ユーザー名');
+    const facilityIdInput = screen.getByLabelText('施設ID');
     const passwordInput = screen.getByLabelText('パスワード');
     const submitButton = screen.getByRole('button', { name: /ログイン/i });
 
-    fireEvent.change(usernameInput, { target: { value: 'testuser' } });
+    fireEvent.change(facilityIdInput, { target: { value: 'testfacility' } });
     fireEvent.change(passwordInput, { target: { value: 'testpass' } });
     fireEvent.click(submitButton);
 
     await waitFor(() => {
       expect(mockOnLogin).toHaveBeenCalledWith({
-        username: 'testuser',
+        facilityId: 'testfacility',
         password: 'testpass',
       });
     });
@@ -55,11 +57,11 @@ describe('LoginForm', () => {
     mockOnLogin.mockResolvedValue(true);
     render(<LoginForm onLogin={mockOnLogin} />);
 
-    const usernameInput = screen.getByLabelText('ユーザー名');
+    const facilityIdInput = screen.getByLabelText('施設ID');
     const passwordInput = screen.getByLabelText('パスワード');
     const submitButton = screen.getByRole('button', { name: /ログイン/i });
 
-    fireEvent.change(usernameInput, { target: { value: 'testuser' } });
+    fireEvent.change(facilityIdInput, { target: { value: 'testfacility' } });
     fireEvent.change(passwordInput, { target: { value: 'testpass' } });
     fireEvent.click(submitButton);
 
@@ -72,40 +74,25 @@ describe('LoginForm', () => {
     mockOnLogin.mockResolvedValue(false);
     render(<LoginForm onLogin={mockOnLogin} />);
 
-    const usernameInput = screen.getByLabelText('ユーザー名');
+    const facilityIdInput = screen.getByLabelText('施設ID');
     const passwordInput = screen.getByLabelText('パスワード');
     const submitButton = screen.getByRole('button', { name: /ログイン/i });
 
-    fireEvent.change(usernameInput, { target: { value: 'wronguser' } });
+    fireEvent.change(facilityIdInput, { target: { value: 'wrongfacility' } });
     fireEvent.change(passwordInput, { target: { value: 'wrongpass' } });
     fireEvent.click(submitButton);
 
     await waitFor(() => {
       expect(
-        screen.getByText('ユーザー名またはパスワードが正しくありません。')
+        screen.getByText('施設IDまたはパスワードが正しくありません。')
       ).toBeInTheDocument();
     });
   });
 
-  it('shows loading state during login', async () => {
-    mockOnLogin.mockImplementation(
-      () => new Promise((resolve) => setTimeout(() => resolve(true), 100))
-    );
-    render(<LoginForm onLogin={mockOnLogin} />);
-
-    const usernameInput = screen.getByLabelText('ユーザー名');
-    const passwordInput = screen.getByLabelText('パスワード');
-    const submitButton = screen.getByRole('button', { name: /ログイン/i });
-
-    fireEvent.change(usernameInput, { target: { value: 'testuser' } });
-    fireEvent.change(passwordInput, { target: { value: 'testpass' } });
-    fireEvent.click(submitButton);
+  it('shows loading state when isLoading prop is true', () => {
+    render(<LoginForm onLogin={mockOnLogin} isLoading={true} />);
 
     expect(screen.getByText('ログイン中...')).toBeInTheDocument();
-    expect(submitButton).toBeDisabled();
-
-    await waitFor(() => {
-      expect(screen.queryByText('ログイン中...')).not.toBeInTheDocument();
-    });
+    expect(screen.getByRole('button', { name: /ログイン中.../i })).toBeDisabled();
   });
 });

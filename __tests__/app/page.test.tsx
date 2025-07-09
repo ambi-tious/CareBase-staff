@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import HomePage from '@/app/(main)/page';
-import jest from 'jest'; // Import jest to fix the undeclared variable error
+import { jest } from '@jest/globals';
 
 // Mock the CareBoard component
 jest.mock('@/components/3_organisms/care-board', () => ({
