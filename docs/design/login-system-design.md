@@ -56,73 +56,30 @@ CareBase-staffアプリケーションにおける認証システムの設計文
 
 ### 認証関連データ構造
 
-```typescript
-// ログイン認証情報
-interface LoginCredentials {
-  facilityId: string;  // 施設ID
-  password: string;    // パスワード
-}
+以下のデータ構造を定義しています：
 
-// 職員データ
-interface Staff {
-  id: string;
-  name: string;
-  furigana: string;
-  role: string;
-  employeeId: string;
-  isActive: boolean;
-}
+- **LoginCredentials**: ログイン認証に必要な施設IDとパスワード
+- **Staff**: 職員の基本情報（ID、名前、ふりがな、役職、社員ID、有効性）
+- **Team**: チーム構造（ID、名前、説明、アイコン、所属職員）
+- **Group**: グループ構造（ID、名前、説明、アイコン、所属チーム）
+- **AuthState**: 認証状態管理用の構造
 
-// チーム構造
-interface Team {
-  id: string;
-  name: string;
-  description: string;
-  icon: LucideIcon;
-  staff: Staff[];
-}
-
-// グループ構造
-interface Group {
-  id: string;
-  name: string;
-  description: string;
-  icon: LucideIcon;
-  teams: Team[];
-}
-
-// 認証状態
-interface AuthState {
-  isAuthenticated: boolean;
-  currentUser: Staff | null;
-  facilityId: string | null;
-  selectedGroup: Group | null;
-  selectedTeam: Team | null;
-}
-```
+詳細な型定義: [`types/staff.ts`](/types/staff.ts)
 
 ### バリデーションスキーマ
 
-```typescript
-import { z } from 'zod';
+入力検証ルール：
 
-// ログイン入力バリデーション
-const loginSchema = z.object({
-  facilityId: z.string()
-    .min(1, '施設IDを入力してください')
-    .max(50, '施設IDは50文字以内で入力してください'),
-  password: z.string()
-    .min(1, 'パスワードを入力してください')
-    .max(100, 'パスワードは100文字以内で入力してください')
-});
+**ログイン入力検証:**
+- 施設ID: 必須、1-50文字
+- パスワード: 必須、1-100文字
 
-// 職員選択バリデーション
-const staffSelectionSchema = z.object({
-  groupId: z.string().min(1, 'グループを選択してください'),
-  teamId: z.string().min(1, 'チームを選択してください'),
-  staffId: z.string().min(1, 'スタッフを選択してください')
-});
-```
+**職員選択検証:**
+- グループID: 必須
+- チームID: 必須  
+- スタッフID: 必須
+
+バリデーション実装: [`components/2_molecules/auth/login-form.tsx`](/components/2_molecules/auth/login-form.tsx)
 
 ---
 
@@ -155,56 +112,27 @@ Atomic Design パターンに従った階層構造：
 
 ### 主要コンポーネント仕様
 
-#### LoginForm コンポーネント
-```typescript
-interface LoginFormProps {
-  onLogin: (credentials: { facilityId: string; password: string }) => Promise<boolean>;
-  isLoading?: boolean;
-  className?: string;
-}
+各コンポーネントのProps仕様と機能：
 
-export const LoginForm: React.FC<LoginFormProps> = ({
-  onLogin,
-  isLoading = false,
-  className = '',
-}) => {
-  // 実装詳細は既存コード参照
-}
-```
+#### LoginForm
+- ログイン認証フォーム
+- リアルタイムバリデーション
+- エラーメッセージ表示
+- ローディング状態管理
 
-#### LoginScreen コンポーネント
-```typescript
-interface LoginScreenProps {
-  onLogin: (credentials: { facilityId: string; password: string }) => Promise<boolean>;
-  onStaffSelection: () => void;
-  className?: string;
-}
+#### LoginScreen 
+- ログイン画面全体のレイアウト
+- ロゴ表示
+- フォーム統合
+- 職員選択への遷移制御
 
-export const LoginScreen: React.FC<LoginScreenProps> = ({
-  onLogin,
-  onStaffSelection,
-  className = '',
-}) => {
-  // 実装詳細は既存コード参照
-}
-```
+#### StaffSelectionScreen
+- 3段階の職員選択プロセス
+- ステップインジケータ
+- 戻る・リセット機能
+- 選択結果の確認表示
 
-#### StaffSelectionScreen コンポーネント
-```typescript
-interface StaffSelectionScreenProps {
-  onStaffSelected: (staff: Staff) => Promise<void>;
-  onBack: () => void;
-  className?: string;
-}
-
-export const StaffSelectionScreen: React.FC<StaffSelectionScreenProps> = ({
-  onStaffSelected,
-  onBack,
-  className = '',
-}) => {
-  // 実装詳細は既存コード参照
-}
-```
+詳細実装: [`components/`](/components/) ディレクトリ
 
 ---
 
@@ -213,47 +141,18 @@ export const StaffSelectionScreen: React.FC<StaffSelectionScreenProps> = ({
 ### 認証状態管理
 React の useState を使用したローカル状態管理：
 
-```typescript
-// app/(auth)/login/page.tsx
-type AuthMode = 'login' | 'staff-selection';
+**状態変数:**
+- `authMode`: 'login' | 'staff-selection'
+- `isLoading`: ローディング状態
+- 各種選択状態（グループ、チーム、スタッフ）
 
-export default function LoginPage() {
-  const [authMode, setAuthMode] = useState<AuthMode>('login');
-  const [isLoading, setIsLoading] = useState(false);
-  const router = useRouter();
-
-  const handleLogin = async (credentials: {
-    facilityId: string;
-    password: string;
-  }): Promise<boolean> => {
-    setIsLoading(true);
-    try {
-      // 認証ロジック
-      if (credentials.facilityId === 'admin' && credentials.password === 'password') {
-        setAuthMode('staff-selection');
-        return true;
-      }
-      return false;
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleStaffSelected = async (staff: Staff): Promise<void> => {
-    // 職員選択後の処理
-    console.log('Selected staff:', staff);
-    router.push('/');
-  };
-
-  // JSX レンダリング
-}
-```
-
-### 状態フロー
+**状態遷移フロー:**
 1. **初期状態**: `authMode = 'login'`
 2. **ログイン成功**: `authMode = 'staff-selection'`
 3. **職員選択完了**: メインアプリケーションへ遷移
 4. **戻る操作**: `authMode = 'login'`
+
+状態管理実装: [`app/(auth)/login/page.tsx`](/app/(auth)/login/page.tsx)
 
 ---
 
@@ -262,42 +161,18 @@ export default function LoginPage() {
 ### 入力検証
 フロントエンドでの入力検証実装：
 
-```typescript
-// components/2_molecules/auth/login-form.tsx
-const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
-  setMessage({ type: null, text: '' });
+**検証項目:**
+- 必須項目チェック（施設ID、パスワード）
+- 文字数制限（施設ID: 50文字、パスワード: 100文字）
+- 認証失敗時の適切なエラーメッセージ
 
-  // 必須項目チェック
-  if (!facilityId.trim() || !password.trim()) {
-    setMessage({
-      type: 'error',
-      text: '施設IDとパスワードを入力してください。',
-    });
-    return;
-  }
+**エラーハンドリングパターン:**
+- 必須項目未入力
+- 認証失敗
+- システムエラー
+- 職員選択エラー
 
-  try {
-    const success = await onLogin({ facilityId, password });
-    if (success) {
-      setMessage({
-        type: 'success',
-        text: 'ログインに成功しました。',
-      });
-    } else {
-      setMessage({
-        type: 'error',
-        text: '施設IDまたはパスワードが正しくありません。',
-      });
-    }
-  } catch (error) {
-    setMessage({
-      type: 'error',
-      text: 'ログイン中にエラーが発生しました。もう一度お試しください。',
-    });
-  }
-};
-```
+バリデーション実装: [`components/2_molecules/auth/login-form.tsx`](/components/2_molecules/auth/login-form.tsx)
 
 ### エラーハンドリング
 - **必須項目未入力**: 「施設IDとパスワードを入力してください。」
@@ -312,91 +187,30 @@ const handleSubmit = async (e: React.FormEvent) => {
 ### 単体テスト
 Jest + React Testing Library を使用：
 
-```typescript
-// __tests__/components/2_molecules/login-form.test.tsx
-describe('LoginForm', () => {
-  const mockOnLogin = jest.fn();
+**テスト対象:**
+- ログインフォームコンポーネント
+- 職員選択コンポーネント
+- バリデーション機能
+- エラーハンドリング
 
-  beforeEach(() => {
-    mockOnLogin.mockClear();
-  });
+**テストケース:**
+- フォーム要素の正常レンダリング
+- 必須項目バリデーション
+- 正常な認証フロー
+- エラー状態の表示
 
-  it('renders login form correctly', () => {
-    render(<LoginForm onLogin={mockOnLogin} />);
-    
-    expect(screen.getAllByText('ログイン')).toHaveLength(2);
-    expect(screen.getByLabelText('施設ID')).toBeInTheDocument();
-    expect(screen.getByLabelText('パスワード')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /ログイン/i })).toBeInTheDocument();
-  });
-
-  it('shows error when fields are empty', async () => {
-    render(<LoginForm onLogin={mockOnLogin} />);
-    
-    fireEvent.click(screen.getByRole('button', { name: /ログイン/i }));
-    
-    await waitFor(() => {
-      expect(screen.getByText('施設IDとパスワードを入力してください。')).toBeInTheDocument();
-    });
-  });
-
-  it('calls onLogin with correct credentials', async () => {
-    mockOnLogin.mockResolvedValue(true);
-    render(<LoginForm onLogin={mockOnLogin} />);
-    
-    fireEvent.change(screen.getByLabelText('施設ID'), { target: { value: 'testfacility' } });
-    fireEvent.change(screen.getByLabelText('パスワード'), { target: { value: 'testpass' } });
-    fireEvent.click(screen.getByRole('button', { name: /ログイン/i }));
-    
-    await waitFor(() => {
-      expect(mockOnLogin).toHaveBeenCalledWith({
-        facilityId: 'testfacility',
-        password: 'testpass',
-      });
-    });
-  });
-});
-```
+テスト実装: [`__tests__/components/`](/__tests__/components/) ディレクトリ
 
 ### 統合テスト
 Playwright を使用したE2Eテスト：
 
-```typescript
-// e2e/login.spec.ts
-import { test, expect } from '@playwright/test';
+**テストシナリオ:**
+- 完全なログイン〜職員選択フロー
+- エラーケースの検証
+- レスポンシブデザインの確認
+- アクセシビリティテスト
 
-test.describe('Login Flow', () => {
-  test('should complete login and staff selection flow', async ({ page }) => {
-    // ログイン画面にアクセス
-    await page.goto('/login');
-    
-    // ログイン情報を入力
-    await page.fill('input[id="facilityId"]', 'admin');
-    await page.fill('input[id="password"]', 'password');
-    
-    // ログインボタンをクリック
-    await page.click('button[type="submit"]');
-    
-    // 職員選択画面に遷移することを確認
-    await expect(page.locator('text=スタッフ選択')).toBeVisible();
-    
-    // グループを選択
-    await page.click('text=介護フロア A');
-    
-    // チームを選択
-    await page.click('text=夜勤チーム');
-    
-    // スタッフを選択
-    await page.click('text=田中 花子');
-    
-    // 確認ボタンをクリック
-    await page.click('button:text("この スタッフでログイン")');
-    
-    // メインアプリケーションに遷移することを確認
-    await expect(page).toHaveURL('/');
-  });
-});
-```
+E2Eテスト: [`e2e/`](/e2e/) ディレクトリ
 
 ### テストカバレッジ
 - **コンポーネント**: 100% カバレッジ目標
