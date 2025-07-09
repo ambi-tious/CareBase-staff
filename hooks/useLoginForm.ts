@@ -6,8 +6,7 @@
 
 import { useState, useCallback, useEffect } from 'react';
 import type { LoginFormState, LoginCredentials } from '@/types/auth';
-import { validateLoginFormRelaxed, validateFacilityId, validatePassword } from '@/validations/auth-validation';
-import { validateData } from '@/utils/validation-helpers';
+import { validateLoginFormRelaxed } from '@/validations/auth-validation';
 
 interface UseLoginFormOptions {
   initialValues?: Partial<LoginCredentials>;
@@ -52,12 +51,14 @@ export const useLoginForm = ({
 
       switch (field) {
         case 'facilityId':
-          const facilityIdResult = validateFacilityId(value);
-          error = facilityIdResult.isValid ? null : facilityIdResult.error;
+          if (!value.trim()) {
+            error = '施設IDは必須です';
+          }
           break;
         case 'password':
-          const passwordResult = validatePassword(value);
-          error = passwordResult.isValid ? null : passwordResult.error;
+          if (!value.trim()) {
+            error = 'パスワードは必須です';
+          }
           break;
       }
 
@@ -101,13 +102,19 @@ export const useLoginForm = ({
       password: formState.password,
     };
 
-    const validation = validateData(validateLoginFormRelaxed, credentials);
+    const validation = validateLoginFormRelaxed(credentials);
     
-    if (!validation.isValid) {
-      setFieldErrors(validation.fieldErrors || {});
+    if (!validation.success) {
+      const newFieldErrors: Record<string, string> = {};
+      for (const error of validation.error.errors) {
+        if (error.path.length > 0) {
+          newFieldErrors[error.path[0]] = error.message;
+        }
+      }
+      setFieldErrors(newFieldErrors);
       setFormState(prev => ({
         ...prev,
-        error: validation.error || 'バリデーションエラーが発生しました',
+        error: validation.error.errors[0]?.message || 'バリデーションエラーが発生しました',
       }));
       return false;
     }
