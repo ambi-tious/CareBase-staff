@@ -1,6 +1,4 @@
-'use client';
-
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect, useMemo } from 'react';
 import type { ResidentBasicInfo } from '@/components/2_molecules/forms/resident-basic-info-form';
 
 interface UseResidentFormOptions {
@@ -30,7 +28,7 @@ export const useResidentForm = ({ initialData, onSubmit }: UseResidentFormOption
   const [errors, setErrors] = useState<Partial<Record<keyof ResidentBasicInfo, string>>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const validateForm = useCallback((data: ResidentBasicInfo): boolean => {
+  const validateForm = useCallback((data: ResidentBasicInfo): Partial<Record<keyof ResidentBasicInfo, string>> => {
     const newErrors: Partial<Record<keyof ResidentBasicInfo, string>> = {};
 
     // Required field validation
@@ -76,12 +74,20 @@ export const useResidentForm = ({ initialData, onSubmit }: UseResidentFormOption
       }
     }
 
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    return newErrors;
   }, []);
 
+  // Real-time validation effect
+  useEffect(() => {
+    const newErrors = validateForm(formData);
+    setErrors(newErrors);
+  }, [formData, validateForm]);
+
   const handleSubmit = useCallback(async () => {
-    if (!validateForm(formData)) {
+    const validationErrors = validateForm(formData);
+    setErrors(validationErrors);
+    
+    if (Object.keys(validationErrors).length > 0) {
       return false;
     }
 
@@ -102,9 +108,10 @@ export const useResidentForm = ({ initialData, onSubmit }: UseResidentFormOption
     setErrors({});
   }, [initialData]);
 
-  const isValid = useCallback(() => {
-    return validateForm(formData);
-  }, [formData, validateForm]);
+  // Derive isValid from current errors state
+  const isValid = useMemo(() => {
+    return Object.keys(errors).length === 0;
+  }, [errors]);
 
   return {
     formData,
@@ -113,6 +120,6 @@ export const useResidentForm = ({ initialData, onSubmit }: UseResidentFormOption
     isSubmitting,
     handleSubmit,
     resetForm,
-    isValid: isValid(),
+    isValid,
   };
 };
