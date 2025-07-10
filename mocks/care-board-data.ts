@@ -458,6 +458,52 @@ export const careBoardData: Resident[] = [
   },
 ];
 
+// Add some discharged residents for testing
+careBoardData.push(
+  {
+    id: 9,
+    name: '退所太郎',
+    furigana: 'タイショタロウ',
+    dob: '1945/03/15',
+    sex: '男',
+    age: 80,
+    admissionDate: '2023/01/01',
+    dischargeDate: '2024/12/31',
+    registrationDate: '2022/12/15',
+    lastUpdateDate: '2024/12/31',
+    admissionStatus: '退所済',
+    careLevel: '要介護2',
+    certificationDate: '2023/01/01',
+    certValidityStart: '2023/01/01',
+    certValidityEnd: '2024/01/01',
+    address: '東京都新宿区西新宿1-1-1',
+    avatarUrl: '/elderly-man-avatar.png',
+    events: [],
+    contacts: [],
+  },
+  {
+    id: 10,
+    name: '退所花子',
+    furigana: 'タイショハナコ',
+    dob: '1950/07/20',
+    sex: '女',
+    age: 75,
+    admissionDate: '2023/06/01',
+    dischargeDate: '2024/11/30',
+    registrationDate: '2023/05/15',
+    lastUpdateDate: '2024/11/30',
+    admissionStatus: '退所済',
+    careLevel: '要支援2',
+    certificationDate: '2023/06/01',
+    certValidityStart: '2023/06/01',
+    certValidityEnd: '2024/06/01',
+    address: '神奈川県横浜市港北区新横浜2-2-2',
+    avatarUrl: '/elderly-woman-avatar.png',
+    events: [],
+    contacts: [],
+  }
+);
+
 export const timeSlots = ['07:00', '08:00', '09:00', '10:00', '11:00', '12:00', '13:00'];
 
 // Helper to find a resident by ID
