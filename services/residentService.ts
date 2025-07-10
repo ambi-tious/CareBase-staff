@@ -52,6 +52,8 @@ export const residentService = {
     // In production, this would make an API call to create the resident
     console.log('Creating resident:', newResident);
 
+    const { careBoardData } = await import('@/mocks/care-board-data');
+    careBoardData.push(newResident);
     return newResident;
   },
 
