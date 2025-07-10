@@ -1,12 +1,26 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { StaffSelectionScreen } from '@/components/3_organisms/auth/staff-selection-screen';
 import type { Staff } from '@/mocks/staff-data';
 
 export default function StaffSelectionPage() {
   const router = useRouter();
+  const [initialStep, setInitialStep] = useState<'group' | 'staff' | 'team'>('group');
+
+  useEffect(() => {
+    // Determine the initial step based on previously selected staff data
+    // Only run on client side to avoid SSR issues with localStorage
+    try {
+      const selectedStaffData = JSON.parse(localStorage.getItem('carebase_selected_staff_data') || '{}');
+      const step = selectedStaffData.teamName ? 'team' : selectedStaffData.groupName ? 'staff' : 'group';
+      setInitialStep(step);
+    } catch (error) {
+      console.error('Error reading from localStorage:', error);
+      setInitialStep('group');
+    }
+  }, []);
 
   const handleStaffSelected = async (staff: Staff): Promise<void> => {
     // Simulate staff selection processing
@@ -19,7 +33,11 @@ export default function StaffSelectionPage() {
       teamName: getTeamNameByStaff(staff),
     };
     
-    localStorage.setItem('carebase_selected_staff_data', JSON.stringify(selectedStaffData));
+    try {
+      localStorage.setItem('carebase_selected_staff_data', JSON.stringify(selectedStaffData));
+    } catch (error) {
+      console.error('Error writing to localStorage:', error);
+    }
     
     // In production, this would authenticate with the selected staff's credentials
     console.log('Selected staff:', staff);
@@ -29,10 +47,6 @@ export default function StaffSelectionPage() {
   const handleBackToLogin = (): void => {
     router.push('/login');
   };
-
-  // Determine the initial step based on previously selected staff data
-  const selectedStaffData = JSON.parse(localStorage.getItem('carebase_selected_staff_data') || '{}');
-  const initialStep = selectedStaffData.teamName ? 'team' : selectedStaffData.groupName ? 'staff' : 'group';
 
   return (
     <div className="min-h-screen bg-carebase-bg flex items-center justify-center p-4">

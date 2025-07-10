@@ -210,7 +210,7 @@ export const StaffSelectionScreen: React.FC<StaffSelectionScreenProps> = ({
                           {selectedStaff.role}
                         </p>
                         <p className="text-xs text-gray-500 mt-2">
-                          {selectedGroup.name} - {selectedTeam.name}
+                          {selectedGroup?.name} - {selectedTeam?.name}
                         </p>
                       </div>
                     </CardContent>
