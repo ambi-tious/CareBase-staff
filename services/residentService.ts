@@ -72,10 +72,18 @@ export const residentService = {
       throw new Error('Resident not found');
     }
 
-    return {
+    const updatedResident = {
       ...existingResident,
       ...data,
       lastUpdateDate: new Date().toISOString().split('T')[0].replace(/-/g, '/'),
     };
+
+    // Update the resident in the careBoardData array
+    const residentIndex = careBoardData.findIndex(r => r.id === id);
+    if (residentIndex !== -1) {
+      careBoardData[residentIndex] = updatedResident;
+    }
+
+    return updatedResident;
   },
 };
