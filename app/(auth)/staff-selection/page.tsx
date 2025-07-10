@@ -30,9 +30,17 @@ export default function StaffSelectionPage() {
     router.push('/login');
   };
 
+  // Determine the initial step based on previously selected staff data
+  const selectedStaffData = JSON.parse(localStorage.getItem('carebase_selected_staff_data') || '{}');
+  const initialStep = selectedStaffData.teamName ? 'team' : selectedStaffData.groupName ? 'staff' : 'group';
+
   return (
     <div className="min-h-screen bg-carebase-bg flex items-center justify-center p-4">
-      <StaffSelectionScreen onStaffSelected={handleStaffSelected} onBack={handleBackToLogin} />
+      <StaffSelectionScreen 
+        onStaffSelected={handleStaffSelected} 
+        onBack={handleBackToLogin} 
+        initialStep={initialStep} 
+      />
     </div>
   );
 }
