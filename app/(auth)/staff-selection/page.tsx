@@ -41,22 +41,22 @@ export default function StaffSelectionPage() {
 function getGroupNameByStaff(staff: Staff): string {
   // This would normally come from the API or be passed through the selection process
   // For now, we'll use mock data mapping
-  const groupMapping: Record<string, string> = {
-    'staff-001': '介護フロア A',
-    'staff-002': '介護フロア A',
-    'staff-003': '介護フロア A',
-    'staff-004': '介護フロア A',
-    'staff-005': '介護フロア A',
-    'staff-006': '介護フロア A',
-    'staff-007': '介護フロア A',
-    'staff-008': '介護フロア B',
-    'staff-009': '介護フロア B',
-    'staff-010': '介護フロア B',
-    'staff-011': '管理部門',
-    'staff-012': '管理部門',
+  const organizationData: Record<string, { groupName: string }> = {
+    'staff-001': { groupName: '介護フロア A' },
+    'staff-002': { groupName: '介護フロア A' },
+    'staff-003': { groupName: '介護フロア A' },
+    'staff-004': { groupName: '介護フロア A' },
+    'staff-005': { groupName: '介護フロア A' },
+    'staff-006': { groupName: '介護フロア A' },
+    'staff-007': { groupName: '介護フロア A' },
+    'staff-008': { groupName: '介護フロア B' },
+    'staff-009': { groupName: '介護フロア B' },
+    'staff-010': { groupName: '介護フロア B' },
+    'staff-011': { groupName: '管理部門' },
+    'staff-012': { groupName: '管理部門' },
   };
   
-  return groupMapping[staff.id] || '不明なグループ';
+  return organizationData[staff.id]?.groupName || '不明なグループ';
 }
 
 function getTeamNameByStaff(staff: Staff): string {
