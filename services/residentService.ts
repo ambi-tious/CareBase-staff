@@ -42,7 +42,7 @@ export const residentService = {
       careLevel: data.careLevel,
       certificationDate: data.admissionDate.replace(/-/g, '/'), // Default to admission date
       certValidityStart: data.admissionDate.replace(/-/g, '/'),
-      certValidityEnd: new Date(new Date(data.admissionDate).getFullYear() + 1, new Date(data.admissionDate).getMonth(), new Date(data.admissionDate).getDate()).toISOString().split('T')[0].replace(/-/g, '/'),
+      certValidityEnd: calculateCertValidityEnd(data.admissionDate),
       address: data.address,
       avatarUrl: '/placeholder.svg', // Default avatar
       events: [],
