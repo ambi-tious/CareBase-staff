@@ -4,8 +4,9 @@ import { Clock } from 'lucide-react';
 import { ResidentProfileHeader } from '@/components/3_organisms/resident/resident-profile-header';
 import { ResidentDetailTabs } from '@/components/3_organisms/resident/resident-detail-tabs';
 
-export default function ResidentDetailPage({ params }: { params: { residentId: string } }) {
-  const residentIdNum = Number.parseInt(params.residentId, 10);
+export default async function ResidentDetailPage({ params }: { params: { residentId: string } }) {
+  const resolvedParams = await params;
+  const residentIdNum = Number.parseInt(resolvedParams.residentId, 10);
   const resident = getResidentById(residentIdNum);
 
   if (!resident) {

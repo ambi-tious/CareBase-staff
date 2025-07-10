@@ -2,14 +2,10 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { LoginScreen } from '@/components/3_organisms/auth/login-screen';
-import { StaffSelectionScreen } from '@/components/3_organisms/auth/staff-selection-screen';
-import type { Staff } from '@/mocks/staff-data';
-
-type AuthMode = 'login' | 'staff-selection';
+import { LoginForm } from '@/components/2_molecules/auth/login-form';
+import { Logo } from '@/components/1_atoms/common/logo';
 
 export default function LoginPage() {
-  const [authMode, setAuthMode] = useState<AuthMode>('login');
   const router = useRouter();
 
   const handleLogin = async (credentials: {
@@ -21,39 +17,30 @@ export default function LoginPage() {
 
     // Mock authentication - in production, this would call a real API
     if (credentials.facilityId === 'admin' && credentials.password === 'password') {
-      setAuthMode('staff-selection');
+      router.push('/staff-selection');
       return true;
     }
 
     return false;
   };
 
-  const handleStaffSelected = async (staff: Staff): Promise<void> => {
-    // Simulate staff selection processing
-    await new Promise((resolve) => setTimeout(resolve, 500));
-
-    // In production, this would authenticate with the selected staff's credentials
-    console.log('Selected staff:', staff);
-    router.push('/');
-  };
-
-  const handleStaffSelection = (): void => {
-    setAuthMode('staff-selection');
-  };
-
-  const handleBackToLogin = (): void => {
-    setAuthMode('login');
-  };
 
   return (
-    <div className="min-h-screen">
-      {authMode === 'login' ? (
-        <LoginScreen onLogin={handleLogin} onStaffSelection={handleStaffSelection} />
-      ) : (
-        <div className="min-h-screen bg-carebase-bg flex items-center justify-center p-4">
-          <StaffSelectionScreen onStaffSelected={handleStaffSelected} onBack={handleBackToLogin} />
+    <div className="min-h-screen bg-carebase-bg flex items-center justify-center p-4">
+      <div className="w-full max-w-md space-y-6">
+        {/* Logo */}
+        <div className="text-center">
+          <Logo />
         </div>
-      )}
+
+        {/* Login Form */}
+        <LoginForm onLogin={handleLogin} />
+
+        {/* Footer */}
+        <div className="text-center text-xs text-gray-500">
+          <p>© 2025 CareBase. All rights reserved.</p>
+        </div>
+      </div>
     </div>
   );
 }
