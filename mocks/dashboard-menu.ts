@@ -51,7 +51,7 @@ export const dashboardMenu: NavCategory[] = [
     title: '利用者関連',
     icon: Users,
     links: [
-      { label: '各種情報(利用者リスト)', href: '#', icon: User },
+      { label: '各種情報(利用者リスト)', href: '/residents', icon: User },
       { label: 'アラートリスト', href: '#', icon: AlertTriangle },
     ],
   },
