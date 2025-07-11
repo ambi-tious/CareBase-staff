@@ -12,6 +12,7 @@ export default function StaffSelectionPage() {
   const fromHeader = searchParams.get('from') === 'header';
   const fromStaffClick = searchParams.get('staff') === 'true';
   const autoSelectStaff = searchParams.get('autoSelectStaff') !== 'false';
+  const autoSelectTeam = searchParams.get('autoSelectTeam') !== 'false';
   const fromGroupClick = searchParams.get('group') === 'true';
   const [selectedStaffData, setSelectedStaffData] = useState<any>(null);
 
@@ -67,6 +68,7 @@ export default function StaffSelectionPage() {
         fromStaffClick={fromStaffClick}
         fromGroupClick={fromGroupClick}
         autoSelectStaff={autoSelectStaff}
+        autoSelectTeam={autoSelectTeam}
         onStaffSelected={handleStaffSelected}
         onLogout={handleLogout}
         selectedStaffData={selectedStaffData}

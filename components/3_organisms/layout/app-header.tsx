@@ -98,7 +98,7 @@ export function AppHeader() {
     if (newGroupTeamSelected) {
       // Navigate to staff selection with query parameter to indicate we're coming from header
       setTimeout(() => {
-        router.push('/staff-selection?from=header&group=true');
+        router.push('/staff-selection?from=header&group=true&autoSelectTeam=false');
       }, 200);
     }
   }, [isGroupTeamSelected, router]);

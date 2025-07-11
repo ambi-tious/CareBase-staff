@@ -26,6 +26,7 @@ interface StaffSelectionScreenProps {
   fromStaffClick?: boolean;
   fromGroupClick?: boolean;
   autoSelectStaff?: boolean;
+  autoSelectTeam?: boolean;
   selectedStaffData?: SelectedStaffData;
   className?: string;
 }
@@ -36,6 +37,7 @@ export const StaffSelectionScreen: React.FC<StaffSelectionScreenProps> = ({
   fromHeader = false,
   fromStaffClick = false,
   autoSelectStaff = true,
+  autoSelectTeam = true,
   fromGroupClick = false,
   selectedStaffData,
   className = '',
@@ -138,7 +140,9 @@ export const StaffSelectionScreen: React.FC<StaffSelectionScreenProps> = ({
         
         // If coming from staff click, also select the staff
         if (fromStaffClick && teamId) {
-          setSelectedTeamId(teamId);
+          if (autoSelectTeam) {
+            setSelectedTeamId(teamId);
+          }
           
           // Find and select the staff
           const team = getTeamById(groupId, teamId);
@@ -149,7 +153,9 @@ export const StaffSelectionScreen: React.FC<StaffSelectionScreenProps> = ({
         }
         // If coming from group click, just select the group
         else if (fromGroupClick && teamId) {
-          setSelectedTeamId(teamId);
+          if (autoSelectTeam) {
+            setSelectedTeamId(teamId);
+          }
         }
       }
     }
