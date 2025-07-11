@@ -1,3 +1,25 @@
 #!/usr/bin/env sh
 
-npx lint-staged
+echo "🔍 コミット前のチェックを実行中..."
+
+# CIチェック（lint、type-check、テスト）を実行
+echo "🧪 CIチェックを実行中..."
+npm run ci
+
+# CIチェックが成功した場合のみビルドテストを実行
+if [ $? -eq 0 ]; then
+    echo "✅ CIチェック成功！ビルドテストを実行中..."
+    npm run build
+
+    # ビルドが成功した場合のみlint-stagedを実行
+    if [ $? -eq 0 ]; then
+        echo "✅ ビルド成功！lint-stagedを実行中..."
+        npx lint-staged
+    else
+        echo "❌ ビルドに失敗しました。コミットを中止します。"
+        exit 1
+    fi
+else
+    echo "❌ CIチェックに失敗しました。コミットを中止します。"
+    exit 1
+fi
