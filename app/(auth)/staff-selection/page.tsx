@@ -19,8 +19,8 @@ function StaffSelectionContent() {
   const autoSelectStaff = searchParams.get('autoSelectStaff') !== 'false';
   const autoSelectTeam = searchParams.get('autoSelectTeam') !== 'false';
   const fromGroupClick = searchParams.get('group') === 'true';
-  const [selectedStaffData, setSelectedStaffData] = useState<SelectedStaffData | undefined>(
   const staffSelectionRef = useRef<HTMLDivElement>(null);
+  const [selectedStaffData, setSelectedStaffData] = useState<SelectedStaffData | undefined>(
     undefined
   );
 
