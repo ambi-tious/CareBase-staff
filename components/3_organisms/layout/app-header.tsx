@@ -80,9 +80,9 @@ export function AppHeader() {
     if (newStaffSelected) {
       // Auto-select group/team when staff is selected
       setIsGroupTeamSelected(true);
-      // Navigate to staff selection after a brief delay to show selection state
+      // Navigate to staff selection with query parameter to indicate we're coming from header
       setTimeout(() => {
-        router.push('/staff-selection');
+        router.push('/staff-selection?from=header&staff=true');
       }, 200);
     } else {
       setIsGroupTeamSelected(false);
@@ -96,21 +96,21 @@ export function AppHeader() {
     setIsGroupTeamSelected(newGroupTeamSelected);
     
     if (newGroupTeamSelected) {
-      // Navigate to staff selection after a brief delay to show selection state
+      // Navigate to staff selection with query parameter to indicate we're coming from header
       setTimeout(() => {
-        router.push('/staff-selection');
+        router.push('/staff-selection?from=header&group=true');
       }, 200);
     }
   }, [isGroupTeamSelected, router]);
 
   const handleStaffNameClickFallback = () => {
-    router.push('/staff-selection');
+    router.push('/staff-selection?from=header&staff=true');
   };
 
   const handleGroupTeamClickFallback = () => {
     // Clear current selection to start from group selection
     localStorage.removeItem('carebase_selected_staff_data');
-    router.push('/staff-selection');
+    router.push('/staff-selection?from=header&group=true');
   };
 
   return (

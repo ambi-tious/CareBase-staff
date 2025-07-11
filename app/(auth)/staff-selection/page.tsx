@@ -9,6 +9,9 @@ import { useEffect, useState } from 'react';
 export default function StaffSelectionPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const fromHeader = searchParams.get('from') === 'header';
+  const fromStaffClick = searchParams.get('staff') === 'true';
+  const fromGroupClick = searchParams.get('group') === 'true';
   const [selectedStaffData, setSelectedStaffData] = useState<any>(null);
 
   // Load current staff data for header navigation context
@@ -59,6 +62,9 @@ export default function StaffSelectionPage() {
   return (
     <div className="min-h-screen bg-carebase-bg flex items-center justify-center p-4">
       <StaffSelectionScreen
+        fromHeader={fromHeader}
+        fromStaffClick={fromStaffClick}
+        fromGroupClick={fromGroupClick}
         onStaffSelected={handleStaffSelected}
         onLogout={handleLogout}
         selectedStaffData={selectedStaffData}

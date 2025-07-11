@@ -22,6 +22,9 @@ interface SelectedStaffData {
 interface StaffSelectionScreenProps {
   onStaffSelected: (staff: Staff) => void;
   onLogout?: () => void;
+  fromHeader?: boolean;
+  fromStaffClick?: boolean;
+  fromGroupClick?: boolean;
   selectedStaffData?: SelectedStaffData;
   className?: string;
 }
@@ -29,6 +32,9 @@ interface StaffSelectionScreenProps {
 export const StaffSelectionScreen: React.FC<StaffSelectionScreenProps> = ({
   onStaffSelected,
   onLogout,
+  fromHeader = false,
+  fromStaffClick = false,
+  fromGroupClick = false,
   selectedStaffData,
   className = '',
 }) => {
@@ -115,24 +121,44 @@ export const StaffSelectionScreen: React.FC<StaffSelectionScreenProps> = ({
 
   // Handle selection from header navigation
   useEffect(() => {
-    // Check if we're coming from header navigation
-    const urlParams = new URLSearchParams(window.location.search);
-    const fromHeader = urlParams.get('from');
-    
-    if (fromHeader === 'header' && selectedStaffData) {
-      // Pre-select based on current staff data
+    if (fromHeader && selectedStaffData) {
       const currentStaff = selectedStaffData.staff;
-      const groupId = getGroupIdByStaffName(selectedStaffData.groupName);
-      const teamId = getTeamIdByStaffAndGroup(currentStaff, groupId);
+      
+      // Find the group ID from the group name
+      const groupId = organizationData.find(
+        group => group.name === selectedStaffData.groupName
+      )?.id;
+      
+      // Find the team ID from the team name within the group
+      let teamId: string | undefined;
+      if (groupId) {
+        const group = getGroupById(groupId);
+        teamId = group?.teams.find(
+          team => team.name === selectedStaffData.teamName
+        )?.id;
+      }
       
       if (groupId) {
         setSelectedGroupId(groupId);
-      }
-      if (teamId) {
-        setSelectedTeamId(teamId);
+        
+        // If coming from staff click, also select the staff
+        if (fromStaffClick && teamId) {
+          setSelectedTeamId(teamId);
+          
+          // Find and select the staff
+          const team = getTeamById(groupId, teamId);
+          const staffMember = team?.staff.find(s => s.id === currentStaff.id);
+          if (staffMember) {
+            setSelectedStaffId(staffMember.id);
+          }
+        }
+        // If coming from group click, just select the group
+        else if (fromGroupClick && teamId) {
+          setSelectedTeamId(teamId);
+        }
       }
     }
-  }, [selectedStaffData]);
+  }, [fromHeader, fromStaffClick, fromGroupClick, selectedStaffData]);
   const isGroupAutoSelected = organizationData.length === 1;
   const isTeamAutoSelected = selectedGroup && selectedGroup.teams.length === 1;
   const showGroupSelector = !isGroupAutoSelected;
