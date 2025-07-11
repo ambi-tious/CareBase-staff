@@ -301,6 +301,8 @@ export const careBoardData: Resident[] = [
         date: '2025/04/15',
         content: '腸閉塞予防　漢方服用',
         notes: '薬アレルギーは出ていない',
+        createdAt: '2025-04-15T00:00:00.000Z',
+        updatedAt: '2025-04-15T00:00:00.000Z',
       },
     ],
     individualPoints: [

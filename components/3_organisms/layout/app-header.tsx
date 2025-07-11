@@ -1,22 +1,22 @@
 'use client';
 
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { useState, useEffect } from 'react';
 import { Logo } from '@/components/1_atoms/common/logo';
+import { StaffDashboard } from '@/components/3_organisms/dashboard/staff-dashboard';
 import { Button, buttonVariants } from '@/components/ui/button'; // Import buttonVariants
-import { User, Users, Menu, X } from 'lucide-react';
 import {
   Sheet,
+  SheetClose,
   SheetContent,
-  SheetTrigger,
   SheetHeader,
   SheetTitle,
-  SheetClose,
+  SheetTrigger,
 } from '@/components/ui/sheet';
-import { StaffDashboard } from '@/components/3_organisms/dashboard/staff-dashboard';
 import { cn } from '@/lib/utils'; // Import cn
 import type { Staff } from '@/mocks/staff-data';
+import { Menu, User, Users, X } from 'lucide-react';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useCallback, useEffect, useState } from 'react';
 
 interface SelectedStaffData {
   staff: Staff;
@@ -27,6 +27,8 @@ interface SelectedStaffData {
 export function AppHeader() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [selectedStaffData, setSelectedStaffData] = useState<SelectedStaffData | null>(null);
+  const [isStaffSelected, setIsStaffSelected] = useState(false);
+  const [isGroupTeamSelected, setIsGroupTeamSelected] = useState(false);
   const router = useRouter();
 
   // Load selected staff data from localStorage
@@ -55,14 +57,64 @@ export function AppHeader() {
     return () => window.removeEventListener('storage', handleStorageChange);
   }, []);
 
-  const handleStaffNameClick = () => {
-    router.push('/staff-selection');
+  // Reset selection states when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Element;
+      if (!target.closest('[data-header-button]')) {
+        setIsStaffSelected(false);
+        setIsGroupTeamSelected(false);
+      }
+    };
+
+    document.addEventListener('click', handleClickOutside);
+    return () => document.removeEventListener('click', handleClickOutside);
+  }, []);
+
+  const handleStaffNameClick = useCallback(
+    (e: React.MouseEvent) => {
+      e.stopPropagation();
+      // Toggle staff selection and auto-select group/team
+      const newStaffSelected = !isStaffSelected;
+      setIsStaffSelected(newStaffSelected);
+
+      if (newStaffSelected) {
+        // Navigate to staff selection with query parameter to indicate we're coming from header
+        setTimeout(() => {
+          router.push('/staff-selection?from=header&staff=true&autoSelectStaff=false');
+        }, 200);
+      } else {
+        setIsGroupTeamSelected(false);
+      }
+    },
+    [isStaffSelected, router]
+  );
+
+  const handleGroupTeamClick = useCallback(
+    (e: React.MouseEvent) => {
+      e.stopPropagation();
+      // Toggle group/team selection
+      const newGroupTeamSelected = !isGroupTeamSelected;
+      setIsGroupTeamSelected(newGroupTeamSelected);
+
+      if (newGroupTeamSelected) {
+        // Navigate to staff selection with query parameter to indicate we're coming from header
+        setTimeout(() => {
+          router.push('/staff-selection?from=header&group=true&autoSelectTeam=false');
+        }, 200);
+      }
+    },
+    [isGroupTeamSelected, router]
+  );
+
+  const handleStaffNameClickFallback = () => {
+    router.push('/staff-selection?from=header&staff=true&autoSelectStaff=false');
   };
 
-  const handleGroupTeamClick = () => {
+  const handleGroupTeamClickFallback = () => {
     // Clear current selection to start from group selection
     localStorage.removeItem('carebase_selected_staff_data');
-    router.push('/staff-selection');
+    router.push('/staff-selection?from=header&group=true');
   };
 
   return (
@@ -77,7 +129,13 @@ export function AppHeader() {
               <Button
                 variant="outline"
                 onClick={handleStaffNameClick}
-                className="hidden rounded-full md:flex border-carebase-blue text-carebase-blue hover:bg-carebase-blue-light font-medium"
+                data-header-button
+                className={cn(
+                  'hidden rounded-full md:flex font-medium',
+                  isStaffSelected
+                    ? 'bg-carebase-blue text-white border-carebase-blue-dark shadow-md'
+                    : 'border-carebase-blue text-carebase-blue hover:bg-carebase-blue-light'
+                )}
               >
                 <User className="mr-2 h-4 w-4" />
                 {selectedStaffData.staff.name}
@@ -85,7 +143,13 @@ export function AppHeader() {
               <Button
                 variant="outline"
                 onClick={handleGroupTeamClick}
-                className="hidden rounded-full md:flex border-carebase-blue text-carebase-blue hover:bg-carebase-blue-light font-medium"
+                data-header-button
+                className={cn(
+                  'hidden rounded-full md:flex font-medium',
+                  isGroupTeamSelected
+                    ? 'bg-carebase-blue text-white border-carebase-blue-dark shadow-md'
+                    : 'border-carebase-blue text-carebase-blue hover:bg-carebase-blue-light'
+                )}
               >
                 <Users className="mr-2 h-4 w-4" />
                 {selectedStaffData.groupName} - {selectedStaffData.teamName}
@@ -95,7 +159,7 @@ export function AppHeader() {
             <>
               <Button
                 variant="outline"
-                onClick={handleStaffNameClick}
+                onClick={handleStaffNameClickFallback}
                 className="hidden rounded-full md:flex border-carebase-blue text-carebase-blue hover:bg-carebase-blue-light font-medium"
               >
                 <User className="mr-2 h-4 w-4" />
@@ -103,7 +167,7 @@ export function AppHeader() {
               </Button>
               <Button
                 variant="outline"
-                onClick={handleGroupTeamClick}
+                onClick={handleGroupTeamClickFallback}
                 className="hidden rounded-full md:flex border-carebase-blue text-carebase-blue hover:bg-carebase-blue-light font-medium"
               >
                 <Users className="mr-2 h-4 w-4" />

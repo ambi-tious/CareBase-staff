@@ -59,6 +59,18 @@ export const medicationInfoFormSchema = z.object({
     .string()
     .min(1, '薬剤名は必須です')
     .max(100, '薬剤名は100文字以内で入力してください'),
+  dosageInstructions: z
+    .string()
+    .min(1, '用法・用量は必須です')
+    .max(200, '用法・用量は200文字以内で入力してください'),
+  startDate: z
+    .string()
+    .min(1, '服用開始日は必須です')
+    .regex(/^\d{4}-\d{2}-\d{2}$/, '有効な日付を入力してください（YYYY-MM-DD）'),
+  prescribingInstitution: z
+    .string()
+    .min(1, '処方医療機関は必須です')
+    .max(100, '処方医療機関は100文字以内で入力してください'),
   institution: z
     .string()
     .min(1, '処方機関は必須です')
@@ -122,7 +134,7 @@ export type MedicationStatusFormData = z.infer<typeof medicationStatusFormSchema
 export interface FormState {
   isSubmitting: boolean;
   error: string | null;
-  fieldErrors: Record<string, string>;
+  fieldErrors: Record<string, string | undefined>;
 }
 
 // Common form options

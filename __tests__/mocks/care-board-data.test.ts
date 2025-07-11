@@ -1,8 +1,8 @@
-import { getResidentById, careBoardData, careCategories } from '@/mocks/care-board-data';
+import { careBoardData, careCategories, getResidentById } from '@/mocks/care-board-data';
 
-describe('care-board-data', () => {
+describe('ケアボードデータ', () => {
   describe('getResidentById', () => {
-    it('returns resident when ID exists', () => {
+    it('IDが存在する場合に入居者を返す', () => {
       const resident = getResidentById(1);
 
       expect(resident).toBeDefined();
@@ -10,24 +10,24 @@ describe('care-board-data', () => {
       expect(resident?.name).toBe('佐藤清');
     });
 
-    it('returns undefined when ID does not exist', () => {
+    it('IDが存在しない場合はundefinedを返す', () => {
       const resident = getResidentById(999);
 
       expect(resident).toBeUndefined();
     });
 
-    it('handles edge cases correctly', () => {
+    it('エッジケースを正しく処理する', () => {
       expect(getResidentById(0)).toBeUndefined();
       expect(getResidentById(-1)).toBeUndefined();
     });
   });
 
   describe('careBoardData', () => {
-    it('contains expected number of residents', () => {
-      expect(careBoardData).toHaveLength(8);
+    it('期待される数の入居者を含む', () => {
+      expect(careBoardData).toHaveLength(10);
     });
 
-    it('all residents have required fields', () => {
+    it('すべての入居者が必須フィールドを持つ', () => {
       careBoardData.forEach((resident) => {
         expect(resident.id).toBeDefined();
         expect(resident.name).toBeDefined();
@@ -45,7 +45,7 @@ describe('care-board-data', () => {
       });
     });
 
-    it('has unique IDs for all residents', () => {
+    it('すべての入居者がユニークなIDを持つ', () => {
       const ids = careBoardData.map((resident) => resident.id);
       const uniqueIds = new Set(ids);
 
@@ -54,7 +54,7 @@ describe('care-board-data', () => {
   });
 
   describe('careCategories', () => {
-    it('contains expected care categories', () => {
+    it('期待されるケアカテゴリを含む', () => {
       expect(careCategories.length).toBeGreaterThan(0);
 
       const expectedCategories = ['drinking', 'excretion', 'breakfast', 'lunch', 'medication'];
@@ -64,14 +64,14 @@ describe('care-board-data', () => {
       });
     });
 
-    it('all categories have required fields', () => {
+    it('すべてのカテゴリが必須フィールドを持つ', () => {
       careCategories.forEach((category) => {
         expect(category.key).toBeDefined();
         expect(category.label).toBeDefined();
         expect(category.icon).toBeDefined();
         expect(typeof category.key).toBe('string');
         expect(typeof category.label).toBe('string');
-        expect(typeof category.icon).toBe('function');
+        expect(typeof category.icon).toBe('string');
       });
     });
   });

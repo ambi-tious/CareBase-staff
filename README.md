@@ -27,11 +27,12 @@ CareBaseは、多忙な介護スタッフでも直感的かつ迅速に操作で
 - **状態管理**: React Hooks (useState, useEffect)
 - **デザインパターン**: Atomic Design
 - **開発ツール**: ESLint, Prettier
+- **テスト**: Jest, React Testing Library
 - **デプロイ**: Vercel
 
 ## 📁 ディレクトリ構造
 
-\`\`\`
+```
 ├── app/ # Next.js App Router
 │ ├── (main)/ # メインレイアウトグループ
 │ │ ├── residents/ # 利用者関連ページ
@@ -43,38 +44,69 @@ CareBaseは、多忙な介護スタッフでも直感的かつ迅速に操作で
 │ ├── 2_molecules/ # 複数のAtomで構成
 │ ├── 3_organisms/ # 自立したUIセクション
 │ └── ui/ # shadcn/ui コンポーネント
+├── __tests__/ # テストファイル
 ├── docs/ # プロジェクトドキュメント
 ├── mocks/ # モックデータ
 ├── lib/ # ユーティリティ関数
 └── public/ # 静的ファイル
-\`\`\`
+```
 
 ## 🚀 セットアップ
 
 ### 前提条件
 
-- Node.js 22.x (LTS)
-- npm または yarn
+- Node.js 18.x または 20.x (LTS)
+- pnpm 8.x
 
 ### インストール
 
-\`\`\`bash
-
+```bash
 # リポジトリをクローン
-
 git clone <repository-url>
-cd carebase-frontend
+cd carebase-staff
 
 # 依存関係をインストール
-
-npm install
+pnpm install
 
 # 開発サーバーを起動
-
-npm run dev
-\`\`\`
+pnpm dev
+```
 
 開発サーバーが起動したら、[http://localhost:3000](http://localhost:3000) でアプリケーションにアクセスできます。
+
+## 🧪 テスト
+
+### テストの実行
+
+```bash
+# 全テストを実行
+pnpm test
+
+# テストをウォッチモードで実行
+pnpm test:watch
+
+# カバレッジ付きでテストを実行
+pnpm test:coverage
+
+
+```
+
+### テストカバレッジ
+
+テストカバレッジは以下の基準を満たす必要があります：
+
+- **Branches**: 70%以上
+- **Functions**: 70%以上
+- **Lines**: 70%以上
+- **Statements**: 70%以上
+
+### テストファイルの配置
+
+- `__tests__/` ディレクトリにテストファイルを配置
+- コンポーネントのテストは `__tests__/components/` に配置
+- フックのテストは `__tests__/hooks/` に配置
+
+
 
 ## 📚 ドキュメント
 
@@ -101,6 +133,8 @@ UIコンポーネントは Atomic Design の階層に従って実装します：
 - コンポーネントのprops型を明示的に定義
 - サーバーコンポーネント（RSC）を基本とし、必要な場合のみクライアントコンポーネントを使用
 
+
+
 ## 🎨 主要機能
 
 ### ケアボード
@@ -123,26 +157,21 @@ UIコンポーネントは Atomic Design の階層に従って実装します：
 
 ### Vercel（推奨）
 
-\`\`\`bash
-
+```bash
 # Vercel CLIを使用
-
 npm i -g vercel
 vercel
-\`\`\`
+```
 
 ### 手動デプロイ
 
-\`\`\`bash
-
+```bash
 # ビルド
-
-npm run build
+pnpm build
 
 # 本番サーバー起動
-
-npm start
-\`\`\`
+pnpm start
+```
 
 ## 🤝 コントリビューション
 
@@ -150,6 +179,8 @@ npm start
 2. 変更を実装
 3. テストを実行
 4. プルリクエストを作成
+
+
 
 ## 📄 ライセンス
 

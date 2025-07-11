@@ -2,6 +2,7 @@
 
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
+import { cn } from '@/lib/utils';
 import type { Staff } from '@/mocks/staff-data';
 import { User } from 'lucide-react';
 import Image from 'next/image';
@@ -23,26 +24,36 @@ export const StaffCard: React.FC<StaffCardProps> = ({
   const getRoleBadgeColor = (role: string) => {
     switch (role) {
       case '施設長':
-        return 'bg-purple-100 text-purple-700';
+        return isSelected ? 'bg-purple-200 text-purple-900' : 'bg-purple-100 text-purple-700';
       case '主任介護職員':
-        return 'bg-blue-100 text-blue-700';
+        return isSelected ? 'bg-blue-200 text-blue-900' : 'bg-blue-100 text-blue-700';
       case '看護師':
-        return 'bg-green-100 text-green-700';
+        return isSelected ? 'bg-green-200 text-green-900' : 'bg-green-100 text-green-700';
       case '介護職員':
-        return 'bg-orange-100 text-orange-700';
+        return isSelected ? 'bg-orange-200 text-orange-900' : 'bg-orange-100 text-orange-700';
       case '事務職員':
-        return 'bg-gray-100 text-gray-700';
+        return isSelected ? 'bg-gray-200 text-gray-900' : 'bg-gray-100 text-gray-700';
       default:
-        return 'bg-gray-100 text-gray-700';
+        return isSelected ? 'bg-gray-200 text-gray-900' : 'bg-gray-100 text-gray-700';
+    }
+  };
+
+  const handleClick = () => {
+    if (onClick) {
+      onClick();
     }
   };
 
   return (
     <Card
-      className={`cursor-pointer transition-all hover:shadow-md ${
-        isSelected ? 'ring-2 ring-carebase-blue bg-carebase-blue-light' : ''
-      } ${className}`}
-      onClick={onClick}
+      className={cn(
+        'cursor-pointer hover:shadow-md',
+        isSelected
+          ? 'ring-2 ring-carebase-blue bg-carebase-blue text-white shadow-lg'
+          : 'hover:ring-1 hover:ring-carebase-blue-light',
+        className
+      )}
+      onClick={handleClick}
     >
       <CardContent className="p-4">
         <div className="flex items-center gap-3">
@@ -57,21 +68,38 @@ export const StaffCard: React.FC<StaffCardProps> = ({
                   className="w-12 h-12 rounded-full object-cover"
                 />
               ) : (
-                <User className="w-6 h-6 text-gray-500" />
+                <User className={cn('w-6 h-6 text-gray-500')} />
               )}
             </div>
           </div>
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-1">
-              <h3 className="font-semibold text-carebase-text-primary truncate">{staff.name}</h3>
-              <Badge
-                className={`text-xs ${getRoleBadgeColor(staff.role)} hover:bg-inherit hover:text-inherit`}
+              <h3
+                className={cn(
+                  'font-semibold truncate transition-colors',
+                  isSelected ? 'text-white' : 'text-carebase-text-primary'
+                )}
               >
-                {staff.role}
-              </Badge>
+                {staff.name}
+              </h3>
+              <Badge className={`text-xs ${getRoleBadgeColor(staff.role)}`}>{staff.role}</Badge>
             </div>
-            <p className="text-sm text-gray-500 mb-1">{staff.furigana}</p>
-            <p className="text-xs text-gray-400">ID: {staff.employeeId}</p>
+            <p
+              className={cn(
+                'text-sm mb-1 transition-colors',
+                isSelected ? 'text-blue-100' : 'text-gray-500'
+              )}
+            >
+              {staff.furigana}
+            </p>
+            <p
+              className={cn(
+                'text-xs transition-colors',
+                isSelected ? 'text-blue-200' : 'text-gray-400'
+              )}
+            >
+              ID: {staff.employeeId}
+            </p>
           </div>
         </div>
       </CardContent>

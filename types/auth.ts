@@ -96,3 +96,13 @@ export type AuthEvent =
   | { type: 'LOGOUT' }
   | { type: 'STAFF_SELECT'; payload: SelectedStaff }
   | { type: 'CLEAR_ERROR' };
+
+// Error codes
+export const AUTH_ERROR_CODES = {
+  INVALID_CREDENTIALS: 'INVALID_CREDENTIALS',
+  NETWORK_ERROR: 'NETWORK_ERROR',
+  STAFF_NOT_FOUND: 'STAFF_NOT_FOUND',
+  TOKEN_EXPIRED: 'TOKEN_EXPIRED',
+  UNAUTHORIZED: 'UNAUTHORIZED',
+  SERVER_ERROR: 'SERVER_ERROR',
+} as const;
