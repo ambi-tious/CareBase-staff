@@ -3,8 +3,6 @@
 CareBaseは、介護現場の記録・情報共有を効率化するSaaS型Webアプリケーションのフロントエンドです。
 
 [![Deployed on Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-black?style=for-the-badge&logo=vercel)](https://vercel.com/hornet-ventures/carebase-staff)
-[![Tests](https://github.com/your-org/carebase-staff/workflows/Test%20Suite/badge.svg)](https://github.com/your-org/carebase-staff/actions)
-[![Security Scan](https://github.com/your-org/carebase-staff/workflows/Security%20Scan/badge.svg)](https://github.com/your-org/carebase-staff/actions)
 
 ## 🎯 プロジェクト概要
 
@@ -30,7 +28,6 @@ CareBaseは、多忙な介護スタッフでも直感的かつ迅速に操作で
 - **デザインパターン**: Atomic Design
 - **開発ツール**: ESLint, Prettier
 - **テスト**: Jest, React Testing Library
-- **CI/CD**: GitHub Actions
 - **デプロイ**: Vercel
 
 ## 📁 ディレクトリ構造
@@ -51,7 +48,6 @@ CareBaseは、多忙な介護スタッフでも直感的かつ迅速に操作で
 ├── docs/ # プロジェクトドキュメント
 ├── mocks/ # モックデータ
 ├── lib/ # ユーティリティ関数
-├── .github/workflows/ # CI/CDワークフロー
 └── public/ # 静的ファイル
 ```
 
@@ -92,8 +88,7 @@ pnpm test:watch
 # カバレッジ付きでテストを実行
 pnpm test:coverage
 
-# CI用のテスト（カバレッジ付き、ウォッチモード無効）
-pnpm test:ci
+
 ```
 
 ### テストカバレッジ
@@ -111,48 +106,7 @@ pnpm test:ci
 - コンポーネントのテストは `__tests__/components/` に配置
 - フックのテストは `__tests__/hooks/` に配置
 
-## 🔄 CI/CD
 
-### GitHub Actions ワークフロー
-
-プロジェクトには以下のCI/CDワークフローが設定されています：
-
-#### 1. Test Suite (`test.yml`)
-
-- **トリガー**: プッシュ、プルリクエスト
-- **実行内容**:
-  - Node.js 18.x と 20.x でのテスト実行
-  - リンティング
-  - 型チェック
-  - テストカバレッジの生成
-  - Codecovへのカバレッジレポート送信
-
-#### 2. Security Scan (`security.yml`)
-
-- **トリガー**: プッシュ、プルリクエスト、毎週月曜日
-- **実行内容**:
-  - npm audit
-  - Snyk セキュリティスキャン
-  - OWASP Dependency Check
-
-#### 3. Deploy (`deploy.yml`)
-
-- **トリガー**: main/developブランチへのプッシュ
-- **実行内容**:
-  - アプリケーションのビルド
-  - ステージング環境へのデプロイ（developブランチ）
-  - 本番環境へのデプロイ（mainブランチ）
-
-### 環境変数
-
-GitHub Secretsで以下の環境変数を設定してください：
-
-- `SNYK_TOKEN`: Snykセキュリティスキャン用のトークン
-
-### デプロイ環境
-
-- **ステージング**: `develop`ブランチから自動デプロイ
-- **本番**: `main`ブランチから自動デプロイ
 
 ## 📚 ドキュメント
 
@@ -179,13 +133,7 @@ UIコンポーネントは Atomic Design の階層に従って実装します：
 - コンポーネントのprops型を明示的に定義
 - サーバーコンポーネント（RSC）を基本とし、必要な場合のみクライアントコンポーネントを使用
 
-### Git Hooks
 
-コミット前に以下のチェックが自動実行されます：
-
-- ESLintによるコード品質チェック
-- Prettierによるコードフォーマット
-- テストの実行
 
 ## 🎨 主要機能
 
@@ -232,12 +180,7 @@ pnpm start
 3. テストを実行
 4. プルリクエストを作成
 
-### プルリクエストの要件
 
-- すべてのテストが通ること
-- カバレッジが70%以上であること
-- リンティングエラーがないこと
-- 型チェックが通ること
 
 ## 📄 ライセンス
 
@@ -247,7 +190,6 @@ pnpm start
 
 - **本番環境**: [https://vercel.com/hornet-ventures/carebase-staff](https://vercel.com/hornet-ventures/carebase-staff)
 - **設計ドキュメント**: [docs/overview.md](./docs/overview.md)
-- **CI/CD**: [GitHub Actions](https://github.com/your-org/carebase-staff/actions)
 
 ---
 
