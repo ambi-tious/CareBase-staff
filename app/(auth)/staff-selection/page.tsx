@@ -3,30 +3,9 @@
 import { StaffSelectionScreen } from '@/components/3_organisms/auth/staff-selection-screen';
 import type { Staff } from '@/mocks/staff-data';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
 
 export default function StaffSelectionPage() {
   const router = useRouter();
-  const [initialStep, setInitialStep] = useState<'group' | 'staff' | 'team'>('group');
-
-  useEffect(() => {
-    // Determine the initial step based on previously selected staff data
-    // Only run on client side to avoid SSR issues with localStorage
-    try {
-      const selectedStaffData = JSON.parse(
-        localStorage.getItem('carebase_selected_staff_data') || '{}'
-      );
-      const step = selectedStaffData.teamName
-        ? 'team'
-        : selectedStaffData.groupName
-          ? 'staff'
-          : 'group';
-      setInitialStep(step);
-    } catch (error) {
-      console.error('Error reading from localStorage:', error);
-      setInitialStep('group');
-    }
-  }, []);
 
   const handleStaffSelected = async (staff: Staff): Promise<void> => {
     // Simulate staff selection processing
@@ -49,7 +28,15 @@ export default function StaffSelectionPage() {
     router.push('/');
   };
 
-  const handleBackToLogin = (): void => {
+  const handleLogout = (): void => {
+    // Clear any stored authentication data
+    try {
+      localStorage.removeItem('carebase_selected_staff_data');
+      localStorage.removeItem('carebase_token');
+      localStorage.removeItem('carebase_user');
+    } catch (error) {
+      console.error('Error clearing localStorage:', error);
+    }
     router.push('/login');
   };
 
@@ -57,8 +44,7 @@ export default function StaffSelectionPage() {
     <div className="min-h-screen bg-carebase-bg flex items-center justify-center p-4">
       <StaffSelectionScreen
         onStaffSelected={handleStaffSelected}
-        onBack={handleBackToLogin}
-        initialStep={initialStep}
+        onLogout={handleLogout}
       />
     </div>
   );

@@ -1,62 +1,64 @@
 'use client';
 
 import type React from 'react';
-import { useState } from 'react';
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { SelectionStep } from '@/components/1_atoms/staff/selection-step';
 import { GroupSelector } from '@/components/2_molecules/auth/group-selector';
 import { TeamSelector } from '@/components/2_molecules/auth/team-selector';
 import { StaffSelector } from '@/components/2_molecules/auth/staff-selector';
 import { organizationData, getGroupById, getTeamById, getStaffById } from '@/mocks/staff-data';
 import type { Staff } from '@/mocks/staff-data';
-import { ArrowLeft, AlertCircle } from 'lucide-react';
+import { LogOut, AlertCircle } from 'lucide-react';
 
 interface StaffSelectionScreenProps {
   onStaffSelected: (staff: Staff) => void;
-  onBack?: () => void;
+  onLogout?: () => void;
   className?: string;
-  initialStep?: 'group' | 'team' | 'staff';
 }
 
 export const StaffSelectionScreen: React.FC<StaffSelectionScreenProps> = ({
   onStaffSelected,
-  onBack,
+  onLogout,
   className = '',
-  initialStep = 'group',
 }) => {
   const [selectedGroupId, setSelectedGroupId] = useState<string>('');
   const [selectedTeamId, setSelectedTeamId] = useState<string>('');
   const [selectedStaffId, setSelectedStaffId] = useState<string>('');
   const [error, setError] = useState<string>('');
 
-  // Load previous selection from localStorage if returning from header click
+  // Auto-selection logic
   useEffect(() => {
-    try {
-      const data = localStorage.getItem('carebase_selected_staff_data');
-      if (data && initialStep !== 'group') {
-        const selectedData = JSON.parse(data);
-        // Find the group and team IDs based on the selected staff
-        for (const group of organizationData) {
-          for (const team of group.teams) {
-            const staff = team.staff.find((s) => s.id === selectedData.staff.id);
-            if (staff) {
-              setSelectedGroupId(group.id);
-              setSelectedTeamId(team.id);
-              if (initialStep === 'staff') {
-                setSelectedStaffId(staff.id);
-              }
-              return;
-            }
-          }
-        }
-      }
-    } catch (error) {
-      console.error('Failed to load previous selection:', error);
+    // Auto-select group if only one exists
+    if (organizationData.length === 1 && !selectedGroupId) {
+      setSelectedGroupId(organizationData[0].id);
     }
-  }, [initialStep]);
+  }, [selectedGroupId]);
+
+  useEffect(() => {
+    // Auto-select team if only one exists in selected group
+    if (selectedGroupId) {
+      const selectedGroup = getGroupById(selectedGroupId);
+      if (selectedGroup && selectedGroup.teams.length === 1 && !selectedTeamId) {
+        setSelectedTeamId(selectedGroup.teams[0].id);
+      }
+    }
+  }, [selectedGroupId, selectedTeamId]);
+
+  // Auto-proceed when staff is selected
+  useEffect(() => {
+    if (selectedGroupId && selectedTeamId && selectedStaffId) {
+      const selectedStaff = getStaffById(selectedGroupId, selectedTeamId, selectedStaffId);
+      if (selectedStaff && selectedStaff.isActive) {
+        // Auto-proceed after a short delay for better UX
+        const timer = setTimeout(() => {
+          onStaffSelected(selectedStaff);
+        }, 500);
+        return () => clearTimeout(timer);
+      }
+    }
+  }, [selectedGroupId, selectedTeamId, selectedStaffId, onStaffSelected]);
 
   const selectedGroup = selectedGroupId ? getGroupById(selectedGroupId) : null;
   const selectedTeam =
@@ -84,78 +86,45 @@ export const StaffSelectionScreen: React.FC<StaffSelectionScreenProps> = ({
     setError('');
   };
 
-  const handleConfirm = () => {
-    if (!selectedStaff) {
-      setError('スタッフが選択されていません。');
-      return;
+  const handleLogout = () => {
+    if (onLogout) {
+      onLogout();
     }
-
-    if (!selectedStaff.isActive) {
-      setError('選択されたスタッフは現在利用できません。');
-      return;
-    }
-
-    onStaffSelected(selectedStaff);
   };
 
   const handleReset = () => {
-    setSelectedGroupId('');
-    setSelectedTeamId('');
+    // Only reset non-auto-selected items
+    if (organizationData.length > 1) {
+      setSelectedGroupId('');
+    }
+    if (selectedGroup && selectedGroup.teams.length > 1) {
+      setSelectedTeamId('');
+    }
     setSelectedStaffId('');
     setError('');
   };
 
-  const getCurrentStep = () => {
-    if (!selectedGroupId) return 1;
-    if (!selectedTeamId) return 2;
-    if (!selectedStaffId) return 3;
-    return 4;
-  };
-
-  const currentStep = getCurrentStep();
+  const isGroupAutoSelected = organizationData.length === 1;
+  const isTeamAutoSelected = selectedGroup && selectedGroup.teams.length === 1;
+  const showGroupSelector = !isGroupAutoSelected;
+  const showTeamSelector = selectedGroupId && !isTeamAutoSelected;
+  const showStaffSelector = selectedGroupId && selectedTeamId;
 
   return (
-    <div className={`max-w-2xl w-full mx-auto ${className}`}>
+    <div className={`max-w-4xl w-full mx-auto ${className}`}>
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
             <CardTitle className="text-xl font-bold text-carebase-text-primary">
               スタッフ選択
             </CardTitle>
-            {onBack && (
-              <Button variant="outline" onClick={onBack}>
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                戻る
-              </Button>
-            )}
+            <Button variant="outline" onClick={handleLogout} className="text-red-600 border-red-300 hover:bg-red-50">
+              <LogOut className="w-4 h-4 mr-2" />
+              ログアウト
+            </Button>
           </div>
         </CardHeader>
         <CardContent className="space-y-6">
-          {/* Progress Steps */}
-          <div className="space-y-3">
-            <SelectionStep
-              stepNumber={1}
-              title="グループ選択"
-              description={selectedGroup?.name}
-              isActive={currentStep === 1}
-              isCompleted={currentStep > 1}
-            />
-            <SelectionStep
-              stepNumber={2}
-              title="チーム選択"
-              description={selectedTeam?.name}
-              isActive={currentStep === 2}
-              isCompleted={currentStep > 2}
-            />
-            <SelectionStep
-              stepNumber={3}
-              title="スタッフ選択"
-              description={selectedStaff?.name}
-              isActive={currentStep === 3}
-              isCompleted={currentStep > 3}
-            />
-          </div>
-
           {/* Error Message */}
           {error && (
             <Alert className="border-red-200 bg-red-50">
@@ -164,75 +133,96 @@ export const StaffSelectionScreen: React.FC<StaffSelectionScreenProps> = ({
             </Alert>
           )}
 
-          {/* Selection Content */}
-          <div className="min-h-[400px]">
-            {currentStep === 1 && (
+          {/* Auto-selected Group Display */}
+          {isGroupAutoSelected && selectedGroup && (
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+              <h3 className="text-sm font-semibold text-blue-800 mb-2">選択されたグループ</h3>
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
+                  <selectedGroup.icon className="w-5 h-5 text-blue-600" />
+                </div>
+                <div>
+                  <p className="font-semibold text-blue-900">{selectedGroup.name}</p>
+                  <p className="text-sm text-blue-700">{selectedGroup.description}</p>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Group Selection */}
+          {showGroupSelector && (
+            <div>
               <GroupSelector
                 groups={organizationData}
                 selectedGroupId={selectedGroupId}
                 onGroupSelect={handleGroupSelect}
               />
-            )}
+            </div>
+          )}
 
-            {currentStep === 2 && selectedGroup && (
+          {/* Auto-selected Team Display */}
+          {isTeamAutoSelected && selectedTeam && (
+            <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+              <h3 className="text-sm font-semibold text-green-800 mb-2">選択されたチーム</h3>
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center">
+                  <selectedTeam.icon className="w-5 h-5 text-green-600" />
+                </div>
+                <div>
+                  <p className="font-semibold text-green-900">{selectedTeam.name}</p>
+                  <p className="text-sm text-green-700">{selectedTeam.description}</p>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Team Selection */}
+          {showTeamSelector && (
+            <div>
               <TeamSelector
-                teams={selectedGroup.teams}
+                teams={selectedGroup!.teams}
                 selectedTeamId={selectedTeamId}
                 onTeamSelect={handleTeamSelect}
               />
-            )}
+            </div>
+          )}
 
-            {currentStep === 3 && selectedTeam && (
+          {/* Staff Selection */}
+          {showStaffSelector && (
+            <div>
               <StaffSelector
-                staff={selectedTeam.staff}
+                staff={selectedTeam!.staff}
                 selectedStaffId={selectedStaffId}
                 onStaffSelect={handleStaffSelect}
               />
-            )}
+            </div>
+          )}
 
-            {currentStep === 4 && selectedStaff && (
-              <div className="text-center py-8">
-                <div className="mb-6">
-                  <h3 className="text-xl font-semibold text-carebase-text-primary mb-2">
-                    選択完了
-                  </h3>
-                  <p className="text-gray-600">以下のスタッフでログインします：</p>
-                </div>
-                <div className="max-w-md mx-auto">
-                  <Card className="border-2 border-carebase-blue bg-carebase-blue-light">
-                    <CardContent className="p-6">
-                      <div className="text-center">
-                        <h4 className="text-lg font-semibold text-carebase-text-primary">
-                          {selectedStaff.name}
-                        </h4>
-                        <p className="text-sm text-gray-600 mb-2">{selectedStaff.furigana}</p>
-                        <p className="text-sm font-medium text-carebase-blue">
-                          {selectedStaff.role}
-                        </p>
-                        <p className="text-xs text-gray-500 mt-2">
-                          {selectedGroup?.name} - {selectedTeam?.name}
-                        </p>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </div>
+          {/* Loading State */}
+          {selectedStaff && (
+            <div className="text-center py-4">
+              <div className="inline-flex items-center gap-2 text-carebase-blue">
+                <div className="w-4 h-4 border-2 border-carebase-blue border-t-transparent rounded-full animate-spin"></div>
+                <span className="text-sm font-medium">
+                  {selectedStaff.name} でログイン中...
+                </span>
               </div>
-            )}
-          </div>
+            </div>
+          )}
 
-          {/* Action Buttons */}
-          <div className="flex justify-between pt-4 border-t">
-            <Button variant="outline" onClick={handleReset} disabled={currentStep === 1}>
-              リセット
-            </Button>
-            <Button
-              onClick={handleConfirm}
-              disabled={currentStep !== 4}
-              className="bg-carebase-blue hover:bg-carebase-blue-dark"
-            >
-              この スタッフでログイン
-            </Button>
-          </div>
+          {/* Reset Button */}
+          {(selectedGroupId || selectedTeamId || selectedStaffId) && (
+            <div className="flex justify-center pt-4 border-t">
+              <Button
+                variant="outline"
+                onClick={handleReset}
+                disabled={!!selectedStaff}
+                className="text-gray-600"
+              >
+                選択をリセット
+              </Button>
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>

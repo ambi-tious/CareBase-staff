@@ -20,10 +20,10 @@ export const GroupSelector: React.FC<GroupSelectorProps> = ({
 }) => {
   return (
     <div className={`space-y-3 ${className}`}>
-      <h3 className="text-lg font-semibold text-carebase-text-primary mb-4">
+      <h3 className="text-lg font-semibold text-carebase-text-primary mb-3">
         グループを選択してください
       </h3>
-      <div className="grid gap-3">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         {groups.map((group) => {
           const Icon = getLucideIcon(group.icon);
           return (
