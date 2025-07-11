@@ -1,13 +1,12 @@
 import { useMedicationForm } from '@/hooks/useMedicationForm';
 import type { MedicationFormData } from '@/types/medication';
-import { vi } from 'vitest';
 import { act, renderHook } from '@testing-library/react';
 
 describe('useMedicationForm', () => {
-  const mockOnSubmit = vi.fn() as vi.MockedFunction<(data: MedicationFormData) => Promise<boolean>>;
+  const mockOnSubmit = vi.fn() as (data: MedicationFormData) => Promise<boolean>;
 
   beforeEach(() => {
-    mockOnSubmit.mockClear();
+    vi.clearAllMocks();
   });
 
   it('initializes with default form data', () => {
@@ -106,7 +105,7 @@ describe('useMedicationForm', () => {
   });
 
   it('submits successfully with valid data', async () => {
-    mockOnSubmit.mockResolvedValue(true);
+    vi.mocked(mockOnSubmit).mockResolvedValue(true);
 
     const { result } = renderHook(() =>
       useMedicationForm({
@@ -140,7 +139,7 @@ describe('useMedicationForm', () => {
   });
 
   it('handles submission errors correctly', async () => {
-    mockOnSubmit.mockRejectedValue(new Error('Network error'));
+    vi.mocked(mockOnSubmit).mockRejectedValue(new Error('Network error'));
 
     const { result } = renderHook(() =>
       useMedicationForm({
