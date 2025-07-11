@@ -26,7 +26,7 @@ export const careCategories = [
   { key: 'excretion', label: '排泄', icon: ExcretionIcon },
   { key: 'breakfast', label: '朝食', icon: Utensils },
   { key: 'lunch', label: '昼食', icon: Soup },
-  { key: 'snack', label: 'お��つ', icon: Cookie },
+  { key: 'snack', label: 'おやつ', icon: Cookie },
   { key: 'dinner', label: '夕食', icon: Utensils },
   { key: 'bedtimeMeal', label: '眠前食', icon: Bed },
   { key: 'medication', label: '服薬', icon: Pill },
