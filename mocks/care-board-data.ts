@@ -1,4 +1,5 @@
 import type { IconName } from '@/lib/lucide-icon-registry';
+import type { Medication } from '@/types/medication';
 
 // Define Care Categories for User Base View columns
 export const careCategories = [
@@ -64,12 +65,11 @@ export interface MedicalHistory {
   notes?: string;
 }
 
-export interface MedicationInfo {
-  id: string;
-  medicationName: string;
-  institution: string;
-  prescriptionDate: string;
-  notes?: string;
+// Update MedicationInfo to use new Medication type
+export interface MedicationInfo extends Medication {
+  // Keep backward compatibility
+  institution?: string;
+  prescriptionDate?: string;
   imageUrl?: string;
 }
 
@@ -124,6 +124,7 @@ export interface Resident {
   medicalInstitutions?: MedicalInstitution[];
   medicalHistory?: MedicalHistory[];
   medicationInfo?: MedicationInfo[];
+  medications?: Medication[];
   medicationStatus?: MedicationStatus[];
   individualPoints?: IndividualPoint[];
 }
@@ -247,19 +248,57 @@ export const careBoardData: Resident[] = [
       {
         id: 'med1',
         medicationName: '薬の名前が入ります',
-        institution: '松本内科クリニック',
-        prescriptionDate: '2025/04/28',
+        dosageInstructions: '1日1回 朝食後 1錠',
+        startDate: '2025-04-28',
+        endDate: '',
+        prescribingInstitution: '松本内科クリニック',
         notes:
           'ここに、テキストが入ります。メモ。ここに、テキストが入ります。ここに、テキストが入ります。メモ。ここに、テキストが入ります。',
+        createdAt: '2025-04-28T00:00:00.000Z',
+        updatedAt: '2025-04-28T00:00:00.000Z',
+        // Backward compatibility
+        institution: '松本内科クリニック',
+        prescriptionDate: '2025/04/28',
         imageUrl: '/placeholder.svg?height=120&width=120',
       },
       {
         id: 'med2',
         medicationName: '薬の名前が入ります薬の名前が入ります',
+        dosageInstructions: '1日2回 朝夕食後 各1錠',
+        startDate: '2025-04-15',
+        endDate: '2025-07-15',
+        prescribingInstitution: '○○○○調剤薬局神戸中央病院前',
+        notes: '-',
+        createdAt: '2025-04-15T00:00:00.000Z',
+        updatedAt: '2025-04-15T00:00:00.000Z',
+        // Backward compatibility
         institution: '○○○○調剤薬局神戸中央病院前',
         prescriptionDate: '2025/04/15',
-        notes: '-',
         imageUrl: '/placeholder.svg?height=120&width=120',
+      },
+    ],
+    medications: [
+      {
+        id: 'medication-1',
+        medicationName: 'アムロジピン錠5mg',
+        dosageInstructions: '1日1回 朝食後 1錠',
+        startDate: '2025-01-15',
+        endDate: '',
+        prescribingInstitution: '松本内科クリニック',
+        notes: '血圧管理のため継続服用中',
+        createdAt: '2025-01-15T00:00:00.000Z',
+        updatedAt: '2025-01-15T00:00:00.000Z',
+      },
+      {
+        id: 'medication-2',
+        medicationName: 'ロキソニン錠60mg',
+        dosageInstructions: '痛みがある時のみ 1回1錠 1日3回まで',
+        startDate: '2025-03-01',
+        endDate: '2025-03-31',
+        prescribingInstitution: '神戸市中央病院',
+        notes: '胃薬と一緒に服用',
+        createdAt: '2025-03-01T00:00:00.000Z',
+        updatedAt: '2025-03-01T00:00:00.000Z',
       },
     ],
     medicationStatus: [
@@ -502,3 +541,10 @@ export const timeSlots = ['07:00', '08:00', '09:00', '10:00', '11:00', '12:00', 
 export const getResidentById = (id: number): Resident | undefined => {
   return careBoardData.find((resident) => resident.id === id);
 };
+
+// Helper function to calculate certification validity end date
+function calculateCertValidityEnd(admissionDate: string): string {
+  const date = new Date(admissionDate.replace(/\//g, '-'));
+  date.setFullYear(date.getFullYear() + 1);
+  return date.toISOString().split('T')[0].replace(/-/g, '/');
+}
