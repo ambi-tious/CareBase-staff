@@ -1,5 +1,4 @@
-import type { LucideIcon } from 'lucide-react';
-import { FileText, Calendar, AlertTriangle, FileWarning } from 'lucide-react';
+import type { IconName } from '@/lib/lucide-icon-registry';
 
 export interface DocumentFolder {
   id: string;
@@ -26,7 +25,7 @@ export type DocumentItem = DocumentFolder | DocumentFile;
 export interface DocumentCategory {
   key: string;
   name: string;
-  icon: LucideIcon;
+  icon: IconName;
   description: string;
 }
 
@@ -34,31 +33,31 @@ export const documentCategories: DocumentCategory[] = [
   {
     key: 'minutes',
     name: '議事録',
-    icon: FileText,
+    icon: 'FileText',
     description: '会議の議事録や記録',
   },
   {
     key: 'incident-reports',
     name: 'ヒヤリハット',
-    icon: AlertTriangle,
+    icon: 'AlertTriangle',
     description: 'ヒヤリハット報告書',
   },
   {
     key: 'accident-reports',
     name: '事故報告書',
-    icon: FileWarning,
+    icon: 'FileWarning',
     description: '事故に関する報告書',
   },
   {
     key: 'event-plans',
     name: '行事企画書',
-    icon: Calendar,
+    icon: 'Calendar',
     description: 'イベントや行事の企画書',
   },
   {
     key: 'other-documents',
     name: 'その他書類',
-    icon: FileText,
+    icon: 'FileText',
     description: 'その他の書類',
   },
 ];

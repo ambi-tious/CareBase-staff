@@ -19,7 +19,7 @@ export default function NewResidentPage() {
       try {
         setSubmitError(null);
         const newResident = await residentService.createResident(data);
-        
+
         // Navigate to the resident detail page
         router.push(`/residents/${newResident.id}`);
       } catch (error) {
@@ -61,16 +61,15 @@ export default function NewResidentPage() {
           </div>
         </div>
         <p className="text-gray-600">
-          新しい利用者の基本情報を入力してください。必須項目（<span className="text-red-500">*</span>）は必ず入力してください。
+          新しい利用者の基本情報を入力してください。必須項目（
+          <span className="text-red-500">*</span>）は必ず入力してください。
         </p>
       </div>
 
       {/* Error Alert */}
       {submitError && (
         <Alert className="mb-6 border-red-200 bg-red-50">
-          <AlertDescription className="text-red-700">
-            {submitError}
-          </AlertDescription>
+          <AlertDescription className="text-red-700">{submitError}</AlertDescription>
         </Alert>
       )}
 
@@ -92,11 +91,7 @@ export default function NewResidentPage() {
 
           {/* Action Buttons */}
           <div className="flex items-center justify-end gap-4 mt-8 pt-6 border-t">
-            <Button
-              variant="outline"
-              onClick={handleCancel}
-              disabled={isSubmitting}
-            >
+            <Button variant="outline" onClick={handleCancel} disabled={isSubmitting}>
               キャンセル
             </Button>
             <Button

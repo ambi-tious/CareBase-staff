@@ -1,6 +1,6 @@
 /**
  * Login Form Hook
- * 
+ *
  * Manages login form state and validation
  */
 
@@ -62,7 +62,7 @@ export const useLoginForm = ({
           break;
       }
 
-      setFieldErrors(prev => ({
+      setFieldErrors((prev) => ({
         ...prev,
         [field]: error,
       }));
@@ -72,29 +72,38 @@ export const useLoginForm = ({
     validateField('password', formState.password, touched.password);
   }, [formState.facilityId, formState.password, touched, enableRealtimeValidation]);
 
-  const updateField = useCallback((field: keyof LoginCredentials, value: string) => {
-    setFormState(prev => ({
-      ...prev,
-      [field]: value,
-      error: null,
-      success: false,
-    }));
-
-    if (!touched[field]) {
-      setTouched(prev => ({
+  const updateField = useCallback(
+    (field: keyof LoginCredentials, value: string) => {
+      setFormState((prev) => ({
         ...prev,
-        [field]: true,
+        [field]: value,
+        error: null,
+        success: false,
       }));
-    }
-  }, [touched]);
 
-  const setFacilityId = useCallback((value: string) => {
-    updateField('facilityId', value);
-  }, [updateField]);
+      if (!touched[field]) {
+        setTouched((prev) => ({
+          ...prev,
+          [field]: true,
+        }));
+      }
+    },
+    [touched]
+  );
 
-  const setPassword = useCallback((value: string) => {
-    updateField('password', value);
-  }, [updateField]);
+  const setFacilityId = useCallback(
+    (value: string) => {
+      updateField('facilityId', value);
+    },
+    [updateField]
+  );
+
+  const setPassword = useCallback(
+    (value: string) => {
+      updateField('password', value);
+    },
+    [updateField]
+  );
 
   const validateForm = useCallback(() => {
     const credentials = {
@@ -103,7 +112,7 @@ export const useLoginForm = ({
     };
 
     const validation = validateLoginFormRelaxed(credentials);
-    
+
     if (!validation.success) {
       const newFieldErrors: Record<string, string> = {};
       for (const error of validation.error.errors) {
@@ -112,7 +121,7 @@ export const useLoginForm = ({
         }
       }
       setFieldErrors(newFieldErrors);
-      setFormState(prev => ({
+      setFormState((prev) => ({
         ...prev,
         error: validation.error.errors[0]?.message || 'バリデーションエラーが発生しました',
       }));
@@ -120,56 +129,59 @@ export const useLoginForm = ({
     }
 
     setFieldErrors({});
-    setFormState(prev => ({
+    setFormState((prev) => ({
       ...prev,
       error: null,
     }));
     return true;
   }, [formState.facilityId, formState.password]);
 
-  const handleSubmit = useCallback(async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    // Mark all fields as touched
-    setTouched({
-      facilityId: true,
-      password: true,
-    });
+  const handleSubmit = useCallback(
+    async (e: React.FormEvent) => {
+      e.preventDefault();
 
-    if (!validateForm()) {
-      return;
-    }
+      // Mark all fields as touched
+      setTouched({
+        facilityId: true,
+        password: true,
+      });
 
-    setFormState(prev => ({
-      ...prev,
-      isLoading: true,
-      error: null,
-      success: false,
-    }));
+      if (!validateForm()) {
+        return;
+      }
 
-    try {
-      const credentials = {
-        facilityId: formState.facilityId.trim(),
-        password: formState.password.trim(),
-      };
-
-      const success = await onSubmit(credentials);
-
-      setFormState(prev => ({
+      setFormState((prev) => ({
         ...prev,
-        isLoading: false,
-        success,
-        error: success ? null : prev.error,
-      }));
-    } catch (error) {
-      setFormState(prev => ({
-        ...prev,
-        isLoading: false,
-        error: 'ログイン中にエラーが発生しました。もう一度お試しください。',
+        isLoading: true,
+        error: null,
         success: false,
       }));
-    }
-  }, [validateForm, onSubmit, formState.facilityId, formState.password]);
+
+      try {
+        const credentials = {
+          facilityId: formState.facilityId.trim(),
+          password: formState.password.trim(),
+        };
+
+        const success = await onSubmit(credentials);
+
+        setFormState((prev) => ({
+          ...prev,
+          isLoading: false,
+          success,
+          error: success ? null : prev.error,
+        }));
+      } catch (error) {
+        setFormState((prev) => ({
+          ...prev,
+          isLoading: false,
+          error: 'ログイン中にエラーが発生しました。もう一度お試しください。',
+          success: false,
+        }));
+      }
+    },
+    [validateForm, onSubmit, formState.facilityId, formState.password]
+  );
 
   const reset = useCallback(() => {
     setFormState({
@@ -187,16 +199,17 @@ export const useLoginForm = ({
   }, [initialValues]);
 
   const clearError = useCallback(() => {
-    setFormState(prev => ({
+    setFormState((prev) => ({
       ...prev,
       error: null,
     }));
   }, []);
 
-  const isFormValid = !fieldErrors.facilityId && 
-                     !fieldErrors.password && 
-                     formState.facilityId.trim() !== '' && 
-                     formState.password.trim() !== '';
+  const isFormValid =
+    !fieldErrors.facilityId &&
+    !fieldErrors.password &&
+    formState.facilityId.trim() !== '' &&
+    formState.password.trim() !== '';
 
   return {
     // Form state
@@ -205,20 +218,20 @@ export const useLoginForm = ({
     isLoading: formState.isLoading,
     error: formState.error,
     success: formState.success,
-    
+
     // Field errors
     fieldErrors,
-    
+
     // Form validation
     isFormValid,
-    
+
     // Actions
     setFacilityId,
     setPassword,
     handleSubmit,
     reset,
     clearError,
-    
+
     // Touched state
     touched,
   };

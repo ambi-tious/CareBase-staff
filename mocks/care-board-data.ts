@@ -1,43 +1,25 @@
-import type { LucideIcon } from 'lucide-react';
-import {
-  Thermometer,
-  HeartPulse,
-  Droplets,
-  Utensils,
-  Bath,
-  Pill,
-  SmileIcon as Tooth,
-  CheckCircle,
-  DeleteIcon as ExcretionIcon,
-  Eye,
-  GlassWater,
-  Soup,
-  Cookie,
-  Bed,
-  Wind,
-  Activity,
-  FileText,
-  Users,
-} from 'lucide-react';
+import type { IconName } from '@/lib/lucide-icon-registry';
+import type { Medication } from '@/types/medication';
+import type { MedicationStatus } from '@/types/medication-status';
 
 // Define Care Categories for User Base View columns
 export const careCategories = [
-  { key: 'drinking', label: '飲水', icon: GlassWater },
-  { key: 'excretion', label: '排泄', icon: ExcretionIcon },
-  { key: 'breakfast', label: '朝食', icon: Utensils },
-  { key: 'lunch', label: '昼食', icon: Soup },
-  { key: 'snack', label: 'おやつ', icon: Cookie },
-  { key: 'dinner', label: '夕食', icon: Utensils },
-  { key: 'bedtimeMeal', label: '眠前食', icon: Bed },
-  { key: 'medication', label: '服薬', icon: Pill },
-  { key: 'oralCare', label: '口腔ケア', icon: Tooth },
-  { key: 'eyeDrops', label: '点眼', icon: Eye },
-  { key: 'bathing', label: '入浴', icon: Bath },
-  { key: 'temperature', label: '体温', icon: Thermometer },
-  { key: 'pulse', label: '脈拍', icon: HeartPulse },
-  { key: 'bloodPressure', label: '血圧', icon: Droplets },
-  { key: 'respiration', label: '呼吸', icon: Wind },
-  { key: 'spo2', label: 'SpO2', icon: Activity },
+  { key: 'drinking', label: '飲水', icon: 'GlassWater' },
+  { key: 'excretion', label: '排泄', icon: 'ExcretionIcon' },
+  { key: 'breakfast', label: '朝食', icon: 'Utensils' },
+  { key: 'lunch', label: '昼食', icon: 'Soup' },
+  { key: 'snack', label: 'おやつ', icon: 'Cookie' },
+  { key: 'dinner', label: '夕食', icon: 'Utensils' },
+  { key: 'bedtimeMeal', label: '眠前食', icon: 'Bed' },
+  { key: 'medication', label: '服薬', icon: 'Pill' },
+  { key: 'oralCare', label: '口腔ケア', icon: 'Tooth' },
+  { key: 'eyeDrops', label: '点眼', icon: 'Eye' },
+  { key: 'bathing', label: '入浴', icon: 'Bath' },
+  { key: 'temperature', label: '体温', icon: 'Thermometer' },
+  { key: 'pulse', label: '脈拍', icon: 'HeartPulse' },
+  { key: 'bloodPressure', label: '血圧', icon: 'Droplets' },
+  { key: 'respiration', label: '呼吸', icon: 'Wind' },
+  { key: 'spo2', label: 'SpO2', icon: 'Activity' },
 ] as const;
 
 export type CareCategoryKey = (typeof careCategories)[number]['key'];
@@ -78,37 +60,31 @@ export interface MedicalInstitution {
 export interface MedicalHistory {
   id: string;
   date: string;
-  condition: string;
+  diseaseName: string;
+  treatmentStatus: '治療中' | '完治' | '経過観察' | 'その他';
+  treatmentInstitution?: string;
   notes?: string;
 }
 
-export interface MedicationInfo {
-  id: string;
-  medicationName: string;
-  institution: string;
-  prescriptionDate: string;
-  notes?: string;
+// Update MedicationInfo to use new Medication type
+export interface MedicationInfo extends Medication {
+  // Keep backward compatibility
+  institution?: string;
+  prescriptionDate?: string;
   imageUrl?: string;
-}
-
-export interface MedicationStatus {
-  id: string;
-  date: string;
-  content: string;
-  notes?: string;
 }
 
 export interface IndividualPoint {
   id: string;
   category: string;
-  icon: LucideIcon;
+  icon: IconName;
   count: number;
   isActive: boolean;
 }
 
 export interface CareEvent {
   time: string;
-  icon: LucideIcon;
+  icon: IconName;
   label: string;
   categoryKey?: CareCategoryKey;
   details?: string;
@@ -142,6 +118,7 @@ export interface Resident {
   medicalInstitutions?: MedicalInstitution[];
   medicalHistory?: MedicalHistory[];
   medicationInfo?: MedicationInfo[];
+  medications?: Medication[];
   medicationStatus?: MedicationStatus[];
   individualPoints?: IndividualPoint[];
 }
@@ -168,11 +145,11 @@ export const careBoardData: Resident[] = [
     address: '兵庫県神戸市西区樫野台3-408-14',
     avatarUrl: '/elderly-japanese-man.png',
     events: [
-      { time: '07:00', icon: Thermometer, label: '36.5', categoryKey: 'temperature' },
-      { time: '07:00', icon: HeartPulse, label: '77', categoryKey: 'pulse' },
-      { time: '07:00', icon: Droplets, label: '156/110', categoryKey: 'bloodPressure' },
-      { time: '08:00', icon: Tooth, label: '粘膜・舌の清掃', categoryKey: 'oralCare' },
-      { time: '12:00', icon: Utensils, label: '8:10', categoryKey: 'lunch' },
+      { time: '07:00', icon: 'Thermometer', label: '36.5', categoryKey: 'temperature' },
+      { time: '07:00', icon: 'HeartPulse', label: '77', categoryKey: 'pulse' },
+      { time: '07:00', icon: 'Droplets', label: '156/110', categoryKey: 'bloodPressure' },
+      { time: '08:00', icon: 'Tooth', label: '粘膜・舌の清掃', categoryKey: 'oralCare' },
+      { time: '12:00', icon: 'Utensils', label: '8:10', categoryKey: 'lunch' },
     ],
     contacts: [
       {
@@ -246,28 +223,76 @@ export const careBoardData: Resident[] = [
     medicalHistory: [
       {
         id: 'mh1',
-        date: '2025/04/15',
-        condition: '大腸ポリープ\n高血圧',
+        date: '2025/04',
+        diseaseName: '大腸ポリープ',
+        treatmentStatus: '完治',
+        treatmentInstitution: '神戸市中央病院',
         notes: 'テキストが入ります。テキストが入ります。テキストが入ります。テキストが入ります。',
+      },
+      {
+        id: 'mh2',
+        date: '2020/03',
+        diseaseName: '高血圧症',
+        treatmentStatus: '治療中',
+        treatmentInstitution: '松本内科クリニック',
+        notes: '定期的な血圧測定と投薬治療を継続中',
       },
     ],
     medicationInfo: [
       {
         id: 'med1',
         medicationName: '薬の名前が入ります',
-        institution: '松本内科クリニック',
-        prescriptionDate: '2025/04/28',
+        dosageInstructions: '1日1回 朝食後 1錠',
+        startDate: '2025-04-28',
+        endDate: '',
+        prescribingInstitution: '松本内科クリニック',
         notes:
           'ここに、テキストが入ります。メモ。ここに、テキストが入ります。ここに、テキストが入ります。メモ。ここに、テキストが入ります。',
+        createdAt: '2025-04-28T00:00:00.000Z',
+        updatedAt: '2025-04-28T00:00:00.000Z',
+        // Backward compatibility
+        institution: '松本内科クリニック',
+        prescriptionDate: '2025/04/28',
         imageUrl: '/placeholder.svg?height=120&width=120',
       },
       {
         id: 'med2',
         medicationName: '薬の名前が入ります薬の名前が入ります',
+        dosageInstructions: '1日2回 朝夕食後 各1錠',
+        startDate: '2025-04-15',
+        endDate: '2025-07-15',
+        prescribingInstitution: '○○○○調剤薬局神戸中央病院前',
+        notes: '-',
+        createdAt: '2025-04-15T00:00:00.000Z',
+        updatedAt: '2025-04-15T00:00:00.000Z',
+        // Backward compatibility
         institution: '○○○○調剤薬局神戸中央病院前',
         prescriptionDate: '2025/04/15',
-        notes: '-',
         imageUrl: '/placeholder.svg?height=120&width=120',
+      },
+    ],
+    medications: [
+      {
+        id: 'medication-1',
+        medicationName: 'アムロジピン錠5mg',
+        dosageInstructions: '1日1回 朝食後 1錠',
+        startDate: '2025-01-15',
+        endDate: '',
+        prescribingInstitution: '松本内科クリニック',
+        notes: '血圧管理のため継続服用中',
+        createdAt: '2025-01-15T00:00:00.000Z',
+        updatedAt: '2025-01-15T00:00:00.000Z',
+      },
+      {
+        id: 'medication-2',
+        medicationName: 'ロキソニン錠60mg',
+        dosageInstructions: '痛みがある時のみ 1回1錠 1日3回まで',
+        startDate: '2025-03-01',
+        endDate: '2025-03-31',
+        prescribingInstitution: '神戸市中央病院',
+        notes: '胃薬と一緒に服用',
+        createdAt: '2025-03-01T00:00:00.000Z',
+        updatedAt: '2025-03-01T00:00:00.000Z',
       },
     ],
     medicationStatus: [
@@ -279,18 +304,18 @@ export const careBoardData: Resident[] = [
       },
     ],
     individualPoints: [
-      { id: 'ip1', category: '移乗介助', icon: Users, count: 1, isActive: true },
-      { id: 'ip2', category: '食事', icon: Utensils, count: 1, isActive: true },
-      { id: 'ip3', category: '飲水', icon: GlassWater, count: 1, isActive: true },
-      { id: 'ip4', category: '服薬', icon: Pill, count: 1, isActive: true },
-      { id: 'ip5', category: '排泄', icon: ExcretionIcon, count: 0, isActive: false },
-      { id: 'ip6', category: '接遇', icon: Users, count: 2, isActive: true },
-      { id: 'ip7', category: '点眼', icon: Eye, count: 0, isActive: false },
-      { id: 'ip8', category: 'バイタル', icon: Activity, count: 0, isActive: false },
-      { id: 'ip9', category: '入浴', icon: Bath, count: 10, isActive: true },
-      { id: 'ip10', category: '口腔ケア', icon: Tooth, count: 0, isActive: false },
-      { id: 'ip11', category: 'その他', icon: FileText, count: 1, isActive: true },
-      { id: 'ip12', category: '薬', icon: Pill, count: 0, isActive: false },
+      { id: 'ip1', category: '移乗介助', icon: 'Users', count: 1, isActive: true },
+      { id: 'ip2', category: '食事', icon: 'Utensils', count: 1, isActive: true },
+      { id: 'ip3', category: '飲水', icon: 'GlassWater', count: 1, isActive: true },
+      { id: 'ip4', category: '服薬', icon: 'Pill', count: 1, isActive: true },
+      { id: 'ip5', category: '排泄', icon: 'ExcretionIcon', count: 0, isActive: false },
+      { id: 'ip6', category: '接遇', icon: 'Users', count: 2, isActive: true },
+      { id: 'ip7', category: '点眼', icon: 'Eye', count: 0, isActive: false },
+      { id: 'ip8', category: 'バイタル', icon: 'Activity', count: 0, isActive: false },
+      { id: 'ip9', category: '入浴', icon: 'Bath', count: 10, isActive: true },
+      { id: 'ip10', category: '口腔ケア', icon: 'Tooth', count: 0, isActive: false },
+      { id: 'ip11', category: 'その他', icon: 'FileText', count: 1, isActive: true },
+      { id: 'ip12', category: '薬', icon: 'Pill', count: 0, isActive: false },
     ],
   },
   {
@@ -313,26 +338,26 @@ export const careBoardData: Resident[] = [
     events: [
       {
         time: 'N/A',
-        icon: GlassWater,
+        icon: 'GlassWater',
         label: '000ml',
         details: '00:00\n合計2',
         categoryKey: 'drinking',
       },
-      { time: '00:00', icon: ExcretionIcon, label: '排尿', categoryKey: 'excretion' },
-      { time: '10:10', icon: Utensils, label: '完食', categoryKey: 'breakfast' },
-      { time: 'N/A', icon: Soup, label: '9:8', categoryKey: 'lunch' },
-      { time: 'N/A', icon: Cookie, label: '6', categoryKey: 'snack' },
-      { time: 'N/A', icon: Utensils, label: '6:7', categoryKey: 'dinner' },
-      { time: 'N/A', icon: Bed, label: '5:9', categoryKey: 'bedtimeMeal' },
-      { time: 'N/A', icon: Pill, label: '食後', categoryKey: 'medication' },
-      { time: 'N/A', icon: Tooth, label: '歯磨き', categoryKey: 'oralCare' },
-      { time: 'N/A', icon: CheckCircle, label: '実施', categoryKey: 'eyeDrops' },
-      { time: 'N/A', icon: Bath, label: '入浴', categoryKey: 'bathing' },
-      { time: 'N/A', icon: Thermometer, label: '36.5', categoryKey: 'temperature' },
-      { time: 'N/A', icon: HeartPulse, label: '77', categoryKey: 'pulse' },
-      { time: 'N/A', icon: Droplets, label: '118/72', categoryKey: 'bloodPressure' },
-      { time: 'N/A', icon: Wind, label: '16', categoryKey: 'respiration' },
-      { time: 'N/A', icon: Activity, label: '98', categoryKey: 'spo2' },
+      { time: '00:00', icon: 'ExcretionIcon', label: '排尿', categoryKey: 'excretion' },
+      { time: '10:10', icon: 'Utensils', label: '完食', categoryKey: 'breakfast' },
+      { time: 'N/A', icon: 'Soup', label: '9:8', categoryKey: 'lunch' },
+      { time: 'N/A', icon: 'Cookie', label: '6', categoryKey: 'snack' },
+      { time: 'N/A', icon: 'Utensils', label: '6:7', categoryKey: 'dinner' },
+      { time: 'N/A', icon: 'Bed', label: '5:9', categoryKey: 'bedtimeMeal' },
+      { time: 'N/A', icon: 'Pill', label: '食後', categoryKey: 'medication' },
+      { time: 'N/A', icon: 'Tooth', label: '歯磨き', categoryKey: 'oralCare' },
+      { time: 'N/A', icon: 'CheckCircle', label: '実施', categoryKey: 'eyeDrops' },
+      { time: 'N/A', icon: 'Bath', label: '入浴', categoryKey: 'bathing' },
+      { time: 'N/A', icon: 'Thermometer', label: '36.5', categoryKey: 'temperature' },
+      { time: 'N/A', icon: 'HeartPulse', label: '77', categoryKey: 'pulse' },
+      { time: 'N/A', icon: 'Droplets', label: '118/72', categoryKey: 'bloodPressure' },
+      { time: 'N/A', icon: 'Wind', label: '16', categoryKey: 'respiration' },
+      { time: 'N/A', icon: 'Activity', label: '98', categoryKey: 'spo2' },
     ],
     contacts: [],
   },

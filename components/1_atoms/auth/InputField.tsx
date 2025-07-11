@@ -1,6 +1,6 @@
 /**
  * Input Field Atom
- * 
+ *
  * Reusable input field component with validation support
  */
 
@@ -16,17 +16,9 @@ export interface InputFieldProps extends React.InputHTMLAttributes<HTMLInputElem
 }
 
 export const InputField = forwardRef<HTMLInputElement, InputFieldProps>(
-  ({ 
-    label, 
-    error, 
-    isRequired = false, 
-    variant = 'default',
-    className,
-    id,
-    ...props 
-  }, ref) => {
+  ({ label, error, isRequired = false, variant = 'default', className, id, ...props }, ref) => {
     const inputId = id || `input-${Math.random().toString(36).substr(2, 9)}`;
-    
+
     const getVariantStyles = () => {
       switch (variant) {
         case 'error':
@@ -41,15 +33,12 @@ export const InputField = forwardRef<HTMLInputElement, InputFieldProps>(
     return (
       <div className="space-y-1">
         {label && (
-          <label 
-            htmlFor={inputId} 
-            className="block text-sm font-medium text-gray-700"
-          >
+          <label htmlFor={inputId} className="block text-sm font-medium text-gray-700">
             {label}
             {isRequired && <span className="text-red-500 ml-1">*</span>}
           </label>
         )}
-        
+
         <input
           ref={ref}
           id={inputId}
@@ -63,7 +52,7 @@ export const InputField = forwardRef<HTMLInputElement, InputFieldProps>(
           )}
           {...props}
         />
-        
+
         {error && (
           <p className="text-sm text-red-600 mt-1" role="alert">
             {error}

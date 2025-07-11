@@ -1,6 +1,6 @@
 /**
  * Authentication Types
- * 
+ *
  * Types for authentication functionality compatible with CareBase-api
  * Reference: https://github.com/ambi-tious/CareBase-api/blob/main/docs/api/endpoints.md#認証-authentication
  */
@@ -89,7 +89,7 @@ export const AUTH_ENDPOINTS = {
 } as const;
 
 // Authentication events
-export type AuthEvent = 
+export type AuthEvent =
   | { type: 'LOGIN_START' }
   | { type: 'LOGIN_SUCCESS'; payload: AuthResponse }
   | { type: 'LOGIN_FAILURE'; payload: AuthError }

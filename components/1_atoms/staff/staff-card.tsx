@@ -1,10 +1,11 @@
 'use client';
 
-import type React from 'react';
-import type { Staff } from '@/mocks/staff-data';
-import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Card, CardContent } from '@/components/ui/card';
+import type { Staff } from '@/mocks/staff-data';
 import { User } from 'lucide-react';
+import Image from 'next/image';
+import type React from 'react';
 
 interface StaffCardProps {
   staff: Staff;
@@ -48,9 +49,11 @@ export const StaffCard: React.FC<StaffCardProps> = ({
           <div className="flex-shrink-0">
             <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center">
               {staff.avatar ? (
-                <img
+                <Image
                   src={staff.avatar || '/placeholder.svg'}
                   alt={staff.name}
+                  width={48}
+                  height={48}
                   className="w-12 h-12 rounded-full object-cover"
                 />
               ) : (
@@ -61,7 +64,11 @@ export const StaffCard: React.FC<StaffCardProps> = ({
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-1">
               <h3 className="font-semibold text-carebase-text-primary truncate">{staff.name}</h3>
-              <Badge className={`text-xs ${getRoleBadgeColor(staff.role)}`}>{staff.role}</Badge>
+              <Badge
+                className={`text-xs ${getRoleBadgeColor(staff.role)} hover:bg-inherit hover:text-inherit`}
+              >
+                {staff.role}
+              </Badge>
             </div>
             <p className="text-sm text-gray-500 mb-1">{staff.furigana}</p>
             <p className="text-xs text-gray-400">ID: {staff.employeeId}</p>

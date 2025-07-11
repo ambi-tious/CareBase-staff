@@ -1,13 +1,16 @@
 import type { ReactNode } from 'react';
-import type { LucideIcon } from 'lucide-react';
+import type { IconName } from '@/lib/lucide-icon-registry';
+import { getLucideIcon } from '@/lib/lucide-icon-registry';
 
 interface CategoryCardProps {
   title: string;
-  icon: LucideIcon;
+  icon: IconName;
   children: ReactNode;
 }
 
-export function CategoryCard({ title, icon: Icon, children }: CategoryCardProps) {
+export function CategoryCard({ title, icon, children }: CategoryCardProps) {
+  const Icon = getLucideIcon(icon);
+
   return (
     <div className="flex flex-col gap-4 rounded-2xl bg-carebase-blue-light p-4 shadow-sm hover:shadow-md transition-shadow">
       <div className="flex items-center gap-3">

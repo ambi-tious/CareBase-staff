@@ -1,6 +1,5 @@
 'use client';
 
-import type React from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -10,16 +9,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import {
-  Plus,
-  FolderPlus,
-  Upload,
-  Search,
-  Grid3X3,
-  List,
-  SortAsc,
-  Filter,
-} from 'lucide-react';
+import { Filter, FolderPlus, Grid3X3, List, Search, SortAsc, Upload } from 'lucide-react';
+import type React from 'react';
 
 interface DocumentToolbarProps {
   searchQuery: string;

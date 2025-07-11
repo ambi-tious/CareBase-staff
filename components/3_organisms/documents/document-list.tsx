@@ -1,10 +1,10 @@
 'use client';
 
-import type React from 'react';
-import { useState } from 'react';
-import type { DocumentItem } from '@/mocks/documents-data';
 import { DocumentItemCard } from '@/components/2_molecules/documents/document-item-card';
 import { DocumentToolbar } from '@/components/2_molecules/documents/document-toolbar';
+import type { DocumentItem } from '@/mocks/documents-data';
+import type React from 'react';
+import { useState } from 'react';
 
 interface DocumentListProps {
   items: DocumentItem[];
@@ -40,12 +40,10 @@ export const DocumentList: React.FC<DocumentListProps> = ({
 
   const handleCreateFolder = () => {
     // TODO: Implement folder creation
-    console.log('Create folder');
   };
 
   const handleUploadFile = () => {
     // TODO: Implement file upload
-    console.log('Upload file');
   };
 
   return (

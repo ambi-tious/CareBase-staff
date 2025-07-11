@@ -1,6 +1,6 @@
 /**
  * Validation Helpers
- * 
+ *
  * Common validation helper functions and utilities
  */
 
@@ -15,22 +15,19 @@ export interface ValidationResult<T = any> {
 }
 
 // Generic validation function
-export const validateData = <T>(
-  schema: z.ZodSchema<T>,
-  data: unknown
-): ValidationResult<T> => {
+export const validateData = <T>(schema: z.ZodSchema<T>, data: unknown): ValidationResult<T> => {
   const result = schema.safeParse(data);
-  
+
   if (result.success) {
     return {
       isValid: true,
       data: result.data,
     };
   }
-  
+
   const fieldErrors: Record<string, string> = {};
   let generalError = '';
-  
+
   for (const error of result.error.errors) {
     if (error.path.length > 0) {
       fieldErrors[error.path.join('.')] = error.message;
@@ -38,7 +35,7 @@ export const validateData = <T>(
       generalError = error.message;
     }
   }
-  
+
   return {
     isValid: false,
     error: generalError || 'バリデーションエラーが発生しました',
@@ -47,20 +44,14 @@ export const validateData = <T>(
 };
 
 // Real-time validation hook helper
-export const createRealtimeValidator = <T>(
-  schema: z.ZodSchema<T>,
-  debounceMs: number = 300
-) => {
+export const createRealtimeValidator = <T>(schema: z.ZodSchema<T>, debounceMs: number = 300) => {
   let timeoutId: NodeJS.Timeout | null = null;
-  
-  return (
-    data: unknown,
-    callback: (result: ValidationResult<T>) => void
-  ) => {
+
+  return (data: unknown, callback: (result: ValidationResult<T>) => void) => {
     if (timeoutId) {
       clearTimeout(timeoutId);
     }
-    
+
     timeoutId = setTimeout(() => {
       const result = validateData(schema, data);
       callback(result);
@@ -99,7 +90,12 @@ export const validateMaxLength = (value: string, maxLength: number, fieldName: s
   return { isValid: true };
 };
 
-export const validatePattern = (value: string, pattern: RegExp, fieldName: string, message?: string) => {
+export const validatePattern = (
+  value: string,
+  pattern: RegExp,
+  fieldName: string,
+  message?: string
+) => {
   if (!pattern.test(value)) {
     return {
       isValid: false,
@@ -153,15 +149,15 @@ export const updateFormValidationState = (
 ): FormValidationState => {
   const newErrors = { ...state.errors };
   const newTouched = { ...state.touched };
-  
+
   if (error) {
     newErrors[field] = error;
   } else {
     delete newErrors[field];
   }
-  
+
   newTouched[field] = touched;
-  
+
   return {
     ...state,
     errors: newErrors,
@@ -201,6 +197,6 @@ export const createValidationMessage = (
     date: `有効な日付を入力してください`,
     datetime: `有効な日時を入力してください`,
   };
-  
+
   return messages[rule] || `${field}の入力値が正しくありません`;
 };

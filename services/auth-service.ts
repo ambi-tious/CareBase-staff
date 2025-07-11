@@ -1,15 +1,15 @@
 /**
  * Authentication Service
- * 
+ *
  * Service layer for authentication API calls
  * Compatible with CareBase-api endpoints
  */
 
-import type { 
-  LoginCredentials, 
-  AuthResponse, 
+import type {
+  LoginCredentials,
+  AuthResponse,
   StaffSelectionResponse,
-  AuthError 
+  AuthError,
 } from '@/types/auth';
 import { AUTH_ENDPOINTS, AUTH_ERROR_CODES } from '@/types/auth';
 import { AUTH_ERROR_MESSAGES } from '@/validations/auth-validation';
@@ -64,7 +64,7 @@ class AuthService {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({ staffId }),
       });
@@ -91,14 +91,14 @@ class AuthService {
     try {
       // For development, just simulate logout
       if (process.env.NODE_ENV === 'development') {
-        await new Promise(resolve => setTimeout(resolve, 500));
+        await new Promise((resolve) => setTimeout(resolve, 500));
         return;
       }
 
       await fetch(`${this.baseUrl}${AUTH_ENDPOINTS.STAFF_LOGOUT}`, {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
         },
       });
     } catch (error) {
@@ -111,7 +111,7 @@ class AuthService {
    */
   private async mockLogin(credentials: LoginCredentials): Promise<AuthResponse> {
     // Simulate network delay
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    await new Promise((resolve) => setTimeout(resolve, 1000));
 
     // Mock authentication logic
     if (credentials.facilityId === 'admin' && credentials.password === 'password') {
@@ -149,7 +149,7 @@ class AuthService {
    */
   private async mockSelectStaff(token: string, staffId: string): Promise<StaffSelectionResponse> {
     // Simulate network delay
-    await new Promise(resolve => setTimeout(resolve, 500));
+    await new Promise((resolve) => setTimeout(resolve, 500));
 
     // Mock staff data - in production, this would come from the API
     const mockStaffData = {
@@ -176,7 +176,7 @@ class AuthService {
     };
 
     const staff = mockStaffData[staffId as keyof typeof mockStaffData];
-    
+
     if (staff) {
       return {
         success: true,
@@ -193,7 +193,10 @@ class AuthService {
   /**
    * Request password reset
    */
-  async requestPasswordReset(facilityId: string, email: string): Promise<{ success: boolean; error?: string }> {
+  async requestPasswordReset(
+    facilityId: string,
+    email: string
+  ): Promise<{ success: boolean; error?: string }> {
     try {
       const response = await fetch(`${this.baseUrl}${AUTH_ENDPOINTS.PASSWORD_REMINDER}`, {
         method: 'POST',
@@ -220,7 +223,10 @@ class AuthService {
   /**
    * Reset password with token
    */
-  async resetPassword(token: string, newPassword: string): Promise<{ success: boolean; error?: string }> {
+  async resetPassword(
+    token: string,
+    newPassword: string
+  ): Promise<{ success: boolean; error?: string }> {
     try {
       const response = await fetch(`${this.baseUrl}${AUTH_ENDPOINTS.PASSWORD_RESET}`, {
         method: 'POST',

@@ -1,6 +1,6 @@
 /**
  * Error Alert Molecule
- * 
+ *
  * Specialized alert component for displaying authentication errors
  */
 
@@ -66,10 +66,8 @@ export const ErrorAlert: React.FC<ErrorAlertProps> = ({
   return (
     <Alert className={cn(getAlertStyles(), 'relative', className)}>
       {getIcon()}
-      <AlertDescription className={cn(getTextStyles(), 'pr-8')}>
-        {message}
-      </AlertDescription>
-      
+      <AlertDescription className={cn(getTextStyles(), 'pr-8')}>{message}</AlertDescription>
+
       {dismissible && onDismiss && (
         <button
           onClick={onDismiss}

@@ -1,9 +1,8 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { LoginForm } from '@/components/2_molecules/auth/login-form';
 import { Logo } from '@/components/1_atoms/common/logo';
+import { LoginForm } from '@/components/2_molecules/auth/login-form';
+import { useRouter } from 'next/navigation';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -23,7 +22,6 @@ export default function LoginPage() {
 
     return false;
   };
-
 
   return (
     <div className="min-h-screen bg-carebase-bg flex items-center justify-center p-4">

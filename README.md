@@ -2,8 +2,7 @@
 
 CareBaseは、介護現場の記録・情報共有を効率化するSaaS型Webアプリケーションのフロントエンドです。
 
-[![Deployed on Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-black?style=for-the-badge&logo=vercel)](https://vercel.com/hornet-ventures/v0-care-base-wu)
-[![Built with v0](https://img.shields.io/badge/Built%20with-v0.dev-black?style=for-the-badge)](https://v0.dev/chat/projects/3p6xHt7FLAl)
+[![Deployed on Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-black?style=for-the-badge&logo=vercel)](https://vercel.com/hornet-ventures/carebase-staff)
 
 ## 🎯 プロジェクト概要
 
@@ -158,8 +157,7 @@ npm start
 
 ## 🔗 関連リンク
 
-- **本番環境**: [https://vercel.com/hornet-ventures/v0-care-base-wu](https://vercel.com/hornet-ventures/v0-care-base-wu)
-- **v0.dev プロジェクト**: [https://v0.dev/chat/projects/3p6xHt7FLAl](https://v0.dev/chat/projects/3p6xHt7FLAl)
+- **本番環境**: [https://vercel.com/hornet-ventures/carebase-staff](https://vercel.com/hornet-ventures/carebase-staff)
 - **設計ドキュメント**: [docs/overview.md](./docs/overview.md)
 
 ---
