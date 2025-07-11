@@ -78,10 +78,10 @@ function TimeBaseView() {
       <div
         className={`h-10 border-b border-gray-200 p-1 flex flex-col flex-wrap items-start justify-start gap-0.5`}
       >
-        {relevantEvents.map((event, index) => {
+        {relevantEvents.map((event) => {
           const Icon = getLucideIcon(event.icon);
           return (
-            <div key={index} className="flex items-center gap-0.5">
+            <div key={event.label} className="flex items-center gap-0.5">
               <Icon className="h-2.5 w-2.5 text-carebase-blue" />
               <span className="truncate text-[10px]">{event.label}</span>
             </div>
