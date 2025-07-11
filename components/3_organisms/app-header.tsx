@@ -1,19 +1,19 @@
 'use client';
 
-import Link from 'next/link';
 import { Logo } from '@/components/1_atoms/logo';
 import { Button } from '@/components/ui/button';
-import { User, Users, Menu, X } from 'lucide-react';
 import {
   Sheet,
+  SheetClose,
   SheetContent,
-  SheetTrigger,
   SheetHeader,
   SheetTitle,
-  SheetClose,
+  SheetTrigger,
 } from '@/components/ui/sheet';
-import { StaffDashboard } from './staff-dashboard';
+import { Menu, User, Users, X } from 'lucide-react';
+import Link from 'next/link';
 import { useState } from 'react';
+import { StaffDashboard } from './staff-dashboard';
 
 export function AppHeader() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -49,7 +49,6 @@ export function AppHeader() {
             <SheetContent
               side="right"
               className="max-w-screen sm:max-w-screen h-screen bg-carebase-bg p-0 overflow-y-auto"
-              showCloseButton={false}
             >
               <SheetHeader className="flex flex-row items-center justify-between p-4 sticky top-0 bg-carebase-bg z-10 border-b">
                 <SheetTitle className="text-xl font-bold text-carebase-text-primary">

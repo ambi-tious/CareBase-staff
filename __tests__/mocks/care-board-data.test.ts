@@ -1,4 +1,4 @@
-import { getResidentById, careBoardData, careCategories } from '@/mocks/care-board-data';
+import { careBoardData, careCategories, getResidentById } from '@/mocks/care-board-data';
 
 describe('care-board-data', () => {
   describe('getResidentById', () => {

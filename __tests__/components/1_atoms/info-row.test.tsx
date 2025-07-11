@@ -1,5 +1,6 @@
-import { render, screen } from '@testing-library/react';
 import { InfoRow } from '@/components/1_atoms/info-row';
+import '@testing-library/jest-dom';
+import { render, screen } from '@testing-library/react';
 
 describe('InfoRow', () => {
   it('renders label and value correctly', () => {

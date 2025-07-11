@@ -1,6 +1,6 @@
-import { render, screen } from '@testing-library/react';
 import { ContactInfoCard } from '@/components/2_molecules/contact-info-card';
 import type { ContactPerson } from '@/mocks/care-board-data';
+import { render, screen } from '@testing-library/react';
 
 const mockContact: ContactPerson = {
   id: 'test-1',

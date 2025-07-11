@@ -1,7 +1,7 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { MedicationCard } from '@/components/2_molecules/medication/medication-card';
 import type { Medication } from '@/types/medication';
 import { jest } from '@jest/globals';
+import { fireEvent, render, screen } from '@testing-library/react';
 
 // Mock the medication service
 jest.mock('@/services/medicationService', () => ({

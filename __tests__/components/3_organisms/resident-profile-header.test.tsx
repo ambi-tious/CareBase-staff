@@ -1,6 +1,6 @@
-import { render, screen } from '@testing-library/react';
 import { ResidentProfileHeader } from '@/components/3_organisms/resident-profile-header';
 import type { Resident } from '@/mocks/care-board-data';
+import { render, screen } from '@testing-library/react';
 
 const mockResident: Resident = {
   id: 1,

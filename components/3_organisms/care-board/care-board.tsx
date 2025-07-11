@@ -1,28 +1,21 @@
 'use client';
 
-import Image from 'next/image';
-import Link from 'next/link'; // Import Link
-import { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
+import { Calendar } from '@/components/ui/calendar';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { getLucideIcon } from '@/lib/lucide-icon-registry';
 import {
   careBoardData,
   careCategories,
-  type CareEvent,
   type CareCategoryKey,
+  type CareEvent,
 } from '@/mocks/care-board-data';
-import {
-  ChevronLeft,
-  ChevronRight,
-  Clock,
-  ClipboardEdit,
-  BookOpen,
-  CalendarIcon,
-} from 'lucide-react';
-import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
-import { Calendar } from '@/components/ui/calendar';
-import { format, addDays } from 'date-fns';
+import { addDays, format } from 'date-fns';
 import { ja } from 'date-fns/locale';
-import { getLucideIcon } from '@/lib/lucide-icon-registry';
+import { BookOpen, CalendarIcon, ChevronLeft, ChevronRight, ClipboardEdit } from 'lucide-react';
+import Image from 'next/image';
+import Link from 'next/link'; // Import Link
+import { useEffect, useRef, useState } from 'react';
 
 type ActiveTabView = 'time' | 'user';
 
@@ -332,13 +325,6 @@ export function CareBoard() {
       </div>
 
       {activeView === 'time' ? <TimeBaseView /> : <UserBaseView />}
-
-      <div className="fixed bottom-6 right-6 z-10">
-        <Button className="h-16 w-16 rounded-full bg-carebase-blue shadow-lg hover:bg-carebase-blue-dark md:h-12 md:w-auto md:px-6 md:py-3 font-semibold">
-          <Clock className="h-6 w-6 md:mr-2" />
-          <span className="hidden md:inline">クイック作成</span>
-        </Button>
-      </div>
     </div>
   );
 }
