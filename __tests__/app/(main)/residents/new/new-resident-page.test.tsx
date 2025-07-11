@@ -3,14 +3,15 @@ import { useResidentForm } from '@/hooks/useResidentForm';
 import { residentService } from '@/services/residentService';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { useRouter } from 'next/navigation';
+import { vi } from 'vitest';
 
 // Mock Next.js navigation
-jest.mock('next/navigation', () => ({
-  useRouter: jest.fn(),
+vi.mock('next/navigation', () => ({
+  useRouter: vi.fn(),
 }));
 
 // Mock the ResidentBasicInfoForm component
-jest.mock('@/components/2_molecules/forms/resident-basic-info-form', () => ({
+vi.mock('@/components/2_molecules/forms/resident-basic-info-form', () => ({
   ResidentBasicInfoForm: ({ data, onChange, errors, disabled }: any) => (
     <div data-testid="resident-basic-info-form">
       <div data-testid="form-data">{JSON.stringify(data)}</div>
@@ -24,44 +25,44 @@ jest.mock('@/components/2_molecules/forms/resident-basic-info-form', () => ({
 }));
 
 // Mock the useResidentForm hook
-jest.mock('@/hooks/useResidentForm', () => ({
-  useResidentForm: jest.fn(),
+vi.mock('@/hooks/useResidentForm', () => ({
+  useResidentForm: vi.fn(),
 }));
 
 // Mock the residentService
-jest.mock('@/services/residentService', () => ({
+vi.mock('@/services/residentService', () => ({
   residentService: {
-    createResident: jest.fn(),
+    createResident: vi.fn(),
   },
 }));
 
 // Mock lucide-react icons
-jest.mock('lucide-react', () => ({
+vi.mock('lucide-react', () => ({
   ArrowLeft: () => <div data-testid="arrow-left-icon">ArrowLeft</div>,
   Save: () => <div data-testid="save-icon">Save</div>,
   UserPlus: () => <div data-testid="user-plus-icon">UserPlus</div>,
 }));
 
 describe('NewResidentPage', () => {
-  const mockPush = jest.fn();
+  const mockPush = vi.fn();
 
   beforeEach(() => {
-    jest.clearAllMocks();
-    (useRouter as jest.Mock).mockReturnValue({
+    vi.clearAllMocks();
+    (useRouter as any).mockReturnValue({
       push: mockPush,
     });
 
     // Mock useResidentForm hook
-    (useResidentForm as jest.Mock).mockReturnValue({
+    (useResidentForm as any).mockReturnValue({
       formData: { name: '', email: '' },
-      setFormData: jest.fn(),
+      setFormData: vi.fn(),
       errors: {},
       isSubmitting: false,
-      handleSubmit: jest.fn().mockResolvedValue(true),
+      handleSubmit: vi.fn().mockResolvedValue(true),
     });
 
     // Mock residentService
-    (residentService.createResident as jest.Mock).mockResolvedValue({
+    (residentService.createResident as any).mockResolvedValue({
       id: 'resident-001',
       name: '田中太郎',
     });
@@ -102,10 +103,10 @@ describe('NewResidentPage', () => {
   });
 
   it('handles save button click successfully', async () => {
-    const mockHandleSubmit = jest.fn().mockResolvedValue(true);
-    (useResidentForm as jest.Mock).mockReturnValue({
+    const mockHandleSubmit = vi.fn().mockResolvedValue(true);
+    (useResidentForm as any).mockReturnValue({
       formData: { name: '田中太郎', email: 'tanaka@example.com' },
-      setFormData: jest.fn(),
+      setFormData: vi.fn(),
       errors: {},
       isSubmitting: false,
       handleSubmit: mockHandleSubmit,
@@ -122,12 +123,12 @@ describe('NewResidentPage', () => {
   });
 
   it('shows error alert when submit fails', async () => {
-    (useResidentForm as jest.Mock).mockReturnValue({
+    (useResidentForm as any).mockReturnValue({
       formData: { name: '田中太郎', email: 'tanaka@example.com' },
-      setFormData: jest.fn(),
+      setFormData: vi.fn(),
       errors: {},
       isSubmitting: false,
-      handleSubmit: jest.fn().mockResolvedValue(false),
+      handleSubmit: vi.fn().mockResolvedValue(false),
     });
 
     render(<NewResidentPage />);
@@ -142,12 +143,12 @@ describe('NewResidentPage', () => {
   });
 
   it('disables buttons when submitting', () => {
-    (useResidentForm as jest.Mock).mockReturnValue({
+    (useResidentForm as any).mockReturnValue({
       formData: { name: '', email: '' },
-      setFormData: jest.fn(),
+      setFormData: vi.fn(),
       errors: {},
       isSubmitting: true,
-      handleSubmit: jest.fn(),
+      handleSubmit: vi.fn(),
     });
 
     render(<NewResidentPage />);

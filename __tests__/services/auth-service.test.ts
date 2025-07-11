@@ -1,11 +1,12 @@
 import { authService } from '@/services/auth-service';
+import { vi } from 'vitest';
 
 // Mock fetch
-global.fetch = jest.fn();
+global.fetch = vi.fn();
 
 describe('AuthService', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     // Reset environment variables
     process.env.NEXT_PUBLIC_API_URL = '';
   });
@@ -23,7 +24,7 @@ describe('AuthService', () => {
         },
       };
 
-      (fetch as jest.Mock).mockResolvedValueOnce({
+      (fetch as any).mockResolvedValueOnce({
         ok: true,
         json: async () => mockResponse,
       });
@@ -42,7 +43,7 @@ describe('AuthService', () => {
     });
 
     it('APIエラーを処理する', async () => {
-      (fetch as jest.Mock).mockRejectedValueOnce(new Error('Network error'));
+      (fetch as any).mockRejectedValueOnce(new Error('Network error'));
 
       const credentials = { facilityId: 'facility-1', password: 'password' };
       const result = await authService.login(credentials);
@@ -54,7 +55,7 @@ describe('AuthService', () => {
     });
 
     it('HTTPエラーレスポンスを処理する', async () => {
-      (fetch as jest.Mock).mockResolvedValueOnce({
+      (fetch as any).mockResolvedValueOnce({
         ok: false,
         status: 401,
       });
@@ -83,7 +84,7 @@ describe('AuthService', () => {
         },
       };
 
-      (fetch as jest.Mock).mockResolvedValueOnce({
+      (fetch as any).mockResolvedValueOnce({
         ok: true,
         json: async () => mockResponse,
       });
@@ -102,7 +103,7 @@ describe('AuthService', () => {
     });
 
     it('スタッフ選択でAPIエラーを処理する', async () => {
-      (fetch as jest.Mock).mockRejectedValueOnce(new Error('Network error'));
+      (fetch as any).mockRejectedValueOnce(new Error('Network error'));
 
       const result = await authService.selectStaff('mock-token', 'staff-001');
 
@@ -115,7 +116,7 @@ describe('AuthService', () => {
 
   describe('logout', () => {
     it('APIログアウトが成功する', async () => {
-      (fetch as jest.Mock).mockResolvedValueOnce({
+      (fetch as any).mockResolvedValueOnce({
         ok: true,
       });
 
@@ -130,9 +131,9 @@ describe('AuthService', () => {
     });
 
     it('ログアウトでAPIエラーを処理する', async () => {
-      (fetch as jest.Mock).mockRejectedValueOnce(new Error('Network error'));
+      (fetch as any).mockRejectedValueOnce(new Error('Network error'));
 
-      const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
       await authService.logout('mock-token');
 
@@ -146,7 +147,7 @@ describe('AuthService', () => {
     it('パスワードリセット要求が成功する', async () => {
       const mockResponse = { success: true };
 
-      (fetch as jest.Mock).mockResolvedValueOnce({
+      (fetch as any).mockResolvedValueOnce({
         ok: true,
         json: async () => mockResponse,
       });
@@ -167,7 +168,7 @@ describe('AuthService', () => {
     });
 
     it('パスワードリセット要求でAPIエラーを処理する', async () => {
-      (fetch as jest.Mock).mockRejectedValueOnce(new Error('Network error'));
+      (fetch as any).mockRejectedValueOnce(new Error('Network error'));
 
       const result = await authService.requestPasswordReset('facility-1', 'test@example.com');
 
@@ -182,7 +183,7 @@ describe('AuthService', () => {
     it('パスワードリセットが成功する', async () => {
       const mockResponse = { success: true };
 
-      (fetch as jest.Mock).mockResolvedValueOnce({
+      (fetch as any).mockResolvedValueOnce({
         ok: true,
         json: async () => mockResponse,
       });
@@ -203,7 +204,7 @@ describe('AuthService', () => {
     });
 
     it('パスワードリセットでAPIエラーを処理する', async () => {
-      (fetch as jest.Mock).mockRejectedValueOnce(new Error('Network error'));
+      (fetch as any).mockRejectedValueOnce(new Error('Network error'));
 
       const result = await authService.resetPassword('reset-token', 'new-password');
 

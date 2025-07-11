@@ -3,7 +3,7 @@ import type { MedicalInstitution } from '@/mocks/care-board-data';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 
 // Mock the modals
-jest.mock('@/components/3_organisms/modals/medical-institution-modal', () => ({
+vi.mock('@/components/3_organisms/modals/medical-institution-modal', () => ({
   MedicalInstitutionModal: ({ isOpen, onClose, onSubmit }: any) => {
     if (!isOpen) return null;
     return (
@@ -16,7 +16,7 @@ jest.mock('@/components/3_organisms/modals/medical-institution-modal', () => ({
   },
 }));
 
-jest.mock('@/components/3_organisms/modals/generic-delete-modal', () => ({
+vi.mock('@/components/3_organisms/modals/generic-delete-modal', () => ({
   GenericDeleteModal: ({ isOpen, onClose, onConfirm, itemName, isDeleting, error }: any) => {
     if (!isOpen) return null;
     return (
@@ -33,10 +33,10 @@ jest.mock('@/components/3_organisms/modals/generic-delete-modal', () => ({
 }));
 
 // Mock the service
-jest.mock('@/services/residentDataService', () => ({
+vi.mock('@/services/residentDataService', () => ({
   residentDataService: {
-    updateMedicalInstitution: jest.fn(),
-    deleteMedicalInstitution: jest.fn(),
+    updateMedicalInstitution: vi.fn(),
+    deleteMedicalInstitution: vi.fn(),
   },
 }));
 
@@ -55,12 +55,12 @@ describe('MedicalInstitutionCard', () => {
     institution: mockInstitution,
     residentId: 1,
     residentName: 'テスト利用者',
-    onInstitutionUpdate: jest.fn(),
-    onInstitutionDelete: jest.fn(),
+    onInstitutionUpdate: vi.fn(),
+    onInstitutionDelete: vi.fn(),
   };
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('renders institution information correctly', () => {

@@ -143,7 +143,7 @@ describe('Dialog', () => {
   });
 
   it('ダイアログの状態変更を処理する', () => {
-    const onOpenChange = jest.fn();
+    const onOpenChange = vi.fn();
 
     render(
       <Dialog onOpenChange={onOpenChange}>

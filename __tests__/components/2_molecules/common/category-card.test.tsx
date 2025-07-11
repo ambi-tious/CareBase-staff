@@ -2,7 +2,7 @@ import { CategoryCard } from '@/components/2_molecules/common/category-card';
 import { render, screen } from '@testing-library/react';
 
 // lucide-icon-registryのモック
-jest.mock('@/lib/lucide-icon-registry', () => ({
+vi.mock('@/lib/lucide-icon-registry', () => ({
   getLucideIcon: () => (props: any) => <svg data-testid="icon" {...props} />,
 }));
 

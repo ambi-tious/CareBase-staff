@@ -1,24 +1,27 @@
 import { MedicationCard } from '@/components/2_molecules/resident/medication-card';
 import type { MedicationInfo } from '@/mocks/care-board-data';
 import { render, screen } from '@testing-library/react';
+import { vi } from 'vitest';
 
 // Mock Next.js Image component
-jest.mock('next/image', () => {
-  return function MockImage({ src, alt, ...props }: any) {
+vi.mock('next/image', () => ({
+  __esModule: true,
+  default: function MockImage({ src, alt, ...props }: any) {
     return <img src={src} alt={alt} {...props} data-testid="medication-image" />;
-  };
-});
+  },
+}));
 
 // Mock Next.js Link component
-jest.mock('next/link', () => {
-  return function MockLink({ children, href, ...props }: any) {
+vi.mock('next/link', () => ({
+  __esModule: true,
+  default: function MockLink({ children, href, ...props }: any) {
     return (
       <a href={href} {...props}>
         {children}
       </a>
     );
-  };
-});
+  },
+}));
 
 describe('MedicationCard', () => {
   const mockMedication: MedicationInfo = {

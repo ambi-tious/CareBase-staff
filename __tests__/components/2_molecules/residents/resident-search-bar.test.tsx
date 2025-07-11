@@ -3,12 +3,12 @@ import { fireEvent, render, screen } from '@testing-library/react';
 
 describe('ResidentSearchBar', () => {
   it('プレースホルダーが表示される', () => {
-    render(<ResidentSearchBar onSearch={jest.fn()} />);
+    render(<ResidentSearchBar onSearch={vi.fn()} />);
     expect(screen.getByPlaceholderText('利用者名で検索...')).toBeInTheDocument();
   });
 
   it('入力でonSearchが呼ばれる', () => {
-    const onSearch = jest.fn();
+    const onSearch = vi.fn();
     render(<ResidentSearchBar onSearch={onSearch} />);
     const input = screen.getByPlaceholderText('利用者名で検索...');
     fireEvent.change(input, { target: { value: 'テスト' } });
@@ -16,7 +16,7 @@ describe('ResidentSearchBar', () => {
   });
 
   it('クリアボタンでonSearchが空文字で呼ばれる', () => {
-    const onSearch = jest.fn();
+    const onSearch = vi.fn();
     render(<ResidentSearchBar onSearch={onSearch} />);
     const input = screen.getByPlaceholderText('利用者名で検索...');
     fireEvent.change(input, { target: { value: 'テスト' } });
@@ -26,7 +26,7 @@ describe('ResidentSearchBar', () => {
   });
 
   it('classNameが適用される', () => {
-    render(<ResidentSearchBar onSearch={jest.fn()} className="custom-class" />);
+    render(<ResidentSearchBar onSearch={vi.fn()} className="custom-class" />);
     const container = screen.getByPlaceholderText('利用者名で検索...').closest('div');
     expect(container?.parentElement).toHaveClass('custom-class');
   });

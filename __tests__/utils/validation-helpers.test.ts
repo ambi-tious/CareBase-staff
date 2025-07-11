@@ -11,6 +11,7 @@ import {
   validateRequired,
   VALIDATION_PATTERNS,
 } from '@/utils/validation-helpers';
+import { vi } from 'vitest';
 import { z } from 'zod';
 
 describe('バリデーションヘルパー', () => {
@@ -74,17 +75,17 @@ describe('バリデーションヘルパー', () => {
 
   describe('createRealtimeValidator', () => {
     beforeEach(() => {
-      jest.useFakeTimers();
+      vi.useFakeTimers();
     });
 
     afterEach(() => {
-      jest.useRealTimers();
+      vi.useRealTimers();
     });
 
     it('バリデーション呼び出しをデバウンスする', () => {
       const schema = z.string().min(1);
       const validator = createRealtimeValidator(schema, 300);
-      const callback = jest.fn();
+      const callback = vi.fn();
 
       validator('test', callback);
       validator('test2', callback);
@@ -92,7 +93,7 @@ describe('バリデーションヘルパー', () => {
 
       expect(callback).not.toHaveBeenCalled();
 
-      jest.advanceTimersByTime(300);
+      vi.advanceTimersByTime(300);
 
       expect(callback).toHaveBeenCalledTimes(1);
       expect(callback).toHaveBeenCalledWith({
@@ -104,16 +105,16 @@ describe('バリデーションヘルパー', () => {
     it('前のタイムアウトをクリアする', () => {
       const schema = z.string().min(1);
       const validator = createRealtimeValidator(schema, 300);
-      const callback = jest.fn();
+      const callback = vi.fn();
 
       validator('test', callback);
-      jest.advanceTimersByTime(200);
+      vi.advanceTimersByTime(200);
       validator('test2', callback);
-      jest.advanceTimersByTime(100);
+      vi.advanceTimersByTime(100);
 
       expect(callback).not.toHaveBeenCalled();
 
-      jest.advanceTimersByTime(200);
+      vi.advanceTimersByTime(200);
 
       expect(callback).toHaveBeenCalledTimes(1);
       expect(callback).toHaveBeenCalledWith({
@@ -200,7 +201,7 @@ describe('バリデーションヘルパー', () => {
 
   describe('validateAsync', () => {
     it('バリデーション成功に対して有効な結果を返す', async () => {
-      const validateFn = jest.fn().mockResolvedValue(true);
+      const validateFn = vi.fn().mockResolvedValue(true);
       const data = { name: 'test' };
 
       const result = await validateAsync(validateFn, data, 'エラーメッセージ');
@@ -212,7 +213,7 @@ describe('バリデーションヘルパー', () => {
     });
 
     it('バリデーション失敗に対して無効な結果を返す', async () => {
-      const validateFn = jest.fn().mockResolvedValue(false);
+      const validateFn = vi.fn().mockResolvedValue(false);
       const data = { name: 'test' };
 
       const result = await validateAsync(validateFn, data, 'エラーメッセージ');
@@ -223,7 +224,7 @@ describe('バリデーションヘルパー', () => {
     });
 
     it('バリデーションエラーを処理する', async () => {
-      const validateFn = jest.fn().mockRejectedValue(new Error('Validation error'));
+      const validateFn = vi.fn().mockRejectedValue(new Error('Validation error'));
       const data = { name: 'test' };
 
       const result = await validateAsync(validateFn, data, 'エラーメッセージ');

@@ -1,9 +1,10 @@
 import { HomeCareOfficeCard } from '@/components/2_molecules/resident/home-care-office-card';
 import type { HomeCareOffice } from '@/mocks/care-board-data';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { vi } from 'vitest';
 
 // Mock the modals
-jest.mock('@/components/3_organisms/modals/home-care-office-modal', () => ({
+vi.mock('@/components/3_organisms/modals/home-care-office-modal', () => ({
   HomeCareOfficeModal: ({ isOpen, onClose, onSubmit }: any) => {
     if (!isOpen) return null;
     return (
@@ -16,7 +17,7 @@ jest.mock('@/components/3_organisms/modals/home-care-office-modal', () => ({
   },
 }));
 
-jest.mock('@/components/3_organisms/modals/generic-delete-modal', () => ({
+vi.mock('@/components/3_organisms/modals/generic-delete-modal', () => ({
   GenericDeleteModal: ({ isOpen, onClose, onConfirm, itemName, isDeleting, error }: any) => {
     if (!isOpen) return null;
     return (
@@ -33,10 +34,10 @@ jest.mock('@/components/3_organisms/modals/generic-delete-modal', () => ({
 }));
 
 // Mock the service
-jest.mock('@/services/residentDataService', () => ({
+vi.mock('@/services/residentDataService', () => ({
   residentDataService: {
-    updateHomeCareOffice: jest.fn(),
-    deleteHomeCareOffice: jest.fn(),
+    updateHomeCareOffice: vi.fn(),
+    deleteHomeCareOffice: vi.fn(),
   },
 }));
 
@@ -55,12 +56,12 @@ describe('HomeCareOfficeCard', () => {
     office: mockOffice,
     residentId: 1,
     residentName: 'テスト利用者',
-    onOfficeUpdate: jest.fn(),
-    onOfficeDelete: jest.fn(),
+    onOfficeUpdate: vi.fn(),
+    onOfficeDelete: vi.fn(),
   };
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('renders office information correctly', () => {

@@ -1,9 +1,10 @@
 import { ContactInfoCard } from '@/components/2_molecules/resident/contact-info-card';
 import type { ContactPerson } from '@/mocks/care-board-data';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { vi } from 'vitest';
 
 // Mock the modals
-jest.mock('@/components/3_organisms/modals/contact-edit-modal', () => ({
+vi.mock('@/components/3_organisms/modals/contact-edit-modal', () => ({
   ContactEditModal: ({ isOpen, onClose, onSubmit }: any) => {
     if (!isOpen) return null;
     return (
@@ -16,7 +17,7 @@ jest.mock('@/components/3_organisms/modals/contact-edit-modal', () => ({
   },
 }));
 
-jest.mock('@/components/3_organisms/modals/contact-delete-modal', () => ({
+vi.mock('@/components/3_organisms/modals/contact-delete-modal', () => ({
   ContactDeleteModal: ({ isOpen, onClose, onConfirm, contactName, isDeleting, error }: any) => {
     if (!isOpen) return null;
     return (
@@ -33,10 +34,10 @@ jest.mock('@/components/3_organisms/modals/contact-delete-modal', () => ({
 }));
 
 // Mock the service
-jest.mock('@/services/contactService', () => ({
+vi.mock('@/services/contactService', () => ({
   contactService: {
-    updateContact: jest.fn(),
-    deleteContact: jest.fn(),
+    updateContact: vi.fn(),
+    deleteContact: vi.fn(),
   },
 }));
 
@@ -58,12 +59,12 @@ describe('ContactInfoCard', () => {
     contact: mockContact,
     residentId: 1,
     residentName: 'テスト利用者',
-    onContactUpdate: jest.fn(),
-    onContactDelete: jest.fn(),
+    onContactUpdate: vi.fn(),
+    onContactDelete: vi.fn(),
   };
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('renders contact information correctly', () => {

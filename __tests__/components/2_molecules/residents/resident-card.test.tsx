@@ -1,27 +1,30 @@
 import { ResidentCard } from '@/components/2_molecules/residents/resident-card';
 import type { Resident } from '@/mocks/care-board-data';
 import { render, screen } from '@testing-library/react';
+import { vi } from 'vitest';
 
 // Mock Next.js Image component
-jest.mock('next/image', () => {
-  return function MockImage({ src, alt, onError, ...props }: any) {
+vi.mock('next/image', () => ({
+  __esModule: true,
+  default: function MockImage({ src, alt, onError, ...props }: any) {
     return <img src={src} alt={alt} onError={onError} {...props} data-testid="resident-avatar" />;
-  };
-});
+  },
+}));
 
 // Mock Next.js Link component
-jest.mock('next/link', () => {
-  return function MockLink({ children, href, ...props }: any) {
+vi.mock('next/link', () => ({
+  __esModule: true,
+  default: function MockLink({ children, href, ...props }: any) {
     return (
       <a href={href} {...props}>
         {children}
       </a>
     );
-  };
-});
+  },
+}));
 
 // Mock the AlertIndicator component
-jest.mock('@/components/1_atoms/residents/alert-indicator', () => ({
+vi.mock('@/components/1_atoms/residents/alert-indicator', () => ({
   AlertIndicator: ({ level, count }: any) => (
     <div data-testid={`alert-${level}`} data-count={count}>
       {level}: {count}
@@ -30,7 +33,7 @@ jest.mock('@/components/1_atoms/residents/alert-indicator', () => ({
 }));
 
 // Mock the ResidentStatusBadge component
-jest.mock('@/components/1_atoms/residents/resident-status-badge', () => ({
+vi.mock('@/components/1_atoms/residents/resident-status-badge', () => ({
   ResidentStatusBadge: ({ status }: any) => (
     <div data-testid="status-badge" data-status={status}>
       {status}

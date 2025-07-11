@@ -16,11 +16,11 @@ describe('ResidentBasicInfoForm', () => {
   };
 
   it('氏名入力欄が表示される', () => {
-    render(<ResidentBasicInfoForm data={mockData} onChange={jest.fn()} errors={{}} />);
+    render(<ResidentBasicInfoForm data={mockData} onChange={vi.fn()} errors={{}} />);
     expect(screen.getByLabelText('氏名', { exact: false })).toBeInTheDocument();
   });
   it('onChangeが呼ばれる', () => {
-    const onChange = jest.fn();
+    const onChange = vi.fn();
     render(<ResidentBasicInfoForm data={mockData} onChange={onChange} errors={{}} />);
     fireEvent.change(screen.getByLabelText('氏名', { exact: false }), {
       target: { value: 'テスト太郎' },

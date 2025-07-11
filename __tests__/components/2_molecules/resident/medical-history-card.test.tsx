@@ -3,7 +3,7 @@ import type { MedicalHistory } from '@/mocks/care-board-data';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 
 // Mock the modals
-jest.mock('@/components/3_organisms/modals/medical-history-modal', () => ({
+vi.mock('@/components/3_organisms/modals/medical-history-modal', () => ({
   MedicalHistoryModal: ({ isOpen, onClose, onSubmit }: any) => {
     if (!isOpen) return null;
     return (
@@ -16,7 +16,7 @@ jest.mock('@/components/3_organisms/modals/medical-history-modal', () => ({
   },
 }));
 
-jest.mock('@/components/3_organisms/modals/generic-delete-modal', () => ({
+vi.mock('@/components/3_organisms/modals/generic-delete-modal', () => ({
   GenericDeleteModal: ({ isOpen, onClose, onConfirm, itemName, isDeleting, error }: any) => {
     if (!isOpen) return null;
     return (
@@ -33,10 +33,10 @@ jest.mock('@/components/3_organisms/modals/generic-delete-modal', () => ({
 }));
 
 // Mock the service
-jest.mock('@/services/residentDataService', () => ({
+vi.mock('@/services/residentDataService', () => ({
   residentDataService: {
-    updateMedicalHistory: jest.fn(),
-    deleteMedicalHistory: jest.fn(),
+    updateMedicalHistory: vi.fn(),
+    deleteMedicalHistory: vi.fn(),
   },
 }));
 
@@ -54,12 +54,12 @@ describe('MedicalHistoryCard', () => {
     history: mockHistory,
     residentId: 1,
     residentName: 'テスト利用者',
-    onHistoryUpdate: jest.fn(),
-    onHistoryDelete: jest.fn(),
+    onHistoryUpdate: vi.fn(),
+    onHistoryDelete: vi.fn(),
   };
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('renders history information correctly', () => {

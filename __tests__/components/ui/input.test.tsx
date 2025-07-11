@@ -58,7 +58,7 @@ describe('Input', () => {
   });
 
   it('onChangeイベントを処理する', () => {
-    const handleChange = jest.fn();
+    const handleChange = vi.fn();
     render(<Input onChange={handleChange} />);
     const input = screen.getByRole('textbox') as HTMLInputElement;
     fireEvent.change(input, { target: { value: 'new value' } });

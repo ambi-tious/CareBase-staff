@@ -1,14 +1,15 @@
 import LoginPage from '@/app/(auth)/login/page';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { useRouter } from 'next/navigation';
+import { vi } from 'vitest';
 
 // Mock Next.js navigation
-jest.mock('next/navigation', () => ({
-  useRouter: jest.fn(),
+vi.mock('next/navigation', () => ({
+  useRouter: vi.fn(),
 }));
 
 // Mock the LoginForm component
-jest.mock('@/components/2_molecules/auth/login-form', () => ({
+vi.mock('@/components/2_molecules/auth/login-form', () => ({
   LoginForm: ({ onLogin }: { onLogin: (credentials: any) => Promise<boolean> }) => (
     <div data-testid="login-form">
       <button
@@ -34,16 +35,16 @@ jest.mock('@/components/2_molecules/auth/login-form', () => ({
 }));
 
 // Mock the Logo component
-jest.mock('@/components/1_atoms/common/logo', () => ({
+vi.mock('@/components/1_atoms/common/logo', () => ({
   Logo: () => <div data-testid="logo">Logo</div>,
 }));
 
 describe('LoginPage', () => {
-  const mockPush = jest.fn();
+  const mockPush = vi.fn();
 
   beforeEach(() => {
-    jest.clearAllMocks();
-    (useRouter as jest.Mock).mockReturnValue({
+    vi.clearAllMocks();
+    (useRouter as any).mockReturnValue({
       push: mockPush,
     });
   });

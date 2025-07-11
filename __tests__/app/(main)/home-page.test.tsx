@@ -1,8 +1,9 @@
 import HomePage from '@/app/(main)/page';
 import { render, screen } from '@testing-library/react';
+import { vi } from 'vitest';
 
 // Mock the CareBoard component
-jest.mock('@/components/3_organisms/care-board/care-board', () => ({
+vi.mock('@/components/3_organisms/care-board/care-board', () => ({
   CareBoard: () => <div data-testid="care-board">Care Board Component</div>,
 }));
 

@@ -2,14 +2,15 @@ import DocumentCategoryPage from '@/app/(main)/documents/[category]/page';
 import { getCategoryByKey, getDocumentsByCategory } from '@/mocks/documents-data';
 import { render, screen } from '@testing-library/react';
 import { notFound } from 'next/navigation';
+import { vi } from 'vitest';
 
 // Mock Next.js navigation
-jest.mock('next/navigation', () => ({
-  notFound: jest.fn(),
+vi.mock('next/navigation', () => ({
+  notFound: vi.fn(),
 }));
 
 // Mock the DocumentList component
-jest.mock('@/components/3_organisms/documents/document-list', () => ({
+vi.mock('@/components/3_organisms/documents/document-list', () => ({
   DocumentList: ({ items }: { items: any[] }) => (
     <div data-testid="document-list">
       <div data-testid="document-count">{items.length}</div>
@@ -23,19 +24,19 @@ jest.mock('@/components/3_organisms/documents/document-list', () => ({
 }));
 
 // Mock the documents data functions
-jest.mock('@/mocks/documents-data', () => ({
-  getDocumentsByCategory: jest.fn(),
-  getCategoryByKey: jest.fn(),
+vi.mock('@/mocks/documents-data', () => ({
+  getDocumentsByCategory: vi.fn(),
+  getCategoryByKey: vi.fn(),
 }));
 
 describe('文書カテゴリページ', () => {
-  const mockGetDocumentsByCategory = jest.fn();
-  const mockGetCategoryByKey = jest.fn();
+  const mockGetDocumentsByCategory = vi.fn();
+  const mockGetCategoryByKey = vi.fn();
 
   beforeEach(() => {
-    jest.clearAllMocks();
-    (getDocumentsByCategory as jest.Mock).mockImplementation(mockGetDocumentsByCategory);
-    (getCategoryByKey as jest.Mock).mockImplementation(mockGetCategoryByKey);
+    vi.clearAllMocks();
+    (getDocumentsByCategory as any).mockImplementation(mockGetDocumentsByCategory);
+    (getCategoryByKey as any).mockImplementation(mockGetCategoryByKey);
   });
 
   it('有効なカテゴリで文書リストをレンダリングする', async () => {

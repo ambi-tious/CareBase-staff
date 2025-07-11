@@ -3,8 +3,8 @@ import type { IndividualPoint } from '@/mocks/care-board-data';
 import { render, screen } from '@testing-library/react';
 
 // Mock the lucide icon registry
-jest.mock('@/lib/lucide-icon-registry', () => ({
-  getLucideIcon: jest.fn(() => {
+vi.mock('@/lib/lucide-icon-registry', () => ({
+  getLucideIcon: vi.fn(() => {
     return function MockIcon({ className }: { className?: string }) {
       return (
         <div data-testid="mock-icon" className={className}>

@@ -2,7 +2,7 @@ import { ResidentsToolbar } from '@/components/2_molecules/residents/residents-t
 import { fireEvent, render, screen } from '@testing-library/react';
 
 // Mock the ResidentSearchBar component
-jest.mock('@/components/2_molecules/residents/resident-search-bar', () => ({
+vi.mock('@/components/2_molecules/residents/resident-search-bar', () => ({
   ResidentSearchBar: ({ onSearch, className }: any) => (
     <div data-testid="resident-search-bar" className={className}>
       <input
@@ -17,14 +17,14 @@ jest.mock('@/components/2_molecules/residents/resident-search-bar', () => ({
 
 describe('ResidentsToolbar', () => {
   const defaultProps = {
-    onSearch: jest.fn(),
+    onSearch: vi.fn(),
     showDischargedResidents: false,
-    onToggleDischargedResidents: jest.fn(),
-    onCreateResident: jest.fn(),
+    onToggleDischargedResidents: vi.fn(),
+    onCreateResident: vi.fn(),
   };
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('renders all toolbar elements correctly', () => {

@@ -1,12 +1,10 @@
 import { useMedicationForm } from '@/hooks/useMedicationForm';
 import type { MedicationFormData } from '@/types/medication';
-import { jest } from '@jest/globals';
+import { vi } from 'vitest';
 import { act, renderHook } from '@testing-library/react';
 
 describe('useMedicationForm', () => {
-  const mockOnSubmit = jest.fn() as jest.MockedFunction<
-    (data: MedicationFormData) => Promise<boolean>
-  >;
+  const mockOnSubmit = vi.fn() as vi.MockedFunction<(data: MedicationFormData) => Promise<boolean>>;
 
   beforeEach(() => {
     mockOnSubmit.mockClear();

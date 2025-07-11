@@ -2,15 +2,16 @@ import StaffSelectionPage from '@/app/(auth)/staff-selection/page';
 import type { Staff } from '@/mocks/staff-data';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { vi } from 'vitest';
 
 // Mock Next.js navigation
-jest.mock('next/navigation', () => ({
-  useRouter: jest.fn(),
-  useSearchParams: jest.fn(),
+vi.mock('next/navigation', () => ({
+  useRouter: vi.fn(),
+  useSearchParams: vi.fn(),
 }));
 
 // Mock the StaffSelectionScreen component
-jest.mock('@/components/3_organisms/auth/staff-selection-screen', () => ({
+vi.mock('@/components/3_organisms/auth/staff-selection-screen', () => ({
   StaffSelectionScreen: ({
     onStaffSelected,
     onLogout,
@@ -45,28 +46,28 @@ jest.mock('@/components/3_organisms/auth/staff-selection-screen', () => ({
 
 // Mock localStorage
 const localStorageMock = {
-  getItem: jest.fn(),
-  setItem: jest.fn(),
-  removeItem: jest.fn(),
-  clear: jest.fn(),
+  getItem: vi.fn(),
+  setItem: vi.fn(),
+  removeItem: vi.fn(),
+  clear: vi.fn(),
 };
 Object.defineProperty(window, 'localStorage', {
   value: localStorageMock,
 });
 
 // Mock scrollIntoView
-Element.prototype.scrollIntoView = jest.fn();
+Element.prototype.scrollIntoView = vi.fn();
 
 describe('スタッフ選択ページ', () => {
-  const mockPush = jest.fn();
-  const mockGet = jest.fn();
+  const mockPush = vi.fn();
+  const mockGet = vi.fn();
 
   beforeEach(() => {
-    jest.clearAllMocks();
-    (useRouter as jest.Mock).mockReturnValue({
+    vi.clearAllMocks();
+    (useRouter as any).mockReturnValue({
       push: mockPush,
     });
-    (useSearchParams as jest.Mock).mockReturnValue({
+    (useSearchParams as any).mockReturnValue({
       get: mockGet,
     });
     localStorageMock.getItem.mockReturnValue(null);

@@ -1,14 +1,14 @@
 import { MedicationCard } from '@/components/2_molecules/medication/medication-card';
 import type { Medication } from '@/types/medication';
-import { jest } from '@jest/globals';
+import { vi } from 'vitest';
 import '@testing-library/jest-dom';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 
 // Mock the medication service
-jest.mock('@/services/medicationService', () => ({
+vi.mock('@/services/medicationService', () => ({
   medicationService: {
-    updateMedication: jest.fn(),
-    deleteMedication: jest.fn(),
+    updateMedication: vi.fn(),
+    deleteMedication: vi.fn(),
   },
 }));
 
@@ -29,12 +29,12 @@ describe('薬剤カード', () => {
     medication: mockMedication,
     residentId: 1,
     residentName: '佐藤清',
-    onMedicationUpdate: jest.fn(),
-    onMedicationDelete: jest.fn(),
+    onMedicationUpdate: vi.fn(),
+    onMedicationDelete: vi.fn(),
   };
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('薬剤情報を正しくレンダリングする', () => {

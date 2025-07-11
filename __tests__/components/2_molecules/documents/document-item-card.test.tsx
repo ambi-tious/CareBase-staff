@@ -33,7 +33,7 @@ describe('DocumentItemCard', () => {
     expect(screen.getByText('3 個のアイテム')).toBeInTheDocument();
   });
   it('クリックイベントが発火する', () => {
-    const onItemClick = jest.fn();
+    const onItemClick = vi.fn();
     render(<DocumentItemCard item={mockItemFile} onItemClick={onItemClick} />);
     fireEvent.click(screen.getByText('テストファイル.pdf'));
     expect(onItemClick).toHaveBeenCalledWith(mockItemFile);

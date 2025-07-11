@@ -1,8 +1,9 @@
 import { StaffCard } from '@/components/1_atoms/staff/staff-card';
 import { fireEvent, render, screen } from '@testing-library/react';
+import { vi } from 'vitest';
 
 // Mock Next.js Image component
-jest.mock('next/image', () => ({
+vi.mock('next/image', () => ({
   __esModule: true,
   default: ({ src, alt, width, height, className }: any) => (
     <img src={src} alt={alt} width={width} height={height} className={className} />
@@ -61,7 +62,7 @@ describe('StaffCard', () => {
   });
 
   it('handles click events', () => {
-    const handleClick = jest.fn();
+    const handleClick = vi.fn();
     render(<StaffCard staff={mockStaff} onClick={handleClick} />);
 
     const card = screen.getByText('田中 花子').closest('[class*="cursor-pointer"]');

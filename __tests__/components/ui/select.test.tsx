@@ -158,7 +158,7 @@ describe('Select', () => {
   });
 
   it('onValueChangeコールバックを処理する', () => {
-    const onValueChange = jest.fn();
+    const onValueChange = vi.fn();
 
     render(
       <Select onValueChange={onValueChange}>

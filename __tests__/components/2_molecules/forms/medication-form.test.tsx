@@ -3,12 +3,12 @@ import { fireEvent, render, screen } from '@testing-library/react';
 
 describe('MedicationForm', () => {
   it('薬剤名入力欄が表示される', () => {
-    render(<MedicationForm onSubmit={jest.fn()} onCancel={jest.fn()} />);
+    render(<MedicationForm onSubmit={vi.fn()} onCancel={vi.fn()} />);
     expect(screen.getByLabelText('薬剤名', { exact: false })).toBeInTheDocument();
   });
   it('onSubmitが呼ばれる', () => {
-    const onSubmit = jest.fn(() => Promise.resolve(true));
-    render(<MedicationForm onSubmit={onSubmit} onCancel={jest.fn()} />);
+    const onSubmit = vi.fn(() => Promise.resolve(true));
+    render(<MedicationForm onSubmit={onSubmit} onCancel={vi.fn()} />);
 
     // 必須フィールドを入力
     fireEvent.change(screen.getByLabelText('薬剤名', { exact: false }), {

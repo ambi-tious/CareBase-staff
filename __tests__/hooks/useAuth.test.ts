@@ -3,15 +3,15 @@ import { authService } from '@/services/auth-service';
 import { act, renderHook, waitFor } from '@testing-library/react';
 
 // Mock the auth service
-jest.mock('@/services/auth-service');
-const mockAuthService = authService as jest.Mocked<typeof authService>;
+vi.mock('@/services/auth-service');
+const mockAuthService = authService as vi.Mocked<typeof authService>;
 
 // Mock localStorage
 const localStorageMock = {
-  getItem: jest.fn(),
-  setItem: jest.fn(),
-  removeItem: jest.fn(),
-  clear: jest.fn(),
+  getItem: vi.fn(),
+  setItem: vi.fn(),
+  removeItem: vi.fn(),
+  clear: vi.fn(),
 };
 Object.defineProperty(window, 'localStorage', {
   value: localStorageMock,
@@ -19,7 +19,7 @@ Object.defineProperty(window, 'localStorage', {
 
 describe('認証フック', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     localStorageMock.getItem.mockReturnValue(null);
     localStorageMock.setItem.mockImplementation(() => {});
     localStorageMock.removeItem.mockImplementation(() => {});
@@ -69,7 +69,7 @@ describe('認証フック', () => {
   it('localStorageのパースエラーを処理する', () => {
     localStorageMock.getItem.mockReturnValue('invalid-json');
 
-    const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
     const { result } = renderHook(() => useAuth());
 

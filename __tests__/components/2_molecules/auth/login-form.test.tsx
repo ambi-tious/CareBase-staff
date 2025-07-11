@@ -1,13 +1,10 @@
 import { LoginForm } from '@/components/2_molecules/auth/login-form';
-import type { LoginCredentials } from '@/types/auth';
-import { jest } from '@jest/globals';
 import '@testing-library/jest-dom';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { vi } from 'vitest';
 
 describe('LoginForm', () => {
-  const mockOnLogin = jest.fn() as jest.MockedFunction<
-    (credentials: LoginCredentials) => Promise<boolean>
-  >;
+  const mockOnLogin = vi.fn() as any;
 
   beforeEach(() => {
     mockOnLogin.mockClear();

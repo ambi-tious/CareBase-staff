@@ -1,18 +1,18 @@
 import { MedicationStatusCard } from '@/components/2_molecules/medication/medication-status-card';
 import type { MedicationStatus } from '@/types/medication-status';
-import { jest } from '@jest/globals';
+import { vi } from 'vitest';
 import { fireEvent, render, screen } from '@testing-library/react';
 
 // Mock the medication status service
-jest.mock('@/services/medicationStatusService', () => ({
+vi.mock('@/services/medicationStatusService', () => ({
   medicationStatusService: {
-    updateMedicationStatus: jest.fn(),
-    deleteMedicationStatus: jest.fn(),
+    updateMedicationStatus: vi.fn(),
+    deleteMedicationStatus: vi.fn(),
   },
 }));
 
 // Mock the modals
-jest.mock('@/components/3_organisms/modals/medication-status-modal', () => ({
+vi.mock('@/components/3_organisms/modals/medication-status-modal', () => ({
   MedicationStatusModal: ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) =>
     isOpen ? (
       <div data-testid="medication-status-modal">
@@ -21,7 +21,7 @@ jest.mock('@/components/3_organisms/modals/medication-status-modal', () => ({
     ) : null,
 }));
 
-jest.mock('@/components/3_organisms/modals/generic-delete-modal', () => ({
+vi.mock('@/components/3_organisms/modals/generic-delete-modal', () => ({
   GenericDeleteModal: ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) =>
     isOpen ? (
       <div data-testid="delete-modal">
@@ -44,12 +44,12 @@ describe('MedicationStatusCard', () => {
     medicationStatus: mockMedicationStatus,
     residentId: 1,
     residentName: '佐藤清',
-    onStatusUpdate: jest.fn(),
-    onStatusDelete: jest.fn(),
+    onStatusUpdate: vi.fn(),
+    onStatusDelete: vi.fn(),
   };
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('renders medication status information correctly', () => {

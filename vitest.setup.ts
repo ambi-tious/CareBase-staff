@@ -1,5 +1,6 @@
-import { jest } from '@jest/globals';
 import '@testing-library/jest-dom';
+import { vi } from 'vitest';
+import React from 'react';
 
 // Suppress console warnings for SVG fill attribute
 const originalError = console.error;
@@ -20,15 +21,15 @@ afterAll(() => {
 });
 
 // Mock Next.js router
-jest.mock('next/navigation', () => ({
+vi.mock('next/navigation', () => ({
   useRouter() {
     return {
-      push: jest.fn(),
-      replace: jest.fn(),
-      prefetch: jest.fn(),
-      back: jest.fn(),
-      forward: jest.fn(),
-      refresh: jest.fn(),
+      push: vi.fn(),
+      replace: vi.fn(),
+      prefetch: vi.fn(),
+      back: vi.fn(),
+      forward: vi.fn(),
+      refresh: vi.fn(),
     };
   },
   useSearchParams() {
@@ -40,22 +41,18 @@ jest.mock('next/navigation', () => ({
 }));
 
 // Mock Next.js Image component
-jest.mock('next/image', () => ({
+vi.mock('next/image', () => ({
   __esModule: true,
-  default: (props) => {
+  default: (props: any) => {
     // eslint-disable-next-line @next/next/no-img-element
-    return <img {...props} />;
+    return React.createElement('img', props);
   },
 }));
 
 // Mock Next.js Link component
-jest.mock('next/link', () => ({
+vi.mock('next/link', () => ({
   __esModule: true,
-  default: ({ children, href, ...props }) => {
-    return (
-      <a href={href} {...props}>
-        {children}
-      </a>
-    );
+  default: ({ children, href, ...props }: any) => {
+    return React.createElement('a', { href, ...props }, children);
   },
 }));

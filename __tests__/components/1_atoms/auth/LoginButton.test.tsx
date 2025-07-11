@@ -99,7 +99,7 @@ describe('LoginButton', () => {
   });
 
   it('handles click events', () => {
-    const handleClick = jest.fn();
+    const handleClick = vi.fn();
     render(<LoginButton onClick={handleClick} />);
 
     const button = screen.getByRole('button');

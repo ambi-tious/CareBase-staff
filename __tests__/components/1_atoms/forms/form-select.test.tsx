@@ -6,7 +6,7 @@ describe('FormSelect', () => {
     label: 'Test Select',
     id: 'test-select',
     value: '',
-    onChange: jest.fn(),
+    onChange: vi.fn(),
     options: [
       { value: 'option1', label: 'Option 1' },
       { value: 'option2', label: 'Option 2' },
@@ -15,7 +15,7 @@ describe('FormSelect', () => {
   };
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('renders with default props', () => {

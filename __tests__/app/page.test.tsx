@@ -1,9 +1,9 @@
 import HomePage from '@/app/(main)/page';
-import { jest } from '@jest/globals';
+import { vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 
 // Mock the CareBoard component
-jest.mock('@/components/3_organisms/care-board/care-board', () => ({
+vi.mock('@/components/3_organisms/care-board/care-board', () => ({
   CareBoard: () => <div data-testid="care-board">CareBoard Component</div>,
 }));
 

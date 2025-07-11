@@ -6,11 +6,11 @@ describe('FormField', () => {
     label: 'Test Label',
     id: 'test-field',
     value: '',
-    onChange: jest.fn(),
+    onChange: vi.fn(),
   };
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('renders with default props', () => {
