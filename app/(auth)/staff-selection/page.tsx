@@ -3,7 +3,7 @@
 import { StaffSelectionScreen } from '@/components/3_organisms/auth/staff-selection-screen';
 import type { Staff } from '@/mocks/staff-data';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Suspense, useEffect, useState } from 'react';
+import { Suspense, useEffect, useRef, useState } from 'react';
 
 interface SelectedStaffData {
   staff: Staff;
@@ -20,6 +20,7 @@ function StaffSelectionContent() {
   const autoSelectTeam = searchParams.get('autoSelectTeam') !== 'false';
   const fromGroupClick = searchParams.get('group') === 'true';
   const [selectedStaffData, setSelectedStaffData] = useState<SelectedStaffData | undefined>(
+  const staffSelectionRef = useRef<HTMLDivElement>(null);
     undefined
   );
 
@@ -33,6 +34,21 @@ function StaffSelectionContent() {
     } catch (error) {
       console.error('Failed to load selected staff data:', error);
     }
+  }, []);
+
+  // Scroll to staff selection area after component mounts
+  useEffect(() => {
+    // Short delay to ensure the component is fully rendered
+    const timer = setTimeout(() => {
+      if (staffSelectionRef.current) {
+        staffSelectionRef.current.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start'
+        });
+      }
+    }, 300);
+
+    return () => clearTimeout(timer);
   }, []);
 
   const handleStaffSelected = async (staff: Staff): Promise<void> => {
@@ -71,6 +87,7 @@ function StaffSelectionContent() {
   return (
     <div className="min-h-screen bg-carebase-bg flex items-center justify-center p-4">
       <StaffSelectionScreen
+        ref={staffSelectionRef}
         fromHeader={fromHeader}
         fromStaffClick={fromStaffClick}
         fromGroupClick={fromGroupClick}

@@ -10,7 +10,7 @@ import { getLucideIcon } from '@/lib/lucide-icon-registry';
 import type { Staff } from '@/mocks/staff-data';
 import { getGroupById, getStaffById, getTeamById, organizationData } from '@/mocks/staff-data';
 import { AlertCircle, LogOut } from 'lucide-react';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { forwardRef, useEffect, useRef, useState } from 'react';
 
 // Define the type for selected staff data
 interface SelectedStaffData {
@@ -31,7 +31,7 @@ interface StaffSelectionScreenProps {
   className?: string;
 }
 
-export const StaffSelectionScreen: React.FC<StaffSelectionScreenProps> = ({
+export const StaffSelectionScreen = forwardRef<HTMLDivElement, StaffSelectionScreenProps>(({
   onStaffSelected,
   onLogout,
   fromHeader = false,
@@ -41,7 +41,7 @@ export const StaffSelectionScreen: React.FC<StaffSelectionScreenProps> = ({
   fromGroupClick = false,
   selectedStaffData,
   className = '',
-}) => {
+}, ref) => {
   const [selectedGroupId, setSelectedGroupId] = useState<string>('');
   const [selectedTeamId, setSelectedTeamId] = useState<string>('');
   const [selectedStaffId, setSelectedStaffId] = useState<string>('');
@@ -195,7 +195,7 @@ export const StaffSelectionScreen: React.FC<StaffSelectionScreenProps> = ({
   };
 
   return (
-    <div className={`max-w-4xl w-full mx-auto ${className}`}>
+    <div ref={ref} className={`max-w-4xl w-full mx-auto ${className}`}>
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
@@ -305,4 +305,4 @@ export const StaffSelectionScreen: React.FC<StaffSelectionScreenProps> = ({
       </Card>
     </div>
   );
-};
+});
