@@ -1,5 +1,23 @@
-import '@testing-library/jest-dom';
 import { jest } from '@jest/globals';
+import '@testing-library/jest-dom';
+
+// Suppress console warnings for SVG fill attribute
+const originalError = console.error;
+beforeAll(() => {
+  console.error = (...args) => {
+    if (
+      typeof args[0] === 'string' &&
+      args[0].includes('Received `true` for a non-boolean attribute `fill`')
+    ) {
+      return;
+    }
+    originalError.call(console, ...args);
+  };
+});
+
+afterAll(() => {
+  console.error = originalError;
+});
 
 // Mock Next.js router
 jest.mock('next/navigation', () => ({

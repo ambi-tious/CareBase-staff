@@ -1,7 +1,8 @@
 import { MedicationCard } from '@/components/2_molecules/medication/medication-card';
 import type { Medication } from '@/types/medication';
 import { jest } from '@jest/globals';
-import { fireEvent, render, screen } from '@testing-library/react';
+import '@testing-library/jest-dom';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 
 // Mock the medication service
 jest.mock('@/services/medicationService', () => ({
@@ -9,25 +10,6 @@ jest.mock('@/services/medicationService', () => ({
     updateMedication: jest.fn(),
     deleteMedication: jest.fn(),
   },
-}));
-
-// Mock the modals
-jest.mock('@/components/3_organisms/modals/medication-modal', () => ({
-  MedicationModal: ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) =>
-    isOpen ? (
-      <div data-testid="medication-modal">
-        <button onClick={onClose}>Close</button>
-      </div>
-    ) : null,
-}));
-
-jest.mock('@/components/3_organisms/modals/generic-delete-modal', () => ({
-  GenericDeleteModal: ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) =>
-    isOpen ? (
-      <div data-testid="delete-modal">
-        <button onClick={onClose}>Close</button>
-      </div>
-    ) : null,
 }));
 
 const mockMedication: Medication = {
@@ -90,22 +72,26 @@ describe('MedicationCard', () => {
     expect(screen.getByText('2025/1/15')).toBeInTheDocument();
   });
 
-  it('opens edit modal when edit button is clicked', () => {
+  it('opens edit modal when edit button is clicked', async () => {
     render(<MedicationCard {...mockProps} />);
 
     const editButton = screen.getByRole('button', { name: /編集/i });
     fireEvent.click(editButton);
 
-    expect(screen.getByTestId('medication-modal')).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByTestId('medication-modal')).toBeInTheDocument();
+    });
   });
 
-  it('opens delete modal when delete button is clicked', () => {
+  it('opens delete modal when delete button is clicked', async () => {
     render(<MedicationCard {...mockProps} />);
 
     const deleteButton = screen.getByRole('button', { name: /削除/i });
     fireEvent.click(deleteButton);
 
-    expect(screen.getByTestId('delete-modal')).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByTestId('delete-modal')).toBeInTheDocument();
+    });
   });
 
   it('handles medication without end date', () => {

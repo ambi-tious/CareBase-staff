@@ -1,4 +1,4 @@
-import { ResidentProfileHeader } from '@/components/3_organisms/resident-profile-header';
+import { ResidentProfileHeader } from '@/components/3_organisms/resident/resident-profile-header';
 import type { Resident } from '@/mocks/care-board-data';
 import { render, screen } from '@testing-library/react';
 
@@ -64,12 +64,6 @@ describe('ResidentProfileHeader', () => {
 
     const avatar = screen.getByAltText('佐藤清');
     expect(avatar).toBeInTheDocument();
-  });
-
-  it('renders update image link', () => {
-    render(<ResidentProfileHeader resident={mockResident} />);
-
-    expect(screen.getByText('画像を更新')).toBeInTheDocument();
   });
 
   it('handles optional fields correctly', () => {

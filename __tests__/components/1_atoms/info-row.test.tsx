@@ -1,4 +1,4 @@
-import { InfoRow } from '@/components/1_atoms/info-row';
+import { InfoRow } from '@/components/1_atoms/common/info-row';
 import '@testing-library/jest-dom';
 import { render, screen } from '@testing-library/react';
 

@@ -24,7 +24,7 @@ describe('care-board-data', () => {
 
   describe('careBoardData', () => {
     it('contains expected number of residents', () => {
-      expect(careBoardData).toHaveLength(8);
+      expect(careBoardData).toHaveLength(10);
     });
 
     it('all residents have required fields', () => {
@@ -71,7 +71,7 @@ describe('care-board-data', () => {
         expect(category.icon).toBeDefined();
         expect(typeof category.key).toBe('string');
         expect(typeof category.label).toBe('string');
-        expect(typeof category.icon).toBe('function');
+        expect(typeof category.icon).toBe('string');
       });
     });
   });

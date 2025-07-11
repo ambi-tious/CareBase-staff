@@ -1,15 +1,15 @@
 'use client';
 
-import type React from 'react';
+import { MedicationForm } from '@/components/2_molecules/forms/medication-form';
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogDescription,
 } from '@/components/ui/dialog';
-import { MedicationForm } from '@/components/2_molecules/forms/medication-form';
-import type { MedicationFormData, Medication } from '@/types/medication';
+import type { Medication, MedicationFormData } from '@/types/medication';
+import type React from 'react';
 
 interface MedicationModalProps {
   isOpen: boolean;
@@ -41,7 +41,10 @@ export const MedicationModal: React.FC<MedicationModalProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+      <DialogContent
+        className="max-w-4xl max-h-[90vh] overflow-y-auto"
+        data-testid="medication-modal"
+      >
         <DialogHeader>
           <DialogTitle className="text-xl font-bold text-carebase-text-primary">
             {mode === 'create' ? 'お薬情報の登録' : 'お薬情報の編集'}

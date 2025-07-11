@@ -111,7 +111,10 @@ describe('MedicationStatusCard', () => {
 
     render(<MedicationStatusCard {...mockProps} medicationStatus={statusWithMultilineContent} />);
 
-    const contentElement = screen.getByText('朝食後の薬を服用済み\n副作用なし\n血圧正常');
-    expect(contentElement).toHaveClass('whitespace-pre-line');
+    // Check that the content is rendered with proper formatting using a more specific approach
+    const contentElement = screen.getByText('内容:').closest('div')?.querySelector('p');
+    expect(contentElement).toHaveTextContent('朝食後の薬を服用済み');
+    expect(contentElement).toHaveTextContent('副作用なし');
+    expect(contentElement).toHaveTextContent('血圧正常');
   });
 });

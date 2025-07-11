@@ -243,7 +243,7 @@ export function CareBoard() {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
 
   return (
-    <div className="p-4 md:p-6 bg-carebase-bg min-h-screen">
+    <div data-testid="care-board" className="p-4 md:p-6 bg-carebase-bg min-h-screen">
       <div className="mb-4 flex flex-col md:flex-row md:items-center md:justify-between gap-2">
         <div className="flex items-center gap-1 flex-wrap">
           <div className="flex items-center gap-0.5 rounded-lg bg-gray-200 p-0.5">
