@@ -104,6 +104,26 @@ export const StaffSelectionScreen: React.FC<StaffSelectionScreenProps> = ({
     setError('');
   };
 
+  // Handle selection from header navigation
+  useEffect(() => {
+    // Check if we're coming from header navigation
+    const urlParams = new URLSearchParams(window.location.search);
+    const fromHeader = urlParams.get('from');
+    
+    if (fromHeader === 'header' && selectedStaffData) {
+      // Pre-select based on current staff data
+      const currentStaff = selectedStaffData.staff;
+      const groupId = getGroupIdByStaffName(selectedStaffData.groupName);
+      const teamId = getTeamIdByStaffAndGroup(currentStaff, groupId);
+      
+      if (groupId) {
+        setSelectedGroupId(groupId);
+      }
+      if (teamId) {
+        setSelectedTeamId(teamId);
+      }
+    }
+  }, [selectedStaffData]);
   const isGroupAutoSelected = organizationData.length === 1;
   const isTeamAutoSelected = selectedGroup && selectedGroup.teams.length === 1;
   const showGroupSelector = !isGroupAutoSelected;

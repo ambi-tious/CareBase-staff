@@ -3,9 +3,25 @@
 import { StaffSelectionScreen } from '@/components/3_organisms/auth/staff-selection-screen';
 import type { Staff } from '@/mocks/staff-data';
 import { useRouter } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 export default function StaffSelectionPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const [selectedStaffData, setSelectedStaffData] = useState<any>(null);
+
+  // Load current staff data for header navigation context
+  useEffect(() => {
+    try {
+      const data = localStorage.getItem('carebase_selected_staff_data');
+      if (data) {
+        setSelectedStaffData(JSON.parse(data));
+      }
+    } catch (error) {
+      console.error('Failed to load selected staff data:', error);
+    }
+  }, []);
 
   const handleStaffSelected = async (staff: Staff): Promise<void> => {
     // Simulate staff selection processing
@@ -45,6 +61,7 @@ export default function StaffSelectionPage() {
       <StaffSelectionScreen
         onStaffSelected={handleStaffSelected}
         onLogout={handleLogout}
+        selectedStaffData={selectedStaffData}
       />
     </div>
   );
@@ -90,4 +107,36 @@ function getTeamNameByStaff(staff: Staff): string {
   };
 
   return teamMapping[staff.id] || '不明なチーム';
+}
+
+// Helper functions for reverse lookup
+export function getGroupIdByStaffName(groupName: string): string | null {
+  const groupMapping: Record<string, string> = {
+    '介護フロア A': 'group-1',
+    '介護フロア B': 'group-2',
+    '管理部門': 'group-3',
+  };
+  return groupMapping[groupName] || null;
+}
+
+export function getTeamIdByStaffAndGroup(staff: Staff, groupId: string | null): string | null {
+  if (!groupId) return null;
+  
+  const teamMapping: Record<string, Record<string, string>> = {
+    'group-1': {
+      '朝番チーム': 'team-a1',
+      '日勤チーム': 'team-a2',
+      '夜勤チーム': 'team-a3',
+    },
+    'group-2': {
+      '朝番チーム': 'team-b1',
+      '日勤チーム': 'team-b2',
+    },
+    'group-3': {
+      '管理チーム': 'team-m1',
+    },
+  };
+  
+  const teamName = getTeamNameByStaff(staff);
+  return teamMapping[groupId]?.[teamName] || null;
 }
