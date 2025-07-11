@@ -1,17 +1,17 @@
 /**
  * Authentication Hook
- * 
+ *
  * Manages authentication state and provides authentication functions
  */
 
 import { useState, useCallback, useEffect } from 'react';
-import type { 
-  AuthState, 
-  AuthUser, 
-  SelectedStaff, 
+import type {
+  AuthState,
+  AuthUser,
+  SelectedStaff,
   LoginCredentials,
   AuthResponse,
-  StaffSelectionResponse 
+  StaffSelectionResponse,
 } from '@/types/auth';
 import { validateLoginFormRelaxed } from '@/validations/auth-validation';
 import { authService } from '@/services/auth-service';
@@ -66,7 +66,7 @@ export const useAuth = () => {
     if (response.token && response.user) {
       localStorage.setItem('carebase_token', response.token);
       localStorage.setItem('carebase_user', JSON.stringify(response.user));
-      
+
       setAuthState({
         isAuthenticated: true,
         token: response.token,
@@ -78,94 +78,100 @@ export const useAuth = () => {
     }
   }, []);
 
-  const login = useCallback(async (credentials: LoginCredentials): Promise<boolean> => {
-    // Validate credentials
-    const validation = validateLoginFormRelaxed(credentials);
-    if (!validation.success) {
-      setAuthState(prev => ({
-        ...prev,
-        error: validation.error?.errors[0]?.message || 'バリデーションエラーが発生しました',
-        isLoading: false,
-      }));
-      return false;
-    }
-
-    setAuthState(prev => ({
-      ...prev,
-      isLoading: true,
-      error: null,
-    }));
-
-    try {
-      const response = await authService.login(credentials);
-      
-      if (response.success) {
-        saveAuthState(response);
-        return true;
-      } else {
-        setAuthState(prev => ({
+  const login = useCallback(
+    async (credentials: LoginCredentials): Promise<boolean> => {
+      // Validate credentials
+      const validation = validateLoginFormRelaxed(credentials);
+      if (!validation.success) {
+        setAuthState((prev) => ({
           ...prev,
-          error: response.error || 'ログインに失敗しました',
+          error: validation.error?.errors[0]?.message || 'バリデーションエラーが発生しました',
           isLoading: false,
         }));
         return false;
       }
-    } catch (error) {
-      setAuthState(prev => ({
+
+      setAuthState((prev) => ({
         ...prev,
-        error: 'ログイン中にエラーが発生しました。もう一度お試しください。',
-        isLoading: false,
+        isLoading: true,
+        error: null,
       }));
-      return false;
-    }
-  }, [saveAuthState]);
 
-  const selectStaff = useCallback(async (staffId: string): Promise<boolean> => {
-    if (!authState.token) {
-      setAuthState(prev => ({
-        ...prev,
-        error: 'ログイン情報が見つかりません',
-      }));
-      return false;
-    }
+      try {
+        const response = await authService.login(credentials);
 
-    setAuthState(prev => ({
-      ...prev,
-      isLoading: true,
-      error: null,
-    }));
-
-    try {
-      const response = await authService.selectStaff(authState.token, staffId);
-      
-      if (response.success && response.staff) {
-        localStorage.setItem('carebase_selected_staff', JSON.stringify(response.staff));
-        setAuthState(prev => ({
+        if (response.success) {
+          saveAuthState(response);
+          return true;
+        } else {
+          setAuthState((prev) => ({
+            ...prev,
+            error: response.error || 'ログインに失敗しました',
+            isLoading: false,
+          }));
+          return false;
+        }
+      } catch (error) {
+        setAuthState((prev) => ({
           ...prev,
-          selectedStaff: response.staff!,
-          isLoading: false,
-        }));
-        return true;
-      } else {
-        setAuthState(prev => ({
-          ...prev,
-          error: response.error || '職員選択に失敗しました',
+          error: 'ログイン中にエラーが発生しました。もう一度お試しください。',
           isLoading: false,
         }));
         return false;
       }
-    } catch (error) {
-      setAuthState(prev => ({
+    },
+    [saveAuthState]
+  );
+
+  const selectStaff = useCallback(
+    async (staffId: string): Promise<boolean> => {
+      if (!authState.token) {
+        setAuthState((prev) => ({
+          ...prev,
+          error: 'ログイン情報が見つかりません',
+        }));
+        return false;
+      }
+
+      setAuthState((prev) => ({
         ...prev,
-        error: '職員選択中にエラーが発生しました。もう一度お試しください。',
-        isLoading: false,
+        isLoading: true,
+        error: null,
       }));
-      return false;
-    }
-  }, [authState.token]);
+
+      try {
+        const response = await authService.selectStaff(authState.token, staffId);
+
+        if (response.success && response.staff) {
+          localStorage.setItem('carebase_selected_staff', JSON.stringify(response.staff));
+          setAuthState((prev) => ({
+            ...prev,
+            selectedStaff: response.staff!,
+            isLoading: false,
+          }));
+          return true;
+        } else {
+          setAuthState((prev) => ({
+            ...prev,
+            error: response.error || '職員選択に失敗しました',
+            isLoading: false,
+          }));
+          return false;
+        }
+      } catch (error) {
+        setAuthState((prev) => ({
+          ...prev,
+          error: '職員選択中にエラーが発生しました。もう一度お試しください。',
+          isLoading: false,
+        }));
+        return false;
+      }
+    },
+    [authState.token]
+  );
 
   const logout = useCallback(async (): Promise<void> => {
-    setAuthState(prev => ({
+    setAuthState((prev) => ({
       ...prev,
       isLoading: true,
     }));
@@ -182,7 +188,7 @@ export const useAuth = () => {
   }, [authState.token, clearAuthState]);
 
   const clearError = useCallback(() => {
-    setAuthState(prev => ({
+    setAuthState((prev) => ({
       ...prev,
       error: null,
     }));
@@ -196,7 +202,7 @@ export const useAuth = () => {
     selectedStaff: authState.selectedStaff,
     isLoading: authState.isLoading,
     error: authState.error,
-    
+
     // Actions
     login,
     selectStaff,

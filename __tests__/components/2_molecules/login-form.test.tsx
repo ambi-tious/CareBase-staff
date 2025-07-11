@@ -83,9 +83,7 @@ describe('LoginForm', () => {
     fireEvent.click(submitButton);
 
     await waitFor(() => {
-      expect(
-        screen.getByText('施設IDまたはパスワードが正しくありません。')
-      ).toBeInTheDocument();
+      expect(screen.getByText('施設IDまたはパスワードが正しくありません。')).toBeInTheDocument();
     });
   });
 

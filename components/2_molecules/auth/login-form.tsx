@@ -54,7 +54,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
             error={fieldErrors.facilityId}
             variant={fieldErrors.facilityId ? 'error' : 'default'}
           />
-          
+
           <InputField
             id="password"
             type="password"
@@ -68,21 +68,9 @@ export const LoginForm: React.FC<LoginFormProps> = ({
             variant={fieldErrors.password ? 'error' : 'default'}
           />
 
-          {error && (
-            <ErrorAlert 
-              type="error" 
-              message={error} 
-              dismissible 
-              onDismiss={clearError}
-            />
-          )}
+          {error && <ErrorAlert type="error" message={error} dismissible onDismiss={clearError} />}
 
-          {success && (
-            <ErrorAlert 
-              type="success" 
-              message="ログインに成功しました。" 
-            />
-          )}
+          {success && <ErrorAlert type="success" message="ログインに成功しました。" />}
 
           <LoginButton
             isLoading={isLoading}

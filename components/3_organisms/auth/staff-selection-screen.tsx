@@ -41,7 +41,7 @@ export const StaffSelectionScreen: React.FC<StaffSelectionScreenProps> = ({
         // Find the group and team IDs based on the selected staff
         for (const group of organizationData) {
           for (const team of group.teams) {
-            const staff = team.staff.find(s => s.id === selectedData.staff.id);
+            const staff = team.staff.find((s) => s.id === selectedData.staff.id);
             if (staff) {
               setSelectedGroupId(group.id);
               setSelectedTeamId(team.id);

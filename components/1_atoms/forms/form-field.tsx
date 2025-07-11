@@ -41,10 +41,7 @@ export const FormField: React.FC<FormFieldProps> = ({
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
         disabled={disabled}
-        className={cn(
-          'w-full',
-          error && 'border-red-300 focus:border-red-500 focus:ring-red-500'
-        )}
+        className={cn('w-full', error && 'border-red-300 focus:border-red-500 focus:ring-red-500')}
       />
       {error && (
         <p className="text-sm text-red-600" role="alert">

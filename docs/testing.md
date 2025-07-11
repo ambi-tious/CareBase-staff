@@ -107,11 +107,9 @@ it('should handle user interaction', () => {
 ### よくある問題
 
 1. **Next.js Image コンポーネントのエラー**
-
    - `jest.setup.js`でモック済み
 
 2. **ルーターのエラー**
-
    - `next/navigation`のモック済み
 
 3. **CSS関連のエラー**

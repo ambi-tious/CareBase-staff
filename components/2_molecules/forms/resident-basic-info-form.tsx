@@ -69,10 +69,8 @@ export const ResidentBasicInfoForm: React.FC<ResidentBasicInfoFormProps> = ({
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
       {/* 基本情報 */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-carebase-text-primary border-b pb-2">
-          基本情報
-        </h3>
-        
+        <h3 className="text-lg font-semibold text-carebase-text-primary border-b pb-2">基本情報</h3>
+
         <FormField
           label="氏名"
           id="name"
@@ -131,9 +129,7 @@ export const ResidentBasicInfoForm: React.FC<ResidentBasicInfoFormProps> = ({
 
       {/* 施設情報 */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-carebase-text-primary border-b pb-2">
-          施設情報
-        </h3>
+        <h3 className="text-lg font-semibold text-carebase-text-primary border-b pb-2">施設情報</h3>
 
         <FormSelect
           label="所属フロア・グループ"

@@ -1,5 +1,4 @@
-import type { LucideIcon } from 'lucide-react';
-import { Users, UserCheck, Shield, Stethoscope, Heart, Clipboard } from 'lucide-react';
+import type { IconName } from '@/lib/lucide-icon-registry';
 
 export interface Staff {
   id: string;
@@ -15,7 +14,7 @@ export interface Team {
   id: string;
   name: string;
   description: string;
-  icon: LucideIcon;
+  icon: IconName;
   staff: Staff[];
 }
 
@@ -23,7 +22,7 @@ export interface Group {
   id: string;
   name: string;
   description: string;
-  icon: LucideIcon;
+  icon: IconName;
   teams: Team[];
 }
 
@@ -32,13 +31,13 @@ export const organizationData: Group[] = [
     id: 'group-1',
     name: '介護フロア A',
     description: '1階 介護フロア',
-    icon: Heart,
+    icon: 'Heart',
     teams: [
       {
         id: 'team-a1',
         name: '朝番チーム',
         description: '早朝・午前担当',
-        icon: UserCheck,
+        icon: 'UserCheck',
         staff: [
           {
             id: 'staff-001',
@@ -70,7 +69,7 @@ export const organizationData: Group[] = [
         id: 'team-a2',
         name: '日勤チーム',
         description: '日中担当',
-        icon: Users,
+        icon: 'Users',
         staff: [
           {
             id: 'staff-004',
@@ -94,7 +93,7 @@ export const organizationData: Group[] = [
         id: 'team-a3',
         name: '夜勤チーム',
         description: '夜間担当',
-        icon: Shield,
+        icon: 'Shield',
         staff: [
           {
             id: 'staff-006',
@@ -120,13 +119,13 @@ export const organizationData: Group[] = [
     id: 'group-2',
     name: '介護フロア B',
     description: '2階 介護フロア',
-    icon: Stethoscope,
+    icon: 'Stethoscope',
     teams: [
       {
         id: 'team-b1',
         name: '朝番チーム',
         description: '早朝・午前担当',
-        icon: UserCheck,
+        icon: 'UserCheck',
         staff: [
           {
             id: 'staff-008',
@@ -150,7 +149,7 @@ export const organizationData: Group[] = [
         id: 'team-b2',
         name: '日勤チーム',
         description: '日中担当',
-        icon: Users,
+        icon: 'Users',
         staff: [
           {
             id: 'staff-010',
@@ -168,13 +167,13 @@ export const organizationData: Group[] = [
     id: 'group-3',
     name: '管理部門',
     description: '施設管理・事務',
-    icon: Clipboard,
+    icon: 'Clipboard',
     teams: [
       {
         id: 'team-m1',
         name: '管理チーム',
         description: '施設長・事務',
-        icon: Shield,
+        icon: 'Shield',
         staff: [
           {
             id: 'staff-011',

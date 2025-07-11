@@ -1,6 +1,6 @@
 /**
  * Login Button Atom
- * 
+ *
  * Specialized button component for login functionality
  */
 
@@ -20,17 +20,20 @@ export interface LoginButtonProps extends React.ButtonHTMLAttributes<HTMLButtonE
 }
 
 export const LoginButton = forwardRef<HTMLButtonElement, LoginButtonProps>(
-  ({ 
-    isLoading = false,
-    variant = 'default',
-    size = 'md',
-    fullWidth = true,
-    loadingText = 'ログイン中...',
-    children = 'ログイン',
-    className,
-    disabled,
-    ...props 
-  }, ref) => {
+  (
+    {
+      isLoading = false,
+      variant = 'default',
+      size = 'md',
+      fullWidth = true,
+      loadingText = 'ログイン中...',
+      children = 'ログイン',
+      className,
+      disabled,
+      ...props
+    },
+    ref
+  ) => {
     const getSizeStyles = () => {
       switch (size) {
         case 'sm':

@@ -5,7 +5,7 @@ import type { Resident } from '@/mocks/care-board-data';
 export const residentService = {
   async createResident(data: ResidentBasicInfo): Promise<Resident> {
     // Simulate API call delay
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    await new Promise((resolve) => setTimeout(resolve, 1000));
 
     // Calculate age from date of birth
     const calculateAge = (dob: string): number => {
@@ -13,16 +13,17 @@ export const residentService = {
       const birthDate = new Date(dob);
       let age = today.getFullYear() - birthDate.getFullYear();
       const monthDiff = today.getMonth() - birthDate.getMonth();
-      
+
       if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
         age--;
       }
-      
+
       return age;
     };
 
     // Generate new resident ID (in production, this would be handled by the backend)
-    const newId = Math.max(...(await import('@/mocks/care-board-data')).careBoardData.map(r => r.id)) + 1;
+    const newId =
+      Math.max(...(await import('@/mocks/care-board-data')).careBoardData.map((r) => r.id)) + 1;
 
     // Create new resident object
     const newResident: Resident = {
@@ -59,15 +60,15 @@ export const residentService = {
 
   async updateResident(id: number, data: Partial<ResidentBasicInfo>): Promise<Resident> {
     // Simulate API call delay
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    await new Promise((resolve) => setTimeout(resolve, 1000));
 
     // In production, this would make an API call to update the resident
     console.log('Updating resident:', id, data);
 
     // For now, return a mock updated resident
     const { careBoardData } = await import('@/mocks/care-board-data');
-    const existingResident = careBoardData.find(r => r.id === id);
-    
+    const existingResident = careBoardData.find((r) => r.id === id);
+
     if (!existingResident) {
       throw new Error('Resident not found');
     }
@@ -79,7 +80,7 @@ export const residentService = {
     };
 
     // Update the resident in the careBoardData array
-    const residentIndex = careBoardData.findIndex(r => r.id === id);
+    const residentIndex = careBoardData.findIndex((r) => r.id === id);
     if (residentIndex !== -1) {
       careBoardData[residentIndex] = updatedResident;
     }

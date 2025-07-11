@@ -17,7 +17,8 @@ export const ResidentsList: React.FC = () => {
   const filteredResidents = useMemo(() => {
     return careBoardData.filter((resident) => {
       // Filter by search query
-      const matchesSearch = searchQuery === '' || 
+      const matchesSearch =
+        searchQuery === '' ||
         resident.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         resident.furigana.toLowerCase().includes(searchQuery.toLowerCase());
 
@@ -32,8 +33,10 @@ export const ResidentsList: React.FC = () => {
     router.push('/residents/new');
   };
 
-  const activeResidentsCount = careBoardData.filter(r => r.admissionStatus === '入居中').length;
-  const dischargedResidentsCount = careBoardData.filter(r => r.admissionStatus === '退所済').length;
+  const activeResidentsCount = careBoardData.filter((r) => r.admissionStatus === '入居中').length;
+  const dischargedResidentsCount = careBoardData.filter(
+    (r) => r.admissionStatus === '退所済'
+  ).length;
 
   return (
     <div className="p-4 md:p-6 bg-carebase-bg min-h-screen">
@@ -65,10 +68,9 @@ export const ResidentsList: React.FC = () => {
           <Users className="h-12 w-12 text-gray-400 mx-auto mb-4" />
           <h3 className="text-lg font-medium text-gray-900 mb-2">利用者が見つかりません</h3>
           <p className="text-gray-500">
-            {searchQuery 
+            {searchQuery
               ? '検索条件に一致する利用者がいません。検索キーワードを変更してお試しください。'
-              : '利用者が登録されていません。新規利用者を登録してください。'
-            }
+              : '利用者が登録されていません。新規利用者を登録してください。'}
           </p>
         </div>
       ) : (

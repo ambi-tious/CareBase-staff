@@ -10,11 +10,7 @@ interface AlertIndicatorProps {
   className?: string;
 }
 
-export const AlertIndicator: React.FC<AlertIndicatorProps> = ({
-  level,
-  count,
-  className = '',
-}) => {
+export const AlertIndicator: React.FC<AlertIndicatorProps> = ({ level, count, className = '' }) => {
   const getAlertConfig = () => {
     switch (level) {
       case 'high':

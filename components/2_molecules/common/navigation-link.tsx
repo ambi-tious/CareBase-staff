@@ -1,8 +1,18 @@
 import Link from 'next/link';
 import { ChevronRight } from 'lucide-react';
-import type { NavLink } from '@/mocks/dashboard-menu';
+import type { IconName } from '@/lib/lucide-icon-registry';
+import { getLucideIcon } from '@/lib/lucide-icon-registry';
 
-export function NavigationLink({ label, href, icon: Icon, setIsMenuOpen }: NavLink & { setIsMenuOpen: (open: boolean) => void }) {
+interface NavigationLinkProps {
+  label: string;
+  href: string;
+  icon: IconName;
+  setIsMenuOpen: (open: boolean) => void;
+}
+
+export function NavigationLink({ label, href, icon, setIsMenuOpen }: NavigationLinkProps) {
+  const Icon = getLucideIcon(icon);
+
   return (
     <Link
       href={href}

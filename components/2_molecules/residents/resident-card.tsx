@@ -1,14 +1,14 @@
 'use client';
 
-import type React from 'react';
+import { AlertIndicator } from '@/components/1_atoms/residents/alert-indicator';
+import { ResidentStatusBadge } from '@/components/1_atoms/residents/resident-status-badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import type { Resident } from '@/mocks/care-board-data';
+import { Calendar, Edit, MapPin, User } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { ResidentStatusBadge } from '@/components/1_atoms/residents/resident-status-badge';
-import { AlertIndicator, type AlertLevel } from '@/components/1_atoms/residents/alert-indicator';
-import { User, Calendar, MapPin, Edit } from 'lucide-react';
-import type { Resident } from '@/mocks/care-board-data';
+import type React from 'react';
 
 interface ResidentCardProps {
   resident: Resident;
@@ -78,7 +78,9 @@ export const ResidentCard: React.FC<ResidentCardProps> = ({ resident, className 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm text-gray-600 mb-3">
               <div className="flex items-center gap-1">
                 <User className="h-3 w-3" />
-                <span>{resident.age}歳 ({resident.sex})</span>
+                <span>
+                  {resident.age}歳 ({resident.sex})
+                </span>
               </div>
               <div className="flex items-center gap-1">
                 <Calendar className="h-3 w-3" />
