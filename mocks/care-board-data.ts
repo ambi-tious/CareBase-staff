@@ -536,9 +536,3 @@ export const getResidentById = (id: number): Resident | undefined => {
   return careBoardData.find((resident) => resident.id === id);
 };
 
-// Helper function to calculate certification validity end date
-function calculateCertValidityEnd(admissionDate: string): string {
-  const date = new Date(admissionDate.replace(/\//g, '-'));
-  date.setFullYear(date.getFullYear() + 1);
-  return date.toISOString().split('T')[0].replace(/-/g, '/');
-}
