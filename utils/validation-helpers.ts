@@ -118,7 +118,7 @@ export const validateAsync = async <T>(
       data: isValid ? data : undefined,
       error: isValid ? undefined : errorMessage,
     };
-  } catch (error) {
+  } catch {
     return {
       isValid: false,
       error: errorMessage,
@@ -186,7 +186,7 @@ export const createValidationMessage = (
   field: string,
   rule: string,
   value?: string | number
-): string => {
+): string | undefined => {
   const messages: Record<string, string> = {
     required: `${field}は必須です`,
     minLength: `${field}は${value}文字以上で入力してください`,
@@ -198,5 +198,5 @@ export const createValidationMessage = (
     datetime: `有効な日時を入力してください`,
   };
 
-  return messages[rule] || `${field}の入力値が正しくありません`;
+  return messages[rule] || undefined;
 };

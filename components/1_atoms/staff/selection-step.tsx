@@ -1,5 +1,5 @@
-import type React from 'react';
 import { Check, ChevronRight } from 'lucide-react';
+import type React from 'react';
 
 interface SelectionStepProps {
   stepNumber: number;
@@ -29,7 +29,7 @@ export const SelectionStep: React.FC<SelectionStepProps> = ({
               : 'bg-gray-200 text-gray-500'
         }`}
       >
-        {isCompleted ? <Check className="w-4 h-4" /> : stepNumber}
+        {isCompleted ? <Check className="w-4 h-4" data-testid="check-icon" /> : stepNumber}
       </div>
       <div className="flex-1">
         <h3 className={`font-medium ${isActive ? 'text-carebase-text-primary' : 'text-gray-500'}`}>
@@ -38,7 +38,10 @@ export const SelectionStep: React.FC<SelectionStepProps> = ({
         {description && <p className="text-sm text-gray-400">{description}</p>}
       </div>
       {!isCompleted && (
-        <ChevronRight className={`w-4 h-4 ${isActive ? 'text-carebase-blue' : 'text-gray-300'}`} />
+        <ChevronRight
+          className={`w-4 h-4 ${isActive ? 'text-carebase-blue' : 'text-gray-300'}`}
+          data-testid="chevron-icon"
+        />
       )}
     </div>
   );

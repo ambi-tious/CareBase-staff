@@ -3,6 +3,8 @@
 CareBaseは、介護現場の記録・情報共有を効率化するSaaS型Webアプリケーションのフロントエンドです。
 
 [![Deployed on Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-black?style=for-the-badge&logo=vercel)](https://vercel.com/hornet-ventures/carebase-staff)
+[![Tests](https://github.com/your-org/carebase-staff/workflows/Test%20Suite/badge.svg)](https://github.com/your-org/carebase-staff/actions)
+[![Security Scan](https://github.com/your-org/carebase-staff/workflows/Security%20Scan/badge.svg)](https://github.com/your-org/carebase-staff/actions)
 
 ## 🎯 プロジェクト概要
 
@@ -27,11 +29,13 @@ CareBaseは、多忙な介護スタッフでも直感的かつ迅速に操作で
 - **状態管理**: React Hooks (useState, useEffect)
 - **デザインパターン**: Atomic Design
 - **開発ツール**: ESLint, Prettier
+- **テスト**: Jest, React Testing Library
+- **CI/CD**: GitHub Actions
 - **デプロイ**: Vercel
 
 ## 📁 ディレクトリ構造
 
-\`\`\`
+```
 ├── app/ # Next.js App Router
 │ ├── (main)/ # メインレイアウトグループ
 │ │ ├── residents/ # 利用者関連ページ
@@ -43,38 +47,112 @@ CareBaseは、多忙な介護スタッフでも直感的かつ迅速に操作で
 │ ├── 2_molecules/ # 複数のAtomで構成
 │ ├── 3_organisms/ # 自立したUIセクション
 │ └── ui/ # shadcn/ui コンポーネント
+├── __tests__/ # テストファイル
 ├── docs/ # プロジェクトドキュメント
 ├── mocks/ # モックデータ
 ├── lib/ # ユーティリティ関数
+├── .github/workflows/ # CI/CDワークフロー
 └── public/ # 静的ファイル
-\`\`\`
+```
 
 ## 🚀 セットアップ
 
 ### 前提条件
 
-- Node.js 22.x (LTS)
-- npm または yarn
+- Node.js 18.x または 20.x (LTS)
+- pnpm 8.x
 
 ### インストール
 
-\`\`\`bash
-
+```bash
 # リポジトリをクローン
-
 git clone <repository-url>
-cd carebase-frontend
+cd carebase-staff
 
 # 依存関係をインストール
-
-npm install
+pnpm install
 
 # 開発サーバーを起動
-
-npm run dev
-\`\`\`
+pnpm dev
+```
 
 開発サーバーが起動したら、[http://localhost:3000](http://localhost:3000) でアプリケーションにアクセスできます。
+
+## 🧪 テスト
+
+### テストの実行
+
+```bash
+# 全テストを実行
+pnpm test
+
+# テストをウォッチモードで実行
+pnpm test:watch
+
+# カバレッジ付きでテストを実行
+pnpm test:coverage
+
+# CI用のテスト（カバレッジ付き、ウォッチモード無効）
+pnpm test:ci
+```
+
+### テストカバレッジ
+
+テストカバレッジは以下の基準を満たす必要があります：
+
+- **Branches**: 70%以上
+- **Functions**: 70%以上
+- **Lines**: 70%以上
+- **Statements**: 70%以上
+
+### テストファイルの配置
+
+- `__tests__/` ディレクトリにテストファイルを配置
+- コンポーネントのテストは `__tests__/components/` に配置
+- フックのテストは `__tests__/hooks/` に配置
+
+## 🔄 CI/CD
+
+### GitHub Actions ワークフロー
+
+プロジェクトには以下のCI/CDワークフローが設定されています：
+
+#### 1. Test Suite (`test.yml`)
+
+- **トリガー**: プッシュ、プルリクエスト
+- **実行内容**:
+  - Node.js 18.x と 20.x でのテスト実行
+  - リンティング
+  - 型チェック
+  - テストカバレッジの生成
+  - Codecovへのカバレッジレポート送信
+
+#### 2. Security Scan (`security.yml`)
+
+- **トリガー**: プッシュ、プルリクエスト、毎週月曜日
+- **実行内容**:
+  - npm audit
+  - Snyk セキュリティスキャン
+  - OWASP Dependency Check
+
+#### 3. Deploy (`deploy.yml`)
+
+- **トリガー**: main/developブランチへのプッシュ
+- **実行内容**:
+  - アプリケーションのビルド
+  - ステージング環境へのデプロイ（developブランチ）
+  - 本番環境へのデプロイ（mainブランチ）
+
+### 環境変数
+
+GitHub Secretsで以下の環境変数を設定してください：
+
+- `SNYK_TOKEN`: Snykセキュリティスキャン用のトークン
+
+### デプロイ環境
+
+- **ステージング**: `develop`ブランチから自動デプロイ
+- **本番**: `main`ブランチから自動デプロイ
 
 ## 📚 ドキュメント
 
@@ -101,6 +179,14 @@ UIコンポーネントは Atomic Design の階層に従って実装します：
 - コンポーネントのprops型を明示的に定義
 - サーバーコンポーネント（RSC）を基本とし、必要な場合のみクライアントコンポーネントを使用
 
+### Git Hooks
+
+コミット前に以下のチェックが自動実行されます：
+
+- ESLintによるコード品質チェック
+- Prettierによるコードフォーマット
+- テストの実行
+
 ## 🎨 主要機能
 
 ### ケアボード
@@ -123,26 +209,21 @@ UIコンポーネントは Atomic Design の階層に従って実装します：
 
 ### Vercel（推奨）
 
-\`\`\`bash
-
+```bash
 # Vercel CLIを使用
-
 npm i -g vercel
 vercel
-\`\`\`
+```
 
 ### 手動デプロイ
 
-\`\`\`bash
-
+```bash
 # ビルド
-
-npm run build
+pnpm build
 
 # 本番サーバー起動
-
-npm start
-\`\`\`
+pnpm start
+```
 
 ## 🤝 コントリビューション
 
@@ -150,6 +231,13 @@ npm start
 2. 変更を実装
 3. テストを実行
 4. プルリクエストを作成
+
+### プルリクエストの要件
+
+- すべてのテストが通ること
+- カバレッジが70%以上であること
+- リンティングエラーがないこと
+- 型チェックが通ること
 
 ## 📄 ライセンス
 
@@ -159,6 +247,7 @@ npm start
 
 - **本番環境**: [https://vercel.com/hornet-ventures/carebase-staff](https://vercel.com/hornet-ventures/carebase-staff)
 - **設計ドキュメント**: [docs/overview.md](./docs/overview.md)
+- **CI/CD**: [GitHub Actions](https://github.com/your-org/carebase-staff/actions)
 
 ---
 

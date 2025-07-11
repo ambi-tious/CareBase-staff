@@ -24,7 +24,7 @@ const mockMedication: Medication = {
   updatedAt: '2025-01-15T00:00:00.000Z',
 };
 
-describe('MedicationCard', () => {
+describe('薬剤カード', () => {
   const mockProps = {
     medication: mockMedication,
     residentId: 1,
@@ -37,7 +37,7 @@ describe('MedicationCard', () => {
     jest.clearAllMocks();
   });
 
-  it('renders medication information correctly', () => {
+  it('薬剤情報を正しくレンダリングする', () => {
     render(<MedicationCard {...mockProps} />);
 
     expect(screen.getByText('アムロジピン錠5mg')).toBeInTheDocument();
@@ -47,14 +47,14 @@ describe('MedicationCard', () => {
     expect(screen.getByText('服用中')).toBeInTheDocument();
   });
 
-  it('shows correct status for ongoing medication', () => {
+  it('継続中の薬剤に対して正しいステータスを表示する', () => {
     render(<MedicationCard {...mockProps} />);
 
     const statusBadge = screen.getByText('服用中');
     expect(statusBadge).toHaveClass('bg-green-100', 'text-green-700');
   });
 
-  it('shows correct status for ended medication', () => {
+  it('終了した薬剤に対して正しいステータスを表示する', () => {
     const endedMedication = {
       ...mockMedication,
       endDate: '2024-12-31',
@@ -66,13 +66,13 @@ describe('MedicationCard', () => {
     expect(statusBadge).toHaveClass('bg-gray-100', 'text-gray-700');
   });
 
-  it('displays formatted dates correctly', () => {
+  it('フォーマットされた日付を正しく表示する', () => {
     render(<MedicationCard {...mockProps} />);
 
     expect(screen.getByText('2025/1/15')).toBeInTheDocument();
   });
 
-  it('opens edit modal when edit button is clicked', async () => {
+  it('編集ボタンがクリックされたときに編集モーダルを開く', async () => {
     render(<MedicationCard {...mockProps} />);
 
     const editButton = screen.getByRole('button', { name: /編集/i });
@@ -83,7 +83,7 @@ describe('MedicationCard', () => {
     });
   });
 
-  it('opens delete modal when delete button is clicked', async () => {
+  it('削除ボタンがクリックされたときに削除モーダルを開く', async () => {
     render(<MedicationCard {...mockProps} />);
 
     const deleteButton = screen.getByRole('button', { name: /削除/i });
@@ -94,13 +94,13 @@ describe('MedicationCard', () => {
     });
   });
 
-  it('handles medication without end date', () => {
+  it('終了日がない薬剤を処理する', () => {
     render(<MedicationCard {...mockProps} />);
 
     expect(screen.queryByText('服用終了日:')).not.toBeInTheDocument();
   });
 
-  it('handles medication without notes', () => {
+  it('メモがない薬剤を処理する', () => {
     const medicationWithoutNotes = {
       ...mockMedication,
       notes: undefined,
@@ -111,7 +111,7 @@ describe('MedicationCard', () => {
     expect(screen.queryByText('メモ:')).not.toBeInTheDocument();
   });
 
-  it('displays end date when provided', () => {
+  it('終了日が提供された場合に終了日を表示する', () => {
     const medicationWithEndDate = {
       ...mockMedication,
       endDate: '2025-12-31',

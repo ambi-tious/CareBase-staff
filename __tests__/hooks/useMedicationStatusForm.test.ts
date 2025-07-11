@@ -3,7 +3,7 @@ import type { MedicationStatusFormData } from '@/types/medication-status';
 import { jest } from '@jest/globals';
 import { act, renderHook } from '@testing-library/react';
 
-describe('useMedicationStatusForm', () => {
+describe('薬剤ステータスフォームフック', () => {
   const mockOnSubmit = jest.fn() as jest.MockedFunction<
     (data: MedicationStatusFormData) => Promise<boolean>
   >;
@@ -12,7 +12,7 @@ describe('useMedicationStatusForm', () => {
     mockOnSubmit.mockClear();
   });
 
-  it('initializes with default form data', () => {
+  it('デフォルトのフォームデータで初期化する', () => {
     const { result } = renderHook(() =>
       useMedicationStatusForm({
         onSubmit: mockOnSubmit,
@@ -30,7 +30,7 @@ describe('useMedicationStatusForm', () => {
     expect(result.current.fieldErrors).toEqual({});
   });
 
-  it('initializes with provided initial data', () => {
+  it('提供された初期データで初期化する', () => {
     const initialData: Partial<MedicationStatusFormData> = {
       content: 'Test content',
       notes: 'Test notes',
@@ -47,7 +47,7 @@ describe('useMedicationStatusForm', () => {
     expect(result.current.formData.notes).toBe('Test notes');
   });
 
-  it('updates field values correctly', () => {
+  it('フィールド値を正しく更新する', () => {
     const { result } = renderHook(() =>
       useMedicationStatusForm({
         onSubmit: mockOnSubmit,
@@ -61,7 +61,7 @@ describe('useMedicationStatusForm', () => {
     expect(result.current.formData.content).toBe('New content');
   });
 
-  it('validates required fields', async () => {
+  it('必須フィールドをバリデーションする', async () => {
     const { result } = renderHook(() =>
       useMedicationStatusForm({
         onSubmit: mockOnSubmit,
@@ -82,7 +82,7 @@ describe('useMedicationStatusForm', () => {
     expect(mockOnSubmit).not.toHaveBeenCalled();
   });
 
-  it('validates date is not in the future', async () => {
+  it('日付が未来でないことをバリデーションする', async () => {
     const { result } = renderHook(() =>
       useMedicationStatusForm({
         onSubmit: mockOnSubmit,
@@ -108,7 +108,7 @@ describe('useMedicationStatusForm', () => {
     expect(mockOnSubmit).not.toHaveBeenCalled();
   });
 
-  it('submits successfully with valid data', async () => {
+  it('有効なデータで正常に送信する', async () => {
     mockOnSubmit.mockResolvedValue(true);
 
     const { result } = renderHook(() =>
@@ -136,7 +136,7 @@ describe('useMedicationStatusForm', () => {
     });
   });
 
-  it('handles submission errors correctly', async () => {
+  it('送信エラーを正しく処理する', async () => {
     mockOnSubmit.mockRejectedValue(new Error('Network error'));
 
     const { result } = renderHook(() =>
@@ -159,7 +159,7 @@ describe('useMedicationStatusForm', () => {
     expect(result.current.error).toContain('ネットワークエラー');
   });
 
-  it('validates content length', async () => {
+  it('コンテンツの長さをバリデーションする', async () => {
     const { result } = renderHook(() =>
       useMedicationStatusForm({
         onSubmit: mockOnSubmit,
@@ -182,7 +182,7 @@ describe('useMedicationStatusForm', () => {
     expect(mockOnSubmit).not.toHaveBeenCalled();
   });
 
-  it('clears field errors when updating fields', () => {
+  it('フィールドを更新するときにフィールドエラーをクリアする', () => {
     const { result } = renderHook(() =>
       useMedicationStatusForm({
         onSubmit: mockOnSubmit,
@@ -205,7 +205,7 @@ describe('useMedicationStatusForm', () => {
     expect(result.current.fieldErrors.content).toBeUndefined();
   });
 
-  it('resets form correctly', () => {
+  it('フォームを正しくリセットする', () => {
     const initialData = { content: 'Initial content' };
 
     const { result } = renderHook(() =>

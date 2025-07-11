@@ -7,8 +7,8 @@ jest.mock('@/components/3_organisms/care-board/care-board', () => ({
   CareBoard: () => <div data-testid="care-board">CareBoard Component</div>,
 }));
 
-describe('HomePage', () => {
-  it('renders CareBoard component', () => {
+describe('ホームページ', () => {
+  it('CareBoardコンポーネントをレンダリングする', () => {
     render(<HomePage />);
 
     expect(screen.getByTestId('care-board')).toBeDefined();

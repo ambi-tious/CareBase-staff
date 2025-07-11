@@ -85,7 +85,9 @@ describe('LoginForm', () => {
     fireEvent.click(submitButton);
 
     await waitFor(() => {
-      expect(screen.getByText('ログイン中にエラーが発生しました。もう一度お試しください。')).toBeInTheDocument();
+      expect(
+        screen.getByText('ログイン中にエラーが発生しました。もう一度お試しください。')
+      ).toBeInTheDocument();
     });
   });
 
