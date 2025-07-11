@@ -25,6 +25,7 @@ interface StaffSelectionScreenProps {
   fromHeader?: boolean;
   fromStaffClick?: boolean;
   fromGroupClick?: boolean;
+  autoSelectStaff?: boolean;
   selectedStaffData?: SelectedStaffData;
   className?: string;
 }
@@ -34,6 +35,7 @@ export const StaffSelectionScreen: React.FC<StaffSelectionScreenProps> = ({
   onLogout,
   fromHeader = false,
   fromStaffClick = false,
+  autoSelectStaff = true,
   fromGroupClick = false,
   selectedStaffData,
   className = '',
@@ -64,16 +66,9 @@ export const StaffSelectionScreen: React.FC<StaffSelectionScreenProps> = ({
   // Auto-proceed when staff is selected
   useEffect(() => {
     if (selectedGroupId && selectedTeamId && selectedStaffId) {
-      const selectedStaff = getStaffById(selectedGroupId, selectedTeamId, selectedStaffId);
-      if (selectedStaff && selectedStaff.isActive) {
-        // Auto-proceed after a short delay for better UX
-        const timer = setTimeout(() => {
-          onStaffSelected(selectedStaff);
-        }, 500);
-        return () => clearTimeout(timer);
-      }
+      // No longer auto-proceed - user must click the login button
     }
-  }, [selectedGroupId, selectedTeamId, selectedStaffId, onStaffSelected]);
+  }, [selectedGroupId, selectedTeamId, selectedStaffId]);
 
   const selectedGroup = selectedGroupId ? getGroupById(selectedGroupId) : null;
   const selectedTeam =
@@ -148,7 +143,7 @@ export const StaffSelectionScreen: React.FC<StaffSelectionScreenProps> = ({
           // Find and select the staff
           const team = getTeamById(groupId, teamId);
           const staffMember = team?.staff.find(s => s.id === currentStaff.id);
-          if (staffMember) {
+          if (staffMember && autoSelectStaff) {
             setSelectedStaffId(staffMember.id);
           }
         }
@@ -163,7 +158,21 @@ export const StaffSelectionScreen: React.FC<StaffSelectionScreenProps> = ({
   const isTeamAutoSelected = selectedGroup && selectedGroup.teams.length === 1;
   const showGroupSelector = !isGroupAutoSelected;
   const showTeamSelector = selectedGroupId && !isTeamAutoSelected;
-  const showStaffSelector = selectedGroupId && selectedTeamId;
+  const showStaffSelector = selectedGroupId && selectedTeamId; 
+  
+  // Function to handle login button click
+  const handleLoginClick = () => {
+    if (selectedGroupId && selectedTeamId && selectedStaffId) {
+      const selectedStaff = getStaffById(selectedGroupId, selectedTeamId, selectedStaffId);
+      if (selectedStaff && selectedStaff.isActive) {
+        onStaffSelected(selectedStaff);
+      } else {
+        setError('有効なスタッフを選択してください');
+      }
+    } else {
+      setError('グループ、チーム、スタッフをすべて選択してください');
+    }
+  };
 
   return (
     <div className={`max-w-4xl w-full mx-auto ${className}`}>
@@ -254,7 +263,7 @@ export const StaffSelectionScreen: React.FC<StaffSelectionScreenProps> = ({
           )}
 
           {/* Loading State */}
-          {selectedStaff && (
+          {false && selectedStaff && (
             <div className="text-center py-4">
               <div className="inline-flex items-center gap-2 text-carebase-blue">
                 <div className="w-4 h-4 border-2 border-carebase-blue border-t-transparent rounded-full animate-spin"></div>
@@ -264,6 +273,19 @@ export const StaffSelectionScreen: React.FC<StaffSelectionScreenProps> = ({
               </div>
             </div>
           )}
+
+          {/* Login Button - Only show when staff is selected */}
+          {selectedStaffId && (
+            <div className="flex justify-center mt-6">
+              <Button 
+                onClick={handleLoginClick}
+                className="bg-carebase-blue hover:bg-carebase-blue-dark text-white px-8 py-2"
+              >
+                選択したスタッフでログイン
+              </Button>
+            </div>
+          )}
+          
 
           {/* Reset Button */}
           {(selectedGroupId || selectedTeamId || selectedStaffId) && (

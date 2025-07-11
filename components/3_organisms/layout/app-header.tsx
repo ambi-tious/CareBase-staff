@@ -82,7 +82,7 @@ export function AppHeader() {
       setIsGroupTeamSelected(true);
       // Navigate to staff selection with query parameter to indicate we're coming from header
       setTimeout(() => {
-        router.push('/staff-selection?from=header&staff=true');
+        router.push('/staff-selection?from=header&staff=true&autoSelectStaff=false');
       }, 200);
     } else {
       setIsGroupTeamSelected(false);
@@ -104,7 +104,7 @@ export function AppHeader() {
   }, [isGroupTeamSelected, router]);
 
   const handleStaffNameClickFallback = () => {
-    router.push('/staff-selection?from=header&staff=true');
+    router.push('/staff-selection?from=header&staff=true&autoSelectStaff=false');
   };
 
   const handleGroupTeamClickFallback = () => {
