@@ -12,20 +12,26 @@ class MedicationStatusService {
   /**
    * Create new medication status for a resident
    */
-  async createMedicationStatus(residentId: number, statusData: MedicationStatusFormData): Promise<MedicationStatus> {
+  async createMedicationStatus(
+    residentId: number,
+    statusData: MedicationStatusFormData
+  ): Promise<MedicationStatus> {
     try {
       // For development, use mock creation
       if (process.env.NODE_ENV === 'development') {
         return this.mockCreateMedicationStatus(residentId, statusData);
       }
 
-      const response = await fetch(`${this.baseUrl}/api/residents/${residentId}/medication-status`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(statusData),
-      });
+      const response = await fetch(
+        `${this.baseUrl}/api/residents/${residentId}/medication-status`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(statusData),
+        }
+      );
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);

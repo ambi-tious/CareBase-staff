@@ -535,4 +535,3 @@ export const timeSlots = ['07:00', '08:00', '09:00', '10:00', '11:00', '12:00', 
 export const getResidentById = (id: number): Resident | undefined => {
   return careBoardData.find((resident) => resident.id === id);
 };
-

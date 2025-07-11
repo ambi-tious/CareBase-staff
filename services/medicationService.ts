@@ -12,7 +12,10 @@ class MedicationService {
   /**
    * Create new medication for a resident
    */
-  async createMedication(residentId: number, medicationData: MedicationFormData): Promise<Medication> {
+  async createMedication(
+    residentId: number,
+    medicationData: MedicationFormData
+  ): Promise<Medication> {
     try {
       // For development, use mock creation
       if (process.env.NODE_ENV === 'development') {

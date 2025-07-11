@@ -5,7 +5,10 @@
  */
 
 import { useState, useCallback } from 'react';
-import type { MedicationStatusFormData, MedicationStatusFormState } from '@/types/medication-status';
+import type {
+  MedicationStatusFormData,
+  MedicationStatusFormState,
+} from '@/types/medication-status';
 import { medicationStatusFormSchema } from '@/types/medication-status';
 
 interface UseMedicationStatusFormOptions {
@@ -19,7 +22,10 @@ const initialFormData: MedicationStatusFormData = {
   notes: '',
 };
 
-export const useMedicationStatusForm = ({ onSubmit, initialData = {} }: UseMedicationStatusFormOptions) => {
+export const useMedicationStatusForm = ({
+  onSubmit,
+  initialData = {},
+}: UseMedicationStatusFormOptions) => {
   const [formData, setFormData] = useState<MedicationStatusFormData>({
     ...initialFormData,
     ...initialData,

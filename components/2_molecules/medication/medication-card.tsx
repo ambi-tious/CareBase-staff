@@ -121,7 +121,9 @@ export const MedicationCard: React.FC<MedicationCardProps> = ({
             <div className="space-y-2">
               <div>
                 <strong>用法・用量:</strong>
-                <p className="mt-1 text-gray-700 whitespace-pre-line">{medication.dosageInstructions}</p>
+                <p className="mt-1 text-gray-700 whitespace-pre-line">
+                  {medication.dosageInstructions}
+                </p>
               </div>
               <div className="flex items-center gap-1">
                 <Building2 className="inline h-4 w-4 mr-1 text-gray-500" />

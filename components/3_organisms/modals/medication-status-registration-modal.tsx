@@ -18,12 +18,9 @@ interface MedicationStatusRegistrationModalProps {
   residentName?: string;
 }
 
-export const MedicationStatusRegistrationModal: React.FC<MedicationStatusRegistrationModalProps> = ({
-  isOpen,
-  onClose,
-  onSubmit,
-  residentName,
-}) => {
+export const MedicationStatusRegistrationModal: React.FC<
+  MedicationStatusRegistrationModalProps
+> = ({ isOpen, onClose, onSubmit, residentName }) => {
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
