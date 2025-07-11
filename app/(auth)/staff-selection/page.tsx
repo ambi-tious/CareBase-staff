@@ -2,9 +2,14 @@
 
 import { StaffSelectionScreen } from '@/components/3_organisms/auth/staff-selection-screen';
 import type { Staff } from '@/mocks/staff-data';
-import { useRouter } from 'next/navigation';
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
+
+interface SelectedStaffData {
+  staff: Staff;
+  groupName: string;
+  teamName: string;
+}
 
 export default function StaffSelectionPage() {
   const router = useRouter();
@@ -14,7 +19,9 @@ export default function StaffSelectionPage() {
   const autoSelectStaff = searchParams.get('autoSelectStaff') !== 'false';
   const autoSelectTeam = searchParams.get('autoSelectTeam') !== 'false';
   const fromGroupClick = searchParams.get('group') === 'true';
-  const [selectedStaffData, setSelectedStaffData] = useState<any>(null);
+  const [selectedStaffData, setSelectedStaffData] = useState<SelectedStaffData | undefined>(
+    undefined
+  );
 
   // Load current staff data for header navigation context
   useEffect(() => {
@@ -124,29 +131,29 @@ export function getGroupIdByStaffName(groupName: string): string | null {
   const groupMapping: Record<string, string> = {
     '介護フロア A': 'group-1',
     '介護フロア B': 'group-2',
-    '管理部門': 'group-3',
+    管理部門: 'group-3',
   };
   return groupMapping[groupName] || null;
 }
 
 export function getTeamIdByStaffAndGroup(staff: Staff, groupId: string | null): string | null {
   if (!groupId) return null;
-  
+
   const teamMapping: Record<string, Record<string, string>> = {
     'group-1': {
-      '朝番チーム': 'team-a1',
-      '日勤チーム': 'team-a2',
-      '夜勤チーム': 'team-a3',
+      朝番チーム: 'team-a1',
+      日勤チーム: 'team-a2',
+      夜勤チーム: 'team-a3',
     },
     'group-2': {
-      '朝番チーム': 'team-b1',
-      '日勤チーム': 'team-b2',
+      朝番チーム: 'team-b1',
+      日勤チーム: 'team-b2',
     },
     'group-3': {
-      '管理チーム': 'team-m1',
+      管理チーム: 'team-m1',
     },
   };
-  
+
   const teamName = getTeamNameByStaff(staff);
   return teamMapping[groupId]?.[teamName] || null;
 }

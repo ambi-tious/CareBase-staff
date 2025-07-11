@@ -1,16 +1,16 @@
 'use client';
 
-import type React from 'react';
-import { useState, useEffect } from 'react';
+import { GroupSelector } from '@/components/2_molecules/auth/group-selector';
+import { StaffSelector } from '@/components/2_molecules/auth/staff-selector';
+import { TeamSelector } from '@/components/2_molecules/auth/team-selector';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { GroupSelector } from '@/components/2_molecules/auth/group-selector';
-import { TeamSelector } from '@/components/2_molecules/auth/team-selector';
-import { StaffSelector } from '@/components/2_molecules/auth/staff-selector';
-import { organizationData, getGroupById, getTeamById, getStaffById } from '@/mocks/staff-data';
+import { getLucideIcon } from '@/lib/lucide-icon-registry';
 import type { Staff } from '@/mocks/staff-data';
-import { LogOut, AlertCircle } from 'lucide-react';
+import { getGroupById, getStaffById, getTeamById, organizationData } from '@/mocks/staff-data';
+import { AlertCircle, LogOut } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
 
 // Define the type for selected staff data
 interface SelectedStaffData {
@@ -75,10 +75,6 @@ export const StaffSelectionScreen: React.FC<StaffSelectionScreenProps> = ({
   const selectedGroup = selectedGroupId ? getGroupById(selectedGroupId) : null;
   const selectedTeam =
     selectedGroupId && selectedTeamId ? getTeamById(selectedGroupId, selectedTeamId) : null;
-  const selectedStaff =
-    selectedGroupId && selectedTeamId && selectedStaffId
-      ? getStaffById(selectedGroupId, selectedTeamId, selectedStaffId)
-      : null;
 
   const handleGroupSelect = (groupId: string) => {
     setSelectedGroupId(groupId);
@@ -104,49 +100,35 @@ export const StaffSelectionScreen: React.FC<StaffSelectionScreenProps> = ({
     }
   };
 
-  const handleReset = () => {
-    // Only reset non-auto-selected items
-    if (organizationData.length > 1) {
-      setSelectedGroupId('');
-    }
-    if (selectedGroup && selectedGroup.teams.length > 1) {
-      setSelectedTeamId('');
-    }
-    setSelectedStaffId('');
-    setError('');
-  };
-
   // Handle selection from header navigation
   useEffect(() => {
     if (fromHeader && selectedStaffData) {
       const currentStaff = selectedStaffData.staff;
-      
+
       // Find the group ID from the group name
       const groupId = organizationData.find(
-        group => group.name === selectedStaffData.groupName
+        (group) => group.name === selectedStaffData.groupName
       )?.id;
-      
+
       // Find the team ID from the team name within the group
       let teamId: string | undefined;
       if (groupId) {
         const group = getGroupById(groupId);
-        teamId = group?.teams.find(
-          team => team.name === selectedStaffData.teamName
-        )?.id;
+        teamId = group?.teams.find((team) => team.name === selectedStaffData.teamName)?.id;
       }
-      
+
       if (groupId) {
         setSelectedGroupId(groupId);
-        
+
         // If coming from staff click, also select the staff
         if (fromStaffClick && teamId) {
           if (autoSelectTeam) {
             setSelectedTeamId(teamId);
           }
-          
+
           // Find and select the staff
           const team = getTeamById(groupId, teamId);
-          const staffMember = team?.staff.find(s => s.id === currentStaff.id);
+          const staffMember = team?.staff.find((s) => s.id === currentStaff.id);
           if (staffMember && autoSelectStaff) {
             setSelectedStaffId(staffMember.id);
           }
@@ -159,13 +141,21 @@ export const StaffSelectionScreen: React.FC<StaffSelectionScreenProps> = ({
         }
       }
     }
-  }, [fromHeader, fromStaffClick, fromGroupClick, selectedStaffData]);
+  }, [
+    fromHeader,
+    fromStaffClick,
+    fromGroupClick,
+    selectedStaffData,
+    autoSelectStaff,
+    autoSelectTeam,
+  ]);
+
   const isGroupAutoSelected = organizationData.length === 1;
   const isTeamAutoSelected = selectedGroup && selectedGroup.teams.length === 1;
   const showGroupSelector = !isGroupAutoSelected;
   const showTeamSelector = selectedGroupId && !isTeamAutoSelected;
-  const showStaffSelector = selectedGroupId && selectedTeamId; 
-  
+  const showStaffSelector = selectedGroupId && selectedTeamId;
+
   // Function to handle login button click
   const handleLoginClick = () => {
     if (selectedGroupId && selectedTeamId && selectedStaffId) {
@@ -188,7 +178,11 @@ export const StaffSelectionScreen: React.FC<StaffSelectionScreenProps> = ({
             <CardTitle className="text-xl font-bold text-carebase-text-primary">
               スタッフ選択
             </CardTitle>
-            <Button variant="outline" onClick={handleLogout} className="text-red-600 border-red-300 hover:bg-red-50">
+            <Button
+              variant="outline"
+              onClick={handleLogout}
+              className="text-red-600 border-red-300 hover:bg-red-50"
+            >
               <LogOut className="w-4 h-4 mr-2" />
               ログアウト
             </Button>
@@ -209,7 +203,9 @@ export const StaffSelectionScreen: React.FC<StaffSelectionScreenProps> = ({
               <h3 className="text-sm font-semibold text-blue-800 mb-2">選択されたグループ</h3>
               <div className="flex items-center gap-3">
                 <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
-                  <selectedGroup.icon className="w-5 h-5 text-blue-600" />
+                  {React.createElement(getLucideIcon(selectedGroup.icon), {
+                    className: 'w-5 h-5 text-blue-600',
+                  })}
                 </div>
                 <div>
                   <p className="font-semibold text-blue-900">{selectedGroup.name}</p>
@@ -236,7 +232,9 @@ export const StaffSelectionScreen: React.FC<StaffSelectionScreenProps> = ({
               <h3 className="text-sm font-semibold text-green-800 mb-2">選択されたチーム</h3>
               <div className="flex items-center gap-3">
                 <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center">
-                  <selectedTeam.icon className="w-5 h-5 text-green-600" />
+                  {React.createElement(getLucideIcon(selectedTeam.icon), {
+                    className: 'w-5 h-5 text-green-600',
+                  })}
                 </div>
                 <div>
                   <p className="font-semibold text-green-900">{selectedTeam.name}</p>
@@ -268,41 +266,14 @@ export const StaffSelectionScreen: React.FC<StaffSelectionScreenProps> = ({
             </div>
           )}
 
-          {/* Loading State */}
-          {false && selectedStaff && (
-            <div className="text-center py-4">
-              <div className="inline-flex items-center gap-2 text-carebase-blue">
-                <div className="w-4 h-4 border-2 border-carebase-blue border-t-transparent rounded-full animate-spin"></div>
-                <span className="text-sm font-medium">
-                  {selectedStaff.name} でログイン中...
-                </span>
-              </div>
-            </div>
-          )}
-
           {/* Login Button - Only show when staff is selected */}
           {selectedStaffId && (
-            <div className="flex justify-center mt-6">
-              <Button 
+            <div className="flex justify-center mt-6 border-t pt-4">
+              <Button
                 onClick={handleLoginClick}
                 className="bg-carebase-blue hover:bg-carebase-blue-dark text-white px-8 py-2"
               >
                 選択したスタッフでログイン
-              </Button>
-            </div>
-          )}
-          
-
-          {/* Reset Button */}
-          {(selectedGroupId || selectedTeamId || selectedStaffId) && (
-            <div className="flex justify-center pt-4 border-t">
-              <Button
-                variant="outline"
-                onClick={handleReset}
-                disabled={!!selectedStaff}
-                className="text-gray-600"
-              >
-                選択をリセット
               </Button>
             </div>
           )}

@@ -2,11 +2,11 @@
 
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
+import { cn } from '@/lib/utils';
 import type { Staff } from '@/mocks/staff-data';
 import { User } from 'lucide-react';
 import Image from 'next/image';
 import type React from 'react';
-import { cn } from '@/lib/utils';
 
 interface StaffCardProps {
   staff: Staff;
@@ -47,9 +47,9 @@ export const StaffCard: React.FC<StaffCardProps> = ({
   return (
     <Card
       className={cn(
-        "cursor-pointer transition-all duration-200 hover:shadow-md",
+        'cursor-pointer hover:shadow-md',
         isSelected
-          ? 'ring-2 ring-carebase-blue bg-carebase-blue text-white shadow-lg scale-105'
+          ? 'ring-2 ring-carebase-blue bg-carebase-blue text-white shadow-lg'
           : 'hover:ring-1 hover:ring-carebase-blue-light',
         className
       )}
@@ -68,33 +68,38 @@ export const StaffCard: React.FC<StaffCardProps> = ({
                   className="w-12 h-12 rounded-full object-cover"
                 />
               ) : (
-                <User className={cn(
-                  "w-6 h-6 transition-colors",
-                  isSelected ? "text-blue-200" : "text-gray-500"
-                )} />
+                <User className={cn('w-6 h-6 text-gray-500')} />
               )}
             </div>
           </div>
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-1">
-              <h3 className={cn(
-                "font-semibold truncate transition-colors",
-                isSelected ? "text-white" : "text-carebase-text-primary"
-              )}>{staff.name}</h3>
-              <Badge
-                className={`text-xs ${getRoleBadgeColor(staff.role)} hover:bg-inherit hover:text-inherit`}
+              <h3
+                className={cn(
+                  'font-semibold truncate transition-colors',
+                  isSelected ? 'text-white' : 'text-carebase-text-primary'
+                )}
               >
-                {staff.role}
-              </Badge>
+                {staff.name}
+              </h3>
+              <Badge className={`text-xs ${getRoleBadgeColor(staff.role)}`}>{staff.role}</Badge>
             </div>
-            <p className={cn(
-              "text-sm mb-1 transition-colors",
-              isSelected ? "text-blue-100" : "text-gray-500"
-            )}>{staff.furigana}</p>
-            <p className={cn(
-              "text-xs transition-colors",
-              isSelected ? "text-blue-200" : "text-gray-400"
-            )}>ID: {staff.employeeId}</p>
+            <p
+              className={cn(
+                'text-sm mb-1 transition-colors',
+                isSelected ? 'text-blue-100' : 'text-gray-500'
+              )}
+            >
+              {staff.furigana}
+            </p>
+            <p
+              className={cn(
+                'text-xs transition-colors',
+                isSelected ? 'text-blue-200' : 'text-gray-400'
+              )}
+            >
+              ID: {staff.employeeId}
+            </p>
           </div>
         </div>
       </CardContent>
