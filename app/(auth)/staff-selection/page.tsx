@@ -43,7 +43,7 @@ function StaffSelectionContent() {
       if (staffSelectionRef.current) {
         staffSelectionRef.current.scrollIntoView({
           behavior: 'smooth',
-          block: 'start'
+          block: 'start',
         });
       }
     }, 300);
