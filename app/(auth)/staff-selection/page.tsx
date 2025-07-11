@@ -3,7 +3,7 @@
 import { StaffSelectionScreen } from '@/components/3_organisms/auth/staff-selection-screen';
 import type { Staff } from '@/mocks/staff-data';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 
 interface SelectedStaffData {
   staff: Staff;
@@ -11,7 +11,7 @@ interface SelectedStaffData {
   teamName: string;
 }
 
-export default function StaffSelectionPage() {
+function StaffSelectionContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const fromHeader = searchParams.get('from') === 'header';
@@ -81,6 +81,20 @@ export default function StaffSelectionPage() {
         selectedStaffData={selectedStaffData}
       />
     </div>
+  );
+}
+
+export default function StaffSelectionPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-carebase-bg flex items-center justify-center">
+          読み込み中...
+        </div>
+      }
+    >
+      <StaffSelectionContent />
+    </Suspense>
   );
 }
 
