@@ -1,6 +1,15 @@
 import type { ResidentBasicInfo } from '@/components/2_molecules/forms/resident-basic-info-form';
 import type { Resident } from '@/mocks/care-board-data';
 
+// Helper function to calculate certification validity end date
+const calculateCertValidityEnd = (admissionDate: string): string => {
+  const admission = new Date(admissionDate);
+  const validityEnd = new Date(admission);
+  validityEnd.setFullYear(validityEnd.getFullYear() + 1);
+  validityEnd.setDate(validityEnd.getDate() - 1); // One day before the anniversary
+  return validityEnd.toISOString().split('T')[0].replace(/-/g, '/');
+};
+
 // Mock service for resident operations
 export const residentService = {
   async createResident(data: ResidentBasicInfo): Promise<Resident> {
@@ -76,6 +85,10 @@ export const residentService = {
     const updatedResident = {
       ...existingResident,
       ...data,
+      sex:
+        data.sex === '男' || data.sex === '女' || data.sex === 'その他'
+          ? data.sex
+          : existingResident.sex,
       lastUpdateDate: new Date().toISOString().split('T')[0].replace(/-/g, '/'),
     };
 

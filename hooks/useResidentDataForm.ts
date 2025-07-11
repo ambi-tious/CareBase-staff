@@ -4,23 +4,23 @@
  * Custom hooks for managing resident-related form state and validation
  */
 
-import { useState, useCallback } from 'react';
 import type {
+  FormOptions,
+  FormState,
   HomeCareOfficeFormData,
-  MedicalInstitutionFormData,
   MedicalHistoryFormData as MedicalHistoryFormDataType,
+  MedicalInstitutionFormData,
   MedicationInfoFormData,
   MedicationStatusFormData,
-  FormState,
-  FormOptions,
 } from '@/types/resident-data';
 import {
   homeCareOfficeFormSchema,
-  medicalInstitutionFormSchema,
   medicalHistoryFormSchema as medicalHistoryFormSchemaImport,
+  medicalInstitutionFormSchema,
   medicationInfoFormSchema,
   medicationStatusFormSchema,
 } from '@/types/resident-data';
+import { useCallback, useState } from 'react';
 
 // Generic form hook
 function useGenericForm<T>(schema: any, initialFormData: T, options: FormOptions<T>) {
@@ -194,6 +194,9 @@ export const useMedicalHistoryForm = (options: FormOptions<MedicalHistoryFormDat
 export const useMedicationInfoForm = (options: FormOptions<MedicationInfoFormData>) => {
   const initialFormData: MedicationInfoFormData = {
     medicationName: '',
+    dosageInstructions: '',
+    startDate: '',
+    prescribingInstitution: '',
     institution: '',
     prescriptionDate: '',
     notes: '',

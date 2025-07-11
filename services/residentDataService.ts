@@ -5,19 +5,19 @@
  */
 
 import type {
+  HomeCareOffice,
+  MedicalHistory,
+  MedicalInstitution,
+  MedicationInfo,
+} from '@/mocks/care-board-data';
+import type { MedicationStatus } from '@/types/medication-status';
+import type {
   HomeCareOfficeFormData,
-  MedicalInstitutionFormData,
   MedicalHistoryFormData as MedicalHistoryFormDataType,
+  MedicalInstitutionFormData,
   MedicationInfoFormData,
   MedicationStatusFormData,
 } from '@/types/resident-data';
-import type {
-  HomeCareOffice,
-  MedicalInstitution,
-  MedicalHistory,
-  MedicationInfo,
-  MedicationStatus,
-} from '@/mocks/care-board-data';
 
 class ResidentDataService {
   private baseUrl = process.env.NEXT_PUBLIC_API_URL || '';
@@ -214,10 +214,15 @@ class ResidentDataService {
     const newMedication: MedicationInfo = {
       id: `med-${Date.now()}`,
       medicationName: data.medicationName,
+      dosageInstructions: data.dosageInstructions || '',
+      startDate: data.startDate || '',
+      prescribingInstitution: data.prescribingInstitution || '',
       institution: data.institution,
       prescriptionDate: data.prescriptionDate,
       notes: data.notes,
       imageUrl: data.imageUrl,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
     };
 
     console.log('Mock created medication info:', newMedication);
@@ -238,10 +243,15 @@ class ResidentDataService {
     const updatedMedication: MedicationInfo = {
       id: medicationId,
       medicationName: data.medicationName,
+      dosageInstructions: data.dosageInstructions,
+      startDate: data.startDate,
+      prescribingInstitution: data.prescribingInstitution,
       institution: data.institution,
       prescriptionDate: data.prescriptionDate,
       notes: data.notes,
       imageUrl: data.imageUrl,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
     };
 
     console.log('Mock updated medication info:', updatedMedication);
@@ -274,6 +284,8 @@ class ResidentDataService {
       date: data.date,
       content: data.content,
       notes: data.notes,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
     };
 
     console.log('Mock created medication status:', newStatus);
@@ -296,6 +308,8 @@ class ResidentDataService {
       date: data.date,
       content: data.content,
       notes: data.notes,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
     };
 
     console.log('Mock updated medication status:', updatedStatus);

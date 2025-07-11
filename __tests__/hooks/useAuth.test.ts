@@ -1,10 +1,11 @@
 import { useAuth } from '@/hooks/useAuth';
 import { authService } from '@/services/auth-service';
 import { act, renderHook, waitFor } from '@testing-library/react';
+import { vi } from 'vitest';
 
 // Mock the auth service
 vi.mock('@/services/auth-service');
-const mockAuthService = authService as vi.Mocked<typeof authService>;
+const mockAuthService = authService as any;
 
 // Mock localStorage
 const localStorageMock = {

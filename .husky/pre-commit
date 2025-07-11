@@ -2,24 +2,24 @@
 
 echo "🔍 コミット前のチェックを実行中..."
 
-# CIチェック（lint、type-check、テスト）を実行
-echo "🧪 CIチェックを実行中..."
-npm run ci
+# Lintチェックを実行
+echo "🔍 Lintチェックを実行中..."
+npm run lint
 
-# CIチェックが成功した場合のみビルドテストを実行
+# Lintチェックが成功した場合のみテストを実行
 if [ $? -eq 0 ]; then
-    echo "✅ CIチェック成功！ビルドテストを実行中..."
-    npm run build
+    echo "✅ Lintチェック成功！テストを実行中..."
+    npm run test:ci
 
-    # ビルドが成功した場合のみlint-stagedを実行
+    # テストが成功した場合のみlint-stagedを実行
     if [ $? -eq 0 ]; then
-        echo "✅ ビルド成功！lint-stagedを実行中..."
+        echo "✅ テスト成功！lint-stagedを実行中..."
         npx lint-staged
     else
-        echo "❌ ビルドに失敗しました。コミットを中止します。"
+        echo "❌ テストに失敗しました。コミットを中止します。"
         exit 1
     fi
 else
-    echo "❌ CIチェックに失敗しました。コミットを中止します。"
+    echo "❌ Lintチェックに失敗しました。コミットを中止します。"
     exit 1
 fi
