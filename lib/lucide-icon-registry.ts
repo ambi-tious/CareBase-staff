@@ -75,7 +75,7 @@ const iconRegistry: Record<string, LucideIcon> = {
 
   // Staff data icons
   UserCheck,
-  Shield,
+  Shield: Shield,
   Stethoscope,
   Heart,
   Clipboard,
