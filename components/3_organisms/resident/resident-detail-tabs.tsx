@@ -7,11 +7,13 @@ import { MedicalHistoryCard } from '@/components/2_molecules/resident/medical-hi
 import { MedicalInstitutionCard } from '@/components/2_molecules/resident/medical-institution-card';
 import { MedicationCard as NewMedicationCard } from '@/components/2_molecules/medication/medication-card';
 import { MedicationCard as OldMedicationCard } from '@/components/2_molecules/resident/medication-card';
+import { MedicationStatusCard } from '@/components/2_molecules/medication/medication-status-card';
 import { ContactRegistrationModal } from '@/components/3_organisms/modals/contact-registration-modal';
 import { HomeCareOfficeModal } from '@/components/3_organisms/modals/home-care-office-modal';
 import { MedicalHistoryModal } from '@/components/3_organisms/modals/medical-history-modal';
 import { MedicalInstitutionModal } from '@/components/3_organisms/modals/medical-institution-modal';
 import { MedicationRegistrationModal } from '@/components/3_organisms/modals/medication-registration-modal';
+import { MedicationStatusRegistrationModal } from '@/components/3_organisms/modals/medication-status-registration-modal';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import {
@@ -33,6 +35,7 @@ import type {
 import { contactService } from '@/services/contactService';
 import { residentDataService } from '@/services/residentDataService';
 import { medicationService } from '@/services/medicationService';
+import { medicationStatusService } from '@/services/medicationStatusService';
 import type { ContactFormData } from '@/types/contact';
 import type {
   HomeCareOfficeFormData,
@@ -40,6 +43,7 @@ import type {
   MedicalInstitutionFormData,
 } from '@/types/resident-data';
 import type { MedicationFormData, Medication } from '@/types/medication';
+import type { MedicationStatusFormData, MedicationStatus } from '@/types/medication-status';
 import { PlusCircle, Settings } from 'lucide-react';
 import type React from 'react';
 import { useState } from 'react';
@@ -54,6 +58,7 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
   const [isMedicalModalOpen, setIsMedicalModalOpen] = useState(false);
   const [isMedicalHistoryModalOpen, setIsMedicalHistoryModalOpen] = useState(false);
   const [isMedicationModalOpen, setIsMedicationModalOpen] = useState(false);
+  const [isMedicationStatusModalOpen, setIsMedicationStatusModalOpen] = useState(false);
   const [contacts, setContacts] = useState<ContactPerson[]>(resident.contacts || []);
   const [homeCareOffice, setHomeCareOffice] = useState<HomeCareOffice | undefined>(
     resident.homeCareOffice
@@ -65,6 +70,17 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
     resident.medicalHistory || []
   );
   const [medications, setMedications] = useState<Medication[]>(resident.medications || []);
+  const [medicationStatuses, setMedicationStatuses] = useState<MedicationStatus[]>(() => {
+    // Convert old format to new format for backward compatibility
+    if (resident.medicationStatus) {
+      return resident.medicationStatus.map((status) => ({
+        ...status,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      }));
+    }
+    return [];
+  });
   const [activeTab, setActiveTab] = useState('family');
 
   const detailTabs = [
@@ -95,6 +111,10 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
 
   const handleAddMedication = () => {
     setIsMedicationModalOpen(true);
+  };
+
+  const handleAddMedicationStatus = () => {
+    setIsMedicationStatusModalOpen(true);
   };
 
   const handleContactSubmit = async (contactData: ContactFormData): Promise<boolean> => {
@@ -154,6 +174,17 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
     }
   };
 
+  const handleMedicationStatusSubmit = async (data: MedicationStatusFormData): Promise<boolean> => {
+    try {
+      const newStatus = await medicationStatusService.createMedicationStatus(resident.id, data);
+      setMedicationStatuses((prev) => [...prev, newStatus]);
+      return true;
+    } catch (error) {
+      console.error('Failed to create medication status:', error);
+      return false;
+    }
+  };
+
   const handleContactUpdate = (updatedContact: ContactPerson) => {
     setContacts((prev) =>
       prev.map((contact) => (contact.id === updatedContact.id ? updatedContact : contact))
@@ -186,6 +217,12 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
     );
   };
 
+  const handleMedicationStatusUpdate = (updatedStatus: MedicationStatus) => {
+    setMedicationStatuses((prev) =>
+      prev.map((status) => (status.id === updatedStatus.id ? updatedStatus : status))
+    );
+  };
+
   const handleContactDelete = (contactId: string) => {
     setContacts((prev) => prev.filter((contact) => contact.id !== contactId));
   };
@@ -206,6 +243,10 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
 
   const handleMedicationDelete = (medicationId: string) => {
     setMedications((prev) => prev.filter((medication) => medication.id !== medicationId));
+  };
+
+  const handleMedicationStatusDelete = (statusId: string) => {
+    setMedicationStatuses((prev) => prev.filter((status) => status.id !== statusId));
   };
 
   const shouldShowAddButton = () => {
@@ -232,6 +273,8 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
         return handleAddMedicalHistory;
       case 'medicationInfo':
         return handleAddMedication;
+      case 'medicationStatus':
+        return handleAddMedicationStatus;
       default:
         return undefined;
     }
@@ -401,35 +444,30 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
         </TabsContent>
 
         <TabsContent value="medicationStatus">
-          {resident.medicationStatus && resident.medicationStatus.length > 0 ? (
-            <Card>
-              <CardContent className="p-0">
-                <Table>
-                  <TableHeader>
-                    <TableRow className="bg-carebase-blue">
-                      <TableHead className="text-white text-center">登録日</TableHead>
-                      <TableHead className="text-white text-center">内容</TableHead>
-                      <TableHead className="text-white text-center">備考</TableHead>
-                      <TableHead className="text-white text-center w-24"></TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {resident.medicationStatus.map((status) => (
-                      <TableRow key={status.id}>
-                        <TableCell className="text-center">{status.date}</TableCell>
-                        <TableCell>{status.content}</TableCell>
-                        <TableCell>{status.notes || '-'}</TableCell>
-                        <TableCell className="text-center">
-                          <Button variant="outline" size="sm">
-                            編集する
-                          </Button>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </CardContent>
-            </Card>
+          {medicationStatuses.length > 0 ? (
+            <div className="space-y-4">
+              {/* Sort by date (newest first) */}
+              {[...medicationStatuses]
+                .sort((a, b) => {
+                  const dateA = new Date(a.date);
+                  const dateB = new Date(b.date);
+                  if (dateB.getTime() !== dateA.getTime()) {
+                    return dateB.getTime() - dateA.getTime();
+                  }
+                  // If same date, sort by ID (assuming newer IDs are larger)
+                  return b.id.localeCompare(a.id);
+                })
+                .map((status) => (
+                  <MedicationStatusCard
+                    key={status.id}
+                    medicationStatus={status}
+                    residentId={resident.id}
+                    residentName={resident.name}
+                    onStatusUpdate={handleMedicationStatusUpdate}
+                    onStatusDelete={handleMedicationStatusDelete}
+                  />
+                ))}
+            </div>
           ) : (
             <p className="text-center text-gray-500 py-8">服薬状況の情報はありません。</p>
           )}
@@ -493,6 +531,13 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
         isOpen={isMedicationModalOpen}
         onClose={() => setIsMedicationModalOpen(false)}
         onSubmit={handleMedicationSubmit}
+        residentName={resident.name}
+      />
+
+      <MedicationStatusRegistrationModal
+        isOpen={isMedicationStatusModalOpen}
+        onClose={() => setIsMedicationStatusModalOpen(false)}
+        onSubmit={handleMedicationStatusSubmit}
         residentName={resident.name}
       />
     </>

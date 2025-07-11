@@ -1,5 +1,6 @@
 import type { IconName } from '@/lib/lucide-icon-registry';
 import type { Medication } from '@/types/medication';
+import type { MedicationStatus } from '@/types/medication-status';
 
 // Define Care Categories for User Base View columns
 export const careCategories = [
@@ -71,13 +72,6 @@ export interface MedicationInfo extends Medication {
   institution?: string;
   prescriptionDate?: string;
   imageUrl?: string;
-}
-
-export interface MedicationStatus {
-  id: string;
-  date: string;
-  content: string;
-  notes?: string;
 }
 
 export interface IndividualPoint {
