@@ -10,7 +10,7 @@ import { getLucideIcon } from '@/lib/lucide-icon-registry';
 import type { Staff } from '@/mocks/staff-data';
 import { getGroupById, getStaffById, getTeamById, organizationData } from '@/mocks/staff-data';
 import { AlertCircle, LogOut } from 'lucide-react';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 // Define the type for selected staff data
 interface SelectedStaffData {
@@ -46,6 +46,10 @@ export const StaffSelectionScreen: React.FC<StaffSelectionScreenProps> = ({
   const [selectedTeamId, setSelectedTeamId] = useState<string>('');
   const [selectedStaffId, setSelectedStaffId] = useState<string>('');
   const [error, setError] = useState<string>('');
+  
+  // Refs for scrolling
+  const teamSelectorRef = useRef<HTMLDivElement>(null);
+  const staffSelectorRef = useRef<HTMLDivElement>(null);
 
   // Auto-selection logic
   useEffect(() => {
@@ -81,12 +85,32 @@ export const StaffSelectionScreen: React.FC<StaffSelectionScreenProps> = ({
     setSelectedTeamId('');
     setSelectedStaffId('');
     setError('');
+    
+    // Scroll to team selector after a short delay
+    if (groupId && teamSelectorRef.current) {
+      setTimeout(() => {
+        teamSelectorRef.current?.scrollIntoView({ 
+          behavior: 'smooth', 
+          block: 'start'
+        });
+      }, 100);
+    }
   };
 
   const handleTeamSelect = (teamId: string) => {
     setSelectedTeamId(teamId);
     setSelectedStaffId('');
     setError('');
+    
+    // Scroll to staff selector after a short delay
+    if (teamId && staffSelectorRef.current) {
+      setTimeout(() => {
+        staffSelectorRef.current?.scrollIntoView({ 
+          behavior: 'smooth', 
+          block: 'start'
+        });
+      }, 100);
+    }
   };
 
   const handleStaffSelect = (staffId: string) => {
@@ -246,7 +270,7 @@ export const StaffSelectionScreen: React.FC<StaffSelectionScreenProps> = ({
 
           {/* Team Selection */}
           {showTeamSelector && (
-            <div>
+            <div ref={teamSelectorRef}>
               <TeamSelector
                 teams={selectedGroup!.teams}
                 selectedTeamId={selectedTeamId}
@@ -257,7 +281,7 @@ export const StaffSelectionScreen: React.FC<StaffSelectionScreenProps> = ({
 
           {/* Staff Selection */}
           {showStaffSelector && (
-            <div>
+            <div ref={staffSelectorRef}>
               <StaffSelector
                 staff={selectedTeam!.staff}
                 selectedStaffId={selectedStaffId}
