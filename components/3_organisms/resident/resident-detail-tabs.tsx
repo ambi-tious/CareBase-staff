@@ -1,13 +1,13 @@
 'use client';
 
+import { MedicationCard as NewMedicationCard } from '@/components/2_molecules/medication/medication-card';
+import { MedicationStatusCard } from '@/components/2_molecules/medication/medication-status-card';
 import { ContactInfoCard } from '@/components/2_molecules/resident/contact-info-card';
 import { HomeCareOfficeCard } from '@/components/2_molecules/resident/home-care-office-card';
 import { IndividualPointCard } from '@/components/2_molecules/resident/individual-point-card';
 import { MedicalHistoryCard } from '@/components/2_molecules/resident/medical-history-card';
 import { MedicalInstitutionCard } from '@/components/2_molecules/resident/medical-institution-card';
-import { MedicationCard as NewMedicationCard } from '@/components/2_molecules/medication/medication-card';
 import { MedicationCard as OldMedicationCard } from '@/components/2_molecules/resident/medication-card';
-import { MedicationStatusCard } from '@/components/2_molecules/medication/medication-status-card';
 import { ContactRegistrationModal } from '@/components/3_organisms/modals/contact-registration-modal';
 import { HomeCareOfficeModal } from '@/components/3_organisms/modals/home-care-office-modal';
 import { MedicalHistoryModal } from '@/components/3_organisms/modals/medical-history-modal';
@@ -15,15 +15,6 @@ import { MedicalInstitutionModal } from '@/components/3_organisms/modals/medical
 import { MedicationRegistrationModal } from '@/components/3_organisms/modals/medication-registration-modal';
 import { MedicationStatusRegistrationModal } from '@/components/3_organisms/modals/medication-status-registration-modal';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import type {
   ContactPerson,
@@ -33,17 +24,17 @@ import type {
   Resident,
 } from '@/mocks/care-board-data';
 import { contactService } from '@/services/contactService';
-import { residentDataService } from '@/services/residentDataService';
 import { medicationService } from '@/services/medicationService';
 import { medicationStatusService } from '@/services/medicationStatusService';
+import { residentDataService } from '@/services/residentDataService';
 import type { ContactFormData } from '@/types/contact';
+import type { Medication, MedicationFormData } from '@/types/medication';
+import type { MedicationStatus, MedicationStatusFormData } from '@/types/medication-status';
 import type {
   HomeCareOfficeFormData,
   MedicalHistoryFormData,
   MedicalInstitutionFormData,
 } from '@/types/resident-data';
-import type { MedicationFormData, Medication } from '@/types/medication';
-import type { MedicationStatusFormData, MedicationStatus } from '@/types/medication-status';
 import { PlusCircle, Settings } from 'lucide-react';
 import type React from 'react';
 import { useState } from 'react';
@@ -381,41 +372,6 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
                   />
                 ))}
             </div>
-          ) : (
-            <p className="text-center text-gray-500 py-8">既往歴の情報はありません。</p>
-          )}
-        </TabsContent>
-
-        <TabsContent value="history-old">
-          {medicalHistory.length > 0 ? (
-            <Card>
-              <CardContent className="p-0">
-                <Table>
-                  <TableHeader>
-                    <TableRow className="bg-carebase-blue [&>th]:hover:bg-carebase-blue">
-                      <TableHead className="text-white text-center">登録日</TableHead>
-                      <TableHead className="text-white text-center">内容</TableHead>
-                      <TableHead className="text-white text-center">備考</TableHead>
-                      <TableHead className="text-white text-center w-24"></TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {medicalHistory.map((history) => (
-                      <TableRow key={history.id}>
-                        <TableCell className="text-center">{history.date}</TableCell>
-                        <TableCell className="whitespace-pre-line">{history.diseaseName}</TableCell>
-                        <TableCell>{history.notes || '-'}</TableCell>
-                        <TableCell className="text-center">
-                          <Button variant="outline" size="sm">
-                            編集する
-                          </Button>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </CardContent>
-            </Card>
           ) : (
             <p className="text-center text-gray-500 py-8">既往歴の情報はありません。</p>
           )}
