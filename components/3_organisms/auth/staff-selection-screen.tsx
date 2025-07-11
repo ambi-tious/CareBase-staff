@@ -12,15 +12,24 @@ import { organizationData, getGroupById, getTeamById, getStaffById } from '@/moc
 import type { Staff } from '@/mocks/staff-data';
 import { LogOut, AlertCircle } from 'lucide-react';
 
+// Define the type for selected staff data
+interface SelectedStaffData {
+  staff: Staff;
+  groupName: string;
+  teamName: string;
+}
+
 interface StaffSelectionScreenProps {
   onStaffSelected: (staff: Staff) => void;
   onLogout?: () => void;
+  selectedStaffData?: SelectedStaffData;
   className?: string;
 }
 
 export const StaffSelectionScreen: React.FC<StaffSelectionScreenProps> = ({
   onStaffSelected,
   onLogout,
+  selectedStaffData,
   className = '',
 }) => {
   const [selectedGroupId, setSelectedGroupId] = useState<string>('');
