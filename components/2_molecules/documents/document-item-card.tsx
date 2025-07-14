@@ -6,6 +6,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Folder, MoreVertical, Download, Edit, Trash2 } from 'lucide-react';
 import { FileIcon } from '@/components/1_atoms/documents/file-icon';
+import Link from 'next/link';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -32,6 +33,14 @@ export const DocumentItemCard: React.FC<DocumentItemCardProps> = ({
     e.stopPropagation();
   };
 
+  // 書類の場合は詳細画面へのリンクを生成
+  const getItemLink = () => {
+    if (item.type === 'file') {
+      return `/documents/view/${item.id}`;
+    }
+    return '#'; // フォルダの場合は現在のページにとどまる
+  };
+
   return (
     <Card
       className={`cursor-pointer transition-all hover:shadow-md hover:scale-[1.02] ${className}`}
@@ -48,7 +57,19 @@ export const DocumentItemCard: React.FC<DocumentItemCardProps> = ({
               )}
             </div>
             <div className="flex-1 min-w-0">
-              <h3 className="font-medium text-sm text-gray-900 truncate mb-1">{item.name}</h3>
+              <h3 className="font-medium text-sm text-gray-900 truncate mb-1">
+                {item.type === 'file' ? (
+                  <Link 
+                    href={getItemLink()} 
+                    className="hover:text-carebase-blue hover:underline"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    {item.name}
+                  </Link>
+                ) : (
+                  item.name
+                )}
+              </h3>
               <div className="text-xs text-gray-500 space-y-1">
                 {item.type === 'folder' ? (
                   <p>{item.itemCount} 個のアイテム</p>
@@ -70,10 +91,18 @@ export const DocumentItemCard: React.FC<DocumentItemCardProps> = ({
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               {item.type === 'file' && (
+                <>
                 <DropdownMenuItem>
                   <Download className="h-4 w-4 mr-2" />
                   ダウンロード
                 </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href={`/documents/editor/${item.id}`}>
+                    <Edit className="h-4 w-4 mr-2" />
+                    編集
+                  </Link>
+                </DropdownMenuItem>
+                </>
               )}
               <DropdownMenuItem>
                 <Edit className="h-4 w-4 mr-2" />

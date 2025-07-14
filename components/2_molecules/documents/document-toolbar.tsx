@@ -41,12 +41,12 @@ export const DocumentToolbar: React.FC<DocumentToolbarProps> = ({
       {/* Top row - Actions */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Button className="bg-carebase-blue hover:bg-carebase-blue-dark" asChild>
-            <Link href="/documents/editor">
+          <Link href="/documents/edit">
+            <Button className="bg-carebase-blue hover:bg-carebase-blue-dark">
               <FileText className="h-4 w-4 mr-2" />
               新規書類作成
-            </Link>
-          </Button>
+            </Button>
+          </Link>
           <Button onClick={onCreateFolder} className="bg-carebase-blue hover:bg-carebase-blue-dark">
             <FolderPlus className="h-4 w-4 mr-2" />
             新しいフォルダ

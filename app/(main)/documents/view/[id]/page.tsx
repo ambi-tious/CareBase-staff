@@ -1,17 +1,17 @@
-'use client';
+'use client'; 
 
-import React, { useState, useEffect } from 'react';
+import React from 'react';
+import { useState, useEffect } from 'react';
 import { DocumentDetail } from '@/components/3_organisms/documents/document-detail';
 import { useRouter } from 'next/navigation';
 
 interface DocumentViewPageProps {
-  params: Promise<{
+  params: {
     id: string;
-  }>;
+  };
 }
 
-export default function DocumentViewPage({ params: paramsPromise }: DocumentViewPageProps) {
-  const params = React.use(paramsPromise);
+export default function DocumentViewPage({ params }: DocumentViewPageProps) {
   const router = useRouter();
   const [document, setDocument] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);

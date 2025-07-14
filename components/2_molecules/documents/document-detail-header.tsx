@@ -4,7 +4,7 @@ import type React from 'react';
 import { DocumentBadge } from '@/components/1_atoms/documents/document-badge';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, Edit, Printer } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { format } from 'date-fns';
 import { ja } from 'date-fns/locale';
 
@@ -25,15 +25,6 @@ export const DocumentDetailHeader: React.FC<DocumentDetailHeaderProps> = ({
   onPrint,
   className,
 }) => {
-  const router = useRouter();
-
-  const handleBack = () => {
-    router.push('/documents/minutes');
-  };
-
-  const handleEdit = () => {
-    router.push(`/documents/editor/${documentId}`);
-  };
 
   const formatDate = (date: Date) => {
     return format(date, 'yyyy年MM月dd日 HH:mm', { locale: ja });
@@ -43,15 +34,16 @@ export const DocumentDetailHeader: React.FC<DocumentDetailHeaderProps> = ({
     <div className={`space-y-4 ${className}`}>
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div className="flex items-center gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleBack}
-            className="flex items-center gap-1"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            一覧へ戻る
-          </Button>
+          <Link href="/documents/minutes">
+            <Button
+              variant="outline"
+              size="sm"
+              className="flex items-center gap-1"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              一覧へ戻る
+            </Button>
+          </Link>
           <DocumentBadge status={status} />
         </div>
         <div className="flex items-center gap-2">
@@ -64,15 +56,16 @@ export const DocumentDetailHeader: React.FC<DocumentDetailHeaderProps> = ({
             <Printer className="h-4 w-4" />
             印刷
           </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleEdit}
-            className="flex items-center gap-1 border-carebase-blue text-carebase-blue hover:bg-carebase-blue-light"
-          >
-            <Edit className="h-4 w-4" />
-            編集
-          </Button>
+          <Link href={`/documents/edit/${documentId}`}>
+            <Button
+              variant="outline"
+              size="sm"
+              className="flex items-center gap-1 border-carebase-blue text-carebase-blue hover:bg-carebase-blue-light"
+            >
+              <Edit className="h-4 w-4" />
+              編集
+            </Button>
+          </Link>
         </div>
       </div>
       <div>

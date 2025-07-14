@@ -1,8 +1,8 @@
 import type React from 'react';
-import { FileText, File, FileSpreadsheet, FileImage } from 'lucide-react';
+import { FileText, File, FileSpreadsheet, FileImage, FileCode } from 'lucide-react';
 
 interface FileIconProps {
-  fileType: 'pdf' | 'doc' | 'xlsx' | 'txt' | 'image';
+  fileType: 'pdf' | 'doc' | 'xlsx' | 'txt' | 'image' | 'html';
   className?: string;
 }
 
@@ -14,6 +14,8 @@ export const FileIcon: React.FC<FileIconProps> = ({ fileType, className = 'h-4 w
       return <FileText className={`${className} text-blue-500`} />;
     case 'xlsx':
       return <FileSpreadsheet className={`${className} text-green-500`} />;
+    case 'html':
+      return <FileCode className={`${className} text-purple-500`} />;
     case 'image':
       return <FileImage className={`${className} text-purple-500`} />;
     default:
