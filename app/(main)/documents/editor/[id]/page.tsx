@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { DocumentForm } from '@/components/3_organisms/documents/document-form';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
@@ -12,7 +12,8 @@ interface DocumentEditorPageProps {
   };
 }
 
-export default function DocumentEditorPage({ params }: DocumentEditorPageProps) {
+export default function DocumentEditorPage({ params: paramsPromise }: { params: Promise<{ id: string }> }) {
+  const params = React.use(paramsPromise);
   const router = useRouter();
   const [document, setDocument] = useState<{
     id: string;
