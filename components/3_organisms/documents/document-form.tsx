@@ -96,6 +96,16 @@ export const DocumentForm: React.FC<DocumentFormProps> = ({
       if (success) {
         setHasChanges(false);
         setUpdatedAt(new Date());
+        
+        // 保存成功後、詳細画面に遷移
+        if (initialDocument.id) {
+          router.push(`/documents/view/${initialDocument.id}`);
+        } else {
+          // 新規作成の場合は、モックIDを生成して遷移
+          const mockId = `doc-${Date.now()}`;
+          router.push(`/documents/view/${mockId}`);
+        }
+        
         return true;
       }
       return false;
