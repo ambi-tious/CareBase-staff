@@ -1,15 +1,13 @@
 # ログイン画面設計書
 
-Issue: [#141 （認証）｜ログイン](https://github.com/ambi-tious/CareBase-staff/issues/141)
+画面名: `ログイン`  
+パス: `/login`  
+URL: https://carebase-staff.vercel.app/login
 
 ## 概要
 
-CareBase-staffアプリケーションのログイン画面設計書です。
+CareBase-staffアプリケーションのログイン画面設計書です。  
 施設IDとパスワードによる認証機能を提供し、認証成功時は職員選択画面へ遷移します。
-
-### モックURL
-
-https://carebase-staff.vercel.app/login
 
 ## 全体レイアウト
 
