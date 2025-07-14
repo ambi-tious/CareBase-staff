@@ -14,7 +14,7 @@ CareBase-staffアプリケーションの利用者一覧画面設計書です。
 
 ### 画面構成
 
-<img width="1281" height="706" alt="利用者一覧画面" src="https://github.com/user-attachments/assets/8ab805b4-efc7-49cb-83ef-f3fa7ee13fc5" />
+<img width="998" height="474" alt="image" src="https://github.com/user-attachments/assets/e6fbf920-fce0-4712-90f1-d061bdf6b85f" />
 
 利用者管理のメイン画面として以下の要素で構成：
 - ページヘッダー（タイトル・統計情報）
