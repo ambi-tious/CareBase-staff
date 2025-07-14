@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, FileText } from 'lucide-react';
@@ -9,12 +9,13 @@ import { DocumentFormFields, type DocumentFormData } from '@/components/2_molecu
 import { useDocumentForm } from '@/hooks/useDocumentForm';
 
 interface DocumentEditPageProps {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
-export default function DocumentEditPage({ params }: DocumentEditPageProps) {
+export default function DocumentEditPage({ params: paramsPromise }: DocumentEditPageProps) {
+  const params = React.use(paramsPromise);
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
