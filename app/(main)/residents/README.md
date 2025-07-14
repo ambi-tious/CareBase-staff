@@ -1,0 +1,169 @@
+# 利用者一覧画面設計書
+
+画面名: `利用者一覧`  
+パス: `/residents`  
+URL: https://carebase-staff.vercel.app/residents
+
+## 概要
+
+CareBase-staffアプリケーションの利用者一覧画面設計書です。  
+ログインしているグループとチームに紐づいた利用者の一覧表示、検索機能、アラート状態の検知機能を提供します。  
+利用者の基本情報とアラート状況を一目で把握でき、詳細画面への遷移や新規利用者登録が可能です。
+
+## 全体レイアウト
+
+### 画面構成
+
+<img width="1281" height="706" alt="利用者一覧画面" src="https://github.com/user-attachments/assets/8ab805b4-efc7-49cb-83ef-f3fa7ee13fc5" />
+
+利用者管理のメイン画面として以下の要素で構成：
+- ページヘッダー（タイトル・統計情報）
+- 検索・操作ツールバー
+- 利用者カード一覧（グリッドレイアウト）
+- フィルター・エクスポート機能
+
+### 画面項目
+
+| 項目名 | コンポーネント | 必須 | 表示条件 | 初期値 | 備考 |
+| --- | --- | --- | --- | --- | --- |
+| ページタイトル | h1 | - | 常時 | 利用者一覧 | Users アイコン付き |
+| 統計情報 | 情報表示エリア | - | 常時 | 入居中・退所済・表示中件数 | リアルタイム更新 |
+| 検索バー | ResidentSearchBar | - | 常時 | 空文字 | 名前・ふりがなで検索 |
+| 新規登録ボタン | Button | - | 常時 | 新規利用者登録 | 青色スタイル、UserPlus アイコン |
+| 退所済み表示トグル | Switch | - | 常時 | false | 退所済み利用者も表示 |
+| フィルターボタン | Button | - | 常時 | フィルター | アウトライン、Filter アイコン |
+| エクスポートボタン | Button | - | 常時 | エクスポート | アウトライン、Download アイコン |
+| 利用者カード | ResidentCard | - | 検索結果あり | - | グリッドレイアウト |
+| 空状態表示 | EmptyState | - | 検索結果なし | - | Users アイコン付きメッセージ |
+
+## 機能仕様
+
+### アクション
+
+| 項目名 | 処理内容 | 対象API | 遷移先画面 |
+| --- | --- | --- | --- |
+| 検索実行 | 名前・ふりがなでの部分一致検索 | - | 同一画面（結果更新） |
+| 退所済み表示切替 | 退所済み利用者の表示・非表示切替 | - | 同一画面（結果更新） |
+| 新規利用者登録 | 新規利用者登録画面への遷移 | - | 新規利用者登録画面 (`/residents/new`) |
+| 利用者詳細表示 | 選択した利用者の詳細画面への遷移 | - | 利用者詳細画面 (`/residents/{id}`) |
+| フィルター実行 | 詳細条件でのフィルタリング | `/api/v1/residents/filter` | 同一画面（結果更新） |
+| エクスポート実行 | 利用者データのCSV出力 | `/api/v1/residents/export` | ファイルダウンロード |
+
+### 入力チェック
+
+| 項目名 | イベント | チェック内容 | エラーメッセージ |
+| --- | --- | --- | --- |
+| 検索バー | input | 文字数制限（100文字以内） | 検索キーワードは100文字以内で入力してください |
+| 検索バー | input | 特殊文字制限 | 使用できない文字が含まれています |
+| フィルター | submit | 必須項目チェック | 必須項目を入力してください |
+| エクスポート | click | 権限チェック | エクスポート権限がありません |
+
+### バリデーション仕様
+
+#### 検索ロジック
+
+- **部分一致検索**: 利用者名・ふりがなの両方で部分一致検索を実行
+- **大文字小文字無視**: 検索時は大文字小文字を区別しない
+- **リアルタイム検索**: 入力と同時に検索結果を更新
+- **空文字処理**: 検索キーワードが空の場合は全件表示
+
+#### 表示制御
+
+- 入居中利用者: デフォルトで表示
+- 退所済み利用者: トグルON時のみ表示
+- アラート優先表示: 緊急・注意アラートを持つ利用者を上位表示
+- ページネーション: 大量データ時の分割表示（将来実装）
+
+#### エラーハンドリング
+
+- 検索結果0件時の適切なメッセージ表示
+- API通信エラー時のフォールバック表示
+- 画像読み込み失敗時のプレースホルダー表示
+
+## データ構造
+
+### Resident（利用者）
+
+```typescript
+interface Resident {
+  id: number;
+  name: string;           // 利用者名
+  furigana: string;       // ふりがな
+  age: number;            // 年齢
+  sex: '男' | '女';       // 性別
+  careLevel: string;      // 要介護度（例: "要介護1", "要支援2"）
+  admissionStatus: '入居中' | '退所済';  // 入居状態
+  roomInfo?: string;      // 部屋情報（例: "もみじ404号室"）
+  unitTeam?: string;      // 所属チーム（例: "テストチーム3"）
+  avatarUrl?: string;     // プロフィール画像URL
+  admissionDate: string;  // 入居日
+  dischargeDate?: string; // 退所日（退所済みの場合）
+}
+```
+
+### ResidentAlert（利用者アラート）
+
+```typescript
+interface ResidentAlert {
+  residentId: number;
+  high: number;          // 緊急アラート件数
+  medium: number;        // 注意アラート件数
+  low: number;           // 情報アラート件数
+  lastUpdated: string;   // 最終更新日時
+}
+```
+
+### SearchFilter（検索フィルター）
+
+```typescript
+interface SearchFilter {
+  query: string;                    // 検索キーワード
+  showDischargedResidents: boolean; // 退所済み表示フラグ
+  careLevel?: string[];            // 要介護度フィルター
+  team?: string[];                 // チームフィルター
+  alertLevel?: 'high' | 'medium' | 'low'; // アラートレベルフィルター
+}
+```
+
+## UI/UX仕様
+
+### レスポンシブデザイン
+
+- **利用者カード**: 1列（モバイル）→ 2列（タブレット）→ 3列（デスクトップ）
+- **ツールバー**: 縦積み（モバイル）→ 横並び（タブレット以上）
+- **検索バー**: 全幅（モバイル）→ 最大幅制限（デスクトップ）
+
+### カラーテーマ
+
+- **アラートバッジ**: 
+  - 緊急: `bg-red-100 text-red-800 border-red-200`
+  - 注意: `bg-orange-100 text-orange-800 border-orange-200`
+  - 情報: `bg-blue-100 text-blue-800 border-blue-200`
+- **ステータスバッジ**:
+  - 入居中: `bg-green-100 text-green-800`
+  - 退所済: `bg-gray-100 text-gray-800`
+- **新規登録ボタン**: `bg-carebase-blue hover:bg-carebase-blue-dark`
+
+### アニメーション
+
+- **カードホバー**: `hover:shadow-md transition-shadow`
+- **検索結果更新**: フェードイン・アウト効果
+- **ローディング**: スケルトンローディング表示
+- **スムーズスクロール**: 検索結果表示時の自動スクロール
+
+### アクセシビリティ
+
+- **キーボードナビゲーション**: Tab キーでの操作対応
+- **スクリーンリーダー**: 適切な aria-label 設定
+- **コントラスト比**: WCAG 2.1 AA レベル準拠
+- **フォーカス表示**: 明確なフォーカスインジケーター
+
+## 参考資料
+
+- [利用者詳細画面設計書](./[residentId]/README.md)
+- [新規利用者登録画面設計書](./new/README.md)
+- [Issue #137: [設計] #003 利用者｜利用者一覧](https://github.com/ambi-tious/CareBase-staff/issues/137)
+- [画面一覧](../../../docs/screen-list.md#利用者管理)
+- [利用者一覧画面実装](./page.tsx)
+- [ResidentsList コンポーネント](../../../components/3_organisms/residents/residents-list.tsx)
+- [ResidentCard コンポーネント](../../../components/2_molecules/residents/resident-card.tsx)
