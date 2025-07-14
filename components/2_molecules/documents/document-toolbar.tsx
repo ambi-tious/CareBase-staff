@@ -9,7 +9,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Filter, FolderPlus, Grid3X3, List, Search, SortAsc, Upload } from 'lucide-react';
+import { Filter, FolderPlus, Grid3X3, List, Search, SortAsc, Upload, FileText } from 'lucide-react';
+import Link from 'next/link';
 import type React from 'react';
 
 interface DocumentToolbarProps {
@@ -40,6 +41,12 @@ export const DocumentToolbar: React.FC<DocumentToolbarProps> = ({
       {/* Top row - Actions */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
+          <Button className="bg-carebase-blue hover:bg-carebase-blue-dark" asChild>
+            <Link href="/documents/editor">
+              <FileText className="h-4 w-4 mr-2" />
+              新規書類作成
+            </Link>
+          </Button>
           <Button onClick={onCreateFolder} className="bg-carebase-blue hover:bg-carebase-blue-dark">
             <FolderPlus className="h-4 w-4 mr-2" />
             新しいフォルダ
