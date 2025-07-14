@@ -6,13 +6,14 @@ import { DocumentDetail } from '@/components/3_organisms/documents/document-deta
 import { useRouter } from 'next/navigation';
 
 interface DocumentViewPageProps {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
-export default function DocumentViewPage({ params }: DocumentViewPageProps) {
+export default function DocumentViewPage({ params: paramsPromise }: DocumentViewPageProps) {
   const router = useRouter();
+  const params = React.use(paramsPromise);
   const [document, setDocument] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
