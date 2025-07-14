@@ -2,9 +2,13 @@
 
 import { DocumentItemCard } from '@/components/2_molecules/documents/document-item-card';
 import { DocumentToolbar } from '@/components/2_molecules/documents/document-toolbar';
-import type { DocumentItem } from '@/mocks/documents-data';
+import type { DocumentFolder, DocumentItem } from '@/mocks/documents-data';
+import { FolderCreateModal } from '@/components/3_organisms/modals/folder-create-modal';
+import { FolderEditModal } from '@/components/3_organisms/modals/folder-edit-modal';
+import { FolderDeleteModal } from '@/components/3_organisms/modals/folder-delete-modal';
+import { useFolderManagement } from '@/hooks/useFolderManagement';
 import type React from 'react';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 
 interface DocumentListProps {
   items: DocumentItem[];
@@ -20,6 +24,32 @@ export const DocumentList: React.FC<DocumentListProps> = ({
   const [searchQuery, setSearchQuery] = useState('');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [sortBy, setSortBy] = useState('name');
+  
+  // フォルダ管理
+  const folders = useMemo(() => {
+    return items.filter((item): item is DocumentFolder => item.type === 'folder');
+  }, [items]);
+  
+  const {
+    folderNames,
+    selectedFolder,
+    isCreateModalOpen,
+    isEditModalOpen,
+    isDeleteModalOpen,
+    createFolder,
+    updateFolder,
+    deleteFolder,
+    getFolderItemCount,
+    openCreateModal,
+    openEditModal,
+    openDeleteModal,
+    closeCreateModal,
+    closeEditModal,
+    closeDeleteModal,
+  } = useFolderManagement({
+    initialFolders: folders,
+    categoryKey: 'documents',
+  });
 
   const filteredItems = items.filter((item) =>
     item.name.toLowerCase().includes(searchQuery.toLowerCase())
@@ -38,10 +68,6 @@ export const DocumentList: React.FC<DocumentListProps> = ({
     }
   });
 
-  const handleCreateFolder = () => {
-    // TODO: Implement folder creation
-  };
-
   const handleUploadFile = () => {
     // TODO: Implement file upload
   };
@@ -55,7 +81,7 @@ export const DocumentList: React.FC<DocumentListProps> = ({
         onViewModeChange={setViewMode}
         sortBy={sortBy}
         onSortChange={setSortBy}
-        onCreateFolder={handleCreateFolder}
+        onCreateFolder={openCreateModal}
         onUploadFile={handleUploadFile}
       />
 
@@ -78,11 +104,37 @@ export const DocumentList: React.FC<DocumentListProps> = ({
               key={item.id}
               item={item}
               onItemClick={onItemClick}
+              onEditFolder={(folder) => openEditModal(folder as DocumentFolder)}
+              onDeleteFolder={(folder) => openDeleteModal(folder as DocumentFolder)}
               className={viewMode === 'list' ? 'w-full' : ''}
             />
           ))}
         </div>
       )}
+      
+      {/* フォルダ管理モーダル */}
+      <FolderCreateModal
+        isOpen={isCreateModalOpen}
+        onClose={closeCreateModal}
+        onCreateFolder={createFolder}
+        existingFolders={folderNames}
+      />
+      
+      <FolderEditModal
+        isOpen={isEditModalOpen}
+        onClose={closeEditModal}
+        onUpdateFolder={updateFolder}
+        folder={selectedFolder}
+        existingFolders={folderNames}
+      />
+      
+      <FolderDeleteModal
+        isOpen={isDeleteModalOpen}
+        onClose={closeDeleteModal}
+        onDeleteFolder={deleteFolder}
+        folder={selectedFolder}
+        hasItems={selectedFolder ? selectedFolder.itemCount > 0 : false}
+      />
     </div>
   );
 };

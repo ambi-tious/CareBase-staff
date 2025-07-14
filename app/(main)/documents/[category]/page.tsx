@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation';
 import { DocumentList } from '@/components/3_organisms/documents/document-list';
 import { getDocumentsByCategory, getCategoryByKey } from '@/mocks/documents-data';
+import React from 'react';
 
 interface DocumentCategoryPageProps {
   params: Promise<{
@@ -9,7 +10,8 @@ interface DocumentCategoryPageProps {
 }
 
 export default async function DocumentCategoryPage({ params }: DocumentCategoryPageProps) {
-  const { category: categoryKey } = await params;
+  const resolvedParams = await params;
+  const categoryKey = resolvedParams.category;
   const category = getCategoryByKey(categoryKey);
 
   if (!category) {

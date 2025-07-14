@@ -4,7 +4,7 @@ import type React from 'react';
 import type { DocumentItem } from '@/mocks/documents-data';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Folder, MoreVertical, Download, Edit, Trash2 } from 'lucide-react';
+import { Folder, MoreVertical, Download, Edit, Trash2, FolderEdit } from 'lucide-react';
 import { FileIcon } from '@/components/1_atoms/documents/file-icon';
 import Link from 'next/link';
 import {
@@ -17,12 +17,16 @@ import {
 interface DocumentItemCardProps {
   item: DocumentItem;
   onItemClick?: (item: DocumentItem) => void;
+  onEditFolder?: (folder: DocumentItem) => void;
+  onDeleteFolder?: (folder: DocumentItem) => void;
   className?: string;
 }
 
 export const DocumentItemCard: React.FC<DocumentItemCardProps> = ({
   item,
   onItemClick,
+  onEditFolder,
+  onDeleteFolder,
   className = '',
 }) => {
   const handleCardClick = () => {
@@ -31,6 +35,20 @@ export const DocumentItemCard: React.FC<DocumentItemCardProps> = ({
 
   const handleMenuClick = (e: React.MouseEvent) => {
     e.stopPropagation();
+  };
+
+  const handleEditFolder = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (item.type === 'folder' && onEditFolder) {
+      onEditFolder(item);
+    }
+  };
+
+  const handleDeleteFolder = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (item.type === 'folder' && onDeleteFolder) {
+      onDeleteFolder(item);
+    }
   };
 
   // 書類の場合は詳細画面へのリンクを生成
@@ -104,14 +122,29 @@ export const DocumentItemCard: React.FC<DocumentItemCardProps> = ({
                 </DropdownMenuItem>
                 </>
               )}
-              <DropdownMenuItem>
-                <Edit className="h-4 w-4 mr-2" />
-                名前を変更
-              </DropdownMenuItem>
-              <DropdownMenuItem className="text-red-600">
-                <Trash2 className="h-4 w-4 mr-2" />
-                削除
-              </DropdownMenuItem>
+              {item.type === 'folder' ? (
+                <>
+                  <DropdownMenuItem onClick={handleEditFolder}>
+                    <FolderEdit className="h-4 w-4 mr-2" />
+                    名前を変更
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={handleDeleteFolder} className="text-red-600">
+                    <Trash2 className="h-4 w-4 mr-2" />
+                    削除
+                  </DropdownMenuItem>
+                </>
+              ) : (
+                <>
+                  <DropdownMenuItem>
+                    <Edit className="h-4 w-4 mr-2" />
+                    名前を変更
+                  </DropdownMenuItem>
+                  <DropdownMenuItem className="text-red-600">
+                    <Trash2 className="h-4 w-4 mr-2" />
+                    削除
+                  </DropdownMenuItem>
+                </>
+              )}
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
