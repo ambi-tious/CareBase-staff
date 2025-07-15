@@ -4,7 +4,7 @@ import type React from 'react';
 import type { DocumentItem } from '@/mocks/documents-data';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Folder, MoreVertical, Download, Edit, Trash2, FolderEdit } from 'lucide-react';
+import { Folder, MoreVertical, Download, Edit, Trash2, FolderEdit, FolderOpen } from 'lucide-react';
 import { FileIcon } from '@/components/1_atoms/documents/file-icon';
 import Link from 'next/link';
 import {
@@ -55,6 +55,8 @@ export const DocumentItemCard: React.FC<DocumentItemCardProps> = ({
   const getItemLink = () => {
     if (item.type === 'file') {
       return `/documents/view/${item.id}`;
+    } else if (item.type === 'folder') {
+      return `/documents/folder/${item.id}`;
     }
     return '#'; // フォルダの場合は現在のページにとどまる
   };
@@ -85,7 +87,13 @@ export const DocumentItemCard: React.FC<DocumentItemCardProps> = ({
                     {item.name}
                   </Link>
                 ) : (
-                  item.name
+                  <Link
+                    href={getItemLink()}
+                    className="hover:text-carebase-blue hover:underline"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    {item.name}
+                  </Link>
                 )}
               </h3>
               <div className="text-xs text-gray-500 space-y-1">
@@ -127,6 +135,12 @@ export const DocumentItemCard: React.FC<DocumentItemCardProps> = ({
                   <DropdownMenuItem onClick={handleEditFolder}>
                     <FolderEdit className="h-4 w-4 mr-2" />
                     名前を変更
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link href={`/documents/folder/${item.id}`}>
+                      <FolderOpen className="h-4 w-4 mr-2" />
+                      開く
+                    </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={handleDeleteFolder} className="text-red-600">
                     <Trash2 className="h-4 w-4 mr-2" />
