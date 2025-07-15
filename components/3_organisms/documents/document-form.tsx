@@ -18,10 +18,7 @@ interface DocumentFormProps {
     createdAt: Date;
     updatedAt: Date;
   };
-  onSave?: (document: {
-    title: string;
-    content: string;
-  }) => Promise<boolean>;
+  onSave?: (document: { title: string; content: string }) => Promise<boolean>;
   className?: string;
 }
 
@@ -90,13 +87,13 @@ export const DocumentForm: React.FC<DocumentFormProps> = ({
   // 保存処理
   const handleSave = async () => {
     if (!onSave) return false;
-    
+
     try {
       const success = await onSave({ title, content });
       if (success) {
         setHasChanges(false);
         setUpdatedAt(new Date());
-        
+
         // 保存成功後、詳細画面に遷移
         if (initialDocument.id) {
           router.push(`/documents/view/${initialDocument.id}`);
@@ -105,7 +102,7 @@ export const DocumentForm: React.FC<DocumentFormProps> = ({
           const mockId = `doc-${Date.now()}`;
           router.push(`/documents/view/${mockId}`);
         }
-        
+
         return true;
       }
       return false;
@@ -119,7 +116,7 @@ export const DocumentForm: React.FC<DocumentFormProps> = ({
   const handlePrint = () => {
     const printWindow = window.open('', '_blank');
     if (!printWindow) return;
-    
+
     printWindow.document.write(`
       <!DOCTYPE html>
       <html>
@@ -157,7 +154,7 @@ export const DocumentForm: React.FC<DocumentFormProps> = ({
         </body>
       </html>
     `);
-    
+
     printWindow.document.close();
     printWindow.focus();
     printWindow.print();
@@ -202,11 +199,7 @@ export const DocumentForm: React.FC<DocumentFormProps> = ({
         </CardContent>
       </Card>
 
-      <DocumentActions
-        onSave={handleSave}
-        onPrint={handlePrint}
-        onExport={handleExport}
-      />
+      <DocumentActions onSave={handleSave} onPrint={handlePrint} onExport={handleExport} />
 
       {lastAutoSaveTime && (
         <p className="text-xs text-muted-foreground mt-2">

@@ -52,9 +52,7 @@ export const DocumentHeader: React.FC<DocumentHeaderProps> = ({
           )}
           disabled={disabled}
         />
-        {isTitleEmpty && (
-          <p className="text-sm text-red-500 mt-1">タイトルは必須項目です</p>
-        )}
+        {isTitleEmpty && <p className="text-sm text-red-500 mt-1">タイトルは必須項目です</p>}
       </div>
       <div className="flex flex-wrap justify-between text-xs text-muted-foreground">
         <span>作成日時: {formatDate(createdAt)}</span>

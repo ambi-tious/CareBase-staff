@@ -3,13 +3,7 @@
 import type React from 'react';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { 
-  Save, 
-  Printer, 
-  FileDown, 
-  AlertCircle,
-  CheckCircle2
-} from 'lucide-react';
+import { Save, Printer, FileDown, AlertCircle, CheckCircle2 } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { cn } from '@/lib/utils';
 
@@ -38,7 +32,7 @@ export const DocumentActions: React.FC<DocumentActionsProps> = ({
     setIsSaving(true);
     setSaveSuccess(false);
     setSaveError(null);
-    
+
     try {
       const success = await onSave();
       if (success) {
@@ -60,7 +54,7 @@ export const DocumentActions: React.FC<DocumentActionsProps> = ({
   const handleExport = async () => {
     setIsExporting(true);
     setExportError(null);
-    
+
     try {
       const success = await onExport();
       if (!success) {
@@ -85,48 +79,34 @@ export const DocumentActions: React.FC<DocumentActionsProps> = ({
           <Save className="h-4 w-4 mr-2" />
           {isSaving ? '保存中...' : '保存'}
         </Button>
-        <Button
-          onClick={onPrint}
-          disabled={disabled}
-          variant="outline"
-        >
+        <Button onClick={onPrint} disabled={disabled} variant="outline">
           <Printer className="h-4 w-4 mr-2" />
           印刷
         </Button>
-        <Button
-          onClick={handleExport}
-          disabled={disabled || isExporting}
-          variant="outline"
-        >
+        <Button onClick={handleExport} disabled={disabled || isExporting} variant="outline">
           <FileDown className="h-4 w-4 mr-2" />
           {isExporting ? 'エクスポート中...' : 'PDFエクスポート'}
         </Button>
       </div>
-      
+
       {saveSuccess && (
         <Alert className="bg-green-50 border-green-200">
           <CheckCircle2 className="h-4 w-4 text-green-600" />
-          <AlertDescription className="text-green-700">
-            文書が正常に保存されました
-          </AlertDescription>
+          <AlertDescription className="text-green-700">文書が正常に保存されました</AlertDescription>
         </Alert>
       )}
-      
+
       {saveError && (
         <Alert className="bg-red-50 border-red-200">
           <AlertCircle className="h-4 w-4 text-red-600" />
-          <AlertDescription className="text-red-700">
-            {saveError}
-          </AlertDescription>
+          <AlertDescription className="text-red-700">{saveError}</AlertDescription>
         </Alert>
       )}
-      
+
       {exportError && (
         <Alert className="bg-red-50 border-red-200">
           <AlertCircle className="h-4 w-4 text-red-600" />
-          <AlertDescription className="text-red-700">
-            {exportError}
-          </AlertDescription>
+          <AlertDescription className="text-red-700">{exportError}</AlertDescription>
         </Alert>
       )}
     </div>

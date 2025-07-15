@@ -9,7 +9,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Filter, FolderPlus, Grid3X3, List, Search, Shield, SortAsc, Upload, FileText } from 'lucide-react';
+import {
+  Filter,
+  FolderPlus,
+  Grid3X3,
+  List,
+  Search,
+  Shield,
+  SortAsc,
+  Upload,
+  FileText,
+} from 'lucide-react';
 import Link from 'next/link';
 import type React from 'react';
 
@@ -51,11 +61,17 @@ export const DocumentToolbar: React.FC<DocumentToolbarProps> = ({
               新規書類
             </Button>
           </Link>
-          <Button 
-            onClick={onCreateFolder} 
+          <Button
+            onClick={onCreateFolder}
             className="bg-carebase-blue hover:bg-carebase-blue-dark"
             disabled={!isAuthenticated || !hasCreatePermission}
-            title={!isAuthenticated ? "ログインが必要です" : !hasCreatePermission ? "権限がありません" : "新しいフォルダを作成"}
+            title={
+              !isAuthenticated
+                ? 'ログインが必要です'
+                : !hasCreatePermission
+                  ? '権限がありません'
+                  : '新しいフォルダを作成'
+            }
           >
             <FolderPlus className="h-4 w-4 mr-2" />
             新しいフォルダ
@@ -65,7 +81,13 @@ export const DocumentToolbar: React.FC<DocumentToolbarProps> = ({
             onClick={onUploadFile}
             className="border-carebase-blue text-carebase-blue hover:bg-carebase-blue-light"
             disabled={!isAuthenticated || !hasCreatePermission}
-            title={!isAuthenticated ? "ログインが必要です" : !hasCreatePermission ? "権限がありません" : "ファイルをアップロード"}
+            title={
+              !isAuthenticated
+                ? 'ログインが必要です'
+                : !hasCreatePermission
+                  ? '権限がありません'
+                  : 'ファイルをアップロード'
+            }
           >
             <Upload className="h-4 w-4 mr-2" />
             ファイルをアップロード

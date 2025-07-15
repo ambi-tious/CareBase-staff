@@ -35,22 +35,22 @@ export const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     // 入力検証
     if (!folderName.trim()) {
       setError('フォルダ名を入力してください');
       return;
     }
-    
+
     // 重複チェック
     if (existingFolders.includes(folderName.trim())) {
       setError('同じ名前のフォルダが既に存在します');
       return;
     }
-    
+
     setError(null);
     setIsSubmitting(true);
-    
+
     try {
       const success = await onCreateFolder(folderName.trim());
       if (success) {
@@ -81,11 +81,9 @@ export const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
             <Folder className="h-5 w-5 text-carebase-blue" />
             新規フォルダの作成
           </DialogTitle>
-          <DialogDescription>
-            新しいフォルダの名前を入力してください。
-          </DialogDescription>
+          <DialogDescription>新しいフォルダの名前を入力してください。</DialogDescription>
         </DialogHeader>
-        
+
         <form onSubmit={handleSubmit}>
           {error && (
             <Alert className="mb-4 border-red-200 bg-red-50">
@@ -93,7 +91,7 @@ export const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
               <AlertDescription className="text-red-700">{error}</AlertDescription>
             </Alert>
           )}
-          
+
           <div className="space-y-2 py-2">
             <Label htmlFor="folder-name" className="text-right">
               フォルダ名 <span className="text-red-500">*</span>
@@ -108,14 +106,14 @@ export const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
               disabled={isSubmitting}
             />
           </div>
-          
+
           <DialogFooter className="mt-4">
             <Button type="button" variant="outline" onClick={handleClose} disabled={isSubmitting}>
               キャンセル
             </Button>
-            <Button 
-              type="submit" 
-              disabled={isSubmitting || !folderName.trim()} 
+            <Button
+              type="submit"
+              disabled={isSubmitting || !folderName.trim()}
               className="bg-carebase-blue hover:bg-carebase-blue-dark"
             >
               {isSubmitting ? (

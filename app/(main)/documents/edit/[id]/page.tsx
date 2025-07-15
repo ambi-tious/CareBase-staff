@@ -5,7 +5,10 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, FileText } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { DocumentFormFields, type DocumentFormData } from '@/components/2_molecules/documents/document-form-fields';
+import {
+  DocumentFormFields,
+  type DocumentFormData,
+} from '@/components/2_molecules/documents/document-form-fields';
 import { useDocumentForm } from '@/hooks/useDocumentForm';
 
 interface DocumentEditPageProps {
@@ -27,12 +30,12 @@ export default function DocumentEditPage({ params: paramsPromise }: DocumentEdit
     const fetchDocument = async () => {
       setIsLoading(true);
       setError(null);
-      
+
       try {
         // 実際のアプリケーションではAPIを呼び出してデータを取得します
         // ここではモックデータを使用
         await new Promise((resolve) => setTimeout(resolve, 500));
-        
+
         // モックデータ
         setInitialData({
           title: 'サンプル文書',
@@ -63,17 +66,17 @@ export default function DocumentEditPage({ params: paramsPromise }: DocumentEdit
     initialData,
     onSubmit: async (data) => {
       setIsSaving(true);
-      
+
       try {
         // 実際のアプリケーションではAPIを呼び出して保存します
         console.log('Updating document metadata:', { id: params.id, ...data });
-        
+
         // 保存処理をシミュレート
         await new Promise((resolve) => setTimeout(resolve, 500));
-        
+
         // 保存成功後、エディタ画面に遷移
         router.push(`/documents/editor/${params.id}`);
-        
+
         return true;
       } catch (error) {
         console.error('Failed to update document:', error);
@@ -131,7 +134,8 @@ export default function DocumentEditPage({ params: paramsPromise }: DocumentEdit
           </div>
         </div>
         <p className="text-gray-600">
-          書類の基本情報を編集してください。必須項目（<span className="text-red-500">*</span>）は必ず入力してください。
+          書類の基本情報を編集してください。必須項目（<span className="text-red-500">*</span>
+          ）は必ず入力してください。
         </p>
       </div>
 

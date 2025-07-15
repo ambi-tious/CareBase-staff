@@ -13,14 +13,14 @@ export default function DocumentEditorPage() {
   // 文書保存処理のモック
   const handleSaveDocument = async (document: { title: string; content: string }) => {
     setIsSaving(true);
-    
+
     try {
       // 実際のアプリケーションではAPIを呼び出して保存します
       console.log('Saving document:', document);
-      
+
       // 保存処理をシミュレート
       await new Promise((resolve) => setTimeout(resolve, 500));
-      
+
       return true;
     } catch (error) {
       console.error('Failed to save document:', error);
@@ -65,4 +65,4 @@ export default function DocumentEditorPage() {
       />
     </div>
   );
-};
+}

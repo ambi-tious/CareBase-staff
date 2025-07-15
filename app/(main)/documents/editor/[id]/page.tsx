@@ -12,7 +12,11 @@ interface DocumentEditorPageProps {
   };
 }
 
-export default function DocumentEditorPage({ params: paramsPromise }: { params: Promise<{ id: string }> }) {
+export default function DocumentEditorPage({
+  params: paramsPromise,
+}: {
+  params: Promise<{ id: string }>;
+}) {
   const params = React.use(paramsPromise);
   const router = useRouter();
   const [document, setDocument] = useState<{
@@ -31,12 +35,12 @@ export default function DocumentEditorPage({ params: paramsPromise }: { params: 
     const fetchDocument = async () => {
       setIsLoading(true);
       setError(null);
-      
+
       try {
         // 実際のアプリケーションではAPIを呼び出してデータを取得します
         // ここではモックデータを使用
         await new Promise((resolve) => setTimeout(resolve, 500));
-        
+
         // モックデータ
         setDocument({
           id: params.id,
@@ -59,23 +63,23 @@ export default function DocumentEditorPage({ params: paramsPromise }: { params: 
   // 文書保存処理のモック
   const handleSaveDocument = async (documentData: { title: string; content: string }) => {
     if (!document) return false;
-    
+
     setIsSaving(true);
-    
+
     try {
       // 実際のアプリケーションではAPIを呼び出して保存します
       console.log('Saving document:', { id: document.id, ...documentData });
-      
+
       // 保存処理をシミュレート
       await new Promise((resolve) => setTimeout(resolve, 500));
-      
+
       // 成功したら文書を更新
       setDocument({
         ...document,
         ...documentData,
         updatedAt: new Date(),
       });
-      
+
       return true;
     } catch (error) {
       console.error('Failed to save document:', error);
@@ -132,10 +136,7 @@ export default function DocumentEditorPage({ params: paramsPromise }: { params: 
       </div>
 
       {/* 文書フォーム */}
-      <DocumentForm
-        initialDocument={document}
-        onSave={handleSaveDocument}
-      />
+      <DocumentForm initialDocument={document} onSave={handleSaveDocument} />
     </div>
   );
-};
+}

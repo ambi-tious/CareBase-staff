@@ -35,10 +35,10 @@ export const FolderDeleteModal: React.FC<FolderDeleteModalProps> = ({
 
   const handleDelete = async () => {
     if (!folder) return;
-    
+
     setError(null);
     setIsSubmitting(true);
-    
+
     try {
       const success = await onDeleteFolder(folder.id);
       if (success) {
@@ -67,18 +67,16 @@ export const FolderDeleteModal: React.FC<FolderDeleteModalProps> = ({
             <AlertTriangle className="h-5 w-5" />
             フォルダの削除
           </DialogTitle>
-          <DialogDescription>
-            この操作は取り消すことができません。
-          </DialogDescription>
+          <DialogDescription>この操作は取り消すことができません。</DialogDescription>
         </DialogHeader>
-        
+
         {error && (
           <Alert className="border-red-200 bg-red-50">
             <AlertCircle className="h-4 w-4 text-red-600" />
             <AlertDescription className="text-red-700">{error}</AlertDescription>
           </Alert>
         )}
-        
+
         <div className="py-4">
           <Alert className="border-red-200 bg-red-50">
             <AlertTriangle className="h-4 w-4 text-red-600" />
@@ -93,15 +91,15 @@ export const FolderDeleteModal: React.FC<FolderDeleteModalProps> = ({
             </AlertDescription>
           </Alert>
         </div>
-        
+
         <DialogFooter>
           <Button type="button" variant="outline" onClick={handleClose} disabled={isSubmitting}>
             キャンセル
           </Button>
-          <Button 
-            type="button" 
+          <Button
+            type="button"
             variant="destructive"
-            onClick={handleDelete} 
+            onClick={handleDelete}
             disabled={isSubmitting || !folder}
             className="bg-red-600 hover:bg-red-700"
           >

@@ -11,14 +11,14 @@ export const useBeforeUnload = (shouldPrompt: boolean, message: string) => {
   useEffect(() => {
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
       if (!shouldPrompt) return;
-      
+
       e.preventDefault();
       e.returnValue = message;
       return message;
     };
 
     window.addEventListener('beforeunload', handleBeforeUnload);
-    
+
     return () => {
       window.removeEventListener('beforeunload', handleBeforeUnload);
     };

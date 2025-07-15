@@ -24,12 +24,12 @@ export const DocumentList: React.FC<DocumentListProps> = ({
   const [searchQuery, setSearchQuery] = useState('');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [sortBy, setSortBy] = useState('name');
-  
+
   // フォルダ管理
   const folders = useMemo(() => {
     return items.filter((item): item is DocumentFolder => item.type === 'folder');
   }, [items]);
-  
+
   const {
     folderNames,
     selectedFolder,
@@ -111,7 +111,7 @@ export const DocumentList: React.FC<DocumentListProps> = ({
           ))}
         </div>
       )}
-      
+
       {/* フォルダ管理モーダル */}
       <FolderCreateModal
         isOpen={isCreateModalOpen}
@@ -119,7 +119,7 @@ export const DocumentList: React.FC<DocumentListProps> = ({
         onCreateFolder={createFolder}
         existingFolders={folderNames}
       />
-      
+
       <FolderEditModal
         isOpen={isEditModalOpen}
         onClose={closeEditModal}
@@ -127,7 +127,7 @@ export const DocumentList: React.FC<DocumentListProps> = ({
         folder={selectedFolder}
         existingFolders={folderNames}
       />
-      
+
       <FolderDeleteModal
         isOpen={isDeleteModalOpen}
         onClose={closeDeleteModal}

@@ -80,9 +80,9 @@ export const DocumentToolbar: React.FC<DocumentToolbarProps> = ({
         onClick={() => onFormatText('redo')}
         disabled={disabled}
       />
-      
+
       <ToolbarSeparator />
-      
+
       <ToolbarDropdown
         value={fontFamily}
         onChange={(value) => onFormatText('fontName', value)}
@@ -90,7 +90,7 @@ export const DocumentToolbar: React.FC<DocumentToolbarProps> = ({
         placeholder="フォント"
         disabled={disabled}
       />
-      
+
       <ToolbarDropdown
         value={fontSize}
         onChange={(value) => onFormatText('fontSize', value)}
@@ -99,9 +99,9 @@ export const DocumentToolbar: React.FC<DocumentToolbarProps> = ({
         disabled={disabled}
         className="w-[80px]"
       />
-      
+
       <ToolbarSeparator />
-      
+
       <ToolbarButton
         icon={Bold}
         label="太字"
@@ -120,16 +120,16 @@ export const DocumentToolbar: React.FC<DocumentToolbarProps> = ({
         onClick={() => onFormatText('underline')}
         disabled={disabled}
       />
-      
+
       <ColorPicker
         value={textColor}
         onChange={(value) => onFormatText('foreColor', value)}
         options={colorOptions}
         disabled={disabled}
       />
-      
+
       <ToolbarSeparator />
-      
+
       <ToolbarButton
         icon={AlignLeft}
         label="左揃え"
@@ -154,9 +154,9 @@ export const DocumentToolbar: React.FC<DocumentToolbarProps> = ({
         onClick={() => onFormatText('justifyFull')}
         disabled={disabled}
       />
-      
+
       <ToolbarSeparator />
-      
+
       <ToolbarButton
         icon={List}
         label="箇条書き"

@@ -30,7 +30,7 @@ export const DocumentDetail: React.FC<DocumentDetailProps> = ({ document, classN
   const handlePrint = () => {
     const printWindow = window.open('', '_blank');
     if (!printWindow) return;
-    
+
     printWindow.document.write(`
       <!DOCTYPE html>
       <html>
@@ -70,7 +70,7 @@ export const DocumentDetail: React.FC<DocumentDetailProps> = ({ document, classN
         </body>
       </html>
     `);
-    
+
     printWindow.document.close();
     printWindow.focus();
     printWindow.print();
@@ -86,7 +86,7 @@ export const DocumentDetail: React.FC<DocumentDetailProps> = ({ document, classN
         createdAt={document.createdAt}
         onPrint={handlePrint}
       />
-      
+
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         <div className="lg:col-span-3">
           <DocumentContentViewer
@@ -95,7 +95,7 @@ export const DocumentDetail: React.FC<DocumentDetailProps> = ({ document, classN
             fontSize={document.fontSize}
           />
         </div>
-        
+
         <div className="lg:col-span-1">
           <DocumentMetadata
             documentId={document.id}

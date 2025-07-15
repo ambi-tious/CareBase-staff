@@ -77,8 +77,8 @@ export const DocumentItemCard: React.FC<DocumentItemCardProps> = ({
             <div className="flex-1 min-w-0">
               <h3 className="font-medium text-sm text-gray-900 truncate mb-1">
                 {item.type === 'file' ? (
-                  <Link 
-                    href={getItemLink()} 
+                  <Link
+                    href={getItemLink()}
                     className="hover:text-carebase-blue hover:underline"
                     onClick={(e) => e.stopPropagation()}
                   >
@@ -110,16 +110,16 @@ export const DocumentItemCard: React.FC<DocumentItemCardProps> = ({
             <DropdownMenuContent align="end">
               {item.type === 'file' && (
                 <>
-                <DropdownMenuItem>
-                  <Download className="h-4 w-4 mr-2" />
-                  ダウンロード
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link href={`/documents/editor/${item.id}`}>
-                    <Edit className="h-4 w-4 mr-2" />
-                    編集
-                  </Link>
-                </DropdownMenuItem>
+                  <DropdownMenuItem>
+                    <Download className="h-4 w-4 mr-2" />
+                    ダウンロード
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link href={`/documents/editor/${item.id}`}>
+                      <Edit className="h-4 w-4 mr-2" />
+                      編集
+                    </Link>
+                  </DropdownMenuItem>
                 </>
               )}
               {item.type === 'folder' ? (

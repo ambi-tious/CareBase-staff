@@ -28,11 +28,7 @@ export const ColorPicker: React.FC<ColorPickerProps> = ({
   return (
     <Popover>
       <PopoverTrigger asChild disabled={disabled}>
-        <Button
-          variant="outline"
-          size="sm"
-          className="h-8 border-0 flex items-center gap-1 px-2"
-        >
+        <Button variant="outline" size="sm" className="h-8 border-0 flex items-center gap-1 px-2">
           <div
             className="h-4 w-4 rounded-sm border"
             style={{ backgroundColor: selectedColor?.color || '#000000' }}

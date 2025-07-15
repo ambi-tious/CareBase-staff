@@ -27,11 +27,7 @@ export const ToolbarButton: React.FC<ToolbarButtonProps> = ({
       size="sm"
       onClick={onClick}
       disabled={disabled}
-      className={cn(
-        'h-8 px-2 py-1',
-        isActive && 'bg-muted text-carebase-blue',
-        className
-      )}
+      className={cn('h-8 px-2 py-1', isActive && 'bg-muted text-carebase-blue', className)}
       title={label}
       aria-label={label}
     >

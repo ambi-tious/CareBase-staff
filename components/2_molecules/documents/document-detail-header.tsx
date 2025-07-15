@@ -25,7 +25,6 @@ export const DocumentDetailHeader: React.FC<DocumentDetailHeaderProps> = ({
   onPrint,
   className,
 }) => {
-
   const formatDate = (date: Date) => {
     return format(date, 'yyyy年MM月dd日 HH:mm', { locale: ja });
   };
@@ -35,11 +34,7 @@ export const DocumentDetailHeader: React.FC<DocumentDetailHeaderProps> = ({
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div className="flex items-center gap-2">
           <Link href="/documents/minutes">
-            <Button
-              variant="outline"
-              size="sm"
-              className="flex items-center gap-1"
-            >
+            <Button variant="outline" size="sm" className="flex items-center gap-1">
               <ArrowLeft className="h-4 w-4" />
               一覧へ戻る
             </Button>
@@ -47,12 +42,7 @@ export const DocumentDetailHeader: React.FC<DocumentDetailHeaderProps> = ({
           <DocumentBadge status={status} />
         </div>
         <div className="flex items-center gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={onPrint}
-            className="flex items-center gap-1"
-          >
+          <Button variant="outline" size="sm" onClick={onPrint} className="flex items-center gap-1">
             <Printer className="h-4 w-4" />
             印刷
           </Button>

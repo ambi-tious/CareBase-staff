@@ -1,4 +1,4 @@
-'use client'; 
+'use client';
 
 import React from 'react';
 import { useState, useEffect } from 'react';
@@ -23,12 +23,12 @@ export default function DocumentViewPage({ params: paramsPromise }: DocumentView
     const fetchDocument = async () => {
       setIsLoading(true);
       setError(null);
-      
+
       try {
         // 実際のアプリケーションではAPIを呼び出してデータを取得します
         // ここではモックデータを使用
         await new Promise((resolve) => setTimeout(resolve, 500));
-        
+
         // モックデータ
         setDocument({
           id: params.id,
