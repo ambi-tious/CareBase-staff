@@ -53,7 +53,7 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
   const [isMedicationStatusModalOpen, setIsMedicationStatusModalOpen] = useState(false);
   const [selectedPointCategory, setSelectedPointCategory] = useState<string | null>(null);
   const [isPointModalOpen, setIsPointModalOpen] = useState(false);
-  const [pointContent, setPointContent] = useState<Record<string, string>>({
+  const [pointContents, setPointContents] = useState<Record<string, string>>({
     '食事': '<h2>食事に関する個別ポイント</h2><p>朝食：全粥・常菜・常食</p><p>昼食：全粥・常菜・常食</p><p>夕食：全粥・常菜・常食</p><ul><li>嚥下機能は良好</li><li>自力摂取可能</li><li>食事の際は前かがみの姿勢を保持</li><li>水分とろみ剤使用（中間のとろみ）</li></ul>',
     '移乗介助': '<h2>移乗介助に関する個別ポイント</h2><p>基本的に見守りで自立</p><p>疲労時は一部介助が必要</p>',
     '服薬': '<h2>服薬に関する個別ポイント</h2><p>自己管理は難しいため、職員管理</p><p>薬は粉砕して提供</p><p>水分はとろみをつけて提供</p>',
@@ -126,10 +126,24 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
   const handlePointDetailSave = async (content: string) => {
     // In a real application, this would call an API to save the content
     if (selectedPointCategory) {
-      setPointContent(prev => ({
+      setPointContents(prev => ({
         ...prev,
         [selectedPointCategory]: content
       }));
+    }
+    // Simulate API call delay
+    await new Promise(resolve => setTimeout(resolve, 800));
+    return Promise.resolve();
+  };
+
+  const handlePointDetailDelete = async () => {
+    // In a real application, this would call an API to delete the content
+    if (selectedPointCategory) {
+      setPointContents(prev => {
+        const newContents = { ...prev };
+        delete newContents[selectedPointCategory];
+        return newContents;
+      });
     }
     // Simulate API call delay
     await new Promise(resolve => setTimeout(resolve, 800));
@@ -471,9 +485,12 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
           {resident.individualPoints && resident.individualPoints.length > 0 ? (
             <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
               {resident.individualPoints.map((point) => (
-                <div key={point.id} onClick={() => handlePointCategoryClick(point.category)}>
-                  <IndividualPointCard point={point} />
-                </div>
+                <IndividualPointCard 
+                  key={point.id} 
+                  point={point} 
+                  hasContent={!!pointContents[point.category]} 
+                  onClick={() => handlePointCategoryClick(point.category)} 
+                />
               ))}
             </div>
           ) : (
@@ -531,8 +548,9 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
         isOpen={isPointModalOpen}
         onClose={() => setIsPointModalOpen(false)}
         category={selectedPointCategory || ''}
-        content={selectedPointCategory ? pointContent[selectedPointCategory] || '' : ''}
+        content={selectedPointCategory && pointContents[selectedPointCategory] ? pointContents[selectedPointCategory] : ''}
         onSave={handlePointDetailSave}
+        onDelete={selectedPointCategory && pointContents[selectedPointCategory] ? handlePointDetailDelete : undefined}
       />
     </>
   );
