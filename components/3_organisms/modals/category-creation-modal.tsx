@@ -20,6 +20,9 @@ interface CategoryCreationModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSubmit: (data: { category: string; icon: IconName }) => Promise<void>;
+  title: string;
+  description: string;
+  submitLabel: string;
 }
 
 const iconOptions: { value: IconName; label: string }[] = [
@@ -39,6 +42,9 @@ export const CategoryCreationModal: React.FC<CategoryCreationModalProps> = ({
   isOpen,
   onClose,
   onSubmit,
+  title,
+  description,
+  submitLabel,
 }) => {
   const [category, setCategory] = useState('');
   const [icon, setIcon] = useState<IconName>('FileText');
@@ -74,10 +80,10 @@ export const CategoryCreationModal: React.FC<CategoryCreationModalProps> = ({
       <DialogContent className="max-w-md">
         <DialogHeader>
           <DialogTitle className="text-xl font-bold text-carebase-text-primary">
-            個別ポイントカテゴリの追加
+            {title}
           </DialogTitle>
           <DialogDescription className="text-gray-600">
-            新しい個別ポイントのカテゴリを作成します。
+            {description}
           </DialogDescription>
         </DialogHeader>
 
@@ -134,7 +140,7 @@ export const CategoryCreationModal: React.FC<CategoryCreationModalProps> = ({
               disabled={isSubmitting}
               className="bg-carebase-blue hover:bg-carebase-blue-dark"
             >
-              {isSubmitting ? '作成中...' : '作成'}
+              {isSubmitting ? `${submitLabel}中...` : submitLabel}
             </Button>
           </div>
         </form>

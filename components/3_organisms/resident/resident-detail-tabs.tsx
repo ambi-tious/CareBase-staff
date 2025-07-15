@@ -55,6 +55,7 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
   const [selectedPointCategory, setSelectedPointCategory] = useState<string | null>(null);
   const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
   const [isPointModalOpen, setIsPointModalOpen] = useState(false);
+  const [isAddCategoryModalOpen, setIsAddCategoryModalOpen] = useState(false);
   const [pointContents, setPointContents] = useState<Record<string, string>>({
     '食事': '<h2>食事に関する個別ポイント</h2><p>朝食：全粥・常菜・常食</p><p>昼食：全粥・常菜・常食</p><p>夕食：全粥・常菜・常食</p><ul><li>嚥下機能は良好</li><li>自力摂取可能</li><li>食事の際は前かがみの姿勢を保持</li><li>水分とろみ剤使用（中間のとろみ）</li></ul>',
     '移乗介助': '<h2>移乗介助に関する個別ポイント</h2><p>基本的に見守りで自立</p><p>疲労時は一部介助が必要</p>',
@@ -99,6 +100,10 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
 
   const handleAddContact = () => {
     setIsContactModalOpen(true);
+  };
+  
+  const handleAddCategory = () => {
+    setIsAddCategoryModalOpen(true);
   };
 
   const handleAddHomeCareOffice = () => {
@@ -313,7 +318,6 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
       'history',
       'medicationInfo',
       'medicationStatus',
-      'points',
     ].includes(activeTab);
   };
 
@@ -499,7 +503,17 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
             <Button variant="outline" className="bg-white">
               内容のある項目のみ表示
             </Button>
-            <Button className="bg-carebase-blue hover:bg-carebase-blue-dark">すべて表示</Button>
+            <Button className="bg-carebase-blue hover:bg-carebase-blue-dark">
+              すべて表示
+            </Button>
+            <Button 
+              variant="outline" 
+              className="bg-white border-carebase-blue text-carebase-blue hover:bg-carebase-blue-light font-medium"
+              onClick={handleAddCategory}
+            >
+              <PlusCircle className="h-4 w-4 mr-2 text-carebase-blue" />
+              追加
+            </Button>
             <Button 
               variant="outline" 
               className="bg-white ml-auto"
@@ -570,12 +584,25 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
         onSubmit={handleMedicationStatusSubmit}
         residentName={resident.name}
       />
+
+      <CategoryCreationModal
+        isOpen={isAddCategoryModalOpen}
+        onClose={() => setIsAddCategoryModalOpen(false)}
+        onSubmit={handleCategoryCreate}
+        title="個別ポイントカテゴリの追加"
+        description="新しい個別ポイントのカテゴリを作成します。"
+        submitLabel="作成"
+      />
       
       <CategoryCreationModal
-        isOpen={isCategoryModalOpen}
-        onClose={() => setIsCategoryModalOpen(false)}
+        isOpen={isCategoryModalOpen} 
+        onClose={() => setIsCategoryModalOpen(false)} 
         onSubmit={handleCategoryCreate}
+        title="カテゴリの管理"
+        description="個別ポイントのカテゴリを管理します。"
+        submitLabel="追加"
       />
+      
       <IndividualPointModal
         isOpen={isPointModalOpen}
         onClose={() => setIsPointModalOpen(false)}
