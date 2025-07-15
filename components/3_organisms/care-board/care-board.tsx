@@ -3,6 +3,7 @@
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { cn } from '@/lib/utils';
 import { getLucideIcon } from '@/lib/lucide-icon-registry';
 import {
   careBoardData,
@@ -21,7 +22,10 @@ type ActiveTabView = 'time' | 'user';
 
 // Component for Time Base View - 24時間縦スクロール対応
 function TimeBaseView() {
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  // スクロールコンテナへの参照
+  const scrollContainerRef = useRef<HTMLDivElement | null>(null);
+  // 現在時刻の行への参照
+  const currentTimeRowRef = useRef<HTMLDivElement | null>(null);
 
   // 24時間分のタイムスロットを生成（30分間隔）
   const generateTimeSlots = () => {
@@ -49,21 +53,33 @@ function TimeBaseView() {
   const currentTime = getCurrentTimeSlot();
 
   useEffect(() => {
-    // 少し遅延させて現在時刻の位置にスクロール
-    setTimeout(() => {
-      const currentTimeElement = document.getElementById('current-time-row');
-      if (currentTimeElement && scrollContainerRef.current) {
-        const containerTop = scrollContainerRef.current.getBoundingClientRect().top;
-        const elementTop = currentTimeElement.getBoundingClientRect().top;
-        const offset =
-          elementTop -
-          containerTop -
-          scrollContainerRef.current.clientHeight / 2 +
-          currentTimeElement.clientHeight / 2;
-        scrollContainerRef.current.scrollTop += offset;
+    // 現在時刻の位置にスクロールする関数
+    const scrollToCurrentTime = () => {
+      if (currentTimeRowRef.current && scrollContainerRef.current) {
+        // ヘッダーの高さを考慮（ヘッダーの高さは約64px + タブの高さ約48px + マージン24px）
+        const headerHeight = 136;
+        
+        // 現在時刻の行の位置を取得
+        const rowRect = currentTimeRowRef.current.getBoundingClientRect();
+        const containerRect = scrollContainerRef.current.getBoundingClientRect();
+        
+        // スクロール位置を計算（現在時刻の行が画面の上部1/3の位置に来るように）
+        const targetPosition = rowRect.top - containerRect.top - headerHeight - (containerRect.height / 3);
+        
+        // スムーズにスクロール
+        scrollContainerRef.current.scrollTo({
+          top: scrollContainerRef.current.scrollTop + targetPosition,
+          behavior: 'smooth'
+        });
       }
-    }, 100);
-  }, []);
+    };
+
+    // ページ読み込み後、少し遅延させてスクロール（DOMが完全に描画されるのを待つ）
+    const timer = setTimeout(scrollToCurrentTime, 300);
+    
+    // コンポーネントのアンマウント時にタイマーをクリア
+    return () => clearTimeout(timer);
+  }, [currentTime]); // currentTimeが変わったときにも再実行
 
   function EventCell({ events, time }: { events: CareEvent[]; time: string }) {
     const relevantEvents = events.filter((event) => event.time.startsWith(time.split(':')[0]));
@@ -85,8 +101,8 @@ function TimeBaseView() {
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-sm overflow-hidden">
-      <div className="overflow-auto max-h-[calc(100vh-220px)]" ref={scrollContainerRef}>
+    <div className="bg-white rounded-lg shadow-sm overflow-hidden border border-gray-200">
+      <div className="overflow-auto max-h-[calc(100vh-220px)] scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent" ref={scrollContainerRef}>
         {' '}
         {/* Adjusted max-height */}
         <div
@@ -133,13 +149,18 @@ function TimeBaseView() {
           {/* Time slots and events */}
           {allTimeSlots.map((time) => (
             <div
-              key={time}
-              className={`contents ${time === currentTime ? 'bg-yellow-50' : ''}`}
-              id={time === currentTime ? 'current-time-row' : undefined}
+              key={time} 
+              className="contents"
+              ref={time === currentTime ? currentTimeRowRef : undefined}
             >
               {/* Time slot label (sticky left) */}
               <div
-                className={`sticky left-0 flex items-center justify-center p-2 border-b border-r border-gray-200 text-sm font-medium z-10 h-14 ${time === currentTime ? 'bg-yellow-100 text-yellow-800' : 'bg-gray-50 text-gray-700'}`} // Adjusted padding and height
+                className={cn(
+                  "sticky left-0 flex items-center justify-center p-2 border-b border-r border-gray-200 text-sm font-medium z-10 h-14",
+                  time === currentTime 
+                    ? "bg-yellow-100 text-yellow-800 font-bold" 
+                    : "bg-gray-50 text-gray-700"
+                )}
               >
                 {time}
               </div>
@@ -147,7 +168,10 @@ function TimeBaseView() {
               {careBoardData.map((resident) => (
                 <div
                   key={`${resident.id}-${time}`}
-                  className={`border-r border-gray-200 ${time === currentTime ? 'bg-yellow-50' : ''}`}
+                  className={cn(
+                    "border-r border-gray-200",
+                    time === currentTime ? "bg-yellow-50" : ""
+                  )}
                 >
                   <EventCell events={resident.events} time={time} />
                 </div>
@@ -240,7 +264,11 @@ function UserBaseView() {
 
 export function CareBoard() {
   const [activeView, setActiveView] = useState<ActiveTabView>('time');
-  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
+  
+  // 現在の時刻を取得（デバッグ用）
+  const currentHour = new Date().getHours();
+  const currentMinute = new Date().getMinutes();
 
   return (
     <div data-testid="care-board" className="p-4 md:p-6 bg-carebase-bg min-h-screen">
@@ -280,7 +308,14 @@ export function CareBoard() {
           )}
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
+          {/* デバッグ情報（開発時のみ表示） */}
+          {process.env.NODE_ENV === 'development' && (
+            <div className="text-xs text-gray-500 mr-2">
+              現在時刻: {currentHour}:{currentMinute < 10 ? `0${currentMinute}` : currentMinute}
+            </div>
+          )}
+          
           <Button
             variant="outline"
             className="bg-white border-carebase-blue text-carebase-blue hover:bg-carebase-blue-light font-medium px-3 py-2 text-sm"
@@ -298,7 +333,7 @@ export function CareBoard() {
                 <CalendarIcon className="mr-2 h-4 w-4 text-carebase-blue" />
                 {format(selectedDate, 'M月d日 (E)', { locale: ja })}
               </Button>
-            </PopoverTrigger>
+            </PopoverTrigger> 
             <PopoverContent className="w-auto p-0">
               <Calendar
                 mode="single"
@@ -325,6 +360,22 @@ export function CareBoard() {
       </div>
 
       {activeView === 'time' ? <TimeBaseView /> : <UserBaseView />}
+      
+      {/* 現在時刻へスクロールするボタン */}
+      <div className="fixed bottom-6 right-6">
+        <Button 
+          onClick={() => {
+            const currentTimeRow = document.querySelector('[data-current-time="true"]');
+            if (currentTimeRow) {
+              currentTimeRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+          }}
+          className="bg-carebase-blue hover:bg-carebase-blue-dark text-white rounded-full shadow-lg p-3"
+        >
+          <ClockIcon className="h-5 w-5" />
+          <span className="sr-only">現在時刻へ</span>
+        </Button>
+      </div>
     </div>
   );
 }
