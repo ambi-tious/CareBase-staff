@@ -68,6 +68,7 @@ module.exports = [
         global: 'readonly',
         NodeJS: 'readonly',
         calculateCertValidityEnd: 'readonly',
+        File: 'readonly',
       },
     },
     plugins: {

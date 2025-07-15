@@ -13,13 +13,13 @@ const Checkbox = React.forwardRef<
   }
 >(({ className, indeterminate, ...props }, ref) => {
   const innerRef = React.useRef<HTMLButtonElement>(null);
-  
+
   React.useEffect(() => {
     if (innerRef.current && 'indeterminate' in innerRef.current) {
-      (innerRef.current as any).indeterminate = indeterminate;
+      (innerRef.current as HTMLInputElement).indeterminate = indeterminate ?? false;
     }
   }, [indeterminate]);
-  
+
   return (
     <CheckboxPrimitive.Root
       ref={(node) => {

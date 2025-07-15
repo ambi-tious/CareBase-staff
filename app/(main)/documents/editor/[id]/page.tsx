@@ -68,7 +68,6 @@ export default function DocumentEditorPage({
 
     try {
       // 実際のアプリケーションではAPIを呼び出して保存します
-      console.log('Saving document:', { id: document.id, ...documentData });
 
       // 保存処理をシミュレート
       await new Promise((resolve) => setTimeout(resolve, 500));

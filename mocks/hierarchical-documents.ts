@@ -67,7 +67,7 @@ export const subFolders: Folder[] = [
     updatedAt: '2025-01-18',
     createdBy: '管理者',
   },
-  
+
   // 2025年度会議のサブフォルダ
   {
     id: 'folder-1-1-1',
@@ -89,7 +89,7 @@ export const subFolders: Folder[] = [
     updatedAt: '2025-01-18',
     createdBy: '管理者',
   },
-  
+
   // ヒヤリハットのサブフォルダ
   {
     id: 'folder-2-1',
@@ -118,7 +118,7 @@ export const documents: Document[] = [
     updatedAt: '2025-01-15',
     createdBy: '管理者',
   },
-  
+
   // 議事録フォルダの文書
   {
     id: 'doc-2',
@@ -132,7 +132,7 @@ export const documents: Document[] = [
     updatedAt: '2025-01-10',
     createdBy: '管理者',
   },
-  
+
   // 2025年度会議フォルダの文書
   {
     id: 'doc-3',
@@ -158,7 +158,7 @@ export const documents: Document[] = [
     updatedAt: '2025-01-18',
     createdBy: '佐藤 太郎',
   },
-  
+
   // 第1四半期フォルダの文書
   {
     id: 'doc-5',
@@ -196,7 +196,7 @@ export const documents: Document[] = [
     updatedAt: '2025-06-10',
     createdBy: '山田 美咲',
   },
-  
+
   // ヒヤリハットフォルダの文書
   {
     id: 'doc-8',
@@ -210,7 +210,7 @@ export const documents: Document[] = [
     updatedAt: '2025-01-05',
     createdBy: '管理者',
   },
-  
+
   // 2025年1月フォルダの文書
   {
     id: 'doc-9',
@@ -242,56 +242,63 @@ export const documents: Document[] = [
 export const getFolderContents = (folderId: string | null): DocumentItem[] => {
   // ルートフォルダの場合
   if (folderId === null) {
-    return [...rootFolders, documents.filter(doc => !doc.category || doc.category === 'その他')];
+    return [
+      ...rootFolders,
+      ...documents.filter((doc) => !doc.category || doc.category === 'その他'),
+    ];
   }
-  
+
   // サブフォルダとドキュメントを取得
-  const childFolders = subFolders.filter(folder => folder.parentId === folderId);
-  const folderDocs = documents.filter(doc => {
+  const childFolders = subFolders.filter((folder) => folder.parentId === folderId);
+  const folderDocs = documents.filter((doc) => {
     // フォルダに対応するカテゴリの文書を取得
     // 実際のアプリケーションでは、文書に親フォルダIDを持たせるべき
-    const folder = [...rootFolders, ...subFolders].find(f => f.id === folderId);
+    const folder = [...rootFolders, ...subFolders].find((f) => f.id === folderId);
     if (!folder) return false;
-    
+
     // ここでは簡易的にフォルダ名とカテゴリ名が一致する文書を返す
     // 実際のアプリケーションでは、文書に親フォルダIDを持たせるべき
     if (folder.name === doc.category) return true;
-    
+
     // 特定のフォルダIDに対応する文書を手動で返す
-    if (folderId === 'folder-1-1' && doc.id === 'doc-3' || doc.id === 'doc-4') return true;
-    if (folderId === 'folder-1-1-1' && (doc.id === 'doc-5' || doc.id === 'doc-6' || doc.id === 'doc-7')) return true;
+    if ((folderId === 'folder-1-1' && doc.id === 'doc-3') || doc.id === 'doc-4') return true;
+    if (
+      folderId === 'folder-1-1-1' &&
+      (doc.id === 'doc-5' || doc.id === 'doc-6' || doc.id === 'doc-7')
+    )
+      return true;
     if (folderId === 'folder-2-1' && (doc.id === 'doc-9' || doc.id === 'doc-10')) return true;
-    
+
     return false;
   });
-  
+
   return [...childFolders, ...folderDocs];
 };
 
 // フォルダパスを取得する関数
-export const getFolderPath = (folderId: string | null): { id: string; name: string; }[] => {
+export const getFolderPath = (folderId: string | null): { id: string; name: string }[] => {
   if (folderId === null) {
     return [{ id: 'root', name: 'ホーム' }];
   }
-  
-  const folder = [...rootFolders, ...subFolders].find(f => f.id === folderId);
+
+  const folder = [...rootFolders, ...subFolders].find((f) => f.id === folderId);
   if (!folder) return [{ id: 'root', name: 'ホーム' }];
-  
+
   const path = [{ id: 'root', name: 'ホーム' }];
-  
+
   for (const id of folder.path) {
-    const pathFolder = [...rootFolders, ...subFolders].find(f => f.id === id);
+    const pathFolder = [...rootFolders, ...subFolders].find((f) => f.id === id);
     if (pathFolder) {
       path.push({ id: pathFolder.id, name: pathFolder.name });
     }
   }
-  
+
   return path;
 };
 
 // フォルダを取得する関数
 export const getFolder = (folderId: string | null): Folder | null => {
   if (folderId === null) return null;
-  
-  return [...rootFolders, ...subFolders].find(f => f.id === folderId) || null;
+
+  return [...rootFolders, ...subFolders].find((f) => f.id === folderId) || null;
 };

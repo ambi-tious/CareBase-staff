@@ -22,7 +22,6 @@ export default function DocumentEditPage() {
 
         try {
           // 実際のアプリケーションではAPIを呼び出して保存します
-          console.log('Saving document metadata:', data);
 
           // 保存処理をシミュレート
           await new Promise((resolve) => setTimeout(resolve, 500));

@@ -91,16 +91,16 @@ export default function FolderViewPage({ params: paramsPromise }: FolderViewPage
     try {
       // 実際のアプリケーションではAPIを呼び出して削除します
       await new Promise((resolve) => setTimeout(resolve, 800));
-      
+
       // 選択されたアイテムを削除
       setContents((prev) => prev.filter((item) => !selectedItems.includes(item.id)));
       setSelectedItems([]);
-      
+
       toast({
         title: 'アイテムを削除しました',
         description: `${selectedItems.length}個のアイテムが削除されました`,
       });
-      
+
       return true;
     } catch (error) {
       console.error('Failed to delete items:', error);
@@ -115,28 +115,28 @@ export default function FolderViewPage({ params: paramsPromise }: FolderViewPage
     // 実際のアプリケーションではAPIを呼び出してアップロードします
     try {
       await new Promise((resolve) => setTimeout(resolve, 1000));
-      
+
       // モックのアップロード成功処理
       const newFiles = files.map((file) => ({
         id: `doc-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
         name: file.name,
         type: 'document' as const,
         size: `${(file.size / (1024 * 1024)).toFixed(1)} MB`,
-        fileType: (file.name.split('.').pop() || 'txt') as any,
+        fileType: (file.name.split('.').pop() || 'txt') as 'pdf' | 'doc' | 'xlsx' | 'txt' | 'html',
         category: folder?.name || 'その他',
         status: 'published' as const,
         createdAt: new Date().toISOString().split('T')[0],
         updatedAt: new Date().toISOString().split('T')[0],
         createdBy: '現在のユーザー',
       }));
-      
+
       setContents((prev) => [...prev, ...newFiles]);
-      
+
       toast({
         title: 'アップロード完了',
         description: `${files.length}個のファイルがアップロードされました`,
       });
-      
+
       return true;
     } catch (error) {
       console.error('Upload error:', error);
@@ -187,10 +187,10 @@ export default function FolderViewPage({ params: paramsPromise }: FolderViewPage
             </h1>
           </div>
         </div>
-        
+
         {/* パンくずリスト */}
         <FolderBreadcrumb path={breadcrumbPath} className="mb-4" />
-        
+
         <div className="flex flex-wrap items-center justify-between gap-4">
           <p className="text-gray-600">
             {contents.length}個のアイテム • 最終更新: {folder?.updatedAt || '-'}
@@ -207,7 +207,9 @@ export default function FolderViewPage({ params: paramsPromise }: FolderViewPage
               variant="outline"
               onClick={handleDeleteSelected}
               disabled={selectedItems.length === 0}
-              className={selectedItems.length > 0 ? "border-red-300 text-red-600 hover:bg-red-50" : ""}
+              className={
+                selectedItems.length > 0 ? 'border-red-300 text-red-600 hover:bg-red-50' : ''
+              }
             >
               <Trash2 className="h-4 w-4 mr-2" />
               選択したアイテムを削除

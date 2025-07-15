@@ -69,7 +69,6 @@ export default function DocumentEditPage({ params: paramsPromise }: DocumentEdit
 
       try {
         // 実際のアプリケーションではAPIを呼び出して保存します
-        console.log('Updating document metadata:', { id: params.id, ...data });
 
         // 保存処理をシミュレート
         await new Promise((resolve) => setTimeout(resolve, 500));

@@ -1,6 +1,6 @@
 /**
  * Document Types
- * 
+ *
  * Types for document management system
  */
 

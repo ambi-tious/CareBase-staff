@@ -1,3 +1,5 @@
+'use client';
+
 import { useState, useMemo } from 'react';
 import {
   Table,
@@ -24,7 +26,16 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { FileIcon } from '@/components/1_atoms/documents/file-icon';
-import { Search, MoreVertical, Download, Eye, Edit, Trash2, ArrowUpDown, Folder } from 'lucide-react';
+import {
+  Search,
+  MoreVertical,
+  Download,
+  Eye,
+  Edit,
+  Trash2,
+  ArrowUpDown,
+  Folder,
+} from 'lucide-react';
 import Link from 'next/link';
 import type { DocumentItem } from '@/types/document';
 
@@ -47,16 +58,14 @@ export function FolderContentsView({
 
   // 検索フィルタリング
   const filteredItems = useMemo(() => {
-    return items.filter((item) =>
-      item.name.toLowerCase().includes(searchQuery.toLowerCase())
-    );
+    return items.filter((item) => item.name.toLowerCase().includes(searchQuery.toLowerCase()));
   }, [items, searchQuery]);
 
   // ソート
   const sortedItems = useMemo(() => {
     return [...filteredItems].sort((a, b) => {
       let comparison = 0;
-      
+
       switch (sortBy) {
         case 'name':
           comparison = a.name.localeCompare(b.name);
@@ -76,8 +85,8 @@ export function FolderContentsView({
           } else if (b.type === 'folder') {
             comparison = 1; // フォルダを先に
           } else {
-            const aDoc = a as any;
-            const bDoc = b as any;
+            const aDoc = a as import('@/types/document').Document;
+            const bDoc = b as import('@/types/document').Document;
             const sizeA = parseFloat(aDoc.size?.split(' ')[0] || '0');
             const sizeB = parseFloat(bDoc.size?.split(' ')[0] || '0');
             comparison = sizeA - sizeB;
@@ -86,14 +95,14 @@ export function FolderContentsView({
         default:
           comparison = 0;
       }
-      
+
       return sortDirection === 'asc' ? comparison : -comparison;
     });
   }, [filteredItems, sortBy, sortDirection]);
 
   // 全選択状態の確認
   const isAllSelected = filteredItems.length > 0 && selectedItems.length === filteredItems.length;
-  
+
   // 部分選択状態の確認
   const isIndeterminate = selectedItems.length > 0 && selectedItems.length < filteredItems.length;
 
@@ -115,9 +124,11 @@ export function FolderContentsView({
   // ソートアイコンの表示
   const renderSortIcon = (column: string) => {
     if (sortBy !== column) return null;
-    
+
     return (
-      <ArrowUpDown className={`h-4 w-4 ml-1 ${sortDirection === 'desc' ? 'transform rotate-180' : ''}`} />
+      <ArrowUpDown
+        className={`h-4 w-4 ml-1 ${sortDirection === 'desc' ? 'transform rotate-180' : ''}`}
+      />
     );
   };
 
@@ -161,7 +172,9 @@ export function FolderContentsView({
             onClick={toggleSortDirection}
             aria-label={sortDirection === 'asc' ? '昇順' : '降順'}
           >
-            <ArrowUpDown className={`h-4 w-4 ${sortDirection === 'desc' ? 'transform rotate-180' : ''}`} />
+            <ArrowUpDown
+              className={`h-4 w-4 ${sortDirection === 'desc' ? 'transform rotate-180' : ''}`}
+            />
           </Button>
         </div>
       </div>
@@ -198,7 +211,10 @@ export function FolderContentsView({
                     {renderSortIcon('date')}
                   </div>
                 </TableHead>
-                <TableHead className="cursor-pointer hidden md:table-cell" onClick={() => handleSortChange('size')}>
+                <TableHead
+                  className="cursor-pointer hidden md:table-cell"
+                  onClick={() => handleSortChange('size')}
+                >
                   <div className="flex items-center">
                     サイズ
                     {renderSortIcon('size')}
@@ -223,7 +239,10 @@ export function FolderContentsView({
                       {item.type === 'folder' ? (
                         <Folder className="h-5 w-5 text-blue-500" />
                       ) : (
-                        <FileIcon fileType={(item as any).fileType} className="h-5 w-5" />
+                        <FileIcon
+                          fileType={(item as import('@/types/document').Document).fileType}
+                          className="h-5 w-5"
+                        />
                       )}
                       <Link
                         href={getItemLink(item)}
@@ -235,7 +254,9 @@ export function FolderContentsView({
                   </TableCell>
                   <TableCell>{item.updatedAt}</TableCell>
                   <TableCell className="hidden md:table-cell">
-                    {item.type === 'folder' ? '-' : (item as any).size}
+                    {item.type === 'folder'
+                      ? '-'
+                      : (item as import('@/types/document').Document).size}
                   </TableCell>
                   <TableCell className="hidden md:table-cell">{item.createdBy}</TableCell>
                   <TableCell>

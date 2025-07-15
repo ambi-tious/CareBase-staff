@@ -11,10 +11,28 @@ interface DocumentViewPageProps {
   }>;
 }
 
+interface DocumentData {
+  id: string;
+  title: string;
+  content: string;
+  status: 'published' | 'draft' | 'archived';
+  createdAt: Date;
+  updatedAt: Date;
+  createdBy: {
+    id: string;
+    name: string;
+    role: string;
+  };
+  category: string;
+  tags: string[];
+  fontFamily: string;
+  fontSize: string;
+}
+
 export default function DocumentViewPage({ params: paramsPromise }: DocumentViewPageProps) {
   const router = useRouter();
   const params = React.use(paramsPromise);
-  const [document, setDocument] = useState<any>(null);
+  const [document, setDocument] = useState<DocumentData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 

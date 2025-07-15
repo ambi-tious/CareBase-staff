@@ -14,16 +14,14 @@ export const FolderBreadcrumb: React.FC<FolderBreadcrumbProps> = ({ path, classN
       {path.map((item, index) => {
         const isLast = index === path.length - 1;
         const href = item.id === 'root' ? '/documents' : `/documents/folder/${item.id}`;
-        
+
         return (
           <React.Fragment key={item.id}>
-            {index > 0 && (
-              <ChevronRight className="h-4 w-4 mx-2 text-gray-400 flex-shrink-0" />
-            )}
-            
+            {index > 0 && <ChevronRight className="h-4 w-4 mx-2 text-gray-400 flex-shrink-0" />}
+
             <div className="flex items-center">
               {index === 0 && <Home className="h-4 w-4 mr-1 text-gray-500" />}
-              
+
               {isLast ? (
                 <span className="font-medium text-gray-900">{item.name}</span>
               ) : (

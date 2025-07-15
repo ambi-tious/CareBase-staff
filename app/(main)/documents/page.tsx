@@ -15,7 +15,12 @@ import Link from 'next/link';
 export default function DocumentsHomePage() {
   const { toast } = useToast();
   const [contents, setContents] = useState(getFolderContents(null));
-  const [breadcrumbPath] = useState(getFolderPath(null));
+  const [breadcrumbPath] = useState(
+    getFolderPath(null).map((item) => ({
+      ...item,
+      path: `/documents${item.id === 'root' ? '' : `/${item.id}`}`,
+    }))
+  );
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -47,16 +52,16 @@ export default function DocumentsHomePage() {
     try {
       // 実際のアプリケーションではAPIを呼び出して削除します
       await new Promise((resolve) => setTimeout(resolve, 800));
-      
+
       // 選択されたアイテムを削除
       setContents((prev) => prev.filter((item) => !selectedItems.includes(item.id)));
       setSelectedItems([]);
-      
+
       toast({
         title: 'アイテムを削除しました',
         description: `${selectedItems.length}個のアイテムが削除されました`,
       });
-      
+
       return true;
     } catch (error) {
       console.error('Failed to delete items:', error);
@@ -71,28 +76,28 @@ export default function DocumentsHomePage() {
     // 実際のアプリケーションではAPIを呼び出してアップロードします
     try {
       await new Promise((resolve) => setTimeout(resolve, 1000));
-      
+
       // モックのアップロード成功処理
       const newFiles = files.map((file) => ({
         id: `doc-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
         name: file.name,
         type: 'document' as const,
         size: `${(file.size / (1024 * 1024)).toFixed(1)} MB`,
-        fileType: (file.name.split('.').pop() || 'txt') as any,
+        fileType: (file.name.split('.').pop() || 'txt') as 'pdf' | 'doc' | 'xlsx' | 'txt' | 'html',
         category: 'その他',
         status: 'published' as const,
         createdAt: new Date().toISOString().split('T')[0],
         updatedAt: new Date().toISOString().split('T')[0],
         createdBy: '現在のユーザー',
       }));
-      
+
       setContents((prev) => [...prev, ...newFiles]);
-      
+
       toast({
         title: 'アップロード完了',
         description: `${files.length}個のファイルがアップロードされました`,
       });
-      
+
       return true;
     } catch (error) {
       console.error('Upload error:', error);
@@ -108,14 +113,12 @@ export default function DocumentsHomePage() {
           <FileText className="h-6 w-6 text-carebase-blue" />
           <h1 className="text-2xl font-bold text-carebase-text-primary">書類管理</h1>
         </div>
-        
+
         {/* パンくずリスト */}
         <FolderBreadcrumb path={breadcrumbPath} className="mb-4" />
-        
+
         <div className="flex flex-wrap items-center justify-between gap-4">
-          <p className="text-gray-600">
-            {contents.length}個のアイテム
-          </p>
+          <p className="text-gray-600">{contents.length}個のアイテム</p>
           <div className="flex items-center gap-2">
             <Link href="/documents/edit">
               <Button className="bg-carebase-blue hover:bg-carebase-blue-dark">
@@ -123,9 +126,7 @@ export default function DocumentsHomePage() {
                 新規書類
               </Button>
             </Link>
-            <Button
-              className="bg-carebase-blue hover:bg-carebase-blue-dark"
-            >
+            <Button className="bg-carebase-blue hover:bg-carebase-blue-dark">
               <FolderPlus className="h-4 w-4 mr-2" />
               新しいフォルダ
             </Button>
@@ -141,7 +142,9 @@ export default function DocumentsHomePage() {
               variant="outline"
               onClick={handleDeleteSelected}
               disabled={selectedItems.length === 0}
-              className={selectedItems.length > 0 ? "border-red-300 text-red-600 hover:bg-red-50" : ""}
+              className={
+                selectedItems.length > 0 ? 'border-red-300 text-red-600 hover:bg-red-50' : ''
+              }
             >
               <Trash2 className="h-4 w-4 mr-2" />
               選択したアイテムを削除

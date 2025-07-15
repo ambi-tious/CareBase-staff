@@ -51,7 +51,7 @@ export function FileUploadModal({
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     e.stopPropagation();
-    
+
     if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
       setFiles(Array.from(e.dataTransfer.files));
       setError(null);
@@ -70,7 +70,7 @@ export function FileUploadModal({
 
     setIsUploading(true);
     setError(null);
-    
+
     // アップロード進捗のシミュレーション
     const simulateProgress = () => {
       let progress = 0;
@@ -82,19 +82,19 @@ export function FileUploadModal({
         }
         setUploadProgress(progress);
       }, 200);
-      
+
       return interval;
     };
-    
+
     const progressInterval = simulateProgress();
 
     try {
       const success = await onUpload(files);
-      
+
       // 進捗シミュレーションを停止
       clearInterval(progressInterval);
       setUploadProgress(100);
-      
+
       if (success) {
         // 少し待ってからモーダルを閉じる
         setTimeout(() => {
@@ -124,23 +124,23 @@ export function FileUploadModal({
 
   const getFileTypeIcon = (file: File) => {
     const extension = file.name.split('.').pop()?.toLowerCase() || '';
-    
+
     if (['pdf'].includes(extension)) return 'pdf';
     if (['doc', 'docx'].includes(extension)) return 'doc';
     if (['xls', 'xlsx'].includes(extension)) return 'xlsx';
     if (['jpg', 'jpeg', 'png', 'gif', 'bmp'].includes(extension)) return 'image';
     if (['html', 'htm'].includes(extension)) return 'html';
-    
+
     return 'txt';
   };
 
   const formatFileSize = (bytes: number) => {
     if (bytes === 0) return '0 Bytes';
-    
+
     const k = 1024;
     const sizes = ['Bytes', 'KB', 'MB', 'GB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
-    
+
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
   };
 
@@ -190,12 +190,7 @@ export function FileUploadModal({
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <h3 className="text-sm font-medium">選択されたファイル</h3>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setFiles([])}
-                disabled={isUploading}
-              >
+              <Button variant="ghost" size="sm" onClick={() => setFiles([])} disabled={isUploading}>
                 すべてクリア
               </Button>
             </div>
@@ -206,7 +201,10 @@ export function FileUploadModal({
                   className="flex items-center justify-between p-2 border-b last:border-b-0"
                 >
                   <div className="flex items-center gap-2 overflow-hidden">
-                    <FileIcon fileType={getFileTypeIcon(file) as any} className="h-5 w-5" />
+                    <FileIcon
+                      fileType={getFileTypeIcon(file) as 'pdf' | 'doc' | 'xlsx' | 'txt' | 'html'}
+                      className="h-5 w-5"
+                    />
                     <div className="min-w-0">
                       <p className="text-sm font-medium truncate">{file.name}</p>
                       <p className="text-xs text-gray-500">{formatFileSize(file.size)}</p>
@@ -257,12 +255,7 @@ export function FileUploadModal({
         )}
 
         <DialogFooter className="gap-2">
-          <Button
-            type="button"
-            variant="outline"
-            onClick={handleClose}
-            disabled={isUploading}
-          >
+          <Button type="button" variant="outline" onClick={handleClose} disabled={isUploading}>
             キャンセル
           </Button>
           <Button
