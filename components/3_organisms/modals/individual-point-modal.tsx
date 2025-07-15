@@ -209,7 +209,7 @@ export const IndividualPointModal: FC<IndividualPointModalProps> = ({
           ) : (
             <div 
               className="min-h-[300px] p-4 border rounded-md"
-              dangerouslySetInnerHTML={{ __html: editorContent || '<p>詳細情報がありません。</p>' }}
+              dangerouslySetInnerHTML={{ __html: editorContent || '' }}
             />
           )}
         </div>
