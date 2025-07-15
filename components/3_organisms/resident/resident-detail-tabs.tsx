@@ -8,6 +8,7 @@ import { IndividualPointCard } from '@/components/2_molecules/resident/individua
 import { MedicalHistoryCard } from '@/components/2_molecules/resident/medical-history-card';
 import { MedicalInstitutionCard } from '@/components/2_molecules/resident/medical-institution-card';
 import { MedicationCard as OldMedicationCard } from '@/components/2_molecules/resident/medication-card';
+import { IndividualPointDetail } from '@/components/2_molecules/resident/individual-point-detail';
 import { ContactRegistrationModal } from '@/components/3_organisms/modals/contact-registration-modal';
 import { HomeCareOfficeModal } from '@/components/3_organisms/modals/home-care-office-modal';
 import { MedicalHistoryModal } from '@/components/3_organisms/modals/medical-history-modal';
@@ -51,6 +52,14 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
   const [isMedicationModalOpen, setIsMedicationModalOpen] = useState(false);
   const [isMedicationStatusModalOpen, setIsMedicationStatusModalOpen] = useState(false);
   const [contacts, setContacts] = useState<ContactPerson[]>(resident.contacts || []);
+  const [selectedPointCategory, setSelectedPointCategory] = useState<string | null>(null);
+  const [pointContent, setPointContent] = useState<Record<string, string>>({
+    '食事': '<h2>食事に関する個別ポイント</h2><p>朝食：全粥・常菜・常食</p><p>昼食：全粥・常菜・常食</p><p>夕食：全粥・常菜・常食</p><ul><li>嚥下機能は良好</li><li>自力摂取可能</li><li>食事の際は前かがみの姿勢を保持</li><li>水分とろみ剤使用（中間のとろみ）</li></ul>',
+    '移乗介助': '<h2>移乗介助に関する個別ポイント</h2><p>基本的に見守りで自立</p><p>疲労時は一部介助が必要</p>',
+    '服薬': '<h2>服薬に関する個別ポイント</h2><p>自己管理は難しいため、職員管理</p><p>薬は粉砕して提供</p><p>水分はとろみをつけて提供</p>',
+    '接遇': '<h2>接遇に関する個別ポイント</h2><p>耳が遠いため、大きな声でゆっくり話す</p><p>目線を合わせて話しかける</p>',
+    '入浴': '<h2>入浴に関する個別ポイント</h2><p>一般浴槽使用</p><p>洗身は部分介助</p><p>洗髪は全介助</p><p>浴室内は見守り</p>',
+  });
   const [homeCareOffice, setHomeCareOffice] = useState<HomeCareOffice | undefined>(
     resident.homeCareOffice
   );
@@ -238,6 +247,27 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
 
   const handleMedicationStatusDelete = (statusId: string) => {
     setMedicationStatuses((prev) => prev.filter((status) => status.id !== statusId));
+  };
+
+  const handlePointCategoryClick = (category: string) => {
+    setSelectedPointCategory(category);
+  };
+
+  const handlePointDetailClose = () => {
+    setSelectedPointCategory(null);
+  };
+
+  const handlePointDetailSave = async (content: string) => {
+    // In a real application, this would call an API to save the content
+    if (selectedPointCategory) {
+      setPointContent(prev => ({
+        ...prev,
+        [selectedPointCategory]: content
+      }));
+    }
+    // Simulate API call delay
+    await new Promise(resolve => setTimeout(resolve, 800));
+    return Promise.resolve();
   };
 
   const shouldShowAddButton = () => {
@@ -430,24 +460,37 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
         </TabsContent>
 
         <TabsContent value="points">
-          <div className="mb-4 flex gap-2">
-            <Button variant="outline" className="bg-white">
-              内容のある項目のみ表示
-            </Button>
-            <Button className="bg-carebase-blue hover:bg-carebase-blue-dark">すべて表示</Button>
-            <Button variant="outline" className="bg-white ml-auto">
-              <Settings className="h-4 w-4 mr-2" />
-              カテゴリを編集
-            </Button>
-          </div>
-          {resident.individualPoints && resident.individualPoints.length > 0 ? (
-            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-              {resident.individualPoints.map((point) => (
-                <IndividualPointCard key={point.id} point={point} />
-              ))}
-            </div>
+          {selectedPointCategory ? (
+            <IndividualPointDetail 
+              category={selectedPointCategory}
+              content={pointContent[selectedPointCategory] || ''}
+              onSave={handlePointDetailSave}
+              onClose={handlePointDetailClose}
+            />
           ) : (
-            <p className="text-center text-gray-500 py-8">個別ポイントの情報はありません。</p>
+            <>
+              <div className="mb-4 flex gap-2">
+                <Button variant="outline" className="bg-white">
+                  内容のある項目のみ表示
+                </Button>
+                <Button className="bg-carebase-blue hover:bg-carebase-blue-dark">すべて表示</Button>
+                <Button variant="outline" className="bg-white ml-auto">
+                  <Settings className="h-4 w-4 mr-2" />
+                  カテゴリを編集
+                </Button>
+              </div>
+              {resident.individualPoints && resident.individualPoints.length > 0 ? (
+                <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+                  {resident.individualPoints.map((point) => (
+                    <div key={point.id} onClick={() => handlePointCategoryClick(point.category)}>
+                      <IndividualPointCard point={point} />
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-center text-gray-500 py-8">個別ポイントの情報はありません。</p>
+              )}
+            </>
           )}
         </TabsContent>
       </Tabs>

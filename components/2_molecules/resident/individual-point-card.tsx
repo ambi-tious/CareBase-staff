@@ -5,16 +5,18 @@ import { getLucideIcon } from '@/lib/lucide-icon-registry';
 
 interface IndividualPointCardProps {
   point: IndividualPoint;
+  onClick?: () => void;
 }
 
-export const IndividualPointCard: React.FC<IndividualPointCardProps> = ({ point }) => {
+export const IndividualPointCard: React.FC<IndividualPointCardProps> = ({ point, onClick }) => {
   const Icon = getLucideIcon(point.icon);
 
   return (
     <div
       className={`relative p-4 rounded-lg text-center ${
         point.isActive ? 'bg-carebase-blue text-white' : 'bg-gray-200 text-gray-500'
-      }`}
+      } cursor-pointer hover:shadow-md transition-shadow`}
+      onClick={onClick}
     >
       {point.count > 0 && (
         <Badge
