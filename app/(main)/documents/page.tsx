@@ -1,4 +1,7 @@
+'use client';
+
 import React from 'react';
+import { useState } from 'react';
 import { FolderBreadcrumb } from '@/components/2_molecules/documents/folder-breadcrumb';
 import { FolderContentsView } from '@/components/3_organisms/documents/folder-contents-view';
 import { Button } from '@/components/ui/button';
@@ -8,7 +11,6 @@ import { useToast } from '@/components/ui/use-toast';
 import { getFolderContents, getFolderPath } from '@/mocks/hierarchical-documents';
 import { FileText, FolderPlus, Upload, Trash2 } from 'lucide-react';
 import Link from 'next/link';
-import { useState } from 'react';
 
 export default function DocumentsHomePage() {
   const { toast } = useToast();
