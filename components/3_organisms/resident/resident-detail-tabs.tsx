@@ -10,6 +10,7 @@ import { MedicalInstitutionCard } from '@/components/2_molecules/resident/medica
 import { MedicationCard as OldMedicationCard } from '@/components/2_molecules/resident/medication-card';
 import { ContactRegistrationModal } from '@/components/3_organisms/modals/contact-registration-modal';
 import { HomeCareOfficeModal } from '@/components/3_organisms/modals/home-care-office-modal';
+import { CategoryCreationModal } from '@/components/3_organisms/modals/category-creation-modal';
 import { MedicalHistoryModal } from '@/components/3_organisms/modals/medical-history-modal';
 import { MedicalInstitutionModal } from '@/components/3_organisms/modals/medical-institution-modal';
 import { MedicationRegistrationModal } from '@/components/3_organisms/modals/medication-registration-modal';
@@ -52,6 +53,7 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
   const [isMedicationModalOpen, setIsMedicationModalOpen] = useState(false);
   const [isMedicationStatusModalOpen, setIsMedicationStatusModalOpen] = useState(false);
   const [selectedPointCategory, setSelectedPointCategory] = useState<string | null>(null);
+  const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
   const [isPointModalOpen, setIsPointModalOpen] = useState(false);
   const [pointContents, setPointContents] = useState<Record<string, string>>({
     '食事': '<h2>食事に関する個別ポイント</h2><p>朝食：全粥・常菜・常食</p><p>昼食：全粥・常菜・常食</p><p>夕食：全粥・常菜・常食</p><ul><li>嚥下機能は良好</li><li>自力摂取可能</li><li>食事の際は前かがみの姿勢を保持</li><li>水分とろみ剤使用（中間のとろみ）</li></ul>',
@@ -145,6 +147,28 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
         return newContents;
       });
     }
+    // Simulate API call delay
+    await new Promise(resolve => setTimeout(resolve, 800));
+    return Promise.resolve();
+  };
+
+  const handleCategoryCreate = async (data: { category: string; icon: IconName }) => {
+    // In a real application, this would call an API to create a new category
+    // For now, we'll just add it to the resident's individualPoints array
+    const newPoint = {
+      id: `ip${resident.individualPoints?.length ?? 0 + 1}`,
+      category: data.category,
+      icon: data.icon,
+      count: 0,
+      isActive: true,
+    };
+    
+    if (resident.individualPoints) {
+      resident.individualPoints.push(newPoint);
+    } else {
+      resident.individualPoints = [newPoint];
+    }
+    
     // Simulate API call delay
     await new Promise(resolve => setTimeout(resolve, 800));
     return Promise.resolve();
@@ -477,7 +501,11 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
               内容のある項目のみ表示
             </Button>
             <Button className="bg-carebase-blue hover:bg-carebase-blue-dark">すべて表示</Button>
-            <Button variant="outline" className="bg-white ml-auto">
+            <Button 
+              variant="outline" 
+              className="bg-white ml-auto"
+              onClick={() => setIsCategoryModalOpen(true)}
+            >
               <Settings className="h-4 w-4 mr-2" />
               カテゴリを編集
             </Button>
@@ -544,6 +572,11 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
         residentName={resident.name}
       />
       
+      <CategoryCreationModal
+        isOpen={isCategoryModalOpen}
+        onClose={() => setIsCategoryModalOpen(false)}
+        onSubmit={handleCategoryCreate}
+      />
       <IndividualPointModal
         isOpen={isPointModalOpen}
         onClose={() => setIsPointModalOpen(false)}

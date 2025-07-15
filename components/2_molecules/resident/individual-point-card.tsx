@@ -12,7 +12,7 @@ interface IndividualPointCardProps {
 export const IndividualPointCard: React.FC<IndividualPointCardProps> = ({ 
   point, 
   onClick, 
-  hasContent = false 
+  hasContent = false
 }) => {
   const Icon = getLucideIcon(point.icon);
 
