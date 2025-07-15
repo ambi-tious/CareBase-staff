@@ -79,46 +79,6 @@ CareBase-staffアプリケーションのスタッフ選択画面設計書です
 - 必須項目未選択時のエラー表示
 - LocalStorage操作エラーのコンソール出力
 
-## データ構造
-
-### Group（グループ）
-
-```typescript
-interface Group {
-  id: string;
-  name: string;        // 例: "介護フロア A", "管理部門"
-  description: string; // 例: "1階 介護フロア", "施設管理・事務"
-  icon: IconName;      // Lucideアイコン名
-  teams: Team[];       // 所属チーム一覧
-}
-```
-
-### Team（チーム）
-
-```typescript
-interface Team {
-  id: string;
-  name: string;        // 例: "朝番チーム", "日勤チーム"
-  description: string; // 例: "早朝・午前担当", "日中担当"
-  icon: IconName;      // Lucideアイコン名
-  staff: Staff[];      // 所属スタッフ一覧
-}
-```
-
-### Staff（スタッフ）
-
-```typescript
-interface Staff {
-  id: string;
-  name: string;        // スタッフ名
-  furigana: string;    // ふりがな
-  role: string;        // 役職（例: "介護スタッフ", "看護師"）
-  employeeId: string;  // スタッフID
-  avatar?: string;     // アバター画像URL（オプション）
-  isActive: boolean;   // 有効フラグ
-}
-```
-
 ## UI/UX仕様
 
 ### レスポンシブデザイン
