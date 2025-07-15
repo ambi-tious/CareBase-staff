@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
@@ -47,7 +49,7 @@ export default function FolderViewPage({ params: paramsPromise }: FolderViewPage
 
         // フォルダパスを取得
         const path = getFolderPath(params.id);
-        setBreadcrumbPath(path);
+        setBreadcrumbPath(path as BreadcrumbItem[]);
 
         // フォルダコンテンツを取得
         const folderContents = getFolderContents(params.id);

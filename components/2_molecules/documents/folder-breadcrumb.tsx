@@ -1,4 +1,4 @@
-import type React from 'react';
+import React from 'react';
 import { ChevronRight, Home } from 'lucide-react';
 import Link from 'next/link';
 import type { BreadcrumbItem } from '@/types/document';
