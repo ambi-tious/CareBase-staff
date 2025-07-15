@@ -104,7 +104,7 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
     setIsContactModalOpen(true);
   };
 
-  const handleAddCategory = () => {
+  const handleOpenAddCategoryModal = () => {
     setIsAddCategoryModalOpen(true);
   };
 
@@ -394,7 +394,7 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
       case 'medicationStatus':
         return handleAddMedicationStatus;
       case 'points':
-        return handleAddCategory;
+        return handleOpenAddCategoryModal;
       default:
         return undefined;
     }
