@@ -84,6 +84,7 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
     }
     return [];
   });
+  const [individualPoints, setIndividualPoints] = useState(resident.individualPoints || []);
   const [activeTab, setActiveTab] = useState('family');
 
   const detailTabs = [
@@ -154,20 +155,18 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
 
   const handleCategoryCreate = async (data: { category: string; icon: IconName }) => {
     // In a real application, this would call an API to create a new category
-    // For now, we'll just add it to the resident's individualPoints array
+    // Generate a truly unique ID using timestamp and random number
+    const uniqueId = `ip_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
     const newPoint = {
-      id: `ip${resident.individualPoints?.length ?? 0 + 1}`,
+      id: uniqueId,
       category: data.category,
       icon: data.icon,
       count: 0,
       isActive: true,
     };
     
-    if (resident.individualPoints) {
-      resident.individualPoints.push(newPoint);
-    } else {
-      resident.individualPoints = [newPoint];
-    }
+    // Update local state immutably
+    setIndividualPoints(prev => [...prev, newPoint]);
     
     // Simulate API call delay
     await new Promise(resolve => setTimeout(resolve, 800));
@@ -510,9 +509,9 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
               カテゴリを編集
             </Button>
           </div>
-          {resident.individualPoints && resident.individualPoints.length > 0 ? (
+          {individualPoints && individualPoints.length > 0 ? (
             <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-              {resident.individualPoints.map((point) => (
+              {individualPoints.map((point) => (
                 <IndividualPointCard 
                   key={point.id} 
                   point={point} 
