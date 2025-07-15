@@ -1,0 +1,133 @@
+# 利用者詳細画面（基本情報）設計書
+
+画面名: `利用者詳細（基本情報）`  
+パス: `/residents/[residentId]`  
+URL: https://carebase-staff.vercel.app/residents/[residentId]
+
+## 概要
+
+CareBase-staffアプリケーションの利用者詳細画面設計書です。  
+利用者の基本情報を表示し、詳細情報へのタブナビゲーションを提供します。  
+利用者一覧画面からの遷移、または直接URLアクセス時に使用されます。
+
+Issue: [#133 [設計] #005 利用者｜利用者詳細（基本情報）](https://github.com/ambi-tious/CareBase-staff/issues/133)
+
+## 全体レイアウト
+
+### 画面構成
+
+<img width="2394" height="752" alt="image" src="https://github.com/user-attachments/assets/054dab48-a519-45d1-86d1-57d54e1431a5" />
+
+1画面で完結する利用者基本情報表示インターフェース：
+- 利用者プロフィールヘッダー（写真、基本情報、施設情報）
+- アクションボタン（記録データ、ケアプラン）
+- 詳細情報タブナビゲーション
+
+### 画面項目
+
+| 項目名 | コンポーネント | 必須 | 表示条件 | 初期値 | 備考 |
+| --- | --- | --- | --- | --- | --- |
+| 利用者写真 | Image | - | 常時 | placeholder画像 | 192x192px、角丸 |
+| ふりがな | Text | ◯ | 常時 | - | 小文字、グレー色 |
+| 利用者名 | Heading | ◯ | 常時 | - | 大文字、太字 |
+| 生年月日 | InfoRow | ◯ | 常時 | - | 年齢も併記 |
+| 性別 | InfoRow | ◯ | 常時 | - | 男/女/その他 |
+| 住所 | InfoRow | ◯ | 常時 | - | 自宅住所 |
+| 所属フロア・グループ | InfoRow | - | 常時 | - | 施設内組織情報 |
+| 所属ユニット・チーム | InfoRow | - | 常時 | - | 施設内チーム情報 |
+| 部屋情報 | InfoRow | - | 常時 | - | 居室番号・名称 |
+| 登録日 | InfoRow | ◯ | 常時 | - | システム登録日 |
+| 更新日 | InfoRow | ◯ | 常時 | - | 最終更新日 |
+| 入所日 | InfoRow | ◯ | 常時 | - | 施設入所日 |
+| 退所日 | InfoRow | - | 退所済みの場合 | - | 施設退所日 |
+| 入所状況 | InfoRow | ◯ | 常時 | - | 入居中/退所済み/待機中 |
+| 要介護度 | InfoRow | ◯ | 常時 | - | 要介護1-5、要支援1-2等 |
+| 認定日 | InfoRow | ◯ | 常時 | - | 介護認定日 |
+| 認定有効期間 | InfoRow | ◯ | 常時 | - | 開始日〜終了日 |
+| 記録データボタン | Button | - | 常時 | 記録データ | 青色スタイル、全幅 |
+| ケアプランボタン | Button | - | 常時 | ケアプラン | アウトライン、全幅 |
+| 詳細情報タブ | TabsList | - | 常時 | ご家族情報 | 7つのタブ |
+
+## 機能仕様
+
+### アクション
+
+| 項目名 | 処理内容 | 対象API | 遷移先画面 |
+| --- | --- | --- | --- |
+| 記録データボタン | 利用者の記録データ画面に遷移 | - | 記録データ画面 |
+| ケアプランボタン | 利用者のケアプラン画面に遷移 | - | ケアプラン画面 |
+| ご家族情報タブ | ご家族情報の詳細を表示 | `/api/v1/residents/[id]/contacts` | 同一画面（タブ切り替え） |
+| 居宅介護支援事業所タブ | 居宅介護支援事業所情報を表示 | `/api/v1/residents/[id]/home-care-office` | 同一画面（タブ切り替え） |
+| かかりつけ医療機関タブ | かかりつけ医療機関情報を表示 | `/api/v1/residents/[id]/medical-institutions` | 同一画面（タブ切り替え） |
+| 既往歴タブ | 既往歴情報を表示 | `/api/v1/residents/[id]/medical-history` | 同一画面（タブ切り替え） |
+| お薬情報タブ | お薬情報を表示 | `/api/v1/residents/[id]/medications` | 同一画面（タブ切り替え） |
+| 服薬状況タブ | 服薬状況を表示 | `/api/v1/residents/[id]/medication-status` | 同一画面（タブ切り替え） |
+| 個別ポイントタブ | 個別ポイント情報を表示 | `/api/v1/residents/[id]/individual-points` | 同一画面（タブ切り替え） |
+
+### 入力チェック
+
+| 項目名 | イベント | チェック内容 | エラーメッセージ |
+| --- | --- | --- | --- |
+| 利用者ID | ページロード | 存在チェック | 指定された利用者が見つかりません |
+| 利用者ID | ページロード | 有効性チェック | 無効な利用者IDです |
+| 画像読み込み | 画像ロード | 読み込みエラー | プレースホルダー画像を表示 |
+
+### バリデーション仕様
+
+#### 表示制御
+
+- 退所日: 入所状況が「退所済み」の場合のみ表示
+- 認定有効期間: 開始日と終了日を「〜」で連結して表示
+- 年齢: 生年月日から自動計算して併記
+- プレースホルダー画像: avatarUrlが未設定の場合に表示
+
+#### エラーハンドリング
+
+- 利用者データ取得エラー時の404ページ表示
+- 画像読み込みエラー時のプレースホルダー表示
+- タブ切り替え時のローディング状態表示
+
+## UI/UX仕様
+
+### レスポンシブデザイン
+
+- **モバイル（〜768px）**: 
+  - 写真とボタンを上部に配置
+  - 情報を1列で縦並び表示
+- **タブレット（768px〜1024px）**: 
+  - 写真を左側、情報を右側に2列配置
+  - 情報項目を2列グリッドで表示
+- **デスクトップ（1024px〜）**: 
+  - 写真を左側、情報を右側に3列グリッドで表示
+  - タブを横並びで表示
+
+### カラーテーマ
+
+- **記録データボタン**: `bg-carebase-blue hover:bg-carebase-blue-dark`
+- **ケアプランボタン**: `border-carebase-blue text-carebase-blue hover:bg-carebase-blue-light`
+- **アクティブタブ**: `bg-carebase-blue text-white`
+- **非アクティブタブ**: `bg-transparent text-gray-600`
+- **情報ラベル**: `text-gray-500 text-xs`
+- **情報値**: `text-carebase-text-primary`
+
+### アニメーション
+
+- **タブ切り替え**: スムーズなトランジション効果
+- **ボタンホバー**: カラー変更アニメーション
+- **画像読み込み**: フェードイン効果
+
+### アクセシビリティ
+
+- **キーボードナビゲーション**: タブキーでの要素移動対応
+- **スクリーンリーダー**: 適切なaria-label設定
+- **コントラスト**: WCAG AA準拠の色彩設計
+
+## 参考資料
+
+- [Issue #133: [設計] #005 利用者｜利用者詳細（基本情報）](https://github.com/ambi-tious/CareBase-staff/issues/133)
+- [利用者詳細画面実装](./page.tsx)
+- [ResidentProfileHeader コンポーネント](../../../../components/3_organisms/resident/resident-profile-header.tsx)
+- [ResidentDetailTabs コンポーネント](../../../../components/3_organisms/resident/resident-detail-tabs.tsx)
+- [利用者一覧画面設計書](../README.md)
+- [画面一覧](../../../../docs/screen-list.md#利用者管理)
+- [FlutterFlow参考画面](https://carebase.flutterflow.app/customerInformation?customerDoc=sample21)
