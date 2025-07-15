@@ -4,8 +4,7 @@ import { MedicationCard as NewMedicationCard } from '@/components/2_molecules/me
 import { MedicationStatusCard } from '@/components/2_molecules/medication/medication-status-card';
 import { ContactInfoCard } from '@/components/2_molecules/resident/contact-info-card';
 import { HomeCareOfficeCard } from '@/components/2_molecules/resident/home-care-office-card';
-import { IndividualPointCard } from '@/components/2_molecules/resident/individual-point-card'; 
-import { IndividualPointDetailView } from '@/components/2_molecules/resident/individual-point-detail';
+import { IndividualPointCard } from '@/components/2_molecules/resident/individual-point-card';
 import { MedicalHistoryCard } from '@/components/2_molecules/resident/medical-history-card';
 import { MedicalInstitutionCard } from '@/components/2_molecules/resident/medical-institution-card';
 import { MedicationCard as OldMedicationCard } from '@/components/2_molecules/resident/medication-card';
@@ -17,10 +16,9 @@ import { MedicationRegistrationModal } from '@/components/3_organisms/modals/med
 import { MedicationStatusRegistrationModal } from '@/components/3_organisms/modals/medication-status-registration-modal';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import {
+import type {
   ContactPerson,
   HomeCareOffice,
-  IndividualPoint,
   MedicalHistory,
   MedicalInstitution,
   Resident,
@@ -74,7 +72,6 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
     }
     return [];
   });
-  const [selectedPoint, setSelectedPoint] = useState<IndividualPoint | null>(null);
   const [activeTab, setActiveTab] = useState('family');
 
   const detailTabs = [
@@ -434,75 +431,24 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
 
         <TabsContent value="points">
           <div className="mb-4 flex gap-2">
-            <Button 
-              variant="outline" 
-              className={`bg-white ${!selectedPoint ? 'border-carebase-blue text-carebase-blue' : ''}`}
-              onClick={() => setSelectedPoint(null)}
-            >
+            <Button variant="outline" className="bg-white">
               内容のある項目のみ表示
             </Button>
-            <Button 
-              className={`${!selectedPoint ? 'bg-carebase-blue hover:bg-carebase-blue-dark' : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-100'}`}
-            >
-              すべて表示
-            </Button>
+            <Button className="bg-carebase-blue hover:bg-carebase-blue-dark">すべて表示</Button>
             <Button variant="outline" className="bg-white ml-auto">
               <Settings className="h-4 w-4 mr-2" />
               カテゴリを編集
             </Button>
           </div>
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div className="lg:col-span-1">
-              {resident.individualPoints && resident.individualPoints.length > 0 ? (
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-2 gap-4">
-                  {resident.individualPoints.map((point) => (
-                    <IndividualPointCard 
-                      key={point.id} 
-                      point={point} 
-                      onSelect={setSelectedPoint}
-                      isSelected={selectedPoint?.id === point.id}
-                    />
-                  ))}
-                </div>
-              ) : (
-                <p className="text-center text-gray-500 py-8">個別ポイントの情報はありません。</p>
-              )}
+          {resident.individualPoints && resident.individualPoints.length > 0 ? (
+            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+              {resident.individualPoints.map((point) => (
+                <IndividualPointCard key={point.id} point={point} />
+              ))}
             </div>
-            
-            <div className="lg:col-span-2">
-              {selectedPoint ? (
-                selectedPoint.details && selectedPoint.details.length > 0 ? (
-                  <div className="space-y-4">
-                    <h3 className="text-xl font-bold text-carebase-text-primary flex items-center gap-2">
-                      {React.createElement(getLucideIcon(selectedPoint.icon), { className: "h-5 w-5 text-carebase-blue" })}
-                      {selectedPoint.category}の詳細情報
-                    </h3>
-                    {selectedPoint.details.map((detail) => (
-                      <IndividualPointDetailView key={detail.id} detail={detail} />
-                    ))}
-                  </div>
-                ) : (
-                  <div className="flex flex-col items-center justify-center h-full py-12 px-4 bg-gray-50 rounded-lg border border-gray-200">
-                    <div className="bg-gray-100 p-4 rounded-full mb-4">
-                      {React.createElement(getLucideIcon(selectedPoint.icon), { className: "h-10 w-10 text-gray-400" })}
-                    </div>
-                    <h3 className="text-xl font-medium text-gray-700 mb-2">{selectedPoint.category}の詳細情報</h3>
-                    <p className="text-gray-500 text-center mb-6">このカテゴリにはまだ詳細情報が登録されていません。</p>
-                    <Button className="bg-carebase-blue hover:bg-carebase-blue-dark">
-                      <PlusCircle className="h-4 w-4 mr-2" />
-                      詳細情報を追加
-                    </Button>
-                  </div>
-                )
-              ) : (
-                <div className="flex flex-col items-center justify-center h-full py-12 px-4 bg-gray-50 rounded-lg border border-gray-200">
-                  <FileText className="h-12 w-12 text-gray-300 mb-4" />
-                  <h3 className="text-xl font-medium text-gray-700 mb-2">個別ポイントの詳細</h3>
-                  <p className="text-gray-500 text-center">左側のカテゴリをクリックすると、詳細情報が表示されます。</p>
-                </div>
-              )}
-            </div>
-          </div>
+          ) : (
+            <p className="text-center text-gray-500 py-8">個別ポイントの情報はありません。</p>
+          )}
         </TabsContent>
       </Tabs>
 

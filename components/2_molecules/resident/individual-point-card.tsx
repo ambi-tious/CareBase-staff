@@ -1,38 +1,20 @@
 import type React from 'react';
-import { useState } from 'react';
-import type { IndividualPoint, IndividualPointDetail } from '@/mocks/care-board-data';
+import type { IndividualPoint } from '@/mocks/care-board-data';
 import { Badge } from '@/components/ui/badge';
 import { getLucideIcon } from '@/lib/lucide-icon-registry';
 
 interface IndividualPointCardProps {
   point: IndividualPoint;
-  onSelect?: (point: IndividualPoint) => void;
-  isSelected?: boolean;
 }
 
-export const IndividualPointCard: React.FC<IndividualPointCardProps> = ({ 
-  point, 
-  onSelect,
-  isSelected = false
-}) => {
+export const IndividualPointCard: React.FC<IndividualPointCardProps> = ({ point }) => {
   const Icon = getLucideIcon(point.icon);
-  
-  const handleClick = () => {
-    if (onSelect) {
-      onSelect(point);
-    }
-  };
 
   return (
     <div
-      className={`relative p-4 rounded-lg text-center cursor-pointer transition-all ${
-        isSelected 
-          ? 'ring-2 ring-carebase-blue shadow-md scale-105' 
-          : point.isActive 
-            ? 'bg-carebase-blue text-white hover:shadow-md' 
-            : 'bg-gray-200 text-gray-500 hover:bg-gray-300'
+      className={`relative p-4 rounded-lg text-center ${
+        point.isActive ? 'bg-carebase-blue text-white' : 'bg-gray-200 text-gray-500'
       }`}
-      onClick={handleClick}
     >
       {point.count > 0 && (
         <Badge

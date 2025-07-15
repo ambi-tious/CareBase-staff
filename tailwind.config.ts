@@ -11,14 +11,6 @@ const config = {
   ],
   prefix: '',
   theme: {
-    extend: {
-      typography: {
-        DEFAULT: {
-          css: {
-            maxWidth: 'none',
-          },
-        },
-      },
     container: {
       center: true,
       padding: '2rem',
@@ -26,6 +18,7 @@ const config = {
         '2xl': '1400px',
       },
     },
+    extend: {
       colors: {
         'carebase-bg': '#f8fafc',
         'carebase-blue-light': '#bae6fd', // ロゴの薄い青に合わせる
@@ -90,7 +83,7 @@ const config = {
       },
     },
   },
-  plugins: [require('tailwindcss-animate'), require('@tailwindcss/typography')],
+  plugins: [require('tailwindcss-animate')],
 } satisfies Config;
 
 export default config;

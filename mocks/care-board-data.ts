@@ -80,16 +80,6 @@ export interface IndividualPoint {
   icon: IconName;
   count: number;
   isActive: boolean;
-  details?: IndividualPointDetail[];
-}
-
-export interface IndividualPointDetail {
-  id: string;
-  title: string;
-  content: string;
-  createdAt: string;
-  updatedAt: string;
-  createdBy: string;
 }
 
 export interface CareEvent {
@@ -316,145 +306,17 @@ export const careBoardData: Resident[] = [
       },
     ],
     individualPoints: [
-      { 
-        id: 'ip1', 
-        category: '移乗介助', 
-        icon: 'Users', 
-        count: 1, 
-        isActive: true,
-        details: [
-          {
-            id: 'ipd1',
-            title: '車椅子への移乗時の注意点',
-            content: '<p>佐藤様は右膝に痛みがあるため、移乗時には特に注意が必要です。</p><p>以下の手順で行ってください：</p><ol><li>必ず2人介助で行う</li><li>右側からの移乗を避ける</li><li>声掛けを十分に行う</li></ol><p>痛みを訴えた場合はすぐに中止し、看護師に報告してください。</p>',
-            createdAt: '2025-01-15T00:00:00.000Z',
-            updatedAt: '2025-01-15T00:00:00.000Z',
-            createdBy: '田中 花子'
-          }
-        ]
-      },
-      { 
-        id: 'ip2', 
-        category: '食事', 
-        icon: 'Utensils', 
-        count: 1, 
-        isActive: true,
-        details: [
-          {
-            id: 'ipd2',
-            title: '食事介助の方法',
-            content: '<p>佐藤様は嚥下機能が低下しているため、以下の点に注意してください：</p><ul><li>一口量は小さめにする</li><li>食事の際は必ず30度以上の角度で上体を起こす</li><li>食事の前にはお茶でうがいをしてもらう</li></ul><p>むせ込みが見られた場合は、すぐに中止し、看護師に報告してください。</p>',
-            createdAt: '2025-02-10T00:00:00.000Z',
-            updatedAt: '2025-02-10T00:00:00.000Z',
-            createdBy: '佐藤 太郎'
-          }
-        ]
-      },
-      { 
-        id: 'ip3', 
-        category: '飲水', 
-        icon: 'GlassWater', 
-        count: 1, 
-        isActive: true,
-        details: [
-          {
-            id: 'ipd3',
-            title: '水分摂取の注意点',
-            content: '<p>佐藤様は脱水症状を起こしやすいため、こまめな水分補給が必要です。</p><p>1日の目標摂取量：<strong>1500ml</strong></p><p>好みの飲み物：</p><ul><li>麦茶（常温）</li><li>りんごジュース（薄めて提供）</li></ul><p>※トロミ剤は使用しない</p>',
-            createdAt: '2025-01-20T00:00:00.000Z',
-            updatedAt: '2025-01-20T00:00:00.000Z',
-            createdBy: '山田 美咲'
-          }
-        ]
-      },
-      { 
-        id: 'ip4', 
-        category: '服薬', 
-        icon: 'Pill', 
-        count: 1, 
-        isActive: true,
-        details: [
-          {
-            id: 'ipd4',
-            title: '服薬管理について',
-            content: '<p>佐藤様は薬の飲み忘れが多いため、以下の点に注意してください：</p><ul><li>必ず目の前で服用を確認する</li><li>水分と一緒に飲み込むまで見守る</li><li>拒否がある場合は無理強いせず、30分後に再度促す</li></ul><p>服用拒否が続く場合は看護師に報告してください。</p>',
-            createdAt: '2025-03-05T00:00:00.000Z',
-            updatedAt: '2025-03-05T00:00:00.000Z',
-            createdBy: '高橋 恵子'
-          }
-        ]
-      },
+      { id: 'ip1', category: '移乗介助', icon: 'Users', count: 1, isActive: true },
+      { id: 'ip2', category: '食事', icon: 'Utensils', count: 1, isActive: true },
+      { id: 'ip3', category: '飲水', icon: 'GlassWater', count: 1, isActive: true },
+      { id: 'ip4', category: '服薬', icon: 'Pill', count: 1, isActive: true },
       { id: 'ip5', category: '排泄', icon: 'ExcretionIcon', count: 0, isActive: false },
-      { 
-        id: 'ip6', 
-        category: '接遇', 
-        icon: 'Users', 
-        count: 2, 
-        isActive: true,
-        details: [
-          {
-            id: 'ipd5',
-            title: 'コミュニケーション方法',
-            content: '<p>佐藤様は聴力が低下しているため、以下の点に注意してください：</p><ul><li>正面から、ゆっくり、はっきりと話す</li><li>必要に応じてジェスチャーを交える</li><li>筆談ボードを活用する（居室に設置済み）</li></ul><p>特に朝は聴力が低下しているため、より丁寧なコミュニケーションを心がけてください。</p>',
-            createdAt: '2025-01-25T00:00:00.000Z',
-            updatedAt: '2025-01-25T00:00:00.000Z',
-            createdBy: '鈴木 一郎'
-          },
-          {
-            id: 'ipd6',
-            title: '不穏時の対応',
-            content: '<p>佐藤様は夕方になると不穏になることがあります（サンダウンシンドローム）。</p><p>不穏時の対応：</p><ol><li>静かな環境に誘導する</li><li>好きな音楽（クラシック）をかける</li><li>家族の写真を見せる</li></ol><p>上記で落ち着かない場合は看護師に報告してください。</p>',
-            createdAt: '2025-02-15T00:00:00.000Z',
-            updatedAt: '2025-02-15T00:00:00.000Z',
-            createdBy: '伊藤 健太'
-          }
-        ]
-      },
+      { id: 'ip6', category: '接遇', icon: 'Users', count: 2, isActive: true },
       { id: 'ip7', category: '点眼', icon: 'Eye', count: 0, isActive: false },
       { id: 'ip8', category: 'バイタル', icon: 'Activity', count: 0, isActive: false },
-      { 
-        id: 'ip9', 
-        category: '入浴', 
-        icon: 'Bath', 
-        count: 10, 
-        isActive: true,
-        details: [
-          {
-            id: 'ipd7',
-            title: '入浴介助の注意点',
-            content: '<p>佐藤様は浴槽の出入りに不安があるため、以下の点に注意してください：</p><ul><li>必ず2人介助で行う</li><li>滑り止めマットを使用する</li><li>湯温は40度を超えないようにする（血圧上昇に注意）</li><li>入浴前後の血圧測定を必ず行う</li></ul><p>入浴後は脱水予防のため、必ず水分補給を促してください。</p>',
-            createdAt: '2025-01-30T00:00:00.000Z',
-            updatedAt: '2025-01-30T00:00:00.000Z',
-            createdBy: '渡辺 由美'
-          },
-          {
-            id: 'ipd8',
-            title: '皮膚観察について',
-            content: '<p>佐藤様は仙骨部に発赤が見られるため、入浴時に以下の観察を行ってください：</p><ul><li>仙骨部の発赤の有無と程度</li><li>かかと、肘などの骨突出部の状態</li><li>全身の乾燥状態</li></ul><p>入浴後は保湿クリームを塗布し、体位変換を2時間ごとに行ってください。</p><p>発赤の悪化が見られた場合は看護師に報告してください。</p>',
-            createdAt: '2025-02-05T00:00:00.000Z',
-            updatedAt: '2025-02-05T00:00:00.000Z',
-            createdBy: '中村 真一'
-          }
-        ]
-      },
+      { id: 'ip9', category: '入浴', icon: 'Bath', count: 10, isActive: true },
       { id: 'ip10', category: '口腔ケア', icon: 'Tooth', count: 0, isActive: false },
-      { 
-        id: 'ip11', 
-        category: 'その他', 
-        icon: 'FileText', 
-        count: 1, 
-        isActive: true,
-        details: [
-          {
-            id: 'ipd9',
-            title: '趣味・好みについて',
-            content: '<p>佐藤様の趣味・好みについての情報です：</p><ul><li>好きな食べ物：和菓子（特に羊羹）、煮魚</li><li>嫌いな食べ物：パン類、乳製品</li><li>趣味：将棋、歴史番組の視聴</li><li>好きな話題：昔の仕事の話（元教師）</li></ul><p>コミュニケーションの際は、上記の話題を取り入れると会話が弾みます。</p>',
-            createdAt: '2025-02-20T00:00:00.000Z',
-            updatedAt: '2025-02-20T00:00:00.000Z',
-            createdBy: '小林 さくら'
-          }
-        ]
-      },
+      { id: 'ip11', category: 'その他', icon: 'FileText', count: 1, isActive: true },
       { id: 'ip12', category: '薬', icon: 'Pill', count: 0, isActive: false },
     ],
   },
