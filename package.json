@@ -73,7 +73,6 @@
   "devDependencies": {
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.3.0",
-
     "@testing-library/user-event": "^14.6.1",
     "@types/node": "^22.16.3",
     "@types/react": "^19.1.8",
@@ -83,6 +82,7 @@
     "@vitejs/plugin-react": "4.6.0",
     "@vitest/coverage-istanbul": "^3.2.4",
     "@vitest/coverage-v8": "1.6.1",
+    "eslint": "^9.31.0",
     "eslint-config-next": "^15.3.5",
     "eslint-config-prettier": "^10.1.5",
     "eslint-plugin-prettier": "^5.5.1",
