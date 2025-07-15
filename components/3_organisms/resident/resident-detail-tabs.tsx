@@ -63,6 +63,7 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
     '接遇': '<h2>接遇に関する個別ポイント</h2><p>耳が遠いため、大きな声でゆっくり話す</p><p>目線を合わせて話しかける</p>',
     '入浴': '<h2>入浴に関する個別ポイント</h2><p>一般浴槽使用</p><p>洗身は部分介助</p><p>洗髪は全介助</p><p>浴室内は見守り</p>',
   });
+  const [showOnlyWithContent, setShowOnlyWithContent] = useState(false);
   const [contacts, setContacts] = useState<ContactPerson[]>(resident.contacts || []);
   const [homeCareOffice, setHomeCareOffice] = useState<HomeCareOffice | undefined>(
     resident.homeCareOffice
@@ -499,11 +500,19 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
         </TabsContent>
 
         <TabsContent value="points">
-          <div className="mb-4 flex gap-2">
-            <Button variant="outline" className="bg-white">
+          <div className="mb-4 flex items-center gap-2">
+            <Button 
+              variant={showOnlyWithContent ? "default" : "outline"} 
+              className={showOnlyWithContent ? "bg-carebase-blue hover:bg-carebase-blue-dark" : "bg-white"}
+              onClick={() => setShowOnlyWithContent(true)}
+            >
               内容のある項目のみ表示
             </Button>
-            <Button className="bg-carebase-blue hover:bg-carebase-blue-dark">
+            <Button 
+              variant={!showOnlyWithContent ? "default" : "outline"}
+              className={!showOnlyWithContent ? "bg-carebase-blue hover:bg-carebase-blue-dark" : "bg-white"}
+              onClick={() => setShowOnlyWithContent(false)}
+            >
               すべて表示
             </Button>
           </div>
@@ -530,14 +539,17 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
           </div>
           {individualPoints && individualPoints.length > 0 ? (
             <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-              {individualPoints.map((point) => (
-                <IndividualPointCard 
-                  key={point.id} 
-                  point={point} 
-                  hasContent={!!pointContents[point.category]} 
-                  onClick={() => handlePointCategoryClick(point.category)} 
-                />
-              ))}
+              {individualPoints
+                .filter(point => !showOnlyWithContent || !!pointContents[point.category])
+                .map((point) => (
+                  <IndividualPointCard 
+                    key={point.id} 
+                    point={point} 
+                    hasContent={!!pointContents[point.category]} 
+                    onClick={() => handlePointCategoryClick(point.category)} 
+                  />
+                ))
+              }
             </div>
           ) : (
             <p className="text-center text-gray-500 py-8">個別ポイントの情報はありません。</p>
