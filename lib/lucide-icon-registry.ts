@@ -52,7 +52,7 @@ import {
 const iconRegistry: Record<string, LucideIcon> = {
   // Clock icon for current time button
   ClockIcon,
-  
+
   // Dashboard menu icons
   Users,
   ClipboardList,

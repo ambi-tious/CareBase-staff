@@ -13,7 +13,14 @@ import {
 } from '@/mocks/care-board-data';
 import { addDays, format } from 'date-fns';
 import { ja } from 'date-fns/locale';
-import { BookOpen, CalendarIcon, ChevronLeft, ChevronRight, ClipboardEdit } from 'lucide-react';
+import {
+  BookOpen,
+  CalendarIcon,
+  ChevronLeft,
+  ChevronRight,
+  ClipboardEdit,
+  Clock,
+} from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link'; // Import Link
 import { useEffect, useRef, useState } from 'react';
@@ -58,25 +65,26 @@ function TimeBaseView() {
       if (currentTimeRowRef.current && scrollContainerRef.current) {
         // ヘッダーの高さを考慮（ヘッダーの高さは約64px + タブの高さ約48px + マージン24px）
         const headerHeight = 136;
-        
+
         // 現在時刻の行の位置を取得
         const rowRect = currentTimeRowRef.current.getBoundingClientRect();
         const containerRect = scrollContainerRef.current.getBoundingClientRect();
-        
+
         // スクロール位置を計算（現在時刻の行が画面の上部1/3の位置に来るように）
-        const targetPosition = rowRect.top - containerRect.top - headerHeight - (containerRect.height / 3);
-        
+        const targetPosition =
+          rowRect.top - containerRect.top - headerHeight - containerRect.height / 3;
+
         // スムーズにスクロール
         scrollContainerRef.current.scrollTo({
           top: scrollContainerRef.current.scrollTop + targetPosition,
-          behavior: 'smooth'
+          behavior: 'smooth',
         });
       }
     };
 
     // ページ読み込み後、少し遅延させてスクロール（DOMが完全に描画されるのを待つ）
     const timer = setTimeout(scrollToCurrentTime, 300);
-    
+
     // コンポーネントのアンマウント時にタイマーをクリア
     return () => clearTimeout(timer);
   }, [currentTime]); // currentTimeが変わったときにも再実行
@@ -102,7 +110,10 @@ function TimeBaseView() {
 
   return (
     <div className="bg-white rounded-lg shadow-sm overflow-hidden border border-gray-200">
-      <div className="overflow-auto max-h-[calc(100vh-220px)] scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent" ref={scrollContainerRef}>
+      <div
+        className="overflow-auto max-h-[calc(100vh-220px)] scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent"
+        ref={scrollContainerRef}
+      >
         {' '}
         {/* Adjusted max-height */}
         <div
@@ -149,17 +160,17 @@ function TimeBaseView() {
           {/* Time slots and events */}
           {allTimeSlots.map((time) => (
             <div
-              key={time} 
+              key={time}
               className="contents"
               ref={time === currentTime ? currentTimeRowRef : undefined}
             >
               {/* Time slot label (sticky left) */}
               <div
                 className={cn(
-                  "sticky left-0 flex items-center justify-center p-2 border-b border-r border-gray-200 text-sm font-medium z-10 h-14",
-                  time === currentTime 
-                    ? "bg-yellow-100 text-yellow-800 font-bold" 
-                    : "bg-gray-50 text-gray-700"
+                  'sticky left-0 flex items-center justify-center p-2 border-b border-r border-gray-200 text-sm font-medium z-10 h-14',
+                  time === currentTime
+                    ? 'bg-yellow-100 text-yellow-800 font-bold'
+                    : 'bg-gray-50 text-gray-700'
                 )}
               >
                 {time}
@@ -169,8 +180,8 @@ function TimeBaseView() {
                 <div
                   key={`${resident.id}-${time}`}
                   className={cn(
-                    "border-r border-gray-200",
-                    time === currentTime ? "bg-yellow-50" : ""
+                    'border-r border-gray-200',
+                    time === currentTime ? 'bg-yellow-50' : ''
                   )}
                 >
                   <EventCell events={resident.events} time={time} />
@@ -197,7 +208,9 @@ function UserBaseView() {
     <div className="overflow-x-auto bg-white rounded-lg shadow-sm">
       <div
         className="grid"
-        style={{ gridTemplateColumns: `220px repeat(${careCategories.length}, minmax(110px, 1fr))` }} // Adjusted column widths
+        style={{
+          gridTemplateColumns: `220px repeat(${careCategories.length}, minmax(110px, 1fr))`,
+        }} // Adjusted column widths
       >
         <div className="sticky top-0 left-0 bg-carebase-blue text-white p-3 border-b border-r border-gray-300 z-20 flex items-center justify-center">
           <span className="text-base font-semibold">利用者名</span>
@@ -264,8 +277,8 @@ function UserBaseView() {
 
 export function CareBoard() {
   const [activeView, setActiveView] = useState<ActiveTabView>('time');
-  const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
-  
+  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+
   // 現在の時刻を取得（デバッグ用）
   const currentHour = new Date().getHours();
   const currentMinute = new Date().getMinutes();
@@ -315,7 +328,7 @@ export function CareBoard() {
               現在時刻: {currentHour}:{currentMinute < 10 ? `0${currentMinute}` : currentMinute}
             </div>
           )}
-          
+
           <Button
             variant="outline"
             className="bg-white border-carebase-blue text-carebase-blue hover:bg-carebase-blue-light font-medium px-3 py-2 text-sm"
@@ -333,7 +346,7 @@ export function CareBoard() {
                 <CalendarIcon className="mr-2 h-4 w-4 text-carebase-blue" />
                 {format(selectedDate, 'M月d日 (E)', { locale: ja })}
               </Button>
-            </PopoverTrigger> 
+            </PopoverTrigger>
             <PopoverContent className="w-auto p-0">
               <Calendar
                 mode="single"
@@ -360,10 +373,10 @@ export function CareBoard() {
       </div>
 
       {activeView === 'time' ? <TimeBaseView /> : <UserBaseView />}
-      
+
       {/* 現在時刻へスクロールするボタン */}
       <div className="fixed bottom-6 right-6">
-        <Button 
+        <Button
           onClick={() => {
             const currentTimeRow = document.querySelector('[data-current-time="true"]');
             if (currentTimeRow) {
@@ -372,7 +385,7 @@ export function CareBoard() {
           }}
           className="bg-carebase-blue hover:bg-carebase-blue-dark text-white rounded-full shadow-lg p-3"
         >
-          <ClockIcon className="h-5 w-5" />
+          <Clock className="h-5 w-5" />
           <span className="sr-only">現在時刻へ</span>
         </Button>
       </div>
