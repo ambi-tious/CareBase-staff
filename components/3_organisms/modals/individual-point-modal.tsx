@@ -1,6 +1,7 @@
 'use client';
 
 import type React from 'react';
+import { useState, useRef, useEffect } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -8,13 +9,8 @@ import {
   DialogTitle,
   DialogDescription,
 } from '@/components/ui/dialog';
-import dynamic from 'next/dynamic';
 import { Button } from '@/components/ui/button';
-import { Save, X } from 'lucide-react';
-
-// Dynamically import ReactQuill to avoid SSR issues
-const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
-import 'react-quill/dist/quill.snow.css';
+import { Save, X, Bold, Italic, List, ListOrdered } from 'lucide-react';
 
 interface IndividualPointModalProps {
   isOpen: boolean;
@@ -31,12 +27,13 @@ export const IndividualPointModal: React.FC<IndividualPointModalProps> = ({
   content = '',
   onSave,
 }) => {
-  const [editorContent, setEditorContent] = React.useState(content);
-  const [isEditing, setIsEditing] = React.useState(false);
-  const [isSaving, setIsSaving] = React.useState(false);
+  const [editorContent, setEditorContent] = useState(content);
+  const [isEditing, setIsEditing] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const editorRef = useRef<HTMLDivElement>(null);
 
   // Reset editor content when the category changes
-  React.useEffect(() => {
+  useEffect(() => {
     setEditorContent(content);
     setIsEditing(false);
   }, [category, content]);
@@ -46,7 +43,8 @@ export const IndividualPointModal: React.FC<IndividualPointModalProps> = ({
     
     setIsSaving(true);
     try {
-      await onSave(editorContent);
+      const htmlContent = editorRef.current?.innerHTML || editorContent;
+      await onSave(htmlContent);
       setIsEditing(false);
     } catch (error) {
       console.error('Failed to save content:', error);
@@ -55,14 +53,17 @@ export const IndividualPointModal: React.FC<IndividualPointModalProps> = ({
     }
   };
 
-  const modules = {
-    toolbar: [
-      [{ header: [1, 2, 3, false] }],
-      ['bold', 'italic', 'underline', 'strike'],
-      [{ list: 'ordered' }, { list: 'bullet' }],
-      [{ color: [] }, { background: [] }],
-      ['clean'],
-    ],
+  const handleFormatting = (command: string, value?: string) => {
+    document.execCommand(command, false, value);
+    if (editorRef.current) {
+      setEditorContent(editorRef.current.innerHTML);
+    }
+  };
+
+  const handleContentChange = () => {
+    if (editorRef.current) {
+      setEditorContent(editorRef.current.innerHTML);
+    }
   };
 
   return (
@@ -113,12 +114,50 @@ export const IndividualPointModal: React.FC<IndividualPointModalProps> = ({
         <div className="min-h-[300px] mt-4">
           {isEditing ? (
             <div className="min-h-[300px]">
-              <ReactQuill
-                theme="snow"
-                value={editorContent}
-                onChange={setEditorContent}
-                modules={modules}
-                className="h-[300px] mb-12"
+              {/* Formatting toolbar */}
+              <div className="flex items-center gap-2 p-2 border-b mb-4">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleFormatting('bold')}
+                >
+                  <Bold className="h-4 w-4" />
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleFormatting('italic')}
+                >
+                  <Italic className="h-4 w-4" />
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleFormatting('insertUnorderedList')}
+                >
+                  <List className="h-4 w-4" />
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleFormatting('insertOrderedList')}
+                >
+                  <ListOrdered className="h-4 w-4" />
+                </Button>
+              </div>
+              
+              {/* Rich text editor */}
+              <div
+                ref={editorRef}
+                contentEditable
+                className="min-h-[300px] p-4 border rounded-md focus:outline-none focus:ring-2 focus:ring-carebase-blue"
+                dangerouslySetInnerHTML={{ __html: editorContent }}
+                onInput={handleContentChange}
+                style={{ whiteSpace: 'pre-wrap' }}
               />
             </div>
           ) : (
@@ -131,4 +170,4 @@ export const IndividualPointModal: React.FC<IndividualPointModalProps> = ({
       </DialogContent>
     </Dialog>
   );
-}
+};

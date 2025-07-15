@@ -1,13 +1,8 @@
 import type React from 'react';
-import { useState, useEffect } from 'react';
-import dynamic from 'next/dynamic';
+import { useState, useEffect, useRef } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Save, X } from 'lucide-react';
-
-// Dynamically import ReactQuill to avoid SSR issues
-const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
-import 'react-quill/dist/quill.snow.css';
+import { Save, X, Bold, Italic, List, ListOrdered } from 'lucide-react';
 
 interface IndividualPointDetailProps {
   category: string;
@@ -25,6 +20,7 @@ export const IndividualPointDetail: React.FC<IndividualPointDetailProps> = ({
   const [editorContent, setEditorContent] = useState(content);
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const editorRef = useRef<HTMLDivElement>(null);
 
   // Reset editor content when the category changes
   useEffect(() => {
@@ -37,7 +33,8 @@ export const IndividualPointDetail: React.FC<IndividualPointDetailProps> = ({
     
     setIsSaving(true);
     try {
-      await onSave(editorContent);
+      const htmlContent = editorRef.current?.innerHTML || editorContent;
+      await onSave(htmlContent);
       setIsEditing(false);
     } catch (error) {
       console.error('Failed to save content:', error);
@@ -46,14 +43,17 @@ export const IndividualPointDetail: React.FC<IndividualPointDetailProps> = ({
     }
   };
 
-  const modules = {
-    toolbar: [
-      [{ header: [1, 2, 3, false] }],
-      ['bold', 'italic', 'underline', 'strike'],
-      [{ list: 'ordered' }, { list: 'bullet' }],
-      [{ color: [] }, { background: [] }],
-      ['clean'],
-    ],
+  const handleFormatting = (command: string, value?: string) => {
+    document.execCommand(command, false, value);
+    if (editorRef.current) {
+      setEditorContent(editorRef.current.innerHTML);
+    }
+  };
+
+  const handleContentChange = () => {
+    if (editorRef.current) {
+      setEditorContent(editorRef.current.innerHTML);
+    }
   };
 
   return (
@@ -109,12 +109,50 @@ export const IndividualPointDetail: React.FC<IndividualPointDetailProps> = ({
       <CardContent>
         {isEditing ? (
           <div className="min-h-[200px]">
-            <ReactQuill
-              theme="snow"
-              value={editorContent}
-              onChange={setEditorContent}
-              modules={modules}
-              className="h-[200px] mb-12"
+            {/* Formatting toolbar */}
+            <div className="flex items-center gap-2 p-2 border-b mb-4">
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => handleFormatting('bold')}
+              >
+                <Bold className="h-4 w-4" />
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => handleFormatting('italic')}
+              >
+                <Italic className="h-4 w-4" />
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => handleFormatting('insertUnorderedList')}
+              >
+                <List className="h-4 w-4" />
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => handleFormatting('insertOrderedList')}
+              >
+                <ListOrdered className="h-4 w-4" />
+              </Button>
+            </div>
+            
+            {/* Rich text editor */}
+            <div
+              ref={editorRef}
+              contentEditable
+              className="min-h-[200px] p-4 border rounded-md focus:outline-none focus:ring-2 focus:ring-carebase-blue"
+              dangerouslySetInnerHTML={{ __html: editorContent }}
+              onInput={handleContentChange}
+              style={{ whiteSpace: 'pre-wrap' }}
             />
           </div>
         ) : (
