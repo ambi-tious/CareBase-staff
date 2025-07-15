@@ -1,5 +1,3 @@
-'use client';
-
 import { useState, useMemo } from 'react';
 import {
   Table,
@@ -26,31 +24,21 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { FileIcon } from '@/components/1_atoms/documents/file-icon';
-import { Search, MoreVertical, Download, Eye, Edit, Trash2, ArrowUpDown } from 'lucide-react';
+import { Search, MoreVertical, Download, Eye, Edit, Trash2, ArrowUpDown, Folder } from 'lucide-react';
 import Link from 'next/link';
-
-interface File {
-  id: string;
-  name: string;
-  type: string;
-  size: string;
-  createdAt: string;
-  updatedAt: string;
-  createdBy: string;
-  fileType: string;
-}
+import type { DocumentItem } from '@/types/document';
 
 interface FolderContentsViewProps {
-  files: File[];
-  selectedFiles: string[];
-  onFileSelection: (fileId: string, isSelected: boolean) => void;
+  items: DocumentItem[];
+  selectedItems: string[];
+  onItemSelection: (itemId: string, isSelected: boolean) => void;
   onSelectAll: (isSelected: boolean) => void;
 }
 
 export function FolderContentsView({
-  files,
-  selectedFiles,
-  onFileSelection,
+  items,
+  selectedItems,
+  onItemSelection,
   onSelectAll,
 }: FolderContentsViewProps) {
   const [searchQuery, setSearchQuery] = useState('');
@@ -58,15 +46,15 @@ export function FolderContentsView({
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
 
   // 検索フィルタリング
-  const filteredFiles = useMemo(() => {
-    return files.filter((file) =>
-      file.name.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredItems = useMemo(() => {
+    return items.filter((item) =>
+      item.name.toLowerCase().includes(searchQuery.toLowerCase())
     );
-  }, [files, searchQuery]);
+  }, [items, searchQuery]);
 
   // ソート
-  const sortedFiles = useMemo(() => {
-    return [...filteredFiles].sort((a, b) => {
+  const sortedItems = useMemo(() => {
+    return [...filteredItems].sort((a, b) => {
       let comparison = 0;
       
       switch (sortBy) {
@@ -76,14 +64,24 @@ export function FolderContentsView({
         case 'date':
           comparison = new Date(a.updatedAt).getTime() - new Date(b.updatedAt).getTime();
           break;
-        case 'size':
-          // サイズの数値部分を抽出して比較
-          const sizeA = parseFloat(a.size.split(' ')[0]);
-          const sizeB = parseFloat(b.size.split(' ')[0]);
-          comparison = sizeA - sizeB;
-          break;
         case 'type':
-          comparison = a.fileType.localeCompare(b.fileType);
+          comparison = a.type.localeCompare(b.type);
+          break;
+        case 'size':
+          // サイズの数値部分を抽出して比較（フォルダの場合はサイズなし）
+          if (a.type === 'folder' && b.type === 'folder') {
+            comparison = 0;
+          } else if (a.type === 'folder') {
+            comparison = -1; // フォルダを先に
+          } else if (b.type === 'folder') {
+            comparison = 1; // フォルダを先に
+          } else {
+            const aDoc = a as any;
+            const bDoc = b as any;
+            const sizeA = parseFloat(aDoc.size?.split(' ')[0] || '0');
+            const sizeB = parseFloat(bDoc.size?.split(' ')[0] || '0');
+            comparison = sizeA - sizeB;
+          }
           break;
         default:
           comparison = 0;
@@ -91,13 +89,13 @@ export function FolderContentsView({
       
       return sortDirection === 'asc' ? comparison : -comparison;
     });
-  }, [filteredFiles, sortBy, sortDirection]);
+  }, [filteredItems, sortBy, sortDirection]);
 
   // 全選択状態の確認
-  const isAllSelected = filteredFiles.length > 0 && selectedFiles.length === filteredFiles.length;
+  const isAllSelected = filteredItems.length > 0 && selectedItems.length === filteredItems.length;
   
   // 部分選択状態の確認
-  const isIndeterminate = selectedFiles.length > 0 && selectedFiles.length < filteredFiles.length;
+  const isIndeterminate = selectedItems.length > 0 && selectedItems.length < filteredItems.length;
 
   // ソート方向の切り替え
   const toggleSortDirection = () => {
@@ -123,6 +121,15 @@ export function FolderContentsView({
     );
   };
 
+  // アイテムのリンク先を取得
+  const getItemLink = (item: DocumentItem) => {
+    if (item.type === 'folder') {
+      return `/documents/folder/${item.id}`;
+    } else {
+      return `/documents/view/${item.id}`;
+    }
+  };
+
   return (
     <div className="space-y-4">
       {/* 検索とソート */}
@@ -130,7 +137,7 @@ export function FolderContentsView({
         <div className="relative w-full sm:w-auto sm:min-w-[300px]">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
           <Input
-            placeholder="ファイルを検索..."
+            placeholder="フォルダ・ファイルを検索..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="pl-10"
@@ -144,8 +151,8 @@ export function FolderContentsView({
             <SelectContent>
               <SelectItem value="name">名前順</SelectItem>
               <SelectItem value="date">更新日順</SelectItem>
-              <SelectItem value="size">サイズ順</SelectItem>
               <SelectItem value="type">種類順</SelectItem>
+              <SelectItem value="size">サイズ順</SelectItem>
             </SelectContent>
           </Select>
           <Button
@@ -159,11 +166,11 @@ export function FolderContentsView({
         </div>
       </div>
 
-      {/* ファイル一覧テーブル */}
-      {filteredFiles.length === 0 ? (
+      {/* アイテム一覧テーブル */}
+      {filteredItems.length === 0 ? (
         <div className="text-center py-12 bg-white rounded-lg shadow">
           <p className="text-gray-500">
-            {searchQuery ? '検索結果が見つかりませんでした。' : 'このフォルダにはファイルがありません。'}
+            {searchQuery ? '検索結果が見つかりませんでした。' : 'このフォルダは空です。'}
           </p>
         </div>
       ) : (
@@ -181,7 +188,7 @@ export function FolderContentsView({
                 </TableHead>
                 <TableHead className="cursor-pointer" onClick={() => handleSortChange('name')}>
                   <div className="flex items-center">
-                    ファイル名
+                    名前
                     {renderSortIcon('name')}
                   </div>
                 </TableHead>
@@ -202,29 +209,35 @@ export function FolderContentsView({
               </TableRow>
             </TableHeader>
             <TableBody>
-              {sortedFiles.map((file) => (
-                <TableRow key={file.id}>
+              {sortedItems.map((item) => (
+                <TableRow key={item.id}>
                   <TableCell>
                     <Checkbox
-                      checked={selectedFiles.includes(file.id)}
-                      onCheckedChange={(checked) => onFileSelection(file.id, !!checked)}
-                      aria-label={`${file.name}を選択`}
+                      checked={selectedItems.includes(item.id)}
+                      onCheckedChange={(checked) => onItemSelection(item.id, !!checked)}
+                      aria-label={`${item.name}を選択`}
                     />
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center gap-2">
-                      <FileIcon fileType={file.fileType} className="h-5 w-5" />
+                      {item.type === 'folder' ? (
+                        <Folder className="h-5 w-5 text-blue-500" />
+                      ) : (
+                        <FileIcon fileType={(item as any).fileType} className="h-5 w-5" />
+                      )}
                       <Link
-                        href={`/documents/view/${file.id}`}
+                        href={getItemLink(item)}
                         className="hover:text-carebase-blue hover:underline"
                       >
-                        {file.name}
+                        {item.name}
                       </Link>
                     </div>
                   </TableCell>
-                  <TableCell>{file.updatedAt}</TableCell>
-                  <TableCell className="hidden md:table-cell">{file.size}</TableCell>
-                  <TableCell className="hidden md:table-cell">{file.createdBy}</TableCell>
+                  <TableCell>{item.updatedAt}</TableCell>
+                  <TableCell className="hidden md:table-cell">
+                    {item.type === 'folder' ? '-' : (item as any).size}
+                  </TableCell>
+                  <TableCell className="hidden md:table-cell">{item.createdBy}</TableCell>
                   <TableCell>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
@@ -234,21 +247,25 @@ export function FolderContentsView({
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
                         <DropdownMenuItem asChild>
-                          <Link href={`/documents/view/${file.id}`}>
+                          <Link href={getItemLink(item)}>
                             <Eye className="h-4 w-4 mr-2" />
-                            表示
+                            {item.type === 'folder' ? '開く' : '表示'}
                           </Link>
                         </DropdownMenuItem>
-                        <DropdownMenuItem asChild>
-                          <Link href={`/documents/edit/${file.id}`}>
-                            <Edit className="h-4 w-4 mr-2" />
-                            編集
-                          </Link>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem>
-                          <Download className="h-4 w-4 mr-2" />
-                          ダウンロード
-                        </DropdownMenuItem>
+                        {item.type === 'document' && (
+                          <>
+                            <DropdownMenuItem asChild>
+                              <Link href={`/documents/edit/${item.id}`}>
+                                <Edit className="h-4 w-4 mr-2" />
+                                編集
+                              </Link>
+                            </DropdownMenuItem>
+                            <DropdownMenuItem>
+                              <Download className="h-4 w-4 mr-2" />
+                              ダウンロード
+                            </DropdownMenuItem>
+                          </>
+                        )}
                         <DropdownMenuItem className="text-red-600">
                           <Trash2 className="h-4 w-4 mr-2" />
                           削除

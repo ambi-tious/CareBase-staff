@@ -1,67 +1,23 @@
 import React from 'react';
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { Button } from '@/components/ui/button';
-import { ArrowLeft, FolderOpen, Upload, Trash2 } from 'lucide-react';
 import { FolderBreadcrumb } from '@/components/2_molecules/documents/folder-breadcrumb';
 import { FolderContentsView } from '@/components/3_organisms/documents/folder-contents-view';
+import { Button } from '@/components/ui/button';
 import { FileUploadModal } from '@/components/3_organisms/modals/file-upload-modal';
 import { GenericDeleteModal } from '@/components/3_organisms/modals/generic-delete-modal';
 import { useToast } from '@/components/ui/use-toast';
-import { getFolderContents, getFolderPath, getFolder } from '@/mocks/hierarchical-documents';
-import type { DocumentItem, Folder, Document, BreadcrumbItem } from '@/types/document';
+import { getFolderContents, getFolderPath } from '@/mocks/hierarchical-documents';
+import { FileText, FolderPlus, Upload, Trash2 } from 'lucide-react';
+import Link from 'next/link';
+import { useState } from 'react';
 
-interface FolderViewPageProps {
-  params: Promise<{
-    id: string;
-  }>;
-}
-
-export default function FolderViewPage({ params: paramsPromise }: FolderViewPageProps) {
-  const params = React.use(paramsPromise);
-  const router = useRouter();
+export default function DocumentsHomePage() {
   const { toast } = useToast();
-  const [folder, setFolder] = useState<Folder | null>(null);
-  const [contents, setContents] = useState<DocumentItem[]>([]);
-  const [breadcrumbPath, setBreadcrumbPath] = useState<BreadcrumbItem[]>([]);
+  const [contents, setContents] = useState(getFolderContents(null));
+  const [breadcrumbPath] = useState(getFolderPath(null));
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
-
-  // フォルダとコンテンツデータの取得
-  useEffect(() => {
-    const fetchFolderContents = async () => {
-      setIsLoading(true);
-      setError(null);
-
-      try {
-        // 実際のアプリケーションではAPIを呼び出してデータを取得します
-        await new Promise((resolve) => setTimeout(resolve, 300));
-
-        // フォルダ情報を取得
-        const folderData = getFolder(params.id);
-        setFolder(folderData);
-
-        // フォルダパスを取得
-        const path = getFolderPath(params.id);
-        setBreadcrumbPath(path);
-
-        // フォルダコンテンツを取得
-        const folderContents = getFolderContents(params.id);
-        setContents(folderContents);
-      } catch (error) {
-        console.error('Failed to fetch folder contents:', error);
-        setError('フォルダの内容を読み込めませんでした。もう一度お試しください。');
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchFolderContents();
-  }, [params.id]);
 
   const handleItemSelection = (itemId: string, isSelected: boolean) => {
     if (isSelected) {
@@ -121,7 +77,7 @@ export default function FolderViewPage({ params: paramsPromise }: FolderViewPage
         type: 'document' as const,
         size: `${(file.size / (1024 * 1024)).toFixed(1)} MB`,
         fileType: (file.name.split('.').pop() || 'txt') as any,
-        category: folder?.name || 'その他',
+        category: 'その他',
         status: 'published' as const,
         createdAt: new Date().toISOString().split('T')[0],
         updatedAt: new Date().toISOString().split('T')[0],
@@ -142,48 +98,13 @@ export default function FolderViewPage({ params: paramsPromise }: FolderViewPage
     }
   };
 
-  if (isLoading) {
-    return (
-      <div className="p-4 md:p-6 bg-carebase-bg min-h-screen">
-        <div className="flex justify-center items-center h-64">
-          <p className="text-gray-500">読み込み中...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="p-4 md:p-6 bg-carebase-bg min-h-screen">
-        <div className="flex justify-center items-center h-64">
-          <div className="text-center">
-            <p className="text-red-500 mb-4">{error}</p>
-            <Button onClick={() => router.back()}>戻る</Button>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="p-4 md:p-6 bg-carebase-bg min-h-screen">
       {/* ヘッダー */}
       <div className="mb-6">
-        <div className="flex items-center gap-4 mb-4">
-          <Button
-            variant="outline"
-            onClick={() => router.back()}
-            className="flex items-center gap-2"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            戻る
-          </Button>
-          <div className="flex items-center gap-3">
-            <FolderOpen className="h-6 w-6 text-carebase-blue" />
-            <h1 className="text-2xl font-bold text-carebase-text-primary">
-              {folder?.name || 'フォルダ'}
-            </h1>
-          </div>
+        <div className="flex items-center gap-3 mb-4">
+          <FileText className="h-6 w-6 text-carebase-blue" />
+          <h1 className="text-2xl font-bold text-carebase-text-primary">書類管理</h1>
         </div>
         
         {/* パンくずリスト */}
@@ -191,12 +112,25 @@ export default function FolderViewPage({ params: paramsPromise }: FolderViewPage
         
         <div className="flex flex-wrap items-center justify-between gap-4">
           <p className="text-gray-600">
-            {contents.length}個のアイテム • 最終更新: {folder?.updatedAt || '-'}
+            {contents.length}個のアイテム
           </p>
           <div className="flex items-center gap-2">
+            <Link href="/documents/edit">
+              <Button className="bg-carebase-blue hover:bg-carebase-blue-dark">
+                <FileText className="h-4 w-4 mr-2" />
+                新規書類
+              </Button>
+            </Link>
+            <Button
+              className="bg-carebase-blue hover:bg-carebase-blue-dark"
+            >
+              <FolderPlus className="h-4 w-4 mr-2" />
+              新しいフォルダ
+            </Button>
             <Button
               onClick={() => setIsUploadModalOpen(true)}
-              className="bg-carebase-blue hover:bg-carebase-blue-dark"
+              variant="outline"
+              className="border-carebase-blue text-carebase-blue hover:bg-carebase-blue-light"
             >
               <Upload className="h-4 w-4 mr-2" />
               ファイルをアップロード
@@ -227,8 +161,8 @@ export default function FolderViewPage({ params: paramsPromise }: FolderViewPage
         isOpen={isUploadModalOpen}
         onClose={() => setIsUploadModalOpen(false)}
         onUpload={handleUpload}
-        folderId={params.id}
-        folderName={folder?.name || 'フォルダ'}
+        folderId="root"
+        folderName="ホーム"
       />
 
       <GenericDeleteModal
