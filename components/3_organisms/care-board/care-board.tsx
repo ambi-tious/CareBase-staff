@@ -69,14 +69,14 @@ function TimeBaseView() {
     const relevantEvents = events.filter((event) => event.time.startsWith(time.split(':')[0]));
     return (
       <div
-        className={`h-10 border-b border-gray-200 p-1 flex flex-col flex-wrap items-start justify-start gap-0.5`}
+        className={`h-14 border-b border-gray-200 p-1.5 flex flex-col flex-wrap items-start justify-start gap-1`}
       >
         {relevantEvents.map((event) => {
           const Icon = getLucideIcon(event.icon);
           return (
-            <div key={event.label} className="flex items-center gap-0.5">
-              <Icon className="h-2.5 w-2.5 text-carebase-blue" />
-              <span className="truncate text-[10px]">{event.label}</span>
+            <div key={event.label} className="flex items-center gap-1">
+              <Icon className="h-4 w-4 text-carebase-blue" />
+              <span className="truncate text-xs font-medium">{event.label}</span>
             </div>
           );
         })}
@@ -92,25 +92,25 @@ function TimeBaseView() {
         <div
           className="grid relative" // relative for sticky positioning context
           style={{
-            gridTemplateColumns: `80px repeat(${careBoardData.length}, minmax(120px, 1fr))`,
+            gridTemplateColumns: `100px repeat(${careBoardData.length}, minmax(150px, 1fr))`,
           }} // Adjusted minmax for resident column
         >
           {/* Top-left corner (empty or title) */}
-          <div className="sticky top-0 left-0 bg-carebase-blue text-white z-30 flex items-center justify-center p-2 border-b border-r border-gray-300">
-            <span className="font-semibold text-sm">時間</span>
+          <div className="sticky top-0 left-0 bg-carebase-blue text-white z-30 flex items-center justify-center p-3 border-b border-r border-gray-300">
+            <span className="font-semibold text-base">時間</span>
           </div>
 
           {/* Resident names header (sticky top) */}
           {careBoardData.map((resident) => (
             <div
               key={resident.id}
-              className="sticky top-0 bg-carebase-blue text-white z-20 flex flex-col items-center p-2 border-b border-r border-gray-300"
+              className="sticky top-0 bg-carebase-blue text-white z-20 flex flex-col items-center p-3 border-b border-r border-gray-300"
             >
               <Link
                 href={`/residents/${resident.id}`}
                 className="flex flex-col items-center text-white hover:text-gray-200"
               >
-                <div className="relative w-8 h-8 rounded-full overflow-hidden mb-1">
+                <div className="relative w-12 h-12 rounded-full overflow-hidden mb-2">
                   {' '}
                   {/* Adjusted avatar size */}
                   <Image
@@ -125,7 +125,7 @@ function TimeBaseView() {
                     }}
                   />
                 </div>
-                <span className="text-xs text-center font-medium">{resident.name}</span>
+                <span className="text-sm text-center font-medium">{resident.name}</span>
               </Link>
             </div>
           ))}
@@ -139,7 +139,7 @@ function TimeBaseView() {
             >
               {/* Time slot label (sticky left) */}
               <div
-                className={`sticky left-0 flex items-center justify-center p-1 border-b border-r border-gray-200 text-xs font-medium z-10 h-10 ${time === currentTime ? 'bg-yellow-100 text-yellow-800' : 'bg-gray-50 text-gray-700'}`} // Adjusted padding and height
+                className={`sticky left-0 flex items-center justify-center p-2 border-b border-r border-gray-200 text-sm font-medium z-10 h-14 ${time === currentTime ? 'bg-yellow-100 text-yellow-800' : 'bg-gray-50 text-gray-700'}`} // Adjusted padding and height
               >
                 {time}
               </div>
@@ -173,24 +173,24 @@ function UserBaseView() {
     <div className="overflow-x-auto bg-white rounded-lg shadow-sm">
       <div
         className="grid"
-        style={{ gridTemplateColumns: `180px repeat(${careCategories.length}, minmax(90px, 1fr))` }} // Adjusted column widths
+        style={{ gridTemplateColumns: `220px repeat(${careCategories.length}, minmax(110px, 1fr))` }} // Adjusted column widths
       >
-        <div className="sticky top-0 left-0 bg-carebase-blue text-white p-2 border-b border-r border-gray-300 z-20 flex items-center justify-center">
-          利用者名
+        <div className="sticky top-0 left-0 bg-carebase-blue text-white p-3 border-b border-r border-gray-300 z-20 flex items-center justify-center">
+          <span className="text-base font-semibold">利用者名</span>
         </div>
         {careCategories.map((category) => (
           <div
             key={category.key}
-            className="sticky top-0 bg-carebase-blue text-white p-2 border-b border-r border-gray-300 z-10 text-xs text-center flex items-center justify-center"
+            className="sticky top-0 bg-carebase-blue text-white p-3 border-b border-r border-gray-300 z-10 text-sm text-center flex items-center justify-center"
           >
             {category.label}
           </div>
         ))}
         {careBoardData.map((resident) => (
           <div key={resident.id} className="contents">
-            <div className="flex items-center gap-2 p-2 border-b border-r border-gray-200 bg-gray-50 sticky left-0 z-[5]">
+            <div className="flex items-center gap-3 p-3 border-b border-r border-gray-200 bg-gray-50 sticky left-0 z-[5]">
               <Link href={`/residents/${resident.id}`} className="flex items-center gap-2 group">
-                <div className="relative w-8 h-8 rounded-full overflow-hidden">
+                <div className="relative w-12 h-12 rounded-full overflow-hidden">
                   {' '}
                   {/* Container for consistent image size */}
                   <Image
@@ -205,7 +205,7 @@ function UserBaseView() {
                     }}
                   />
                 </div>
-                <span className="text-sm group-hover:underline">{resident.name}</span>
+                <span className="text-base font-medium group-hover:underline">{resident.name}</span>
               </Link>
             </div>
             {careCategories.map((category) => {
@@ -213,7 +213,7 @@ function UserBaseView() {
               return (
                 <div
                   key={`${resident.id}-${category.key}`}
-                  className="p-2 border-b border-r border-gray-200 text-xs text-center whitespace-pre-line"
+                  className="p-3 border-b border-r border-gray-200 text-sm text-center whitespace-pre-line"
                 >
                   {event ? (
                     event.details ? (
@@ -244,18 +244,18 @@ export function CareBoard() {
 
   return (
     <div data-testid="care-board" className="p-4 md:p-6 bg-carebase-bg min-h-screen">
-      <div className="mb-4 flex flex-col md:flex-row md:items-center md:justify-between gap-2">
+      <div className="mb-6 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
         <div className="flex items-center gap-1 flex-wrap">
-          <div className="flex items-center gap-0.5 rounded-lg bg-gray-200 p-0.5">
+          <div className="flex items-center gap-1 rounded-lg bg-gray-200 p-1">
             <Button
               onClick={() => setActiveView('time')}
-              className={`px-3 py-2 font-medium text-sm ${activeView === 'time' ? 'bg-carebase-blue hover:bg-carebase-blue-dark text-white' : 'bg-transparent text-gray-700 hover:bg-gray-300'}`}
+              className={`px-4 py-2.5 font-medium text-base ${activeView === 'time' ? 'bg-carebase-blue hover:bg-carebase-blue-dark text-white' : 'bg-transparent text-gray-700 hover:bg-gray-300'}`}
             >
               時間ベース
             </Button>
             <Button
               onClick={() => setActiveView('user')}
-              className={`px-3 py-2 font-medium text-sm ${activeView === 'user' ? 'bg-carebase-blue hover:bg-carebase-blue-dark text-white' : 'bg-transparent text-gray-700 hover:bg-gray-300'}`}
+              className={`px-4 py-2.5 font-medium text-base ${activeView === 'user' ? 'bg-carebase-blue hover:bg-carebase-blue-dark text-white' : 'bg-transparent text-gray-700 hover:bg-gray-300'}`}
             >
               ご利用者ベース
             </Button>
@@ -264,38 +264,38 @@ export function CareBoard() {
             <>
               <Button
                 variant="outline"
-                className="bg-white border-carebase-blue text-carebase-blue hover:bg-carebase-blue-light font-medium px-2 py-1.5 text-xs"
+                className="bg-white border-carebase-blue text-carebase-blue hover:bg-carebase-blue-light font-medium px-3 py-2 text-sm"
               >
-                <ClipboardEdit className="h-3 w-3 mr-1 text-carebase-blue" />
+                <ClipboardEdit className="h-4 w-4 mr-2 text-carebase-blue" />
                 まとめて記録
               </Button>
               <Button
                 variant="outline"
-                className="bg-white border-carebase-blue text-carebase-blue hover:bg-carebase-blue-light font-medium px-2 py-1.5 text-xs"
+                className="bg-white border-carebase-blue text-carebase-blue hover:bg-carebase-blue-light font-medium px-3 py-2 text-sm"
               >
-                <BookOpen className="h-3 w-3 mr-1 text-carebase-blue" />
+                <BookOpen className="h-4 w-4 mr-2 text-carebase-blue" />
                 マニュアルガイド
               </Button>
             </>
           )}
         </div>
 
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-2">
           <Button
             variant="outline"
-            className="bg-white border-carebase-blue text-carebase-blue hover:bg-carebase-blue-light font-medium px-2 py-1.5 text-xs"
+            className="bg-white border-carebase-blue text-carebase-blue hover:bg-carebase-blue-light font-medium px-3 py-2 text-sm"
             onClick={() => setSelectedDate(addDays(selectedDate, -1))}
           >
-            <ChevronLeft className="h-3 w-3 mr-0.5" />
+            <ChevronLeft className="h-4 w-4 mr-1" />
             前日
           </Button>
           <Popover>
             <PopoverTrigger asChild>
               <Button
                 variant={'outline'}
-                className="w-[140px] justify-start text-left font-medium text-carebase-text-primary text-sm bg-white border-carebase-blue hover:bg-carebase-blue-light px-2 py-1.5"
+                className="w-[160px] justify-start text-left font-medium text-carebase-text-primary text-base bg-white border-carebase-blue hover:bg-carebase-blue-light px-3 py-2"
               >
-                <CalendarIcon className="mr-1 h-3 w-3 text-carebase-blue" />
+                <CalendarIcon className="mr-2 h-4 w-4 text-carebase-blue" />
                 {format(selectedDate, 'M月d日 (E)', { locale: ja })}
               </Button>
             </PopoverTrigger>
@@ -315,11 +315,11 @@ export function CareBoard() {
           </Popover>
           <Button
             variant="outline"
-            className="bg-white border-carebase-blue text-carebase-blue hover:bg-carebase-blue-light font-medium px-2 py-1.5 text-xs"
+            className="bg-white border-carebase-blue text-carebase-blue hover:bg-carebase-blue-light font-medium px-3 py-2 text-sm"
             onClick={() => setSelectedDate(addDays(selectedDate, 1))}
           >
             翌日
-            <ChevronRight className="h-3 w-3 ml-0.5" />
+            <ChevronRight className="h-4 w-4 ml-1" />
           </Button>
         </div>
       </div>
