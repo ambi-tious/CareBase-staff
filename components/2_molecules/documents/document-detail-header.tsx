@@ -46,7 +46,7 @@ export const DocumentDetailHeader: React.FC<DocumentDetailHeaderProps> = ({
             <Printer className="h-4 w-4" />
             印刷
           </Button>
-          <Link href={`/documents/edit/${documentId}`}>
+          <Link href={`/documents/editor/${documentId}`}>
             <Button
               variant="outline"
               size="sm"

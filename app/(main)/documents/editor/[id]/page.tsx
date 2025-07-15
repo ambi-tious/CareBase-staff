@@ -7,9 +7,9 @@ import { ArrowLeft } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
 interface DocumentEditorPageProps {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
 export default function DocumentEditorPage({
@@ -138,4 +138,4 @@ export default function DocumentEditorPage({
       <DocumentForm initialDocument={document} onSave={handleSaveDocument} />
     </div>
   );
-}
+};
