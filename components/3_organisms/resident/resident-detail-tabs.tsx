@@ -506,22 +506,27 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
             <Button className="bg-carebase-blue hover:bg-carebase-blue-dark">
               すべて表示
             </Button>
-            <Button 
-              variant="outline" 
-              className="bg-white border-carebase-blue text-carebase-blue hover:bg-carebase-blue-light font-medium"
-              onClick={handleAddCategory}
-            >
-              <PlusCircle className="h-4 w-4 mr-2 text-carebase-blue" />
-              追加
-            </Button>
-            <Button 
-              variant="outline" 
-              className="bg-white ml-auto"
-              onClick={() => setIsCategoryModalOpen(true)}
-            >
-              <Settings className="h-4 w-4 mr-2" />
-              カテゴリを編集
-            </Button>
+          </div>
+          
+          <div className="mb-4 flex justify-end">
+            <div className="flex gap-2">
+              <Button 
+                variant="outline" 
+                className="bg-white border-carebase-blue text-carebase-blue hover:bg-carebase-blue-light font-medium"
+                onClick={handleAddCategory}
+              >
+                <PlusCircle className="h-4 w-4 mr-2 text-carebase-blue" />
+                追加
+              </Button>
+              <Button 
+                variant="outline" 
+                className="bg-white"
+                onClick={() => setIsCategoryModalOpen(true)}
+              >
+                <Settings className="h-4 w-4 mr-2" />
+                カテゴリを編集
+              </Button>
+            </div>
           </div>
           {individualPoints && individualPoints.length > 0 ? (
             <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
