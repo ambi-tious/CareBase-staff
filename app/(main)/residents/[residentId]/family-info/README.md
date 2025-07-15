@@ -14,7 +14,7 @@ CareBase-staffアプリケーションの利用者詳細画面内のご家族情
 
 ### 画面構成
 
-<img width="1200" height="600" alt="ご家族情報タブ画面" src="/home/ubuntu/attachments/a3694b25-7969-4cfc-9605-ca7c791109b1/image.png" />
+<img height="300" alt="image" src="https://github.com/user-attachments/assets/c623fd80-0ce8-4a1f-ac7b-4293b090756e" />
 
 タブ内で完結するご家族情報管理インターフェース：
 - タブヘッダー（ご家族情報タブ選択状態）
@@ -57,7 +57,7 @@ CareBase-staffアプリケーションの利用者詳細画面内のご家族情
 
 #### 登録モーダル
 
-<img width="800" height="600" alt="ご家族情報登録モーダル" src="/home/ubuntu/attachments/1b9d5120-f16c-436d-a443-04971f4f7e4b/image.png" />
+<img height="400" alt="image" src="https://github.com/user-attachments/assets/4ab7b6c8-14f8-4905-b182-855185208eb7" />
 
 | 項目名 | コンポーネント | 必須 | 初期値 | 備考 |
 | --- | --- | --- | --- | --- |
@@ -77,7 +77,7 @@ CareBase-staffアプリケーションの利用者詳細画面内のご家族情
 
 #### 編集モーダル
 
-<img width="800" height="600" alt="ご家族情報編集モーダル" src="/home/ubuntu/attachments/d658b28a-65f3-4b7c-93b6-887693a3ba63/image.png" />
+<img height="400" alt="image" src="https://github.com/user-attachments/assets/3f0e9e4d-3962-4c83-b8d0-0caf5272d346" />
 
 登録モーダルと同様の構成で、以下の違いがあります：
 
@@ -89,7 +89,7 @@ CareBase-staffアプリケーションの利用者詳細画面内のご家族情
 
 #### 削除確認モーダル
 
-<img width="500" height="300" alt="削除確認モーダル" src="/home/ubuntu/attachments/16d6e5ce-2760-4069-a1ee-5cdcc72ba3cd/image.png" />
+<img height="200" alt="image" src="https://github.com/user-attachments/assets/227d4513-8de4-4b25-8ca0-2e735c8b2d97" />
 
 | 項目名 | コンポーネント | 必須 | 初期値 | 備考 |
 | --- | --- | --- | --- | --- |
@@ -137,75 +137,6 @@ CareBase-staffアプリケーションの利用者詳細画面内のご家族情
 - ネットワークエラーの統一表示
 - 削除処理エラーの表示
 - 楽観的更新とエラー時のロールバック
-
-## データ構造
-
-### ContactFormData（フォームデータ）
-
-```typescript
-interface ContactFormData {
-  name: string;           // 氏名（必須、50文字以内）
-  furigana?: string;      // フリガナ（任意）
-  relationship: string;   // 続柄（必須、30文字以内）
-  phone1: string;         // 電話番号1（必須、電話番号形式）
-  phone2?: string;        // 電話番号2（任意、電話番号形式）
-  email?: string;         // メールアドレス（任意、メール形式）
-  address?: string;       // 住所（任意）
-  notes?: string;         // 備考（任意）
-  type: '緊急連絡先' | '連絡先' | 'その他'; // 種別（必須）
-}
-```
-
-### ContactPerson（表示データ）
-
-```typescript
-interface ContactPerson {
-  id: string;             // 連絡先ID
-  name: string;           // 氏名
-  furigana: string;       // フリガナ
-  relationship: string;   // 続柄
-  phone1: string;         // 電話番号1
-  phone2?: string;        // 電話番号2
-  email?: string;         // メールアドレス
-  address: string;        // 住所
-  notes?: string;         // 備考
-  type: '緊急連絡先' | '連絡先' | 'その他'; // 種別
-}
-```
-
-### 選択肢データ
-
-#### 種別選択肢
-
-```typescript
-const contactTypeOptions = [
-  { value: '緊急連絡先', label: '緊急連絡先' },
-  { value: '連絡先', label: '連絡先' },
-  { value: 'その他', label: 'その他' },
-];
-```
-
-#### 続柄選択肢
-
-```typescript
-const relationshipOptions = [
-  { value: '配偶者', label: '配偶者' },
-  { value: '長男', label: '長男' },
-  { value: '長女', label: '長女' },
-  { value: '次男', label: '次男' },
-  { value: '次女', label: '次女' },
-  { value: '三男', label: '三男' },
-  { value: '三女', label: '三女' },
-  { value: '父', label: '父' },
-  { value: '母', label: '母' },
-  { value: '兄', label: '兄' },
-  { value: '姉', label: '姉' },
-  { value: '弟', label: '弟' },
-  { value: '妹', label: '妹' },
-  { value: '孫', label: '孫' },
-  { value: 'その他', label: 'その他' },
-];
-```
 
 ## UI/UX仕様
 
