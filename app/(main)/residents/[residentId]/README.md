@@ -16,7 +16,7 @@ Issue: [#133 [設計] #005 利用者｜利用者詳細（基本情報）](https:
 
 ### 画面構成
 
-<img width="1200" height="600" alt="利用者詳細画面（基本情報）" src="~/attachments/38396644-6c74-49e1-83cb-e1876e0bae49/image.png" />
+<img width="2394" height="752" alt="image" src="https://github.com/user-attachments/assets/054dab48-a519-45d1-86d1-57d54e1431a5" />
 
 1画面で完結する利用者基本情報表示インターフェース：
 - 利用者プロフィールヘッダー（写真、基本情報、施設情報）
@@ -86,53 +86,6 @@ Issue: [#133 [設計] #005 利用者｜利用者詳細（基本情報）](https:
 - 利用者データ取得エラー時の404ページ表示
 - 画像読み込みエラー時のプレースホルダー表示
 - タブ切り替え時のローディング状態表示
-
-## データ構造
-
-### Resident（利用者）
-
-```typescript
-interface Resident {
-  id: number;
-  name: string;                    // 利用者名
-  furigana: string;               // ふりがな
-  dob: string;                    // 生年月日（YYYY/MM/DD形式）
-  sex: '男' | '女' | 'その他';      // 性別
-  age: number;                    // 年齢（自動計算）
-  floorGroup?: string;            // 所属フロア・グループ
-  unitTeam?: string;              // 所属ユニット・チーム
-  roomInfo?: string;              // 部屋情報
-  registrationDate: string;       // 登録日（YYYY/MM/DD形式）
-  lastUpdateDate: string;         // 更新日（YYYY/MM/DD形式）
-  admissionDate: string;          // 入所日（YYYY/MM/DD形式）
-  dischargeDate?: string;         // 退所日（YYYY/MM/DD形式）
-  admissionStatus: '入居中' | '退所済' | '待機中';  // 入所状況
-  careLevel: string;              // 要介護度
-  certificationDate: string;      // 認定日（YYYY/MM/DD形式）
-  certValidityStart: string;      // 認定有効期間開始日（YYYY/MM/DD形式）
-  certValidityEnd: string;        // 認定有効期間終了日（YYYY/MM/DD形式）
-  address: string;                // 住所
-  avatarUrl: string;              // プロフィール画像URL
-  // 詳細情報（タブで表示）
-  contacts?: ContactPerson[];           // ご家族情報
-  homeCareOffice?: HomeCareOffice;      // 居宅介護支援事業所
-  medicalInstitutions?: MedicalInstitution[];  // かかりつけ医療機関
-  medicalHistory?: MedicalHistory[];    // 既往歴
-  medications?: Medication[];           // お薬情報
-  medicationStatus?: MedicationStatus[]; // 服薬状況
-  individualPoints?: IndividualPoint[]; // 個別ポイント
-}
-```
-
-### InfoRow（情報行）
-
-```typescript
-interface InfoRowProps {
-  label: string;    // ラベル名
-  value: string;    // 表示値
-  className?: string; // 追加スタイル
-}
-```
 
 ## UI/UX仕様
 
