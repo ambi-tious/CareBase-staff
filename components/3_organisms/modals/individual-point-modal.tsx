@@ -131,4 +131,4 @@ export const IndividualPointModal: React.FC<IndividualPointModalProps> = ({
       </DialogContent>
     </Dialog>
   );
-};
+}
