@@ -15,7 +15,6 @@ import { MedicalInstitutionModal } from '@/components/3_organisms/modals/medical
 import { MedicationRegistrationModal } from '@/components/3_organisms/modals/medication-registration-modal';
 import { MedicationStatusRegistrationModal } from '@/components/3_organisms/modals/medication-status-registration-modal';
 import { IndividualPointModal } from '@/components/3_organisms/modals/individual-point-modal';
-import { IndividualPointModal } from '@/components/3_organisms/modals/individual-point-modal';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import type {
@@ -62,15 +61,6 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
     '入浴': '<h2>入浴に関する個別ポイント</h2><p>一般浴槽使用</p><p>洗身は部分介助</p><p>洗髪は全介助</p><p>浴室内は見守り</p>',
   });
   const [contacts, setContacts] = useState<ContactPerson[]>(resident.contacts || []);
-  const [selectedPointCategory, setSelectedPointCategory] = useState<string | null>(null);
-  const [isPointModalOpen, setIsPointModalOpen] = useState(false);
-  const [pointContent, setPointContent] = useState<Record<string, string>>({
-    '食事': '<h2>食事に関する個別ポイント</h2><p>朝食：全粥・常菜・常食</p><p>昼食：全粥・常菜・常食</p><p>夕食：全粥・常菜・常食</p><ul><li>嚥下機能は良好</li><li>自力摂取可能</li><li>食事の際は前かがみの姿勢を保持</li><li>水分とろみ剤使用（中間のとろみ）</li></ul>',
-    '移乗介助': '<h2>移乗介助に関する個別ポイント</h2><p>基本的に見守りで自立</p><p>疲労時は一部介助が必要</p>',
-    '服薬': '<h2>服薬に関する個別ポイント</h2><p>自己管理は難しいため、職員管理</p><p>薬は粉砕して提供</p><p>水分はとろみをつけて提供</p>',
-    '接遇': '<h2>接遇に関する個別ポイント</h2><p>耳が遠いため、大きな声でゆっくり話す</p><p>目線を合わせて話しかける</p>',
-    '入浴': '<h2>入浴に関する個別ポイント</h2><p>一般浴槽使用</p><p>洗身は部分介助</p><p>洗髪は全介助</p><p>浴室内は見守り</p>',
-  });
   const [homeCareOffice, setHomeCareOffice] = useState<HomeCareOffice | undefined>(
     resident.homeCareOffice
   );
@@ -276,24 +266,6 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
 
   const handleMedicationStatusDelete = (statusId: string) => {
     setMedicationStatuses((prev) => prev.filter((status) => status.id !== statusId));
-  };
-
-  const handlePointCategoryClick = (category: string) => {
-    setSelectedPointCategory(category);
-    setIsPointModalOpen(true);
-  };
-
-  const handlePointDetailSave = async (content: string) => {
-    // In a real application, this would call an API to save the content
-    if (selectedPointCategory) {
-      setPointContent(prev => ({
-        ...prev,
-        [selectedPointCategory]: content
-      }));
-    }
-    // Simulate API call delay
-    await new Promise(resolve => setTimeout(resolve, 800));
-    return Promise.resolve();
   };
 
   const shouldShowAddButton = () => {
@@ -502,8 +474,6 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
                 <div key={point.id} onClick={() => handlePointCategoryClick(point.category)}>
                   <IndividualPointCard point={point} />
                 </div>
-                  <IndividualPointCard point={point} />
-                </div>
               ))}
             </div>
           ) : (
@@ -555,14 +525,6 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
         onClose={() => setIsMedicationStatusModalOpen(false)}
         onSubmit={handleMedicationStatusSubmit}
         residentName={resident.name}
-      />
-      
-      <IndividualPointModal
-        isOpen={isPointModalOpen}
-        onClose={() => setIsPointModalOpen(false)}
-        category={selectedPointCategory || ''}
-        content={selectedPointCategory ? pointContent[selectedPointCategory] || '' : ''}
-        onSave={handlePointDetailSave}
       />
       
       <IndividualPointModal
