@@ -56,7 +56,7 @@ export const DocumentItemCard: React.FC<DocumentItemCardProps> = ({
     if (item.type === 'file') {
       return `/documents/view/${item.id}`;
     } else if (item.type === 'folder') {
-      return `/documents/folder/${item.id}`;
+      return `/documents/${item.id}`;
     }
     return '#'; // フォルダの場合は現在のページにとどまる
   };
@@ -137,7 +137,7 @@ export const DocumentItemCard: React.FC<DocumentItemCardProps> = ({
                     名前を変更
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
-                    <Link href={`/documents/folder/${item.id}`}>
+                    <Link href={`/documents/${item.id}`}>
                       <FolderOpen className="h-4 w-4 mr-2" />
                       開く
                     </Link>

@@ -135,7 +135,7 @@ export function FolderContentsView({
   // アイテムのリンク先を取得
   const getItemLink = (item: DocumentItem) => {
     if (item.type === 'folder') {
-      return `/documents/folder/${item.id}`;
+      return `/documents/${item.id}`;
     } else {
       return `/documents/view/${item.id}`;
     }

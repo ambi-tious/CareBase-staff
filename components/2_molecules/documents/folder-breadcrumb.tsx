@@ -13,7 +13,7 @@ export const FolderBreadcrumb: React.FC<FolderBreadcrumbProps> = ({ path, classN
     <nav aria-label="フォルダパス" className={`flex items-center flex-wrap ${className}`}>
       {path.map((item, index) => {
         const isLast = index === path.length - 1;
-        const href = item.id === 'root' ? '/documents' : `/documents/folder/${item.id}`;
+        const href = item.id === 'root' ? '/documents' : `/documents/${item.id}`;
 
         return (
           <React.Fragment key={item.id}>
