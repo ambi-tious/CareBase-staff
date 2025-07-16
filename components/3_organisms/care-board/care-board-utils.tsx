@@ -260,19 +260,16 @@ export const CareRecordModal: React.FC<CareRecordModalProps> = ({
       setStaffName('田中 花子');
     }
   }, []);
-     <div
-       className="flex items-center gap-1 p-1.5 rounded-md text-xs relative transition-all duration-200 w-full box-border"
+
   useEffect(() => {
     if (updatedEvent.time && updatedEvent.time !== 'N/A') {
       const [hourPart, minutePart] = updatedEvent.time.split(':');
       setHour(hourPart);
       setMinute(minutePart || '00');
-         width: '100%',
-         maxWidth: '100%',
     } else {
       // 現在時刻をデフォルト値として設定
       const now = new Date();
-       <span className="font-medium truncate flex-1">{event.label}</span>
+      setHour(now.getHours().toString().padStart(2, '0'));
       setMinute(now.getMinutes().toString().padStart(2, '0'));
     }
   }, [updatedEvent.time]);
@@ -327,19 +324,17 @@ export const CareRecordModal: React.FC<CareRecordModalProps> = ({
   };
 
   // 時間または分が変更されたときに更新
-     <div
-       className="flex items-center gap-1 p-1.5 rounded-md text-xs relative transition-all duration-200 w-full box-border"
+  useEffect(() => {
+    if (hour && minute) {
       updateTime();
     }
   }, [hour, minute]);
 
   const handleSave = () => {
-         width: '100%',
-         maxWidth: '100%',
     if (!validateForm()) return;
     
     // 担当者情報をdetailsに追加
-       <span className="font-medium flex-1">バイタル</span>
+    const details = `担当者: ${staffName}\n実施状況: ${eventStatus === 'completed' ? '実施済み' : '予定'}\n${updatedEvent.details || ''}`;
     
     onSave(
       {
