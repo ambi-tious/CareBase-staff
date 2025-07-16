@@ -33,6 +33,29 @@ function TimeBaseView() {
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
   // 現在時刻の行への参照
   const currentTimeRowRef = useRef<HTMLDivElement | null>(null);
+  
+  // 画面読み込み完了後に現在時刻の行へスクロールする
+  useEffect(() => {
+    // 少し遅延させてDOMが完全に描画された後に実行
+    const scrollTimer = setTimeout(() => {
+      if (scrollContainerRef.current && currentTimeRowRef.current) {
+        // 現在時刻の行の位置を取得
+        const containerRect = scrollContainerRef.current.getBoundingClientRect();
+        const rowRect = currentTimeRowRef.current.getBoundingClientRect();
+        
+        // スクロール位置を計算（現在時刻の行が上部に来るように）
+        const scrollTop = rowRect.top - containerRect.top - 20; // 20pxのオフセットで少し上に表示
+        
+        // スムーズにスクロール
+        scrollContainerRef.current.scrollTo({
+          top: scrollTop,
+          behavior: 'smooth'
+        });
+      }
+    }, 300); // 300ms遅延
+    
+    return () => clearTimeout(scrollTimer);
+  }, []);
 
   // 24時間分のタイムスロットを生成（30分間隔）
   const generateTimeSlots = () => {
@@ -79,8 +102,7 @@ function TimeBaseView() {
       <div
         className="overflow-auto max-h-[calc(100vh-200px)] scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent"
         ref={scrollContainerRef}
-      >
-        {' '}
+      > 
         {/* Adjusted max-height */}
         <div
           className="grid relative" // relative for sticky positioning context
@@ -124,7 +146,7 @@ function TimeBaseView() {
           {allTimeSlots.map((time) => (
             <div
               key={time}
-              className="contents"
+              className={`contents ${time === currentTime ? 'current-time-row' : ''}`}
               ref={time === currentTime ? currentTimeRowRef : undefined}
             >
               {/* Time slot label (sticky left) */}
