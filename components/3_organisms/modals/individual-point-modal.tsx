@@ -186,58 +186,16 @@ export const IndividualPointModal: FC<IndividualPointModalProps> = ({
 
         <div className="min-h-[300px] mt-4">
           {isEditing ? (
-            <div className="min-h-[300px]">
-              {/* Formatting toolbar */}
-              <div className="flex items-center gap-2 p-2 border-b mb-4">
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handleFormatting('bold')}
-                >
-                  <Bold className="h-4 w-4" />
-                </Button>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handleFormatting('italic')}
-                >
-                  <Italic className="h-4 w-4" />
-                </Button>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handleFormatting('insertUnorderedList')}
-                >
-                  <List className="h-4 w-4" />
-                </Button>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handleFormatting('insertOrderedList')}
-                >
-                  <ListOrdered className="h-4 w-4" />
-                </Button>
-              </div>
-
-              {/* Rich text editor */}
-              <div
-                ref={editorRef}
-                contentEditable
-                className="min-h-[300px] p-4 border rounded-md focus:outline-none focus:ring-2 focus:ring-carebase-blue"
-                dangerouslySetInnerHTML={{ __html: editorContent }}
-                onInput={handleContentChange}
-                style={{ whiteSpace: 'pre-wrap' }}
-              />
-            </div>
-          ) : (
-            <div
-              className="min-h-[300px] p-4 border rounded-md"
-              dangerouslySetInnerHTML={{ __html: editorContent || '' }}
+            <textarea
+              className="min-h-[300px] w-full p-4 border rounded-md focus:outline-none focus:ring-2 focus:ring-carebase-blue"
+              value={editorContent}
+              onChange={(e) => setEditorContent(e.target.value)}
+              rows={12}
             />
+          ) : (
+            <div className="min-h-[300px] p-4 border rounded-md whitespace-pre-line text-gray-800">
+              {editorContent || '詳細情報がありません。'}
+            </div>
           )}
         </div>
       </DialogContent>
