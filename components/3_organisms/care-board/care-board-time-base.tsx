@@ -1,7 +1,22 @@
 import { cn } from '@/lib/utils';
 import { CareCategoryKey, CareEvent, careBoardData } from '@/mocks/care-board-data';
+import {
+  DndContext,
+  DragEndEvent,
+  DragOverlay,
+  DragStartEvent,
+  PointerSensor,
+  closestCenter,
+  useSensor,
+  useSensors,
+} from '@dnd-kit/core';
+import {
+  SortableContext,
+  useSortable,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { DragDropContext, Draggable, DropResult, Droppable } from 'react-beautiful-dnd';
 import {
   CareEventStatusComponent as CareEventStatus,
   CareRecordModal,
@@ -9,6 +24,56 @@ import {
   VitalSigns,
   type CareEventStatus as CareEventStatusType,
 } from './care-board-utils';
+
+// ドラッグ可能なイベントコンポーネント
+function DraggableEvent({
+  event,
+  residentId,
+  residentName,
+  category,
+  status,
+  onEventClick,
+}: {
+  event: CareEvent;
+  residentId: number;
+  residentName: string;
+  category?: CareCategoryKey;
+  status: 'scheduled' | 'completed';
+  onEventClick: (event: CareEvent, residentId: number, residentName: string) => void;
+}) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({
+    id: `${residentId}::${event.time}::${event.label}`,
+  });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      {...attributes}
+      {...listeners}
+      onClick={(e) => {
+        e.stopPropagation();
+        onEventClick(event, residentId, residentName);
+      }}
+      className="w-full cursor-grab active:cursor-grabbing"
+    >
+      <CareEventStatus event={event} category={category} status={status} />
+    </div>
+  );
+}
 
 export function TimeBaseView() {
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
@@ -23,6 +88,15 @@ export function TimeBaseView() {
     isNew?: boolean;
   } | null>(null);
   const [careEvents, setCareEvents] = useState<Record<number, CareEvent[]>>({});
+  const [activeId, setActiveId] = useState<string | null>(null);
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    })
+  );
 
   // Set client-side flag and current time to avoid hydration mismatch
   useEffect(() => {
@@ -136,29 +210,41 @@ export function TimeBaseView() {
     [selectedEvent]
   );
 
-  const handleDragEnd = useCallback((result: DropResult) => {
-    if (!result.destination) return;
+  const handleDragStart = (event: DragStartEvent) => {
+    setActiveId(event.active.id as string);
+  };
 
-    const { draggableId, destination } = result;
-    const [residentId, eventTime, eventLabel] = draggableId.split('::');
-    const newTime = destination.droppableId;
+  const handleDragEnd = useCallback((event: DragEndEvent) => {
+    const { active, over } = event;
+    setActiveId(null);
 
-    setCareEvents((prev) => {
-      const residentEvents = [...(prev[Number(residentId)] || [])];
-      const eventIndex = residentEvents.findIndex(
-        (e) => e.time === eventTime && e.label === eventLabel
-      );
+    if (!over) return;
 
-      if (eventIndex !== -1) {
-        const updatedEvent = { ...residentEvents[eventIndex], time: newTime };
-        residentEvents[eventIndex] = updatedEvent;
-      }
+    const activeId = active.id as string;
+    const overId = over.id as string;
 
-      return {
-        ...prev,
-        [Number(residentId)]: residentEvents,
-      };
-    });
+    // ドロップ先が時間スロットの場合
+    if (overId.match(/^\d{2}:\d{2}$/)) {
+      const [residentId, eventTime, eventLabel] = activeId.split('::');
+      const newTime = overId;
+
+      setCareEvents((prev) => {
+        const residentEvents = [...(prev[Number(residentId)] || [])];
+        const eventIndex = residentEvents.findIndex(
+          (e) => e.time === eventTime && e.label === eventLabel
+        );
+
+        if (eventIndex !== -1) {
+          const updatedEvent = { ...residentEvents[eventIndex], time: newTime };
+          residentEvents[eventIndex] = updatedEvent;
+        }
+
+        return {
+          ...prev,
+          [Number(residentId)]: residentEvents,
+        };
+      });
+    }
   }, []);
 
   const allTimeSlots = generateTimeSlots(60);
@@ -229,68 +315,66 @@ export function TimeBaseView() {
     const vitalStatus = hasVitalEvents ? getEventStatus(vitalEvents[0]) : 'scheduled';
 
     return (
-      <Droppable droppableId={time} isDropDisabled={false} isCombineEnabled ignoreContainerClipping>
-        {(provided) => (
+      <div
+        className="min-h-16 border-b border-gray-200 p-1.5 flex flex-col items-start justify-start gap-1.5 w-full"
+        style={{
+          backgroundColor: hasVitalEvents ? 'rgba(231, 76, 60, 0.05)' : 'transparent',
+        }}
+        onClick={() =>
+          nonVitalEvents.length === 0 &&
+          !hasVitalEvents &&
+          handleCellClick(time, residentId, residentName)
+        }
+      >
+        {/* バイタルイベントがあれば統合表示 */}
+        {hasVitalEvents && (
           <div
-            ref={provided.innerRef}
-            {...provided.droppableProps}
-            className="min-h-16 border-b border-gray-200 p-1.5 flex flex-col items-start justify-start gap-1.5 w-full"
-            style={{
-              backgroundColor: hasVitalEvents ? 'rgba(231, 76, 60, 0.05)' : 'transparent',
+            onClick={(e) => {
+              e.stopPropagation();
+              handleEventClick(vitalEvents[0], residentId, residentName);
             }}
-
-            onClick={() =>
-              nonVitalEvents.length === 0 &&
-              !hasVitalEvents &&
-              handleCellClick(time, residentId, residentName)
-            }
           >
-            {/* バイタルイベントがあれば統合表示 */}
-            {hasVitalEvents && (
-              <div
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleEventClick(vitalEvents[0], residentId, residentName);
-                }}
-              >
-                <VitalSigns events={vitalEvents} status={vitalStatus} />
-              </div>
-            )}
-
-            {/* その他のイベントを個別表示 */}
-            {nonVitalEvents.map((event, index) => {
-              const category = event.categoryKey;
-              // 各イベントに予定または実績のステータスを割り当て
-              const status = getEventStatus(event);
-              return (
-                <Draggable
-                  key={`${event.time || 'no-time'}-${event.label}`}
-                  draggableId={`${residentId}::${event.time}::${event.label}`}
-                  index={index}
-                >
-                  {(provided) => (
-                    <div
-                      ref={provided.innerRef}
-                      {...provided.draggableProps}
-                      {...provided.dragHandleProps}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleEventClick(event, residentId, residentName);
-                      }}
-                      className="w-full"
-                    >
-                      <CareEventStatus event={event} category={category} status={status} />
-                    </div>
-                  )}
-                </Draggable>
-              );
-            })}
-            {provided.placeholder}
+            <VitalSigns events={vitalEvents} status={vitalStatus} />
           </div>
         )}
-      </Droppable>
+
+        {/* その他のイベントを個別表示 */}
+        <SortableContext
+          items={nonVitalEvents.map((event) => `${residentId}::${event.time}::${event.label}`)}
+          strategy={verticalListSortingStrategy}
+        >
+          {nonVitalEvents.map((event) => {
+            const category = event.categoryKey;
+            // 各イベントに予定または実績のステータスを割り当て
+            const status = getEventStatus(event);
+            return (
+              <DraggableEvent
+                key={`${event.time || 'no-time'}-${event.label}`}
+                event={event}
+                residentId={residentId}
+                residentName={residentName}
+                category={category}
+                status={status}
+                onEventClick={handleEventClick}
+              />
+            );
+          })}
+        </SortableContext>
+      </div>
     );
   }
+
+  // アクティブなドラッグアイテムを取得
+  const getActiveEvent = () => {
+    if (!activeId) return null;
+    const [residentId, eventTime, eventLabel] = activeId.split('::');
+    const residentEvents = careEvents[Number(residentId)] || [];
+    return residentEvents.find(
+      (e) => e.time === eventTime && e.label === eventLabel
+    );
+  };
+
+  const activeEvent = getActiveEvent();
 
   return (
     <>
@@ -304,7 +388,12 @@ export function TimeBaseView() {
           </div>
         </div>
       ) : (
-        <DragDropContext onDragEnd={handleDragEnd}>
+        <DndContext
+          sensors={sensors}
+          collisionDetection={closestCenter}
+          onDragStart={handleDragStart}
+          onDragEnd={handleDragEnd}
+        >
           <div className="bg-white rounded-lg shadow-md overflow-hidden border border-gray-200">
             <div className="overflow-auto max-h-[calc(100vh-200px)]" ref={scrollContainerRef}>
               <div
@@ -348,6 +437,7 @@ export function TimeBaseView() {
                           isClient && time === currentTime ? 'bg-yellow-50' : '',
                           parseInt(time.split(':')[0]) % 2 === 0 ? 'bg-gray-50/50' : ''
                         )}
+                        data-droppable-id={time}
                       >
                         <EventCell
                           events={careEvents[resident.id] || resident.events}
@@ -362,6 +452,20 @@ export function TimeBaseView() {
               </div>
             </div>
           </div>
+          
+          {/* ドラッグオーバーレイ */}
+          <DragOverlay>
+            {activeEvent ? (
+              <div className="w-full">
+                <CareEventStatus 
+                  event={activeEvent} 
+                  category={activeEvent.categoryKey} 
+                  status={getEventStatus(activeEvent)} 
+                />
+              </div>
+            ) : null}
+          </DragOverlay>
+
           {selectedEvent && (
             <CareRecordModal
               event={selectedEvent.event}
@@ -373,7 +477,7 @@ export function TimeBaseView() {
               onSave={handleSaveRecord}
             />
           )}
-        </DragDropContext>
+        </DndContext>
       )}
     </>
   );
