@@ -211,7 +211,7 @@ export function TimeBaseView() {
     const vitalStatus = hasVitalEvents ? getEventStatus(vitalEvents[0]) : 'scheduled';
 
     return (
-      <Droppable droppableId={time}>
+      <Droppable droppableId={time} isDropDisabled isCombineEnabled ignoreContainerClipping>
         {(provided) => (
           <div
             ref={provided.innerRef}
