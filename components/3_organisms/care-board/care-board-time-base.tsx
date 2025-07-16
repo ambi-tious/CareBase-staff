@@ -1,16 +1,13 @@
 import { cn } from '@/lib/utils';
 import { CareCategoryKey, CareEvent, careBoardData } from '@/mocks/care-board-data';
 import { useEffect, useRef, useState } from 'react';
-import { VitalSigns } from './care-board-utils';
-
-// CareEventStatusコンポーネントは共通化するためutilsまたは別ファイルに分離推奨
-import { CareEventStatus, ResidentInfoCell } from './care-board-utils';
+import { ResidentInfoCell, CareEventStatus, VitalSigns } from './care-board-utils';
 
 export function TimeBaseView() {
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
   const currentTimeRowRef = useRef<HTMLDivElement | null>(null);
   const [isClient, setIsClient] = useState(false);
-  const [currentTime, setCurrentTime] = useState('00:00');
+  const [currentTime, setCurrentTime] = useState('07:00'); // デフォルト値を設定
 
   // Set client-side flag and current time to avoid hydration mismatch
   useEffect(() => {
@@ -59,11 +56,15 @@ export function TimeBaseView() {
   const getEventStatus = (_event: CareEvent): 'scheduled' | 'completed' => {
     // 実際の実装では、APIからのデータに基づいてステータスを設定します
     // ここではデモのためにランダムに割り当てています
-    // Server-side rendering時は一貫した値を返し、クライアント側でのみランダムを使用
+    // Server-side rendering時は固定値を返し、クライアント側でのみランダムを使用
     if (!isClient) {
       return 'scheduled';
     }
-    return Math.random() > 0.5 ? 'completed' : 'scheduled';
+    
+    // 固定のシード値を使用して決定論的な結果を生成
+    const eventId = _event.time + _event.label;
+    const hash = [...eventId].reduce((acc, char) => acc + char.charCodeAt(0), 0);
+    return hash % 2 === 0 ? 'completed' : 'scheduled';
   };
 
   function EventCell({ events, time }: { events: CareEvent[]; time: string }) {
@@ -73,7 +74,7 @@ export function TimeBaseView() {
     // バイタル以外のイベントをフィルタリング
     const nonVitalEvents = events.filter((event) => {
       if (!event.categoryKey || !vitalCategories.includes(event.categoryKey)) {
-        if (event.time === 'N/A') {
+        if (event.time === 'N/A' || !event.time) {
           const hour = parseInt(time.split(':')[0]);
           if (event.categoryKey === 'breakfast' && hour >= 7 && hour < 9) return true;
           if (event.categoryKey === 'lunch' && hour >= 12 && hour < 14) return true;
@@ -87,7 +88,7 @@ export function TimeBaseView() {
 
     // バイタルイベントをフィルタリング
     const vitalEvents = events.filter((event) => {
-      if (event.time === 'N/A' && event.categoryKey) {
+      if ((event.time === 'N/A' || !event.time) && event.categoryKey) {
         return false; // N/Aのバイタルは表示しない
       }
       if (
@@ -120,7 +121,7 @@ export function TimeBaseView() {
           const status = getEventStatus(event);
           return (
             <CareEventStatus
-              key={`${event.time}-${event.label}`}
+              key={`${event.time || 'no-time'}-${event.label}`}
               event={event}
               category={category}
               status={status}

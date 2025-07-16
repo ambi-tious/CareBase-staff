@@ -106,7 +106,7 @@ export const VitalSigns: React.FC<VitalSignsProps> = ({ events, status = 'schedu
     >
       <Thermometer className="h-3 w-3 flex-shrink-0" />
       <span className="font-medium">バイタル</span>
-      {time !== 'N/A' && <span className="text-xs opacity-75 ml-auto">{time}</span>}
+      <span className="text-xs opacity-75 ml-auto">{time !== 'N/A' && time ? time : '07:00'}</span>
 
       {/* 実施済みの場合のみチェックマークを表示 */}
       {status === 'completed' && (
@@ -198,7 +198,7 @@ export const CareEventStatus: React.FC<CareEventStatusProps> = ({
     >
       <Icon className="h-3.5 w-3.5 flex-shrink-0" />
       <span className="font-medium truncate">{event.label}</span>
-      {event.time !== 'N/A' && <span className="text-xs opacity-75 ml-auto">{event.time}</span>}
+      <span className="text-xs opacity-75 ml-auto">{event.time !== 'N/A' && event.time ? event.time : '07:00'}</span>
 
       {/* 実施済みの場合のみチェックマークを表示 */}
       {status === 'completed' && (

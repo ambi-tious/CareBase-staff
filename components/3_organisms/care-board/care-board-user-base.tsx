@@ -1,14 +1,17 @@
 import { getLucideIcon } from '@/lib/lucide-icon-registry';
 import { careBoardData, careCategories, CareCategoryKey, CareEvent } from '@/mocks/care-board-data';
 import React from 'react';
-import { CARE_CATEGORY_COLORS, CareEventStatus, ResidentInfoCell, rgbToString, VitalSigns } from './care-board-utils';
+import { CARE_CATEGORY_COLORS, ResidentInfoCell, rgbToString, VitalSigns, CareEventStatus } from './care-board-utils';
 
 export function UserBaseView() {
   // 予定と実績をランダムに割り当てる関数（デモ用）
   const getEventStatus = (_event: CareEvent): 'scheduled' | 'completed' => {
     // 実際の実装では、APIからのデータに基づいてステータスを設定します
     // ここではデモのためにランダムに割り当てています
-    return Math.random() > 0.5 ? 'completed' : 'scheduled';
+    // 固定のシード値を使用して決定論的な結果を生成
+    const eventId = _event.time + _event.label;
+    const hash = [...eventId].reduce((acc, char) => acc + char.charCodeAt(0), 0);
+    return hash % 2 === 0 ? 'completed' : 'scheduled';
   };
 
   // バイタル関連のカテゴリキー
