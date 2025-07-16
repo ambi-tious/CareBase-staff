@@ -10,11 +10,7 @@ import {
   useSensor,
   useSensors,
 } from '@dnd-kit/core';
-import {
-  SortableContext,
-  useSortable,
-  verticalListSortingStrategy,
-} from '@dnd-kit/sortable';
+import { SortableContext, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import {
@@ -41,14 +37,7 @@ function DraggableEvent({
   status: 'scheduled' | 'completed';
   onEventClick: (event: CareEvent, residentId: number, residentName: string) => void;
 }) {
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-    isDragging,
-  } = useSortable({
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: `${residentId}::${event.time}::${event.label}`,
   });
 
@@ -369,9 +358,7 @@ export function TimeBaseView() {
     if (!activeId) return null;
     const [residentId, eventTime, eventLabel] = activeId.split('::');
     const residentEvents = careEvents[Number(residentId)] || [];
-    return residentEvents.find(
-      (e) => e.time === eventTime && e.label === eventLabel
-    );
+    return residentEvents.find((e) => e.time === eventTime && e.label === eventLabel);
   };
 
   const activeEvent = getActiveEvent();
@@ -452,15 +439,15 @@ export function TimeBaseView() {
               </div>
             </div>
           </div>
-          
+
           {/* ドラッグオーバーレイ */}
           <DragOverlay>
             {activeEvent ? (
               <div className="w-full">
-                <CareEventStatus 
-                  event={activeEvent} 
-                  category={activeEvent.categoryKey} 
-                  status={getEventStatus(activeEvent)} 
+                <CareEventStatus
+                  event={activeEvent}
+                  category={activeEvent.categoryKey}
+                  status={getEventStatus(activeEvent)}
                 />
               </div>
             ) : null}
