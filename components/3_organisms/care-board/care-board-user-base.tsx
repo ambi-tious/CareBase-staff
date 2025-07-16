@@ -132,23 +132,23 @@ export function UserBaseView() {
 
   return (
     <>
-      <div className="overflow-x-auto bg-white rounded-lg shadow-md">
+      <div className="overflow-x-auto bg-white rounded-lg shadow-md max-h-[calc(100vh-200px)]">
         <div
           className="grid"
           style={{
-            gridTemplateColumns: `220px repeat(${careCategories.length}, minmax(120px, 1fr))`,
+            gridTemplateColumns: `200px repeat(${careCategories.length}, minmax(120px, 1fr))`,
           }}
         >
-          <div className="sticky top-0 left-0 bg-carebase-blue text-white p-3 border-b border-r border-gray-300 z-20 flex items-center justify-center h-16">
+          <div className="sticky top-0 left-0 bg-carebase-blue text-white p-3 border-b border-r border-gray-300 z-20 flex items-center justify-center">
             <span className="text-base font-semibold">利用者名</span>
           </div>
           {careCategories.map((category) => (
             <div
               key={category.key}
-              className="sticky top-0 bg-carebase-blue text-white p-3 border-b border-r border-gray-300 z-10 text-sm text-center flex flex-col items-center justify-center h-16"
+              className="sticky top-0 bg-carebase-blue text-white border-b border-r border-gray-300 z-10 text-sm text-center flex flex-col items-center justify-center"
               style={{ backgroundColor: rgbToString(CARE_CATEGORY_COLORS[category.key]) }}
             >
-              <div className="flex items-center justify-center mb-1">
+              <div className="flex items-center justify-center">
                 {React.createElement(getLucideIcon(category.icon), { className: 'h-5 w-5 mr-1' })}
                 <span>{category.label}</span>
               </div>

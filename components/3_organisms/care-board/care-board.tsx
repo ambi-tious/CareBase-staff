@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { getLucideIcon } from '@/lib/lucide-icon-registry';
-import { careBoardData, careCategories } from '@/mocks/care-board-data';
+import { careBoardData, careCategories, CareEvent } from '@/mocks/care-board-data';
 import { addDays, format } from 'date-fns';
 import { ja } from 'date-fns/locale';
 import {
@@ -19,10 +19,10 @@ import {
   Users,
 } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
+import { BulkCareRecordModal } from './bulk-care-record-modal';
 import { TimeBaseView } from './care-board-time-base';
 import { UserBaseView } from './care-board-user-base';
 import { CARE_CATEGORY_COLORS, rgbToString } from './care-board-utils';
-import { BulkCareRecordModal } from './bulk-care-record-modal';
 
 type ActiveTabView = 'time' | 'user';
 

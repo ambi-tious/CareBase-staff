@@ -147,7 +147,7 @@ export const CARE_CATEGORY_COLORS: Record<CareCategoryKey, [number, number, numb
   excretion: [121, 85, 72],
   breakfast: [243, 156, 18],
   lunch: [243, 156, 18],
-  snack: [241, 196, 15],
+  snack: [243, 156, 18],
   dinner: [243, 156, 18],
   bedtimeMeal: [243, 156, 18],
   medication: [155, 89, 182],
