@@ -1,13 +1,21 @@
 import { cn } from '@/lib/utils';
 import { CareCategoryKey, CareEvent, careBoardData } from '@/mocks/care-board-data';
-import { useEffect, useRef, useState } from 'react';
-import { ResidentInfoCell, CareEventStatus, VitalSigns } from './care-board-utils';
+import { useEffect, useRef, useState, useCallback } from 'react';
+import { ResidentInfoCell, CareEventStatus, VitalSigns, CareRecordModal } from './care-board-utils';
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 
 export function TimeBaseView() {
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
   const currentTimeRowRef = useRef<HTMLDivElement | null>(null);
   const [isClient, setIsClient] = useState(false);
   const [currentTime, setCurrentTime] = useState('07:00'); // デフォルト値を設定
+  const [selectedEvent, setSelectedEvent] = useState<{
+    event: CareEvent;
+    residentId: number;
+    residentName: string;
+    isNew?: boolean;
+  } | null>(null);
+  const [careEvents, setCareEvents] = useState<Record<number, CareEvent[]>>({});
 
   // Set client-side flag and current time to avoid hydration mismatch
   useEffect(() => {
@@ -21,6 +29,17 @@ export function TimeBaseView() {
     };
     setCurrentTime(getCurrentTimeSlot());
   }, []);
+
+  // Initialize care events from careBoardData
+  useEffect(() => {
+    if (isClient) {
+      const initialEvents: Record<number, CareEvent[]> = {};
+      careBoardData.forEach(resident => {
+        initialEvents[resident.id] = [...resident.events];
+      });
+      setCareEvents(initialEvents);
+    }
+  }, [isClient]);
 
   useEffect(() => {
     if (!isClient) return;
@@ -50,6 +69,85 @@ export function TimeBaseView() {
     return slots;
   };
 
+  const handleEventClick = useCallback((event: CareEvent, residentId: number, residentName: string) => {
+    setSelectedEvent({
+      event,
+      residentId,
+      residentName
+    });
+  }, []);
+
+  const handleCellClick = useCallback((time: string, residentId: number, residentName: string) => {
+    // Create a new empty event
+    const newEvent: CareEvent = {
+      time,
+      icon: 'ClipboardList',
+      label: '',
+      categoryKey: undefined,
+      details: '',
+    };
+    
+    setSelectedEvent({
+      event: newEvent,
+      residentId,
+      residentName,
+      isNew: true
+    });
+  }, []);
+
+  const handleSaveRecord = useCallback((updatedEvent: CareEvent, residentId: number, isNew: boolean) => {
+    setCareEvents(prev => {
+      const residentEvents = [...(prev[residentId] || [])];
+      
+      if (isNew) {
+        // Add new event
+        residentEvents.push(updatedEvent);
+      } else {
+        // Update existing event
+        const index = residentEvents.findIndex(e => 
+          e.time === selectedEvent?.event.time && 
+          e.label === selectedEvent?.event.label
+        );
+        
+        if (index !== -1) {
+          residentEvents[index] = updatedEvent;
+        }
+      }
+      
+      return {
+        ...prev,
+        [residentId]: residentEvents
+      };
+    });
+    
+    setSelectedEvent(null);
+  }, [selectedEvent]);
+
+  const handleDragEnd = useCallback((result: any) => {
+    if (!result.destination) return;
+    
+    const { draggableId, destination } = result;
+    const [residentId, eventTime, eventLabel] = draggableId.split('::');
+    const newTime = destination.droppableId;
+    
+    setCareEvents(prev => {
+      const residentEvents = [...(prev[Number(residentId)] || [])];
+      const eventIndex = residentEvents.findIndex(e => 
+        e.time === eventTime && e.label === eventLabel
+      );
+      
+      if (eventIndex !== -1) {
+        const updatedEvent = {...residentEvents[eventIndex], time: newTime};
+        residentEvents[eventIndex] = updatedEvent;
+      }
+      
+      return {
+        ...prev,
+        [Number(residentId)]: residentEvents
+      };
+    });
+  }, []);
+
   const allTimeSlots = generateTimeSlots(60);
 
   // 予定と実績をランダムに割り当てる関数（デモ用）
@@ -67,7 +165,12 @@ export function TimeBaseView() {
     return hash % 2 === 0 ? 'completed' : 'scheduled';
   };
 
-  function EventCell({ events, time }: { events: CareEvent[]; time: string }) {
+  function EventCell({ events, time, residentId, residentName }: { 
+    events: CareEvent[]; 
+    time: string;
+    residentId: number;
+    residentName: string;
+  }) {
     // バイタル関連のカテゴリキー
     const vitalCategories: CareCategoryKey[] = ['temperature', 'pulse', 'bloodPressure'];
 
@@ -108,31 +211,64 @@ export function TimeBaseView() {
     const vitalStatus = hasVitalEvents ? getEventStatus(vitalEvents[0]) : 'scheduled';
 
     return (
-      <div
-        className={`min-h-16 border-b border-gray-200 p-1.5 flex flex-col items-start justify-start gap-1.5`}
-      >
+      <Droppable droppableId={time}>
+        {(provided) => (
+          <div
+            ref={provided.innerRef}
+            {...provided.droppableProps}
+            className={`min-h-16 border-b border-gray-200 p-1.5 flex flex-col items-start justify-start gap-1.5`}
+            onClick={() => nonVitalEvents.length === 0 && !hasVitalEvents && handleCellClick(time, residentId, residentName)}
+          >
         {/* バイタルイベントがあれば統合表示 */}
-        {hasVitalEvents && <VitalSigns events={vitalEvents} status={vitalStatus} />}
+            {hasVitalEvents && (
+              <div onClick={(e) => {
+                e.stopPropagation();
+                handleEventClick(vitalEvents[0], residentId, residentName);
+              }}>
+                <VitalSigns events={vitalEvents} status={vitalStatus} />
+              </div>
+            )}
 
         {/* その他のイベントを個別表示 */}
-        {nonVitalEvents.map((event) => {
+            {nonVitalEvents.map((event, index) => {
           const category = event.categoryKey;
           // 各イベントに予定または実績のステータスを割り当て
           const status = getEventStatus(event);
           return (
-            <CareEventStatus
-              key={`${event.time || 'no-time'}-${event.label}`}
-              event={event}
-              category={category}
-              status={status}
-            />
+              <Draggable 
+                key={`${event.time || 'no-time'}-${event.label}`} 
+                draggableId={`${residentId}::${event.time}::${event.label}`} 
+                index={index}
+              >
+                {(provided) => (
+                  <div
+                    ref={provided.innerRef}
+                    {...provided.draggableProps}
+                    {...provided.dragHandleProps}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleEventClick(event, residentId, residentName);
+                    }}
+                  >
+                    <CareEventStatus
+                      event={event}
+                      category={category}
+                      status={status}
+                    />
+                  </div>
+                )}
+              </Draggable>
           );
         })}
-      </div>
+            {provided.placeholder}
+          </div>
+        )}
+      </Droppable>
     );
   }
 
   return (
+    <DragDropContext onDragEnd={handleDragEnd}>
     <div className="bg-white rounded-lg shadow-md overflow-hidden border border-gray-200">
       <div className="overflow-auto max-h-[calc(100vh-200px)]" ref={scrollContainerRef}>
         <div
@@ -177,7 +313,12 @@ export function TimeBaseView() {
                     parseInt(time.split(':')[0]) % 2 === 0 ? 'bg-gray-50/50' : ''
                   )}
                 >
-                  <EventCell events={resident.events} time={time} />
+                  <EventCell 
+                    events={careEvents[resident.id] || resident.events} 
+                    time={time} 
+                    residentId={resident.id}
+                    residentName={resident.name}
+                  />
                 </div>
               ))}
             </div>
@@ -185,5 +326,16 @@ export function TimeBaseView() {
         </div>
       </div>
     </div>
+    {selectedEvent && (
+      <CareRecordModal
+        event={selectedEvent.event}
+        residentId={selectedEvent.residentId}
+        residentName={selectedEvent.residentName}
+        isNew={selectedEvent.isNew}
+        onClose={() => setSelectedEvent(null)}
+        onSave={handleSaveRecord}
+      />
+    )}
+    </DragDropContext>
   );
 }
