@@ -22,10 +22,12 @@ import {
   Clock as ClockIcon,
   Filter,
   Printer,
+  Users,
 } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link'; // Import Link
 import { useEffect, useRef, useState } from 'react';
+import React from 'react';
 
 type ActiveTabView = 'time' | 'user';
 
@@ -177,8 +179,7 @@ function TimeBaseView() {
           }} // Adjusted minmax for resident column
         >
           {/* Top-left corner (empty or title) */}
-          <div className="sticky top-0 left-0 bg-carebase-blue text-white z-30 flex items-center justify-center p-3 border-b border-r border-gray-300 h-20">
-            <ClockIcon className="h-5 w-5 mr-1.5" />
+          <div className="sticky top-0 left-0 bg-carebase-blue text-white z-30 flex items-center justify-center p-3 border-b border-r border-gray-300">
             <span className="font-semibold text-base">時間</span>
           </div>
 
@@ -186,11 +187,11 @@ function TimeBaseView() {
           {careBoardData.map((resident) => (
             <div
               key={resident.id}
-              className="sticky top-0 bg-carebase-blue text-white z-20 flex flex-col items-center py-2 border-b border-r border-gray-300 h-20"
+              className="sticky top-0 bg-carebase-blue text-white z-20 flex flex-col items-center py-2 border-b border-r border-gray-300 p-2"
             >
-              <Link href={`/residents/${resident.id}`} className="flex flex-col items-center gap-1 group hover:bg-carebase-blue-dark p-1 rounded transition-colors">
-                <div className="relative w-10 h-10 rounded-full overflow-hidden">
-                  {/* Container for consistent image size */}
+              <Link href={`/residents/${resident.id}`} className="flex items-center gap-2 group w-full">
+                <div className="relative w-12 h-12 rounded-full overflow-hidden">
+                  {' '}
                   <Image
                     src={resident.avatarUrl || '/placeholder.svg'}
                     alt={resident.name}
@@ -202,9 +203,11 @@ function TimeBaseView() {
                       target.src = '/placeholder.svg';
                     }}
                   />
-                <span className="text-sm font-medium text-center">{resident.name}</span>
-                <span className="text-xs bg-white/20 px-1.5 py-0.5 rounded-full">{resident.careLevel}</span>
-                <span className="text-base font-medium">{resident.name}</span>
+                </div>
+                <div className="flex flex-col">
+                  <span className="text-base font-medium">{resident.name}</span>
+                  <span className="text-xs">{resident.careLevel}</span>
+                </div>
               </Link>
             </div>
           ))}
