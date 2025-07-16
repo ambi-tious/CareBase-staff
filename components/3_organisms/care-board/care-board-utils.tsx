@@ -75,7 +75,8 @@ export function rgbToString(rgb: number[]) {
   return `rgb(${rgb[0]}, ${rgb[1]}, ${rgb[2]})`;
 }
 
-type CareEventStatus = 'scheduled' | 'completed' | 'in-progress' | 'missed';
+// ステータスを予定と実績のみに簡略化
+type CareEventStatus = 'scheduled' | 'completed';
 
 interface CareEventStatusProps {
   event: CareEvent;
@@ -86,40 +87,33 @@ interface CareEventStatusProps {
 export const CareEventStatus: React.FC<CareEventStatusProps> = ({
   event,
   category,
-  status = 'scheduled'
+  status = 'scheduled' // デフォルトは予定状態
 }) => {
   const Icon = getLucideIcon(event.icon);
   const baseColorArr: number[] = category ? CARE_CATEGORY_COLORS[category] : [51, 51, 51];
   const baseColor = rgbToString(baseColorArr);
+  
   const getStatusStyles = () => {
     switch (status) {
       case 'completed':
+        // 実施済み: 濃い色調、実線枠
         return {
-          background: rgbToRgba(baseColorArr, 0.19), // 30/255 ≒ 0.12, 0.19は見た目調整
+          background: rgbToRgba(baseColorArr, 0.25), // 濃い色調
           border: `2px solid ${baseColor}`,
-          borderStyle: 'solid',
-        };
-      case 'in-progress':
-        return {
-          background: rgbToRgba(baseColorArr, 0.13), // 20/255 ≒ 0.08, 0.13は見た目調整
-          border: `2px solid ${baseColor}`,
-          borderStyle: 'dashed',
-        };
-      case 'missed':
-        return {
-          background: 'rgba(255, 229, 229, 1)',
-          border: '2px solid #FF6B6B',
           borderStyle: 'solid',
         };
       default:
+        // 予定: 薄い色調、点線枠
         return {
-          background: rgbToRgba(baseColorArr, 0.06), // 10/255 ≒ 0.04, 0.06は見た目調整
-          border: `1px solid ${baseColor}`,
+          background: rgbToRgba(baseColorArr, 0.08), // 薄い色調
+          border: `1.5px solid ${baseColor}`,
           borderStyle: 'dotted',
         };
     }
   };
+  
   const statusStyles = getStatusStyles();
+  
   return (
     <div
       className="flex items-center gap-1 p-1.5 rounded-md text-xs relative transition-all duration-200 w-full"
@@ -133,6 +127,8 @@ export const CareEventStatus: React.FC<CareEventStatusProps> = ({
       <Icon className="h-3.5 w-3.5 flex-shrink-0" />
       <span className="font-medium truncate">{event.label}</span>
       {event.time !== 'N/A' && <span className="text-xs opacity-75 ml-auto">{event.time}</span>}
+      
+      {/* 実施済みの場合のみチェックマークを表示 */}
       {status === 'completed' && (
         <div className="absolute -top-2 -right-2 bg-green-500 text-white rounded-full w-4 h-4 flex items-center justify-center">
           <Check className="h-3 w-3" />

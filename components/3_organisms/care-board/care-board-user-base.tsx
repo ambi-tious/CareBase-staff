@@ -7,9 +7,16 @@ import Image from 'next/image';
 import { CareEventStatus } from './care-board-utils';
 import { ResidentInfoCell } from './care-board-utils';
 
-type CareEventStatusType = 'scheduled' | 'completed' | 'in-progress' | 'missed';
+type CareEventStatusType = 'scheduled' | 'completed';
 
 export function UserBaseView() {
+  // 予定と実績をランダムに割り当てる関数（デモ用）
+  const getEventStatus = (event: CareEvent): 'scheduled' | 'completed' => {
+    // 実際の実装では、APIからのデータに基づいてステータスを設定します
+    // ここではデモのためにランダムに割り当てています
+    return Math.random() > 0.5 ? 'completed' : 'scheduled';
+  };
+
   const getEventForCategory = (
     residentEvents: CareEvent[],
     categoryKey: CareCategoryKey
@@ -55,7 +62,11 @@ export function UserBaseView() {
                   style={{ backgroundColor: event ? bgColor : 'transparent' }}
                 >
                   {event ? (
-                    <CareEventStatus event={event} category={category.key} status={'scheduled'} />
+                    <CareEventStatus 
+                      event={event} 
+                      category={category.key} 
+                      status={getEventStatus(event)} 
+                    />
                   ) : (
                     <span className="text-gray-300">-</span>
                   )}

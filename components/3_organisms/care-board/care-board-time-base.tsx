@@ -53,8 +53,13 @@ export function TimeBaseView() {
 
   const currentTime = getCurrentTimeSlot();
 
-  // getRandomStatus関数とその利用を削除
-  // CareEventStatusのstatusは'scheduled'固定で渡す
+  // 予定と実績をランダムに割り当てる関数（デモ用）
+  const getEventStatus = (event: CareEvent): 'scheduled' | 'completed' => {
+    // 実際の実装では、APIからのデータに基づいてステータスを設定します
+    // ここではデモのためにランダムに割り当てています
+    return Math.random() > 0.5 ? 'completed' : 'scheduled';
+  };
+
   function EventCell({ events, time }: { events: CareEvent[]; time: string }) {
     const relevantEvents = events.filter((event) => {
       if (event.time === 'N/A' && event.categoryKey) {
@@ -73,12 +78,14 @@ export function TimeBaseView() {
       >
         {relevantEvents.map((event) => {
           const category = event.categoryKey;
+          // 各イベントに予定または実績のステータスを割り当て
+          const status = getEventStatus(event);
           return (
             <CareEventStatus
               key={`${event.time}-${event.label}`}
               event={event}
               category={category}
-              status={'scheduled'}
+              status={status}
             />
           );
         })}
