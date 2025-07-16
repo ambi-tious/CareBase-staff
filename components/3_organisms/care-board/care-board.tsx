@@ -3,18 +3,13 @@
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { cn } from '@/lib/utils';
 import { getLucideIcon } from '@/lib/lucide-icon-registry';
 import {
-  careBoardData,
-  careCategories,
-  type CareCategoryKey,
-  type CareEvent,
+  careCategories
 } from '@/mocks/care-board-data';
 import { addDays, format } from 'date-fns';
 import { ja } from 'date-fns/locale';
 import {
-  BookOpen,
   CalendarIcon,
   Check,
   ChevronLeft,
@@ -23,14 +18,12 @@ import {
   Clock as ClockIcon,
   Filter,
   Printer,
-  Users,
+  Users
 } from 'lucide-react';
-import Image from 'next/image';
-import Link from 'next/link';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useState } from 'react';
 import { TimeBaseView } from './care-board-time-base';
 import { UserBaseView } from './care-board-user-base';
-import { CARE_CATEGORY_COLORS } from './care-board-utils';
+import { CARE_CATEGORY_COLORS, rgbToString } from './care-board-utils';
 
 type ActiveTabView = 'time' | 'user';
 
@@ -153,8 +146,8 @@ export function CareBoard() {
                     size="sm"
                     className="text-xs"
                     style={{
-                      borderColor: CARE_CATEGORY_COLORS[category.key],
-                      color: CARE_CATEGORY_COLORS[category.key],
+                      borderColor: rgbToString(CARE_CATEGORY_COLORS[category.key]),
+                      color: rgbToString(CARE_CATEGORY_COLORS[category.key]),
                     }}
                   >
                     {React.createElement(getLucideIcon(category.icon), {

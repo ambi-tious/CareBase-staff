@@ -1,13 +1,7 @@
-import React from 'react';
-import { CareEvent, careBoardData, careCategories, CareCategoryKey } from '@/mocks/care-board-data';
 import { getLucideIcon } from '@/lib/lucide-icon-registry';
-import { CARE_CATEGORY_COLORS, rgbToString, VitalSigns } from './care-board-utils';
-import Link from 'next/link';
-import Image from 'next/image';
-import { CareEventStatus } from './care-board-utils';
-import { ResidentInfoCell } from './care-board-utils';
-
-type CareEventStatusType = 'scheduled' | 'completed';
+import { careBoardData, careCategories, CareCategoryKey, CareEvent } from '@/mocks/care-board-data';
+import React from 'react';
+import { CARE_CATEGORY_COLORS, CareEventStatus, ResidentInfoCell, rgbToString, VitalSigns } from './care-board-utils';
 
 export function UserBaseView() {
   // 予定と実績をランダムに割り当てる関数（デモ用）
@@ -19,7 +13,7 @@ export function UserBaseView() {
 
   // バイタル関連のカテゴリキー
   const vitalCategories: CareCategoryKey[] = ['temperature', 'pulse', 'bloodPressure'];
-  
+
   // 通常のイベントを取得する関数
   const getNonVitalEventForCategory = (
     residentEvents: CareEvent[],
@@ -31,11 +25,11 @@ export function UserBaseView() {
     }
     return residentEvents.find((event) => event.categoryKey === categoryKey);
   };
-  
+
   // バイタルイベントを取得する関数
   const getVitalEventsForResident = (residentEvents: CareEvent[]): CareEvent[] => {
-    return residentEvents.filter((event) => 
-      event.categoryKey && vitalCategories.includes(event.categoryKey)
+    return residentEvents.filter(
+      (event) => event.categoryKey && vitalCategories.includes(event.categoryKey)
     );
   };
 
@@ -73,12 +67,14 @@ export function UserBaseView() {
                 const vitalEvents = getVitalEventsForResident(resident.events);
                 const hasVitalEvents = vitalEvents.length > 0;
                 const vitalStatus = hasVitalEvents ? getEventStatus(vitalEvents[0]) : 'scheduled';
-                
+
                 return (
                   <div
                     key={`${resident.id}-vitals`}
                     className="p-2 border-b border-r border-gray-200 text-sm text-center hover:bg-gray-50 transition-colors cursor-pointer min-h-16"
-                    style={{ backgroundColor: hasVitalEvents ? 'rgba(231, 76, 60, 0.05)' : 'transparent' }}
+                    style={{
+                      backgroundColor: hasVitalEvents ? 'rgba(231, 76, 60, 0.05)' : 'transparent',
+                    }}
                   >
                     {hasVitalEvents ? (
                       <VitalSigns events={vitalEvents} status={vitalStatus} />
@@ -87,7 +83,7 @@ export function UserBaseView() {
                     )}
                   </div>
                 );
-              } 
+              }
               // 血圧と脈拍のカテゴリはスキップ（バイタルにまとめるため）
               else if (category.key === 'pulse' || category.key === 'bloodPressure') {
                 return (
@@ -102,7 +98,9 @@ export function UserBaseView() {
               // その他の通常カテゴリ
               else {
                 const event = getNonVitalEventForCategory(resident.events, category.key);
-                const bgColor = category.key ? CARE_CATEGORY_COLORS[category.key] + '10' : '#f0f0f0';
+                const bgColor = category.key
+                  ? CARE_CATEGORY_COLORS[category.key] + '10'
+                  : '#f0f0f0';
                 return (
                   <div
                     key={`${resident.id}-${category.key}`}
@@ -110,10 +108,10 @@ export function UserBaseView() {
                     style={{ backgroundColor: event ? bgColor : 'transparent' }}
                   >
                     {event ? (
-                      <CareEventStatus 
-                        event={event} 
-                        category={category.key} 
-                        status={getEventStatus(event)} 
+                      <CareEventStatus
+                        event={event}
+                        category={category.key}
+                        status={getEventStatus(event)}
                       />
                     ) : (
                       <span className="text-gray-300">-</span>

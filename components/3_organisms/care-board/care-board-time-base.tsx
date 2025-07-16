@@ -1,13 +1,10 @@
-import React, { useEffect, useRef } from 'react';
-import { CareEvent, careBoardData } from '@/mocks/care-board-data';
 import { cn } from '@/lib/utils';
-import Link from 'next/link';
-import Image from 'next/image';
-import { CARE_CATEGORY_COLORS, VitalSigns } from './care-board-utils';
+import { CareCategoryKey, CareEvent, careBoardData } from '@/mocks/care-board-data';
+import { useEffect, useRef } from 'react';
+import { VitalSigns } from './care-board-utils';
 
 // CareEventStatusコンポーネントは共通化するためutilsまたは別ファイルに分離推奨
-import { CareEventStatus } from './care-board-utils';
-import { ResidentInfoCell } from './care-board-utils';
+import { CareEventStatus, ResidentInfoCell } from './care-board-utils';
 
 export function TimeBaseView() {
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
@@ -61,7 +58,7 @@ export function TimeBaseView() {
   function EventCell({ events, time }: { events: CareEvent[]; time: string }) {
     // バイタル関連のカテゴリキー
     const vitalCategories: CareCategoryKey[] = ['temperature', 'pulse', 'bloodPressure'];
-    
+
     // バイタル以外のイベントをフィルタリング
     const nonVitalEvents = events.filter((event) => {
       if (!event.categoryKey || !vitalCategories.includes(event.categoryKey)) {
@@ -76,21 +73,25 @@ export function TimeBaseView() {
       }
       return false;
     });
-    
+
     // バイタルイベントをフィルタリング
     const vitalEvents = events.filter((event) => {
       if (event.time === 'N/A' && event.categoryKey) {
         return false; // N/Aのバイタルは表示しない
       }
-      if (event.time.startsWith(time.split(':')[0]) && event.categoryKey && vitalCategories.includes(event.categoryKey)) {
+      if (
+        event.time.startsWith(time.split(':')[0]) &&
+        event.categoryKey &&
+        vitalCategories.includes(event.categoryKey)
+      ) {
         return true;
       }
       return false;
     });
-    
+
     // バイタルイベントがあるかどうか
     const hasVitalEvents = vitalEvents.length > 0;
-    
+
     // バイタルのステータスを決定（すべてのバイタルイベントが同じステータスと仮定）
     const vitalStatus = hasVitalEvents ? getEventStatus(vitalEvents[0]) : 'scheduled';
 
@@ -99,10 +100,8 @@ export function TimeBaseView() {
         className={`min-h-16 border-b border-gray-200 p-1.5 flex flex-col items-start justify-start gap-1.5`}
       >
         {/* バイタルイベントがあれば統合表示 */}
-        {hasVitalEvents && (
-          <VitalSigns events={vitalEvents} status={vitalStatus} />
-        )}
-        
+        {hasVitalEvents && <VitalSigns events={vitalEvents} status={vitalStatus} />}
+
         {/* その他のイベントを個別表示 */}
         {nonVitalEvents.map((event) => {
           const category = event.categoryKey;
