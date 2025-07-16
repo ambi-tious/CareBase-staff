@@ -4,9 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { getLucideIcon } from '@/lib/lucide-icon-registry';
-import {
-  careCategories
-} from '@/mocks/care-board-data';
+import { careCategories } from '@/mocks/care-board-data';
 import { addDays, format } from 'date-fns';
 import { ja } from 'date-fns/locale';
 import {
@@ -18,7 +16,7 @@ import {
   Clock as ClockIcon,
   Filter,
   Printer,
-  Users
+  Users,
 } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { TimeBaseView } from './care-board-time-base';
@@ -97,7 +95,7 @@ export function CareBoard() {
           <Button
             variant="outline"
             className="bg-white border-carebase-blue text-carebase-blue hover:bg-carebase-blue-light font-medium px-3 py-2 text-sm shadow-sm"
-            onClick={() => setSelectedDate(addDays(selectedDate, -1))}
+            onClick={() => selectedDate && setSelectedDate(addDays(selectedDate, -1))}
           >
             <ChevronLeft className="h-4 w-4 mr-1" />
             前日
@@ -109,13 +107,15 @@ export function CareBoard() {
                 className="w-[160px] justify-start text-left font-medium text-carebase-text-primary text-base bg-white border-carebase-blue hover:bg-carebase-blue-light px-3 py-2 shadow-sm"
               >
                 <CalendarIcon className="mr-2 h-4 w-4 text-carebase-blue" />
-                {selectedDate ? format(selectedDate, 'M月d日 (E)', { locale: ja }) : '読み込み中...'}
+                {selectedDate
+                  ? format(selectedDate, 'M月d日 (E)', { locale: ja })
+                  : '読み込み中...'}
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-auto p-0">
               <Calendar
                 mode="single"
-                selected={selectedDate}
+                selected={selectedDate || undefined}
                 onSelect={(date) => {
                   if (date) {
                     setSelectedDate(date);
@@ -129,7 +129,7 @@ export function CareBoard() {
           <Button
             variant="outline"
             className="bg-white border-carebase-blue text-carebase-blue hover:bg-carebase-blue-light font-medium px-3 py-2 text-sm shadow-sm"
-            onClick={() => setSelectedDate(addDays(selectedDate, 1))}
+            onClick={() => selectedDate && setSelectedDate(addDays(selectedDate, 1))}
           >
             翌日
             <ChevronRight className="h-4 w-4 ml-1" />

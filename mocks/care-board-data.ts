@@ -89,6 +89,7 @@ export interface CareEvent {
   categoryKey?: CareCategoryKey;
   details?: string;
   color?: string;
+  status?: import('@/components/3_organisms/care-board/care-board-utils').CareEventStatus;
 }
 
 export interface Resident {

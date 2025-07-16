@@ -1,19 +1,34 @@
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input'; 
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { getLucideIcon } from '@/lib/lucide-icon-registry';
 import { CareCategoryKey, CareEvent, careCategories } from '@/mocks/care-board-data';
-import { Check, Clock, Save, Thermometer, User, X, Calendar } from 'lucide-react';
-import React, { useState, useEffect } from 'react';
+import { Calendar, Check, Clock, Save, Thermometer, User, X } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
 
 // 利用者情報セル（アイコン・名前・careLevelバッジ）共通化
 import type { Resident } from '@/mocks/care-board-data';
 import Image from 'next/image';
 import Link from 'next/link';
+
+// ステータスを予定と実績のみに簡略化
+export type CareEventStatus = 'scheduled' | 'completed';
 
 interface ResidentInfoCellProps {
   resident: Resident;
@@ -106,7 +121,7 @@ export const VitalSigns: React.FC<VitalSignsProps> = ({ events, status = 'schedu
       style={{
         backgroundColor: statusStyles.background,
         border: statusStyles.border,
-        borderStyle: statusStyles.borderStyle as any,
+        borderStyle: statusStyles.borderStyle as 'solid' | 'dotted',
         color: baseColor,
       }}
     >
@@ -153,16 +168,13 @@ export function rgbToString(rgb: number[]) {
   return `rgb(${rgb[0]}, ${rgb[1]}, ${rgb[2]})`;
 }
 
-// ステータスを予定と実績のみに簡略化
-export type CareEventStatus = 'scheduled' | 'completed';
-
 interface CareEventStatusProps {
   event: CareEvent;
   category?: CareCategoryKey;
   status?: CareEventStatus;
 }
 
-export const CareEventStatus: React.FC<CareEventStatusProps> = ({
+export const CareEventStatusComponent: React.FC<CareEventStatusProps> = ({
   event,
   category,
   status = 'scheduled', // デフォルトは予定状態
@@ -198,13 +210,15 @@ export const CareEventStatus: React.FC<CareEventStatusProps> = ({
       style={{
         backgroundColor: statusStyles.background,
         border: statusStyles.border,
-        borderStyle: statusStyles.borderStyle as any,
+        borderStyle: statusStyles.borderStyle as 'solid' | 'dotted',
         color: baseColor,
       }}
     >
       <Icon className="h-3.5 w-3.5 flex-shrink-0" />
       <span className="font-medium truncate">{event.label}</span>
-      <span className="text-xs opacity-75 ml-auto">{event.time !== 'N/A' && event.time ? event.time : '07:00'}</span>
+      <span className="text-xs opacity-75 ml-auto">
+        {event.time !== 'N/A' && event.time ? event.time : '07:00'}
+      </span>
 
       {/* 実施済みの場合のみチェックマークを表示 */}
       {status === 'completed' && (
@@ -234,9 +248,9 @@ export const CareRecordModal: React.FC<CareRecordModalProps> = ({
   status = 'scheduled',
   isNew = false,
   onClose,
-  onSave
+  onSave,
 }) => {
-  const [updatedEvent, setUpdatedEvent] = useState<CareEvent>({...event});
+  const [updatedEvent, setUpdatedEvent] = useState<CareEvent>({ ...event });
   const [staffName, setStaffName] = useState<string>(''); // 担当者
   const [eventStatus, setEventStatus] = useState<CareEventStatus>(status);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -274,42 +288,34 @@ export const CareRecordModal: React.FC<CareRecordModalProps> = ({
     }
   }, [updatedEvent.time]);
 
-  // 時間オプションを生成
-  const timeOptions = Array.from({ length: 24 }).map((_, hour) => {
-    return {
-      value: `${hour.toString().padStart(2, '0')}:00`,
-      label: `${hour.toString().padStart(2, '0')}:00`
-    };
-  });
-
   // 分オプションを生成（5分間隔）
   const minuteOptions = Array.from({ length: 12 }).map((_, index) => {
     const minute = index * 5;
     return {
       value: minute.toString().padStart(2, '0'),
-      label: minute.toString().padStart(2, '0')
+      label: minute.toString().padStart(2, '0'),
     };
   });
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
-    
+
     if (!hour) {
       newErrors.time = '時間を選択してください';
     }
-    
+
     if (!updatedEvent.categoryKey) {
       newErrors.categoryKey = 'ケア種別を選択してください';
     }
-    
+
     if (!updatedEvent.label || updatedEvent.label.trim() === '') {
       newErrors.label = '内容を入力してください';
     }
-    
+
     if (!staffName || staffName.trim() === '') {
       newErrors.staffName = '担当者を入力してください';
     }
-    
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -317,9 +323,9 @@ export const CareRecordModal: React.FC<CareRecordModalProps> = ({
   // 時間と分を結合して更新
   const updateTime = () => {
     const formattedTime = `${hour}:${minute}`;
-    setUpdatedEvent(prev => ({
+    setUpdatedEvent((prev) => ({
       ...prev,
-      time: formattedTime
+      time: formattedTime,
     }));
   };
 
@@ -332,7 +338,7 @@ export const CareRecordModal: React.FC<CareRecordModalProps> = ({
 
   const handleSave = () => {
     if (!validateForm()) return;
-    
+
     // 担当者情報をdetailsに追加
     const details = `担当者: ${staffName}\n${updatedEvent.details || ''}`.trim();
     
@@ -340,7 +346,7 @@ export const CareRecordModal: React.FC<CareRecordModalProps> = ({
       {
         ...updatedEvent,
         details,
-        status: eventStatus // 実施状況を保存
+        status: eventStatus, // 実施状況を保存
       },
       residentId,
       isNew
@@ -355,13 +361,15 @@ export const CareRecordModal: React.FC<CareRecordModalProps> = ({
             {isNew ? 'ケア記録の新規作成' : 'ケア記録の編集'}
           </DialogTitle>
         </DialogHeader>
-        
+
         <div className="py-4 space-y-4">
           <div className="flex items-center gap-2 text-sm text-gray-500 mb-2">
             <User className="h-4 w-4" />
-            <span>利用者: <strong>{residentName}</strong></span>
+            <span>
+              利用者: <strong>{residentName}</strong>
+            </span>
           </div>
-          
+
           <div className="space-y-4">
             <div className="space-y-2 border p-4 rounded-md bg-gray-50">
               <div className="flex items-center mb-2">
@@ -370,14 +378,11 @@ export const CareRecordModal: React.FC<CareRecordModalProps> = ({
                   時間 <span className="text-red-500">*</span>
                 </label>
               </div>
-              
+
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="text-xs text-gray-500 mb-1 block">時</label>
-                  <Select
-                    value={hour}
-                    onValueChange={setHour}
-                  >
+                  <Select value={hour} onValueChange={setHour}>
                     <SelectTrigger className={errors.time ? 'border-red-500' : ''}>
                       <SelectValue placeholder="時" />
                     </SelectTrigger>
@@ -392,15 +397,12 @@ export const CareRecordModal: React.FC<CareRecordModalProps> = ({
                 </div>
                 <div>
                   <label className="text-xs text-gray-500 mb-1 block">分</label>
-                  <Select
-                    value={minute}
-                    onValueChange={setMinute}
-                  >
+                  <Select value={minute} onValueChange={setMinute}>
                     <SelectTrigger>
                       <SelectValue placeholder="分" />
                     </SelectTrigger>
                     <SelectContent>
-                      {minuteOptions.map(option => (
+                      {minuteOptions.map((option) => (
                         <SelectItem key={option.value} value={option.value}>
                           {option.label}
                         </SelectItem>
@@ -411,7 +413,7 @@ export const CareRecordModal: React.FC<CareRecordModalProps> = ({
               </div>
               {errors.time && <p className="text-red-500 text-xs mt-1">{errors.time}</p>}
             </div>
-            
+
             <div className="space-y-2">
               <label className="text-sm font-medium">
                 ケア種別 <span className="text-red-500 ml-1">*</span>
@@ -419,11 +421,11 @@ export const CareRecordModal: React.FC<CareRecordModalProps> = ({
               <Select
                 value={updatedEvent.categoryKey}
                 onValueChange={(value) => {
-                  const category = careCategories.find(c => c.key === value);
+                  const category = careCategories.find((c) => c.key === value);
                   setUpdatedEvent({
-                    ...updatedEvent, 
+                    ...updatedEvent,
                     categoryKey: value as CareCategoryKey,
-                    icon: category?.icon || 'ClipboardList'
+                    icon: category?.icon || 'ClipboardList',
                   });
                 }}
               >
@@ -431,10 +433,12 @@ export const CareRecordModal: React.FC<CareRecordModalProps> = ({
                   <SelectValue placeholder="ケア種別を選択" />
                 </SelectTrigger>
                 <SelectContent>
-                  {careCategories.map(category => (
+                  {careCategories.map((category) => (
                     <SelectItem key={category.key} value={category.key}>
                       <div className="flex items-center gap-2">
-                        {React.createElement(getLucideIcon(category.icon), { className: 'h-4 w-4' })}
+                        {React.createElement(getLucideIcon(category.icon), {
+                          className: 'h-4 w-4',
+                        })}
                         <span>{category.label}</span>
                       </div>
                     </SelectItem>
@@ -443,61 +447,64 @@ export const CareRecordModal: React.FC<CareRecordModalProps> = ({
               </Select>
               {errors.categoryKey && <p className="text-red-500 text-xs">{errors.categoryKey}</p>}
             </div>
-            
+
             <div className="space-y-2">
               <label className="text-sm font-medium">
                 内容 <span className="text-red-500 ml-1">*</span>
               </label>
               <Input
                 value={updatedEvent.label}
-                onChange={(e) => setUpdatedEvent({...updatedEvent, label: e.target.value})}
+                onChange={(e) => setUpdatedEvent({ ...updatedEvent, label: e.target.value })}
                 placeholder="例: 食事摂取量8割"
                 className={errors.label ? 'border-red-500' : ''}
               />
               {errors.label && <p className="text-red-500 text-xs">{errors.label}</p>}
             </div>
-            
+
             <div className="space-y-2">
               <div className="flex items-center mb-2">
                 <User className="h-4 w-4 mr-2" />
-                <label className="text-sm font-medium">
-                  担当者
-                </label>
+                <label className="text-sm font-medium">担当者</label>
               </div>
               <div className="p-3 border rounded-md bg-gray-50">
                 <p className="text-sm font-medium">{staffName}</p>
-                <p className="text-xs text-gray-500 mt-1">ログイン中のユーザーが自動的に設定されます</p>
+                <p className="text-xs text-gray-500 mt-1">
+                  ログイン中のユーザーが自動的に設定されます
+                </p>
               </div>
             </div>
-            
+
             <div className="space-y-2 border p-4 rounded-md bg-gray-50">
               <div className="flex items-center mb-2">
                 <Calendar className="h-4 w-4 mr-2" />
-                <label className="text-sm font-medium">
-                  実施状況
-                </label>
+                <label className="text-sm font-medium">実施状況</label>
               </div>
-              <RadioGroup value={eventStatus} onValueChange={(value) => setEventStatus(value as CareEventStatus)}>
+              <RadioGroup
+                value={eventStatus}
+                onValueChange={(value) => setEventStatus(value as CareEventStatus)}
+              >
                 <div className="flex items-center space-x-6">
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem value="scheduled" id="scheduled" />
-                    <Label htmlFor="scheduled" className="text-sm">予定</Label>
+                    <Label htmlFor="scheduled" className="text-sm">
+                      予定
+                    </Label>
                   </div>
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem value="completed" id="completed" />
-                    <Label htmlFor="completed" className="text-sm">実施済み</Label>
+                    <Label htmlFor="completed" className="text-sm">
+                      実施済み
+                    </Label>
                   </div>
                 </div>
               </RadioGroup>
             </div>
-            
+
             <div className="space-y-2">
-              <label className="text-sm font-medium">
-                備考
-              </label>
+              <label className="text-sm font-medium">備考</label>
               <textarea
                 value={updatedEvent.details || ''}
-                onChange={(e) => setUpdatedEvent({...updatedEvent, details: e.target.value})}
+                onChange={(e) => setUpdatedEvent({ ...updatedEvent, details: e.target.value })}
                 placeholder="備考があれば入力してください"
                 className="w-full px-3 py-2 border border-gray-300 rounded-md"
                 rows={3}
@@ -505,7 +512,7 @@ export const CareRecordModal: React.FC<CareRecordModalProps> = ({
             </div>
           </div>
         </div>
-        
+
         <DialogFooter className="flex justify-end gap-2">
           <Button variant="outline" onClick={onClose}>
             <X className="h-4 w-4 mr-2" />

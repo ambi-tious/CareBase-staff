@@ -1,7 +1,15 @@
 import { getLucideIcon } from '@/lib/lucide-icon-registry';
 import { careBoardData, careCategories, CareCategoryKey, CareEvent } from '@/mocks/care-board-data';
 import React, { useCallback, useEffect, useState } from 'react';
-import { CARE_CATEGORY_COLORS, CareEventStatus, CareRecordModal, ResidentInfoCell, rgbToString, VitalSigns, rgbToRgba } from './care-board-utils';
+import {
+  CARE_CATEGORY_COLORS,
+  CareEventStatusComponent as CareEventStatus,
+  CareRecordModal,
+  ResidentInfoCell,
+  rgbToString,
+  VitalSigns,
+  type CareEventStatus as CareEventStatusType,
+} from './care-board-utils';
 
 export function UserBaseView() {
   const [isClient, setIsClient] = useState(false);
@@ -9,7 +17,7 @@ export function UserBaseView() {
     event: CareEvent;
     residentId: number;
     residentName: string;
-    status?: CareEventStatus;
+    status?: CareEventStatusType;
     isNew?: boolean;
   } | null>(null);
   const [careEvents, setCareEvents] = useState<Record<number, CareEvent[]>>({});
@@ -17,10 +25,10 @@ export function UserBaseView() {
   // Set client-side flag to avoid hydration mismatch
   useEffect(() => {
     setIsClient(true);
-    
+
     // Initialize care events from careBoardData
     const initialEvents: Record<number, CareEvent[]> = {};
-    careBoardData.forEach(resident => {
+    careBoardData.forEach((resident) => {
       initialEvents[resident.id] = [...resident.events];
     });
     setCareEvents(initialEvents);
@@ -36,61 +44,69 @@ export function UserBaseView() {
     return hash % 2 === 0 ? 'completed' : 'scheduled';
   };
 
-  const handleEventClick = useCallback((event: CareEvent, residentId: number, residentName: string) => {
-    setSelectedEvent({
-      event,
-      residentId,
-      residentName,
-      status: getEventStatus(event)
-    });
-  }, []);
+  const handleEventClick = useCallback(
+    (event: CareEvent, residentId: number, residentName: string) => {
+      setSelectedEvent({
+        event,
+        residentId,
+        residentName,
+        status: getEventStatus(event),
+      });
+    },
+    []
+  );
 
-  const handleCellClick = useCallback((categoryKey: CareCategoryKey, residentId: number, residentName: string) => {
-    // Create a new empty event
-    const category = careCategories.find(c => c.key === categoryKey);
-    const newEvent: CareEvent = {
-      time: new Date().getHours().toString().padStart(2, '0') + ':00',
-      icon: category?.icon || 'ClipboardList',
-      label: '',
-      categoryKey,
-      details: '',
-    };
-    
-    setSelectedEvent({
-      event: newEvent,
-      residentId,
-      residentName,
-      isNew: true
-    });
-  }, []);
-
-  const handleSaveRecord = useCallback((updatedEvent: CareEvent, residentId: number, isNew: boolean) => {
-    setCareEvents(prev => {
-      const residentEvents = [...(prev[residentId] || [])];
-      
-      if (isNew) {
-        // Add new event
-        residentEvents.push(updatedEvent);
-      } else {
-        // Update existing event
-        const index = residentEvents.findIndex(e => 
-          e.time === selectedEvent?.event.time && 
-          e.label === selectedEvent?.event.label
-        );
-        
-        if (index !== -1) {
-          residentEvents[index] = updatedEvent;
-        }
-      }
-      
-      return {
-        ...prev,
-        [residentId]: residentEvents
+  const handleCellClick = useCallback(
+    (categoryKey: CareCategoryKey, residentId: number, residentName: string) => {
+      // Create a new empty event
+      const category = careCategories.find((c) => c.key === categoryKey);
+      const newEvent: CareEvent = {
+        time: new Date().getHours().toString().padStart(2, '0') + ':00',
+        icon: category?.icon || 'ClipboardList',
+        label: '',
+        categoryKey,
+        details: '',
       };
-    });
-    
-    setSelectedEvent(null);
-  }, [selectedEvent]);
+
+      setSelectedEvent({
+        event: newEvent,
+        residentId,
+        residentName,
+        isNew: true,
+      });
+    },
+    []
+  );
+
+  const handleSaveRecord = useCallback(
+    (updatedEvent: CareEvent, residentId: number, isNew: boolean) => {
+      setCareEvents((prev) => {
+        const residentEvents = [...(prev[residentId] || [])];
+
+        if (isNew) {
+          // Add new event
+          residentEvents.push(updatedEvent);
+        } else {
+          // Update existing event
+          const index = residentEvents.findIndex(
+            (e) => e.time === selectedEvent?.event.time && e.label === selectedEvent?.event.label
+          );
+
+          if (index !== -1) {
+            residentEvents[index] = updatedEvent;
+          }
+        }
+
+        return {
+          ...prev,
+          [residentId]: residentEvents,
+        };
+      });
+
+      setSelectedEvent(null);
+    },
+    [selectedEvent]
+  );
 
   // バイタル関連のカテゴリキー
   const vitalCategories: CareCategoryKey[] = ['temperature', 'pulse', 'bloodPressure'];
@@ -164,10 +180,12 @@ export function UserBaseView() {
                       }}
                     >
                       {hasVitalEvents ? (
-                        <div onClick={(e) => {
-                          e.stopPropagation();
-                          handleEventClick(vitalEvents[0], resident.id, resident.name);
-                        }}>
+                        <div
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleEventClick(vitalEvents[0], resident.id, resident.name);
+                          }}
+                        >
                           <VitalSigns events={vitalEvents} status={vitalStatus} />
                         </div>
                       ) : (
@@ -205,10 +223,12 @@ export function UserBaseView() {
                       }}
                     >
                       {event ? (
-                        <div onClick={(e) => {
-                          e.stopPropagation();
-                          handleEventClick(event, resident.id, resident.name);
-                        }}>
+                        <div
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleEventClick(event, resident.id, resident.name);
+                          }}
+                        >
                           <CareEventStatus
                             event={event}
                             category={category.key}
