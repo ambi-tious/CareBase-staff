@@ -19,6 +19,7 @@ import {
   Users,
 } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
+import { toast } from 'sonner';
 import { BulkCareRecordModal } from './bulk-care-record-modal';
 import { TimeBaseView } from './care-board-time-base';
 import { UserBaseView } from './care-board-user-base';
@@ -41,7 +42,7 @@ export function CareBoard() {
   const handleSaveBulkRecords = (records: { residentId: number; event: CareEvent }[]) => {
     // 実際の実装では、APIを呼び出してデータを保存します
     console.log('Saving bulk records:', records);
-    
+
     // モックデータの更新（実際の実装ではAPIを使用）
     records.forEach(({ residentId, event }) => {
       const residentIndex = careBoardData.findIndex((r) => r.id === residentId);
@@ -49,9 +50,9 @@ export function CareBoard() {
         careBoardData[residentIndex].events.push(event);
       }
     });
-    
+
     // 成功メッセージ（実際の実装ではトースト通知などを使用）
-    alert(`${records.length}件の記録を保存しました`);
+    toast.success(`${records.length}件の記録を保存しました`);
   };
 
   return (
@@ -218,12 +219,12 @@ export function CareBoard() {
       )}
 
       {activeView === 'time' ? <TimeBaseView /> : <UserBaseView />}
-      
+
       {/* 一括記録モーダル */}
       <BulkCareRecordModal
         isOpen={showBulkRecordModal}
         onClose={() => setShowBulkRecordModal(false)}
-        residents={careBoardData.filter(r => r.admissionStatus === '入居中')}
+        residents={careBoardData.filter((r) => r.admissionStatus === '入居中')}
         onSave={handleSaveBulkRecords}
       />
     </div>

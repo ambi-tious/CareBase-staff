@@ -67,8 +67,8 @@ export const BulkCareRecordModal: React.FC<BulkCareRecordModalProps> = ({
       // 現在時刻をデフォルト値として設定
       const now = new Date();
       setHour(now.getHours().toString().padStart(2, '0'));
-      setMinute(Math.floor(now.getMinutes() / 5) * 5 .toString().padStart(2, '0'));
-      
+      setMinute(Math.floor(now.getMinutes() / 5) * (5).toString().padStart(2, '0'));
+
       // 利用者選択の初期化
       setResidentSelections(
         residents.map((resident) => ({
@@ -77,7 +77,7 @@ export const BulkCareRecordModal: React.FC<BulkCareRecordModalProps> = ({
           note: '',
         }))
       );
-      
+
       // ログインユーザー情報を取得
       try {
         const staffDataStr = localStorage.getItem('carebase_selected_staff_data');
@@ -91,7 +91,7 @@ export const BulkCareRecordModal: React.FC<BulkCareRecordModalProps> = ({
         console.error('Failed to load staff data:', error);
         setStaffName('田中 花子');
       }
-      
+
       // フォームをリセット
       setSelectedCategory('');
       setCommonLabel('');
@@ -113,9 +113,7 @@ export const BulkCareRecordModal: React.FC<BulkCareRecordModalProps> = ({
   const toggleResidentSelection = (residentId: number, checked: boolean) => {
     setResidentSelections((prev) =>
       prev.map((selection) =>
-        selection.resident.id === residentId
-          ? { ...selection, selected: checked }
-          : selection
+        selection.resident.id === residentId ? { ...selection, selected: checked } : selection
       )
     );
   };
@@ -124,9 +122,7 @@ export const BulkCareRecordModal: React.FC<BulkCareRecordModalProps> = ({
   const updateResidentNote = (residentId: number, note: string) => {
     setResidentSelections((prev) =>
       prev.map((selection) =>
-        selection.resident.id === residentId
-          ? { ...selection, note }
-          : selection
+        selection.resident.id === residentId ? { ...selection, note } : selection
       )
     );
   };
@@ -161,16 +157,16 @@ export const BulkCareRecordModal: React.FC<BulkCareRecordModalProps> = ({
   // 保存処理
   const handleSave = async () => {
     if (!validateForm()) return;
-    
+
     setIsSubmitting(true);
-    
+
     try {
       // 時間と分を結合
       const timeString = `${hour}:${minute}`;
-      
+
       // 選択されたカテゴリの情報を取得
       const category = careCategories.find((c) => c.key === selectedCategory);
-      
+
       // 選択された利用者ごとにイベントを作成
       const records = residentSelections
         .filter((selection) => selection.selected)
@@ -183,16 +179,16 @@ export const BulkCareRecordModal: React.FC<BulkCareRecordModalProps> = ({
             categoryKey: selectedCategory as CareCategoryKey,
             details: `担当者: ${staffName}\n${selection.note}`.trim(),
           };
-          
+
           return {
             residentId: selection.resident.id,
             event,
           };
         });
-      
+
       // 保存処理を呼び出し
       onSave(records);
-      
+
       // モーダルを閉じる
       onClose();
     } catch (error) {
@@ -331,11 +327,9 @@ export const BulkCareRecordModal: React.FC<BulkCareRecordModalProps> = ({
                 </label>
               </div>
             </div>
-            
-            {errors.residents && (
-              <p className="text-red-500 text-xs">{errors.residents}</p>
-            )}
-            
+
+            {errors.residents && <p className="text-red-500 text-xs">{errors.residents}</p>}
+
             <div className="border rounded-md overflow-hidden">
               <div className="max-h-[300px] overflow-y-auto">
                 <table className="w-full">
@@ -396,8 +390,8 @@ export const BulkCareRecordModal: React.FC<BulkCareRecordModalProps> = ({
             <X className="h-4 w-4 mr-2" />
             キャンセル
           </Button>
-          <Button 
-            onClick={handleSave} 
+          <Button
+            onClick={handleSave}
             className="bg-carebase-blue hover:bg-carebase-blue-dark"
             disabled={isSubmitting}
           >

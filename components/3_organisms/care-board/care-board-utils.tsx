@@ -124,7 +124,7 @@ export const VitalSigns: React.FC<VitalSignsProps> = ({ events, status = 'schedu
         borderStyle: statusStyles.borderStyle as 'solid' | 'dotted',
         color: baseColor,
         width: '100%',
-        maxWidth: '100%'
+        maxWidth: '100%',
       }}
     >
       <Thermometer className="h-3 w-3 flex-shrink-0" />
@@ -215,7 +215,7 @@ export const CareEventStatusComponent: React.FC<CareEventStatusProps> = ({
         borderStyle: statusStyles.borderStyle as 'solid' | 'dotted',
         color: baseColor,
         width: '100%',
-        maxWidth: '100%'
+        maxWidth: '100%',
       }}
     >
       <Icon className="h-3.5 w-3.5 flex-shrink-0" />
@@ -345,7 +345,7 @@ export const CareRecordModal: React.FC<CareRecordModalProps> = ({
 
     // 担当者情報をdetailsに追加
     const details = `担当者: ${staffName}\n${updatedEvent.details || ''}`.trim();
-    
+
     onSave(
       {
         ...updatedEvent,
