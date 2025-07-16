@@ -977,13 +977,6 @@ export function CareBoard() {
         </div>
 
         <div className="flex items-center gap-2 flex-wrap">
-          {/* デバッグ情報（開発時のみ表示） */}
-          {process.env.NODE_ENV === 'development' && (
-            <div className="text-xs text-gray-500 mr-2">
-              現在時刻: {currentHour}:{currentMinute < 10 ? `0${currentMinute}` : currentMinute}
-            </div>
-          )}
-
           <Button
             variant="outline"
             className="bg-white border-carebase-blue text-carebase-blue hover:bg-carebase-blue-light font-medium px-3 py-2 text-sm shadow-sm"
