@@ -21,6 +21,7 @@ import {
   Users
 } from 'lucide-react';
 import React, { useState } from 'react';
+import { useEffect } from 'react';
 import { TimeBaseView } from './care-board-time-base';
 import { UserBaseView } from './care-board-user-base';
 import { CARE_CATEGORY_COLORS, rgbToString } from './care-board-utils';
@@ -29,8 +30,13 @@ type ActiveTabView = 'time' | 'user';
 
 export function CareBoard() {
   const [activeView, setActiveView] = useState<ActiveTabView>('time');
-  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+  const [selectedDate, setSelectedDate] = useState<Date>(new Date('2025-01-01T00:00:00Z'));
   const [showFilters, setShowFilters] = useState<boolean>(false);
+
+  // Update to current date on client side to avoid hydration mismatch
+  useEffect(() => {
+    setSelectedDate(new Date());
+  }, []);
 
   // 現在の時刻を取得（デバッグ用）
   const currentHour = new Date().getHours();

@@ -1,6 +1,6 @@
 import { cn } from '@/lib/utils';
 import { CareCategoryKey, CareEvent, careBoardData } from '@/mocks/care-board-data';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { VitalSigns } from './care-board-utils';
 
 // CareEventStatusコンポーネントは共通化するためutilsまたは別ファイルに分離推奨
@@ -9,8 +9,25 @@ import { CareEventStatus, ResidentInfoCell } from './care-board-utils';
 export function TimeBaseView() {
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
   const currentTimeRowRef = useRef<HTMLDivElement | null>(null);
+  const [isClient, setIsClient] = useState(false);
+  const [currentTime, setCurrentTime] = useState('00:00');
+
+  // Set client-side flag and current time to avoid hydration mismatch
+  useEffect(() => {
+    setIsClient(true);
+    const getCurrentTimeSlot = () => {
+      const now = new Date();
+      const hour = now.getHours();
+      const minute = now.getMinutes();
+      const roundedMinute = Math.floor(minute / 60) * 60;
+      return `${hour.toString().padStart(2, '0')}:${roundedMinute.toString().padStart(2, '0')}`;
+    };
+    setCurrentTime(getCurrentTimeSlot());
+  }, []);
 
   useEffect(() => {
+    if (!isClient) return;
+    
     const scrollTimer = setTimeout(() => {
       if (scrollContainerRef.current && currentTimeRowRef.current) {
         const containerRect = scrollContainerRef.current.getBoundingClientRect();
@@ -23,7 +40,7 @@ export function TimeBaseView() {
       }
     }, 300);
     return () => clearTimeout(scrollTimer);
-  }, []);
+  }, [isClient, currentTime]);
 
   const generateTimeSlots = (interval = 60) => {
     const slots = [];
@@ -38,20 +55,14 @@ export function TimeBaseView() {
 
   const allTimeSlots = generateTimeSlots(60);
 
-  const getCurrentTimeSlot = () => {
-    const now = new Date();
-    const hour = now.getHours();
-    const minute = now.getMinutes();
-    const roundedMinute = Math.floor(minute / 60) * 60;
-    return `${hour.toString().padStart(2, '0')}:${roundedMinute.toString().padStart(2, '0')}`;
-  };
-
-  const currentTime = getCurrentTimeSlot();
-
   // 予定と実績をランダムに割り当てる関数（デモ用）
   const getEventStatus = (_event: CareEvent): 'scheduled' | 'completed' => {
     // 実際の実装では、APIからのデータに基づいてステータスを設定します
     // ここではデモのためにランダムに割り当てています
+    // Server-side rendering時は一貫した値を返し、クライアント側でのみランダムを使用
+    if (!isClient) {
+      return 'scheduled';
+    }
     return Math.random() > 0.5 ? 'completed' : 'scheduled';
   };
 
@@ -143,13 +154,13 @@ export function TimeBaseView() {
           {allTimeSlots.map((time) => (
             <div
               key={time}
-              className={`contents ${time === currentTime ? 'current-time-row' : ''}`}
-              ref={time === currentTime ? currentTimeRowRef : undefined}
+              className={`contents ${isClient && time === currentTime ? 'current-time-row' : ''}`}
+              ref={isClient && time === currentTime ? currentTimeRowRef : undefined}
             >
               <div
                 className={cn(
                   'sticky left-0 flex items-center justify-center p-2 border-b border-r border-gray-200 text-sm font-medium z-10 h-16',
-                  time === currentTime
+                  isClient && time === currentTime
                     ? 'bg-yellow-100 text-yellow-800 font-bold border-l-4 border-yellow-500'
                     : 'bg-gray-50 text-gray-700'
                 )}
@@ -161,7 +172,7 @@ export function TimeBaseView() {
                   key={`${resident.id}-${time}`}
                   className={cn(
                     'border-r border-gray-200 relative h-auto',
-                    time === currentTime ? 'bg-yellow-50' : '',
+                    isClient && time === currentTime ? 'bg-yellow-50' : '',
                     parseInt(time.split(':')[0]) % 2 === 0 ? 'bg-gray-50/50' : ''
                   )}
                 >
