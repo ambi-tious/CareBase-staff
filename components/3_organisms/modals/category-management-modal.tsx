@@ -12,30 +12,22 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { 
-  Select, 
-  SelectContent, 
-  SelectItem, 
-  SelectTrigger, 
-  SelectValue 
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from '@/components/ui/select';
-import { 
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableHead, 
-  TableHeader, 
-  TableRow 
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
 } from '@/components/ui/table';
-import { 
-  AlertCircle, 
-  Edit, 
-  Trash2, 
-  Save, 
-  X, 
-  Plus, 
-  Check 
-} from 'lucide-react';
+import { AlertCircle, Edit, Trash2, Save, X, Plus, Check } from 'lucide-react';
 import { getLucideIcon } from '@/lib/lucide-icon-registry';
 import type { IconName } from '@/lib/lucide-icon-registry';
 
@@ -126,9 +118,9 @@ export const CategoryManagementModal: React.FC<CategoryManagementModalProps> = (
 
     // Check for duplicates, excluding the current category being edited
     const isDuplicate = localCategories.some(
-      cat => cat.category.toLowerCase() === name.toLowerCase() && cat.id !== currentId
+      (cat) => cat.category.toLowerCase() === name.toLowerCase() && cat.id !== currentId
     );
-    
+
     if (isDuplicate) {
       setError('同じ名前のカテゴリが既に存在します');
       return false;
@@ -144,17 +136,17 @@ export const CategoryManagementModal: React.FC<CategoryManagementModalProps> = (
 
     setIsSubmitting(true);
     setError(null);
-    
+
     try {
       await onAddCategory({ category: newCategory, icon: newIcon });
-      
+
       // Optimistically update local state
       const newId = `temp_${Date.now()}`;
-      setLocalCategories(prev => [
-        ...prev, 
-        { id: newId, category: newCategory, icon: newIcon, isActive: true, count: 0 }
+      setLocalCategories((prev) => [
+        ...prev,
+        { id: newId, category: newCategory, icon: newIcon, isActive: true, count: 0 },
       ]);
-      
+
       setNewCategory('');
       setNewIcon('FileText');
     } catch (error) {
@@ -172,19 +164,17 @@ export const CategoryManagementModal: React.FC<CategoryManagementModalProps> = (
 
     setIsSubmitting(true);
     setError(null);
-    
+
     try {
       await onUpdateCategory(id, { category: editCategory, icon: editIcon });
-      
+
       // Optimistically update local state
-      setLocalCategories(prev => 
-        prev.map(cat => 
-          cat.id === id 
-            ? { ...cat, category: editCategory, icon: editIcon }
-            : cat
+      setLocalCategories((prev) =>
+        prev.map((cat) =>
+          cat.id === id ? { ...cat, category: editCategory, icon: editIcon } : cat
         )
       );
-      
+
       setEditingId(null);
     } catch (error) {
       console.error('Failed to update category:', error);
@@ -197,12 +187,12 @@ export const CategoryManagementModal: React.FC<CategoryManagementModalProps> = (
   const handleDelete = async (id: string) => {
     setIsSubmitting(true);
     setError(null);
-    
+
     try {
       await onDeleteCategory(id);
-      
+
       // Optimistically update local state
-      setLocalCategories(prev => prev.filter(cat => cat.id !== id));
+      setLocalCategories((prev) => prev.filter((cat) => cat.id !== id));
       setDeleteConfirmId(null);
     } catch (error) {
       console.error('Failed to delete category:', error);
@@ -236,7 +226,9 @@ export const CategoryManagementModal: React.FC<CategoryManagementModalProps> = (
           <h3 className="text-md font-semibold mb-3">新規カテゴリの追加</h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="space-y-2 md:col-span-2">
-              <Label htmlFor="new-category-name">カテゴリ名 <span className="text-red-500">*</span></Label>
+              <Label htmlFor="new-category-name">
+                カテゴリ名 <span className="text-red-500">*</span>
+              </Label>
               <Input
                 id="new-category-name"
                 value={newCategory}
@@ -246,7 +238,9 @@ export const CategoryManagementModal: React.FC<CategoryManagementModalProps> = (
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="new-category-icon">アイコン <span className="text-red-500">*</span></Label>
+              <Label htmlFor="new-category-icon">
+                アイコン <span className="text-red-500">*</span>
+              </Label>
               <Select
                 value={newIcon}
                 onValueChange={(value) => setNewIcon(value as IconName)}
@@ -315,7 +309,7 @@ export const CategoryManagementModal: React.FC<CategoryManagementModalProps> = (
                       ) : (
                         <div className="flex items-center">
                           {React.createElement(getLucideIcon(category.icon), {
-                            className: "h-5 w-5 text-carebase-blue",
+                            className: 'h-5 w-5 text-carebase-blue',
                           })}
                         </div>
                       )}
@@ -408,12 +402,7 @@ export const CategoryManagementModal: React.FC<CategoryManagementModalProps> = (
         </div>
 
         <div className="flex justify-end gap-3 pt-4">
-          <Button
-            type="button"
-            variant="outline"
-            onClick={onClose}
-            disabled={isSubmitting}
-          >
+          <Button type="button" variant="outline" onClick={onClose} disabled={isSubmitting}>
             閉じる
           </Button>
         </div>

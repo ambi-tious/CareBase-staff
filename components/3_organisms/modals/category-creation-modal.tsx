@@ -13,7 +13,13 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { AlertCircle } from 'lucide-react';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import type { IconName } from '@/lib/lucide-icon-registry';
 
 interface CategoryCreationModalProps {
@@ -53,15 +59,15 @@ export const CategoryCreationModal: React.FC<CategoryCreationModalProps> = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!category.trim()) {
       setError('カテゴリ名を入力してください');
       return;
     }
-    
+
     setIsSubmitting(true);
     setError(null);
-    
+
     try {
       await onSubmit({ category, icon });
       setCategory('');
@@ -82,9 +88,7 @@ export const CategoryCreationModal: React.FC<CategoryCreationModalProps> = ({
           <DialogTitle className="text-xl font-bold text-carebase-text-primary">
             {title}
           </DialogTitle>
-          <DialogDescription className="text-gray-600">
-            {description}
-          </DialogDescription>
+          <DialogDescription className="text-gray-600">{description}</DialogDescription>
         </DialogHeader>
 
         {error && (
@@ -96,7 +100,9 @@ export const CategoryCreationModal: React.FC<CategoryCreationModalProps> = ({
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="category-name">カテゴリ名 <span className="text-red-500">*</span></Label>
+            <Label htmlFor="category-name">
+              カテゴリ名 <span className="text-red-500">*</span>
+            </Label>
             <Input
               id="category-name"
               value={category}
@@ -107,7 +113,9 @@ export const CategoryCreationModal: React.FC<CategoryCreationModalProps> = ({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="category-icon">アイコン <span className="text-red-500">*</span></Label>
+            <Label htmlFor="category-icon">
+              アイコン <span className="text-red-500">*</span>
+            </Label>
             <Select
               value={icon}
               onValueChange={(value) => setIcon(value as IconName)}
@@ -127,12 +135,7 @@ export const CategoryCreationModal: React.FC<CategoryCreationModalProps> = ({
           </div>
 
           <div className="flex justify-end gap-3 pt-4">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={onClose}
-              disabled={isSubmitting}
-            >
+            <Button type="button" variant="outline" onClick={onClose} disabled={isSubmitting}>
               キャンセル
             </Button>
             <Button

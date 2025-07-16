@@ -8,10 +8,10 @@ interface IndividualPointCardProps {
   hasContent?: boolean;
 }
 
-export const IndividualPointCard: React.FC<IndividualPointCardProps> = ({ 
-  point, 
-  onClick, 
-  hasContent = false
+export const IndividualPointCard: React.FC<IndividualPointCardProps> = ({
+  point,
+  onClick,
+  hasContent = false,
 }) => {
   const Icon = getLucideIcon(point.icon);
 

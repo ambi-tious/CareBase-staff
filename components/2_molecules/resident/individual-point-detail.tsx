@@ -30,7 +30,7 @@ export const IndividualPointDetail: React.FC<IndividualPointDetailProps> = ({
 
   const handleSave = async () => {
     if (!onSave) return;
-    
+
     setIsSaving(true);
     try {
       const htmlContent = editorRef.current?.innerHTML || editorContent;
@@ -93,11 +93,7 @@ export const IndividualPointDetail: React.FC<IndividualPointDetailProps> = ({
                 編集
               </Button>
               {onClose && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={onClose}
-                >
+                <Button variant="outline" size="sm" onClick={onClose}>
                   <X className="h-3 w-3 mr-1" />
                   閉じる
                 </Button>
@@ -144,7 +140,7 @@ export const IndividualPointDetail: React.FC<IndividualPointDetailProps> = ({
                 <ListOrdered className="h-4 w-4" />
               </Button>
             </div>
-            
+
             {/* Rich text editor */}
             <div
               ref={editorRef}
@@ -156,7 +152,7 @@ export const IndividualPointDetail: React.FC<IndividualPointDetailProps> = ({
             />
           </div>
         ) : (
-          <div 
+          <div
             className="min-h-[200px] p-4 border rounded-md"
             dangerouslySetInnerHTML={{ __html: editorContent || '<p>詳細情報がありません。</p>' }}
           />
