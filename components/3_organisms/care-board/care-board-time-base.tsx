@@ -269,6 +269,7 @@ export function TimeBaseView() {
                         e.stopPropagation();
                         handleEventClick(event, residentId, residentName);
                       }}
+                      className="w-full"
                     >
                       <CareEventStatus event={event} category={category} status={status} />
                     </div>
@@ -287,7 +288,7 @@ export function TimeBaseView() {
     <>
       {!isClient ? (
         // Server-side rendering fallback
-        <div className="bg-white rounded-lg shadow-md overflow-hidden border border-gray-200">
+      className={`min-h-16 border-b border-gray-200 p-1.5 flex flex-col items-start justify-start gap-1.5 w-full`}
           <div className="overflow-auto max-h-[calc(100vh-200px)]">
             <div className="flex items-center justify-center p-8">
               <div className="text-gray-500">読み込み中...</div>

@@ -117,16 +117,18 @@ export const VitalSigns: React.FC<VitalSignsProps> = ({ events, status = 'schedu
 
   return (
     <div
-      className="flex items-center gap-1 p-1.5 rounded-md text-xs relative transition-all duration-200 w-full"
+      className="flex items-center gap-1 p-1.5 rounded-md text-xs relative transition-all duration-200 w-full box-border"
       style={{
         backgroundColor: statusStyles.background,
         border: statusStyles.border,
         borderStyle: statusStyles.borderStyle as 'solid' | 'dotted',
         color: baseColor,
+        width: '100%',
+        maxWidth: '100%'
       }}
     >
       <Thermometer className="h-3 w-3 flex-shrink-0" />
-      <span className="font-medium">バイタル</span>
+      <span className="font-medium flex-1 truncate">バイタル</span>
       <span className="text-xs opacity-75 ml-auto">{time !== 'N/A' && time ? time : '07:00'}</span>
 
       {/* 実施済みの場合のみチェックマークを表示 */}
@@ -206,16 +208,18 @@ export const CareEventStatusComponent: React.FC<CareEventStatusProps> = ({
 
   return (
     <div
-      className="flex items-center gap-1 p-1.5 rounded-md text-xs relative transition-all duration-200 w-full"
+      className="flex items-center gap-1 p-1.5 rounded-md text-xs relative transition-all duration-200 w-full box-border"
       style={{
         backgroundColor: statusStyles.background,
         border: statusStyles.border,
         borderStyle: statusStyles.borderStyle as 'solid' | 'dotted',
         color: baseColor,
+        width: '100%',
+        maxWidth: '100%'
       }}
     >
       <Icon className="h-3.5 w-3.5 flex-shrink-0" />
-      <span className="font-medium truncate">{event.label}</span>
+      <span className="font-medium truncate flex-1">{event.label}</span>
       <span className="text-xs opacity-75 ml-auto">
         {event.time !== 'N/A' && event.time ? event.time : '07:00'}
       </span>

@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { getLucideIcon } from '@/lib/lucide-icon-registry';
-import { careCategories } from '@/mocks/care-board-data';
+import { careBoardData, careCategories } from '@/mocks/care-board-data';
 import { addDays, format } from 'date-fns';
 import { ja } from 'date-fns/locale';
 import {
@@ -22,6 +22,7 @@ import React, { useEffect, useState } from 'react';
 import { TimeBaseView } from './care-board-time-base';
 import { UserBaseView } from './care-board-user-base';
 import { CARE_CATEGORY_COLORS, rgbToString } from './care-board-utils';
+import { BulkCareRecordModal } from './bulk-care-record-modal';
 
 type ActiveTabView = 'time' | 'user';
 
@@ -29,15 +30,29 @@ export function CareBoard() {
   const [activeView, setActiveView] = useState<ActiveTabView>('time');
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [showFilters, setShowFilters] = useState<boolean>(false);
+  const [showBulkRecordModal, setShowBulkRecordModal] = useState<boolean>(false);
 
   // Set current date on client side to avoid hydration mismatch
   useEffect(() => {
     setSelectedDate(new Date());
   }, []);
 
-  // 現在の時刻を取得（デバッグ用）
-  const currentHour = new Date().getHours();
-  const currentMinute = new Date().getMinutes();
+  // 一括記録の保存処理
+  const handleSaveBulkRecords = (records: { residentId: number; event: CareEvent }[]) => {
+    // 実際の実装では、APIを呼び出してデータを保存します
+    console.log('Saving bulk records:', records);
+    
+    // モックデータの更新（実際の実装ではAPIを使用）
+    records.forEach(({ residentId, event }) => {
+      const residentIndex = careBoardData.findIndex((r) => r.id === residentId);
+      if (residentIndex !== -1) {
+        careBoardData[residentIndex].events.push(event);
+      }
+    });
+    
+    // 成功メッセージ（実際の実装ではトースト通知などを使用）
+    alert(`${records.length}件の記録を保存しました`);
+  };
 
   return (
     <div data-testid="care-board" className="p-4 md:p-6 bg-carebase-bg max-h-screen">
@@ -70,6 +85,7 @@ export function CareBoard() {
           <Button
             variant="outline"
             className="bg-white border-carebase-blue text-carebase-blue hover:bg-carebase-blue-light font-medium px-3 py-2 text-sm shadow-sm"
+            onClick={() => setShowBulkRecordModal(true)}
           >
             <ClipboardEdit className="h-4 w-4 mr-2 text-carebase-blue" />
             まとめて記録
@@ -202,6 +218,14 @@ export function CareBoard() {
       )}
 
       {activeView === 'time' ? <TimeBaseView /> : <UserBaseView />}
+      
+      {/* 一括記録モーダル */}
+      <BulkCareRecordModal
+        isOpen={showBulkRecordModal}
+        onClose={() => setShowBulkRecordModal(false)}
+        residents={careBoardData.filter(r => r.admissionStatus === '入居中')}
+        onSave={handleSaveBulkRecords}
+      />
     </div>
   );
 }
