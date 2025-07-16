@@ -38,10 +38,8 @@ function TimeBaseView() {
   const generateTimeSlots = () => {
     const slots = [];
     for (let hour = 0; hour < 24; hour++) {
-      for (let minute = 0; minute < 60; minute += 30) {
-        const timeString = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
-        slots.push(timeString);
-      }
+      const timeString = `${hour.toString().padStart(2, '0')}:00`;
+      slots.push(timeString);
     }
     return slots;
   };
@@ -52,42 +50,10 @@ function TimeBaseView() {
   const getCurrentTimeSlot = () => {
     const now = new Date();
     const hour = now.getHours();
-    const minute = now.getMinutes();
-    const roundedMinute = minute < 30 ? 0 : 30;
-    return `${hour.toString().padStart(2, '0')}:${roundedMinute.toString().padStart(2, '0')}`;
+    return `${hour.toString().padStart(2, '0')}:00`;
   };
 
   const currentTime = getCurrentTimeSlot();
-
-  useEffect(() => {
-    // 現在時刻の位置にスクロールする関数
-    const scrollToCurrentTime = () => {
-      if (currentTimeRowRef.current && scrollContainerRef.current) {
-        // ヘッダーの高さを考慮（ヘッダーの高さは約64px + タブの高さ約48px + マージン24px）
-        const headerHeight = 136;
-
-        // 現在時刻の行の位置を取得
-        const rowRect = currentTimeRowRef.current.getBoundingClientRect();
-        const containerRect = scrollContainerRef.current.getBoundingClientRect();
-
-        // スクロール位置を計算（現在時刻の行が画面の上部1/3の位置に来るように）
-        const targetPosition =
-          rowRect.top - containerRect.top - headerHeight - containerRect.height / 3;
-
-        // スムーズにスクロール
-        scrollContainerRef.current.scrollTo({
-          top: scrollContainerRef.current.scrollTop + targetPosition,
-          behavior: 'smooth',
-        });
-      }
-    };
-
-    // ページ読み込み後、少し遅延させてスクロール（DOMが完全に描画されるのを待つ）
-    const timer = setTimeout(scrollToCurrentTime, 300);
-
-    // コンポーネントのアンマウント時にタイマーをクリア
-    return () => clearTimeout(timer);
-  }, [currentTime]); // currentTimeが変わったときにも再実行
 
   function EventCell({ events, time }: { events: CareEvent[]; time: string }) {
     const relevantEvents = events.filter((event) => event.time.startsWith(time.split(':')[0]));
@@ -111,7 +77,7 @@ function TimeBaseView() {
   return (
     <div className="bg-white rounded-lg shadow-sm overflow-hidden border border-gray-200">
       <div
-        className="overflow-auto max-h-[calc(100vh-220px)] scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent"
+        className="overflow-auto max-h-[calc(100vh-200px)] scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent"
         ref={scrollContainerRef}
       >
         {' '}
@@ -119,7 +85,7 @@ function TimeBaseView() {
         <div
           className="grid relative" // relative for sticky positioning context
           style={{
-            gridTemplateColumns: `100px repeat(${careBoardData.length}, minmax(150px, 1fr))`,
+            gridTemplateColumns: `80px repeat(${careBoardData.length}, minmax(150px, 1fr))`,
           }} // Adjusted minmax for resident column
         >
           {/* Top-left corner (empty or title) */}
@@ -131,15 +97,12 @@ function TimeBaseView() {
           {careBoardData.map((resident) => (
             <div
               key={resident.id}
-              className="sticky top-0 bg-carebase-blue text-white z-20 flex flex-col items-center p-3 border-b border-r border-gray-300"
+              className="sticky top-0 bg-carebase-blue text-white z-20 flex flex-col items-center py-2 border-b border-r border-gray-300"
             >
-              <Link
-                href={`/residents/${resident.id}`}
-                className="flex flex-col items-center text-white hover:text-gray-200"
-              >
-                <div className="relative w-12 h-12 rounded-full overflow-hidden mb-2">
+              <Link href={`/residents/${resident.id}`} className="flex items-center gap-2 group">
+                <div className="relative w-10 h-10 rounded-full overflow-hidden">
                   {' '}
-                  {/* Adjusted avatar size */}
+                  {/* Container for consistent image size */}
                   <Image
                     src={resident.avatarUrl || '/placeholder.svg'}
                     alt={resident.name}
@@ -152,7 +115,7 @@ function TimeBaseView() {
                     }}
                   />
                 </div>
-                <span className="text-sm text-center font-medium">{resident.name}</span>
+                <span className="text-base font-medium">{resident.name}</span>
               </Link>
             </div>
           ))}
@@ -242,7 +205,7 @@ function UserBaseView() {
                     }}
                   />
                 </div>
-                <span className="text-base font-medium group-hover:underline">{resident.name}</span>
+                <span className="text-base font-medium">{resident.name}</span>
               </Link>
             </div>
             {careCategories.map((category) => {
@@ -284,7 +247,7 @@ export function CareBoard() {
   const currentMinute = new Date().getMinutes();
 
   return (
-    <div data-testid="care-board" className="p-4 md:p-6 bg-carebase-bg min-h-screen">
+    <div data-testid="care-board" className="p-4 md:p-6 bg-carebase-bg max-h-screen">
       <div className="mb-6 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
         <div className="flex items-center gap-1 flex-wrap">
           <div className="flex items-center gap-1 rounded-lg bg-gray-200 p-1">
@@ -374,21 +337,6 @@ export function CareBoard() {
 
       {activeView === 'time' ? <TimeBaseView /> : <UserBaseView />}
 
-      {/* 現在時刻へスクロールするボタン */}
-      <div className="fixed bottom-6 right-6">
-        <Button
-          onClick={() => {
-            const currentTimeRow = document.querySelector('[data-current-time="true"]');
-            if (currentTimeRow) {
-              currentTimeRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }
-          }}
-          className="bg-carebase-blue hover:bg-carebase-blue-dark text-white rounded-full shadow-lg p-3"
-        >
-          <Clock className="h-5 w-5" />
-          <span className="sr-only">現在時刻へ</span>
-        </Button>
-      </div>
     </div>
   );
 }
