@@ -41,7 +41,7 @@ export function CareBoard() {
   // 一括記録の保存処理
   const handleSaveBulkRecords = (records: { residentId: number; event: CareEvent }[]) => {
     // 実際の実装では、APIを呼び出してデータを保存します
-    console.log('Saving bulk records:', records);
+    // TODO: API呼び出しの実装
 
     // モックデータの更新（実際の実装ではAPIを使用）
     records.forEach(({ residentId, event }) => {

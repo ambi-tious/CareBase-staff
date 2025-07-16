@@ -10,7 +10,6 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import {
   Select,
   SelectContent,
@@ -18,10 +17,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Textarea } from '@/components/ui/textarea';
 import { getLucideIcon } from '@/lib/lucide-icon-registry';
-import { CareCategoryKey, CareEvent, careCategories, Resident } from '@/mocks/care-board-data';
-import { Calendar, Clock, Save, User, X } from 'lucide-react';
+import { careCategories, CareCategoryKey, CareEvent, Resident } from '@/mocks/care-board-data';
+import { Clock, Save, User, X } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 
 interface BulkCareRecordModalProps {
@@ -67,7 +65,7 @@ export const BulkCareRecordModal: React.FC<BulkCareRecordModalProps> = ({
       // 現在時刻をデフォルト値として設定
       const now = new Date();
       setHour(now.getHours().toString().padStart(2, '0'));
-      setMinute(Math.floor(now.getMinutes() / 5) * (5).toString().padStart(2, '0'));
+      setMinute((Math.floor(now.getMinutes() / 5) * 5).toString().padStart(2, '0'));
 
       // 利用者選択の初期化
       setResidentSelections(
