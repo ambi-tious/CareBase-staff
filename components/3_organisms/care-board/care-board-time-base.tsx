@@ -218,7 +218,7 @@ export function TimeBaseView() {
           <div
             ref={provided.innerRef}
             {...provided.droppableProps}
-            className={`min-h-16 border-b border-gray-200 p-1.5 flex flex-col items-start justify-start gap-1.5`}
+           className={`min-h-16 border-b border-gray-200 p-1.5 flex flex-col items-start justify-start gap-1.5 w-full`}
             onClick={() => nonVitalEvents.length === 0 && !hasVitalEvents && handleCellClick(time, residentId, residentName)}
           >
         {/* バイタルイベントがあれば統合表示 */}
