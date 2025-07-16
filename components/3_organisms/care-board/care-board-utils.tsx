@@ -472,9 +472,6 @@ export const CareRecordModal: React.FC<CareRecordModalProps> = ({
               </div>
               <div className="p-3 border rounded-md bg-gray-50">
                 <p className="text-sm font-medium">{staffName}</p>
-                <p className="text-xs text-gray-500 mt-1">
-                  ログイン中のユーザーが自動的に設定されます
-                </p>
               </div>
             </div>
 
