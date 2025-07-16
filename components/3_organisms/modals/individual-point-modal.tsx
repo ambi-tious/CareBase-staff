@@ -35,6 +35,7 @@ export const IndividualPointModal: FC<IndividualPointModalProps> = ({
   const [isSaving, setIsSaving] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const editorRef = useRef<HTMLDivElement>(null);
 
   // Reset editor content when the category changes
@@ -46,7 +47,7 @@ export const IndividualPointModal: FC<IndividualPointModalProps> = ({
   // Handle delete
   const handleDelete = async () => {
     if (!onDelete) return;
-    
+
     setIsDeleting(true);
     setError(null);
     try {
@@ -57,12 +58,13 @@ export const IndividualPointModal: FC<IndividualPointModalProps> = ({
       setError('削除に失敗しました。もう一度お試しください。');
     } finally {
       setIsDeleting(false);
+      setShowDeleteConfirm(false);
     }
   };
 
   const handleSave = async () => {
     if (!onSave) return;
-    
+
     setIsSaving(true);
     setError(null);
     try {
@@ -102,6 +104,27 @@ export const IndividualPointModal: FC<IndividualPointModalProps> = ({
           </DialogDescription>
         </DialogHeader>
 
+        {showDeleteConfirm && (
+          <Alert className="mb-4 border-red-200 bg-red-50">
+            <AlertCircle className="h-4 w-4 text-red-600" />
+            <AlertDescription className="text-red-700">
+              本当にこの個別ポイント詳細情報を削除しますか？この操作は元に戻せません。
+            </AlertDescription>
+            <div className="flex gap-2 mt-4">
+              <Button variant="destructive" onClick={handleDelete} disabled={isDeleting}>
+                {isDeleting ? '削除中...' : '削除'}
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => setShowDeleteConfirm(false)}
+                disabled={isDeleting}
+              >
+                キャンセル
+              </Button>
+            </div>
+          </Alert>
+        )}
+
         {error && (
           <Alert className="mb-4 border-red-200 bg-red-50">
             <AlertCircle className="h-4 w-4 text-red-600" />
@@ -133,25 +156,29 @@ export const IndividualPointModal: FC<IndividualPointModalProps> = ({
             </>
           ) : (
             <>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setIsEditing(true)}
-                className="border-carebase-blue text-carebase-blue hover:bg-carebase-blue-light"
-              >
-                編集
-              </Button>
-              {onDelete && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={handleDelete}
-                  disabled={isDeleting}
-                  className="border-red-300 text-red-600 hover:bg-red-50"
-                >
-                  <Trash2 className="h-3 w-3 mr-1" />
-                  {isDeleting ? '削除中...' : '削除'}
-                </Button>
+              {!showDeleteConfirm && (
+                <>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setIsEditing(true)}
+                    className="border-carebase-blue text-carebase-blue hover:bg-carebase-blue-light"
+                  >
+                    編集
+                  </Button>
+                  {onDelete && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setShowDeleteConfirm(true)}
+                      disabled={isDeleting}
+                      className="border-red-300 text-red-600 hover:bg-red-50"
+                    >
+                      <Trash2 className="h-3 w-3 mr-1" />
+                      {isDeleting ? '削除中...' : '削除'}
+                    </Button>
+                  )}
+                </>
               )}
             </>
           )}
@@ -195,7 +222,7 @@ export const IndividualPointModal: FC<IndividualPointModalProps> = ({
                   <ListOrdered className="h-4 w-4" />
                 </Button>
               </div>
-              
+
               {/* Rich text editor */}
               <div
                 ref={editorRef}
@@ -207,7 +234,7 @@ export const IndividualPointModal: FC<IndividualPointModalProps> = ({
               />
             </div>
           ) : (
-            <div 
+            <div
               className="min-h-[300px] p-4 border rounded-md"
               dangerouslySetInnerHTML={{ __html: editorContent || '' }}
             />

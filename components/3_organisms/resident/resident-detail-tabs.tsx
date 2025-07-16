@@ -17,7 +17,6 @@ import { MedicationRegistrationModal } from '@/components/3_organisms/modals/med
 import { MedicationStatusRegistrationModal } from '@/components/3_organisms/modals/medication-status-registration-modal';
 import { IndividualPointModal } from '@/components/3_organisms/modals/individual-point-modal';
 import { Button } from '@/components/ui/button';
-import { CategoryManagementModal } from '@/components/3_organisms/modals/category-management-modal';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import type {
   ContactPerson,
@@ -41,6 +40,8 @@ import type {
 import { PlusCircle, Settings } from 'lucide-react';
 import type React from 'react';
 import { useState } from 'react';
+import { CategoryEditModal } from '@/components/3_organisms/modals/category-edit-modal';
+import type { IconName } from '@/lib/lucide-icon-registry';
 
 interface ResidentDetailTabsProps {
   resident: Resident;
@@ -58,11 +59,12 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
   const [isPointModalOpen, setIsPointModalOpen] = useState(false);
   const [isAddCategoryModalOpen, setIsAddCategoryModalOpen] = useState(false);
   const [pointContents, setPointContents] = useState<Record<string, string>>({
-    '食事': '<h2>食事に関する個別ポイント</h2><p>朝食：全粥・常菜・常食</p><p>昼食：全粥・常菜・常食</p><p>夕食：全粥・常菜・常食</p><ul><li>嚥下機能は良好</li><li>自力摂取可能</li><li>食事の際は前かがみの姿勢を保持</li><li>水分とろみ剤使用（中間のとろみ）</li></ul>',
-    '移乗介助': '<h2>移乗介助に関する個別ポイント</h2><p>基本的に見守りで自立</p><p>疲労時は一部介助が必要</p>',
-    '服薬': '<h2>服薬に関する個別ポイント</h2><p>自己管理は難しいため、職員管理</p><p>薬は粉砕して提供</p><p>水分はとろみをつけて提供</p>',
-    '接遇': '<h2>接遇に関する個別ポイント</h2><p>耳が遠いため、大きな声でゆっくり話す</p><p>目線を合わせて話しかける</p>',
-    '入浴': '<h2>入浴に関する個別ポイント</h2><p>一般浴槽使用</p><p>洗身は部分介助</p><p>洗髪は全介助</p><p>浴室内は見守り</p>',
+    食事: '<h2>食事に関する個別ポイント</h2><p>朝食：全粥・常菜・常食</p><p>昼食：全粥・常菜・常食</p><p>夕食：全粥・常菜・常食</p><ul><li>嚥下機能は良好</li><li>自力摂取可能</li><li>食事の際は前かがみの姿勢を保持</li><li>水分とろみ剤使用（中間のとろみ）</li></ul>',
+    移乗介助:
+      '<h2>移乗介助に関する個別ポイント</h2><p>基本的に見守りで自立</p><p>疲労時は一部介助が必要</p>',
+    服薬: '<h2>服薬に関する個別ポイント</h2><p>自己管理は難しいため、職員管理</p><p>薬は粉砕して提供</p><p>水分はとろみをつけて提供</p>',
+    接遇: '<h2>接遇に関する個別ポイント</h2><p>耳が遠いため、大きな声でゆっくり話す</p><p>目線を合わせて話しかける</p>',
+    入浴: '<h2>入浴に関する個別ポイント</h2><p>一般浴槽使用</p><p>洗身は部分介助</p><p>洗髪は全介助</p><p>浴室内は見守り</p>',
   });
   const [showOnlyWithContent, setShowOnlyWithContent] = useState(false);
   const [contacts, setContacts] = useState<ContactPerson[]>(resident.contacts || []);
@@ -104,7 +106,7 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
     setIsContactModalOpen(true);
   };
 
-  const handleOpenAddCategoryModal = () => {
+  const handleAddCategory = () => {
     setIsAddCategoryModalOpen(true);
   };
 
@@ -131,10 +133,6 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
   const handlePointCategoryClick = (category: string) => {
     setSelectedPointCategory(category);
     setIsPointModalOpen(true);
-  };
-  
-  const handleCategoryManagement = () => {
-    setIsCategoryModalOpen(true);
   };
 
   const handlePointDetailSave = async (content: string) => {
@@ -164,7 +162,7 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
     return Promise.resolve();
   };
 
-  const handleAddCategory = async (data: { category: string; icon: IconName }) => {
+  const handleCategoryCreate = async (data: { category: string; icon: IconName }) => {
     // In a real application, this would call an API to create a new category
     // Generate a truly unique ID using timestamp and random number
     const uniqueId = `ip_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
@@ -184,55 +182,14 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
     return Promise.resolve();
   };
 
-  const handleUpdateCategory = async (id: string, data: { category: string; icon: IconName }) => {
-    // In a real application, this would call an API to update the category
-    
-    // Update local state immutably
-    setIndividualPoints((prev) => 
-      prev.map((point) => 
-        point.id === id 
-          ? { ...point, category: data.category, icon: data.icon }
-          : point
-      )
+  // --- 追加: カテゴリ編集・削除ハンドラ ---
+  const handleCategoryUpdate = (updated: { id: string; category: string; icon: IconName }) => {
+    setIndividualPoints((prev) =>
+      prev.map((cat) => (cat.id === updated.id ? { ...cat, ...updated } : cat))
     );
-    
-    // If the category name changed, update the pointContents object
-    const oldCategory = individualPoints.find(p => p.id === id)?.category;
-    if (oldCategory && oldCategory !== data.category && pointContents[oldCategory]) {
-      setPointContents((prev) => {
-        const newContents = { ...prev };
-        newContents[data.category] = newContents[oldCategory];
-        delete newContents[oldCategory];
-        return newContents;
-      });
-    }
-    
-    // Simulate API call delay
-    await new Promise((resolve) => setTimeout(resolve, 800));
-    return Promise.resolve();
   };
-  
-  const handleDeleteCategory = async (id: string) => {
-    // In a real application, this would call an API to delete the category
-    
-    // Get the category name before deleting
-    const categoryToDelete = individualPoints.find(p => p.id === id)?.category;
-    
-    // Update local state immutably
-    setIndividualPoints((prev) => prev.filter((point) => point.id !== id));
-    
-    // Also remove any content associated with this category
-    if (categoryToDelete && pointContents[categoryToDelete]) {
-      setPointContents((prev) => {
-        const newContents = { ...prev };
-        delete newContents[categoryToDelete];
-        return newContents;
-      });
-    }
-    
-    // Simulate API call delay
-    await new Promise((resolve) => setTimeout(resolve, 800));
-    return Promise.resolve();
+  const handleCategoryDelete = (id: string) => {
+    setIndividualPoints((prev) => prev.filter((cat) => cat.id !== id));
   };
 
   const handleContactSubmit = async (contactData: ContactFormData): Promise<boolean> => {
@@ -394,7 +351,7 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
       case 'medicationStatus':
         return handleAddMedicationStatus;
       case 'points':
-        return handleOpenAddCategoryModal;
+        return handleAddCategory;
       default:
         return undefined;
     }
@@ -562,21 +519,19 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
           <div className="mb-4 flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Button
-                variant={showOnlyWithContent ? 'default' : 'outline'} 
-                className={showOnlyWithContent 
-                  ? 'bg-carebase-blue hover:bg-carebase-blue-dark' 
-                  : 'bg-white'
-                } 
+                variant={showOnlyWithContent ? 'default' : 'outline'}
+                className={
+                  showOnlyWithContent ? 'bg-carebase-blue hover:bg-carebase-blue-dark' : 'bg-white'
+                }
                 onClick={() => setShowOnlyWithContent(true)}
               >
                 内容のある項目のみ表示
               </Button>
               <Button
-                variant={!showOnlyWithContent ? 'default' : 'outline'} 
-                className={!showOnlyWithContent 
-                  ? 'bg-carebase-blue hover:bg-carebase-blue-dark' 
-                  : 'bg-white'
-                } 
+                variant={!showOnlyWithContent ? 'default' : 'outline'}
+                className={
+                  !showOnlyWithContent ? 'bg-carebase-blue hover:bg-carebase-blue-dark' : 'bg-white'
+                }
                 onClick={() => setShowOnlyWithContent(false)}
               >
                 すべて表示
@@ -584,14 +539,17 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
             </div>
             <Button
               variant="outline"
-              className="bg-white border-carebase-blue text-carebase-blue hover:bg-carebase-blue-light"
-              onClick={handleCategoryManagement}
+              className="bg-white"
+              onClick={() => setIsCategoryModalOpen(true)}
             >
               <Settings className="h-4 w-4 mr-2" />
               カテゴリを編集
             </Button>
           </div>
 
+          <div className="mb-4 flex justify-end">
+            <div className="flex gap-2"></div>
+          </div>
           {individualPoints && individualPoints.length > 0 ? (
             <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
               {individualPoints
@@ -656,22 +614,23 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
         residentName={resident.name}
       />
 
-      <CategoryCreationModal
-        isOpen={isAddCategoryModalOpen}
-        onClose={() => setIsAddCategoryModalOpen(false)}
-        onSubmit={handleAddCategory}
-        title="個別ポイントカテゴリの追加"
-        description="新しい個別ポイントのカテゴリを作成します。"
-        submitLabel="作成"
-      />
-
-      <CategoryManagementModal
+      {/* --- 追加: カテゴリ編集モーダル --- */}
+      <CategoryEditModal
         isOpen={isCategoryModalOpen}
         onClose={() => setIsCategoryModalOpen(false)}
         categories={individualPoints}
-        onAddCategory={handleAddCategory}
-        onUpdateCategory={handleUpdateCategory}
-        onDeleteCategory={handleDeleteCategory}
+        onUpdate={handleCategoryUpdate}
+        onDelete={handleCategoryDelete}
+      />
+
+      {/* --- 追加用モーダルは追加ボタン専用に --- */}
+      <CategoryCreationModal
+        isOpen={isAddCategoryModalOpen}
+        onClose={() => setIsAddCategoryModalOpen(false)}
+        onSubmit={handleCategoryCreate}
+        title="個別ポイントカテゴリの追加"
+        description="新しい個別ポイントのカテゴリを作成します。"
+        submitLabel="作成"
       />
 
       <IndividualPointModal
