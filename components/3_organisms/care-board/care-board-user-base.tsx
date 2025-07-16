@@ -51,7 +51,7 @@ export function UserBaseView() {
               return (
                 <div
                   key={`${resident.id}-${category.key}`}
-                  className="p-2 border-b border-r border-gray-200 text-sm text-center hover:bg-gray-50 transition-colors cursor-pointer"
+                  className="p-2 border-b border-r border-gray-200 text-sm text-center hover:bg-gray-50 transition-colors cursor-pointer min-h-16"
                   style={{ backgroundColor: event ? bgColor : 'transparent' }}
                 >
                   {event ? (

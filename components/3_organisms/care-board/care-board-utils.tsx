@@ -86,7 +86,7 @@ interface CareEventStatusProps {
 export const CareEventStatus: React.FC<CareEventStatusProps> = ({
   event,
   category,
-  status = 'scheduled',
+  status = 'scheduled'
 }) => {
   const Icon = getLucideIcon(event.icon);
   const baseColorArr: number[] = category ? CARE_CATEGORY_COLORS[category] : [51, 51, 51];
@@ -122,7 +122,7 @@ export const CareEventStatus: React.FC<CareEventStatusProps> = ({
   const statusStyles = getStatusStyles();
   return (
     <div
-      className="flex items-center gap-1 p-1.5 rounded-md text-xs relative transition-all duration-200"
+      className="flex items-center gap-1 p-1.5 rounded-md text-xs relative transition-all duration-200 w-full"
       style={{
         backgroundColor: statusStyles.background,
         border: statusStyles.border,

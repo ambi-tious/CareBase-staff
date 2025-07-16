@@ -11,8 +11,6 @@ import { CARE_CATEGORY_COLORS } from './care-board-utils';
 import { CareEventStatus } from './care-board-utils';
 import { ResidentInfoCell } from './care-board-utils';
 
-type CareEventStatusType = 'scheduled' | 'completed' | 'in-progress' | 'missed';
-
 export function TimeBaseView() {
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
   const currentTimeRowRef = useRef<HTMLDivElement | null>(null);
@@ -71,7 +69,7 @@ export function TimeBaseView() {
 
     return (
       <div
-        className={`h-16 border-b border-gray-200 p-1.5 flex flex-col items-start justify-start gap-1.5 overflow-y-auto`}
+        className={`min-h-16 border-b border-gray-200 p-1.5 flex flex-col items-start justify-start gap-1.5`}
       >
         {relevantEvents.map((event) => {
           const category = event.categoryKey;
@@ -128,7 +126,7 @@ export function TimeBaseView() {
                 <div
                   key={`${resident.id}-${time}`}
                   className={cn(
-                    'border-r border-gray-200 relative',
+                    'border-r border-gray-200 relative h-auto',
                     time === currentTime ? 'bg-yellow-50' : '',
                     parseInt(time.split(':')[0]) % 2 === 0 ? 'bg-gray-50/50' : ''
                   )}
