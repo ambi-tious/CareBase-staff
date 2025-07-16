@@ -1,12 +1,14 @@
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
+import { Input } from '@/components/ui/input'; 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Label } from '@/components/ui/label';
 import { getLucideIcon } from '@/lib/lucide-icon-registry';
 import { CareCategoryKey, CareEvent, careCategories } from '@/mocks/care-board-data';
-import { Check, Clock, Save, Thermometer, User, X } from 'lucide-react';
-import React, { useState } from 'react';
+import { Check, Clock, Save, Thermometer, User, X, Calendar } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
 
 // 利用者情報セル（アイコン・名前・careLevelバッジ）共通化
 import type { Resident } from '@/mocks/care-board-data';
@@ -152,7 +154,7 @@ export function rgbToString(rgb: number[]) {
 }
 
 // ステータスを予定と実績のみに簡略化
-type CareEventStatus = 'scheduled' | 'completed';
+export type CareEventStatus = 'scheduled' | 'completed';
 
 interface CareEventStatusProps {
   event: CareEvent;
@@ -219,6 +221,7 @@ interface CareRecordModalProps {
   event: CareEvent;
   residentId: number;
   residentName: string;
+  status?: CareEventStatus;
   isNew?: boolean;
   onClose: () => void;
   onSave: (updatedEvent: CareEvent, residentId: number, isNew: boolean) => void;
@@ -228,13 +231,49 @@ export const CareRecordModal: React.FC<CareRecordModalProps> = ({
   event,
   residentId,
   residentName,
+  status = 'scheduled',
   isNew = false,
   onClose,
   onSave
 }) => {
   const [updatedEvent, setUpdatedEvent] = useState<CareEvent>({...event});
-  const [staffName, setStaffName] = useState<string>('田中 花子'); // デフォルト担当者
+  const [staffName, setStaffName] = useState<string>(''); // 担当者
+  const [eventStatus, setEventStatus] = useState<CareEventStatus>(status);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [hour, setHour] = useState<string>('');
+  const [minute, setMinute] = useState<string>('');
+
+  // ログインユーザー情報を取得
+  useEffect(() => {
+    try {
+      // ローカルストレージから選択されたスタッフデータを取得
+      const staffDataStr = localStorage.getItem('carebase_selected_staff_data');
+      if (staffDataStr) {
+        const staffData = JSON.parse(staffDataStr);
+        setStaffName(staffData.staff.name);
+      } else {
+        // フォールバック: ローカルストレージにデータがない場合
+        setStaffName('田中 花子');
+      }
+    } catch (error) {
+      console.error('Failed to load staff data:', error);
+      setStaffName('田中 花子');
+    }
+  }, []);
+
+  // 初期時間設定
+  useEffect(() => {
+    if (updatedEvent.time && updatedEvent.time !== 'N/A') {
+      const [hourPart, minutePart] = updatedEvent.time.split(':');
+      setHour(hourPart);
+      setMinute(minutePart || '00');
+    } else {
+      // 現在時刻をデフォルト値として設定
+      const now = new Date();
+      setHour(now.getHours().toString().padStart(2, '0'));
+      setMinute(now.getMinutes().toString().padStart(2, '0'));
+    }
+  }, [updatedEvent.time]);
 
   // 時間オプションを生成
   const timeOptions = Array.from({ length: 24 }).map((_, hour) => {
@@ -244,10 +283,19 @@ export const CareRecordModal: React.FC<CareRecordModalProps> = ({
     };
   });
 
+  // 分オプションを生成（5分間隔）
+  const minuteOptions = Array.from({ length: 12 }).map((_, index) => {
+    const minute = index * 5;
+    return {
+      value: minute.toString().padStart(2, '0'),
+      label: minute.toString().padStart(2, '0')
+    };
+  });
+
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
     
-    if (!updatedEvent.time || updatedEvent.time === 'N/A') {
+    if (!hour) {
       newErrors.time = '時間を選択してください';
     }
     
@@ -267,16 +315,33 @@ export const CareRecordModal: React.FC<CareRecordModalProps> = ({
     return Object.keys(newErrors).length === 0;
   };
 
+  // 時間と分を結合して更新
+  const updateTime = () => {
+    const formattedTime = `${hour}:${minute}`;
+    setUpdatedEvent(prev => ({
+      ...prev,
+      time: formattedTime
+    }));
+  };
+
+  // 時間または分が変更されたときに更新
+  useEffect(() => {
+    if (hour && minute) {
+      updateTime();
+    }
+  }, [hour, minute]);
+
   const handleSave = () => {
     if (!validateForm()) return;
     
     // 担当者情報をdetailsに追加
-    const details = `担当者: ${staffName}\n${updatedEvent.details || ''}`;
+    const details = `担当者: ${staffName}\n実施状況: ${eventStatus === 'completed' ? '実施済み' : '予定'}\n${updatedEvent.details || ''}`;
     
     onSave(
       {
         ...updatedEvent,
-        details
+        details,
+        status: eventStatus // 実施状況を保存
       },
       residentId,
       isNew
@@ -295,31 +360,57 @@ export const CareRecordModal: React.FC<CareRecordModalProps> = ({
         <div className="py-4 space-y-4">
           <div className="flex items-center gap-2 text-sm text-gray-500 mb-2">
             <User className="h-4 w-4" />
-            <span>利用者: {residentName}</span>
+            <span>利用者: <strong>{residentName}</strong></span>
           </div>
           
           <div className="space-y-4">
-            <div className="space-y-2">
-              <label className="text-sm font-medium flex items-center">
-                <Clock className="h-4 w-4 mr-1" />
-                時間 <span className="text-red-500 ml-1">*</span>
-              </label>
-              <Select
-                value={updatedEvent.time}
-                onValueChange={(value) => setUpdatedEvent({...updatedEvent, time: value})}
-              >
-                <SelectTrigger className={errors.time ? 'border-red-500' : ''}>
-                  <SelectValue placeholder="時間を選択" />
-                </SelectTrigger>
-                <SelectContent>
-                  {timeOptions.map(option => (
-                    <SelectItem key={option.value} value={option.value}>
-                      {option.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              {errors.time && <p className="text-red-500 text-xs">{errors.time}</p>}
+            <div className="space-y-2 border p-4 rounded-md bg-gray-50">
+              <div className="flex items-center mb-2">
+                <Clock className="h-4 w-4 mr-2" />
+                <label className="text-sm font-medium">
+                  時間 <span className="text-red-500">*</span>
+                </label>
+              </div>
+              
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="text-xs text-gray-500 mb-1 block">時</label>
+                  <Select
+                    value={hour}
+                    onValueChange={setHour}
+                  >
+                    <SelectTrigger className={errors.time ? 'border-red-500' : ''}>
+                      <SelectValue placeholder="時" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {Array.from({ length: 24 }).map((_, i) => (
+                        <SelectItem key={i} value={i.toString().padStart(2, '0')}>
+                          {i.toString().padStart(2, '0')}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <label className="text-xs text-gray-500 mb-1 block">分</label>
+                  <Select
+                    value={minute}
+                    onValueChange={setMinute}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="分" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {minuteOptions.map(option => (
+                        <SelectItem key={option.value} value={option.value}>
+                          {option.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+              {errors.time && <p className="text-red-500 text-xs mt-1">{errors.time}</p>}
             </div>
             
             <div className="space-y-2">
@@ -368,16 +459,37 @@ export const CareRecordModal: React.FC<CareRecordModalProps> = ({
             </div>
             
             <div className="space-y-2">
-              <label className="text-sm font-medium">
-                担当者 <span className="text-red-500 ml-1">*</span>
-              </label>
-              <Input
-                value={staffName}
-                onChange={(e) => setStaffName(e.target.value)}
-                placeholder="例: 田中 花子"
-                className={errors.staffName ? 'border-red-500' : ''}
-              />
-              {errors.staffName && <p className="text-red-500 text-xs">{errors.staffName}</p>}
+              <div className="flex items-center mb-2">
+                <User className="h-4 w-4 mr-2" />
+                <label className="text-sm font-medium">
+                  担当者
+                </label>
+              </div>
+              <div className="p-3 border rounded-md bg-gray-50">
+                <p className="text-sm font-medium">{staffName}</p>
+                <p className="text-xs text-gray-500 mt-1">ログイン中のユーザーが自動的に設定されます</p>
+              </div>
+            </div>
+            
+            <div className="space-y-2 border p-4 rounded-md bg-gray-50">
+              <div className="flex items-center mb-2">
+                <Calendar className="h-4 w-4 mr-2" />
+                <label className="text-sm font-medium">
+                  実施状況
+                </label>
+              </div>
+              <RadioGroup value={eventStatus} onValueChange={(value) => setEventStatus(value as CareEventStatus)}>
+                <div className="flex items-center space-x-6">
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="scheduled" id="scheduled" />
+                    <Label htmlFor="scheduled" className="text-sm">予定</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="completed" id="completed" />
+                    <Label htmlFor="completed" className="text-sm">実施済み</Label>
+                  </div>
+                </div>
+              </RadioGroup>
             </div>
             
             <div className="space-y-2">

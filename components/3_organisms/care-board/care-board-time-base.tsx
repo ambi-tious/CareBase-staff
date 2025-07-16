@@ -1,8 +1,8 @@
 import { cn } from '@/lib/utils';
 import { CareCategoryKey, CareEvent, careBoardData } from '@/mocks/care-board-data';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
-import { CareEventStatus, CareRecordModal, ResidentInfoCell, VitalSigns } from './care-board-utils';
+import { DragDropContext, Draggable, Droppable, DropResult } from 'react-beautiful-dnd';
+import { CareEventStatus, CareRecordModal, ResidentInfoCell, VitalSigns, rgbToRgba, CARE_CATEGORY_COLORS } from './care-board-utils';
 
 export function TimeBaseView() {
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
@@ -13,6 +13,7 @@ export function TimeBaseView() {
     event: CareEvent;
     residentId: number;
     residentName: string;
+    status?: CareEventStatus;
     isNew?: boolean;
   } | null>(null);
   const [careEvents, setCareEvents] = useState<Record<number, CareEvent[]>>({});
@@ -73,7 +74,8 @@ export function TimeBaseView() {
     setSelectedEvent({
       event,
       residentId,
-      residentName
+      residentName,
+      status: getEventStatus(event)
     });
   }, []);
 
@@ -90,7 +92,7 @@ export function TimeBaseView() {
     setSelectedEvent({
       event: newEvent,
       residentId,
-      residentName,
+      residentName, 
       isNew: true
     });
   }, []);
@@ -123,7 +125,7 @@ export function TimeBaseView() {
     setSelectedEvent(null);
   }, [selectedEvent]);
 
-  const handleDragEnd = useCallback((result: any) => {
+  const handleDragEnd = useCallback((result: DropResult) => {
     if (!result.destination) return;
     
     const { draggableId, destination } = result;
@@ -342,6 +344,7 @@ export function TimeBaseView() {
         event={selectedEvent.event}
         residentId={selectedEvent.residentId}
         residentName={selectedEvent.residentName}
+        status={selectedEvent.status}
         isNew={selectedEvent.isNew}
         onClose={() => setSelectedEvent(null)}
         onSave={handleSaveRecord}
