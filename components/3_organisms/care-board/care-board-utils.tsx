@@ -334,7 +334,7 @@ export const CareRecordModal: React.FC<CareRecordModalProps> = ({
     if (!validateForm()) return;
     
     // 担当者情報をdetailsに追加
-    const details = `担当者: ${staffName}\n実施状況: ${eventStatus === 'completed' ? '実施済み' : '予定'}\n${updatedEvent.details || ''}`;
+    const details = `担当者: ${staffName}\n${updatedEvent.details || ''}`.trim();
     
     onSave(
       {
