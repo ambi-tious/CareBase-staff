@@ -1,8 +1,13 @@
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { getLucideIcon } from '@/lib/lucide-icon-registry';
-import { CareCategoryKey, CareEvent } from '@/mocks/care-board-data';
-import { Check, Thermometer } from 'lucide-react';
-import React from 'react';
+import { CareCategoryKey, CareEvent, careCategories } from '@/mocks/care-board-data';
+import { Check, Clock, Save, Thermometer, User, X } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { format } from 'date-fns';
 
 // 利用者情報セル（アイコン・名前・careLevelバッジ）共通化
 import type { Resident } from '@/mocks/care-board-data';
@@ -207,5 +212,201 @@ export const CareEventStatus: React.FC<CareEventStatusProps> = ({
         </div>
       )}
     </div>
+  );
+};
+
+// ケア記録モーダル
+interface CareRecordModalProps {
+  event: CareEvent;
+  residentId: number;
+  residentName: string;
+  isNew?: boolean;
+  onClose: () => void;
+  onSave: (updatedEvent: CareEvent, residentId: number, isNew: boolean) => void;
+}
+
+export const CareRecordModal: React.FC<CareRecordModalProps> = ({
+  event,
+  residentId,
+  residentName,
+  isNew = false,
+  onClose,
+  onSave
+}) => {
+  const [updatedEvent, setUpdatedEvent] = useState<CareEvent>({...event});
+  const [staffName, setStaffName] = useState<string>('田中 花子'); // デフォルト担当者
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
+  // 時間オプションを生成
+  const timeOptions = Array.from({ length: 24 }).map((_, hour) => {
+    return {
+      value: `${hour.toString().padStart(2, '0')}:00`,
+      label: `${hour.toString().padStart(2, '0')}:00`
+    };
+  });
+
+  const validateForm = () => {
+    const newErrors: Record<string, string> = {};
+    
+    if (!updatedEvent.time || updatedEvent.time === 'N/A') {
+      newErrors.time = '時間を選択してください';
+    }
+    
+    if (!updatedEvent.categoryKey) {
+      newErrors.categoryKey = 'ケア種別を選択してください';
+    }
+    
+    if (!updatedEvent.label || updatedEvent.label.trim() === '') {
+      newErrors.label = '内容を入力してください';
+    }
+    
+    if (!staffName || staffName.trim() === '') {
+      newErrors.staffName = '担当者を入力してください';
+    }
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSave = () => {
+    if (!validateForm()) return;
+    
+    // 担当者情報をdetailsに追加
+    const details = `担当者: ${staffName}\n${updatedEvent.details || ''}`;
+    
+    onSave(
+      {
+        ...updatedEvent,
+        details
+      },
+      residentId,
+      isNew
+    );
+  };
+
+  return (
+    <Dialog open={true} onOpenChange={onClose}>
+      <DialogContent className="sm:max-w-[500px]">
+        <DialogHeader>
+          <DialogTitle className="text-xl font-bold flex items-center gap-2">
+            {isNew ? 'ケア記録の新規作成' : 'ケア記録の編集'}
+          </DialogTitle>
+        </DialogHeader>
+        
+        <div className="py-4 space-y-4">
+          <div className="flex items-center gap-2 text-sm text-gray-500 mb-2">
+            <User className="h-4 w-4" />
+            <span>利用者: {residentName}</span>
+          </div>
+          
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <label className="text-sm font-medium flex items-center">
+                <Clock className="h-4 w-4 mr-1" />
+                時間 <span className="text-red-500 ml-1">*</span>
+              </label>
+              <Select
+                value={updatedEvent.time}
+                onValueChange={(value) => setUpdatedEvent({...updatedEvent, time: value})}
+              >
+                <SelectTrigger className={errors.time ? 'border-red-500' : ''}>
+                  <SelectValue placeholder="時間を選択" />
+                </SelectTrigger>
+                <SelectContent>
+                  {timeOptions.map(option => (
+                    <SelectItem key={option.value} value={option.value}>
+                      {option.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              {errors.time && <p className="text-red-500 text-xs">{errors.time}</p>}
+            </div>
+            
+            <div className="space-y-2">
+              <label className="text-sm font-medium">
+                ケア種別 <span className="text-red-500 ml-1">*</span>
+              </label>
+              <Select
+                value={updatedEvent.categoryKey}
+                onValueChange={(value) => {
+                  const category = careCategories.find(c => c.key === value);
+                  setUpdatedEvent({
+                    ...updatedEvent, 
+                    categoryKey: value as CareCategoryKey,
+                    icon: category?.icon || 'ClipboardList'
+                  });
+                }}
+              >
+                <SelectTrigger className={errors.categoryKey ? 'border-red-500' : ''}>
+                  <SelectValue placeholder="ケア種別を選択" />
+                </SelectTrigger>
+                <SelectContent>
+                  {careCategories.map(category => (
+                    <SelectItem key={category.key} value={category.key}>
+                      <div className="flex items-center gap-2">
+                        {React.createElement(getLucideIcon(category.icon), { className: 'h-4 w-4' })}
+                        <span>{category.label}</span>
+                      </div>
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              {errors.categoryKey && <p className="text-red-500 text-xs">{errors.categoryKey}</p>}
+            </div>
+            
+            <div className="space-y-2">
+              <label className="text-sm font-medium">
+                内容 <span className="text-red-500 ml-1">*</span>
+              </label>
+              <Input
+                value={updatedEvent.label}
+                onChange={(e) => setUpdatedEvent({...updatedEvent, label: e.target.value})}
+                placeholder="例: 食事摂取量8割"
+                className={errors.label ? 'border-red-500' : ''}
+              />
+              {errors.label && <p className="text-red-500 text-xs">{errors.label}</p>}
+            </div>
+            
+            <div className="space-y-2">
+              <label className="text-sm font-medium">
+                担当者 <span className="text-red-500 ml-1">*</span>
+              </label>
+              <Input
+                value={staffName}
+                onChange={(e) => setStaffName(e.target.value)}
+                placeholder="例: 田中 花子"
+                className={errors.staffName ? 'border-red-500' : ''}
+              />
+              {errors.staffName && <p className="text-red-500 text-xs">{errors.staffName}</p>}
+            </div>
+            
+            <div className="space-y-2">
+              <label className="text-sm font-medium">
+                備考
+              </label>
+              <textarea
+                value={updatedEvent.details || ''}
+                onChange={(e) => setUpdatedEvent({...updatedEvent, details: e.target.value})}
+                placeholder="備考があれば入力してください"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                rows={3}
+              />
+            </div>
+          </div>
+        </div>
+        
+        <DialogFooter className="flex justify-end gap-2">
+          <Button variant="outline" onClick={onClose}>
+            <X className="h-4 w-4 mr-2" />
+            キャンセル
+          </Button>
+          <Button onClick={handleSave} className="bg-carebase-blue hover:bg-carebase-blue-dark">
+            <Save className="h-4 w-4 mr-2" />
+            {isNew ? '登録' : '更新'}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 };
