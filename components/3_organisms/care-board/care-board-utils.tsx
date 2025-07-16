@@ -1,13 +1,12 @@
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { getLucideIcon } from '@/lib/lucide-icon-registry';
 import { CareCategoryKey, CareEvent, careCategories } from '@/mocks/care-board-data';
 import { Check, Clock, Save, Thermometer, User, X } from 'lucide-react';
-import React, { useState, useEffect } from 'react';
-import { format } from 'date-fns';
+import React, { useState } from 'react';
 
 // 利用者情報セル（アイコン・名前・careLevelバッジ）共通化
 import type { Resident } from '@/mocks/care-board-data';

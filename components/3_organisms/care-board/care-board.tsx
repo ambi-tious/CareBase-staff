@@ -20,8 +20,7 @@ import {
   Printer,
   Users
 } from 'lucide-react';
-import React, { useState } from 'react';
-import { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { TimeBaseView } from './care-board-time-base';
 import { UserBaseView } from './care-board-user-base';
 import { CARE_CATEGORY_COLORS, rgbToString } from './care-board-utils';

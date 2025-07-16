@@ -1,7 +1,7 @@
 import { getLucideIcon } from '@/lib/lucide-icon-registry';
 import { careBoardData, careCategories, CareCategoryKey, CareEvent } from '@/mocks/care-board-data';
-import React, { useState, useCallback, useEffect } from 'react';
-import { CARE_CATEGORY_COLORS, ResidentInfoCell, rgbToString, VitalSigns, CareEventStatus, CareRecordModal } from './care-board-utils';
+import React, { useCallback, useEffect, useState } from 'react';
+import { CARE_CATEGORY_COLORS, CareEventStatus, CareRecordModal, ResidentInfoCell, rgbToString, VitalSigns } from './care-board-utils';
 
 export function UserBaseView() {
   const [isClient, setIsClient] = useState(false);
@@ -113,125 +113,127 @@ export function UserBaseView() {
   };
 
   return (
-    <div className="overflow-x-auto bg-white rounded-lg shadow-md">
-      <div
-        className="grid"
-        style={{
-          gridTemplateColumns: `220px repeat(${careCategories.length}, minmax(120px, 1fr))`,
-        }}
-      >
-        <div className="sticky top-0 left-0 bg-carebase-blue text-white p-3 border-b border-r border-gray-300 z-20 flex items-center justify-center h-16">
-          <span className="text-base font-semibold">利用者名</span>
-        </div>
-        {careCategories.map((category) => (
-          <div
-            key={category.key}
-            className="sticky top-0 bg-carebase-blue text-white p-3 border-b border-r border-gray-300 z-10 text-sm text-center flex flex-col items-center justify-center h-16"
-            style={{ backgroundColor: rgbToString(CARE_CATEGORY_COLORS[category.key]) }}
-          >
-            <div className="flex items-center justify-center mb-1">
-              {React.createElement(getLucideIcon(category.icon), { className: 'h-5 w-5 mr-1' })}
-              <span>{category.label}</span>
-            </div>
+    <>
+      <div className="overflow-x-auto bg-white rounded-lg shadow-md">
+        <div
+          className="grid"
+          style={{
+            gridTemplateColumns: `220px repeat(${careCategories.length}, minmax(120px, 1fr))`,
+          }}
+        >
+          <div className="sticky top-0 left-0 bg-carebase-blue text-white p-3 border-b border-r border-gray-300 z-20 flex items-center justify-center h-16">
+            <span className="text-base font-semibold">利用者名</span>
           </div>
-        ))}
-        {careBoardData.map((resident) => (
-          <div key={resident.id} className="contents">
-            <div className="flex items-center gap-3 p-3 border-b border-r border-gray-200 bg-gray-50 sticky left-0 z-[5] hover:bg-gray-100 transition-colors">
-              <ResidentInfoCell resident={resident} />
+          {careCategories.map((category) => (
+            <div
+              key={category.key}
+              className="sticky top-0 bg-carebase-blue text-white p-3 border-b border-r border-gray-300 z-10 text-sm text-center flex flex-col items-center justify-center h-16"
+              style={{ backgroundColor: rgbToString(CARE_CATEGORY_COLORS[category.key]) }}
+            >
+              <div className="flex items-center justify-center mb-1">
+                {React.createElement(getLucideIcon(category.icon), { className: 'h-5 w-5 mr-1' })}
+                <span>{category.label}</span>
+              </div>
             </div>
-            {careCategories.map((category) => {
-              // バイタルカテゴリの特別処理
-              if (category.key === 'temperature') {
-                const vitalEvents = getVitalEventsForResident(resident.events);
-                const hasVitalEvents = vitalEvents.length > 0;
-                const vitalStatus = hasVitalEvents ? getEventStatus(vitalEvents[0]) : 'scheduled';
+          ))}
+          {careBoardData.map((resident) => (
+            <div key={resident.id} className="contents">
+              <div className="flex items-center gap-3 p-3 border-b border-r border-gray-200 bg-gray-50 sticky left-0 z-[5] hover:bg-gray-100 transition-colors">
+                <ResidentInfoCell resident={resident} />
+              </div>
+              {careCategories.map((category) => {
+                // バイタルカテゴリの特別処理
+                if (category.key === 'temperature') {
+                  const vitalEvents = getVitalEventsForResident(resident.events);
+                  const hasVitalEvents = vitalEvents.length > 0;
+                  const vitalStatus = hasVitalEvents ? getEventStatus(vitalEvents[0]) : 'scheduled';
 
-                return (
-                  <div
-                    key={`${resident.id}-vitals`}
-                    className="p-2 border-b border-r border-gray-200 text-sm text-center hover:bg-gray-50 transition-colors cursor-pointer min-h-16"
-                    style={{
-                      backgroundColor: hasVitalEvents ? 'rgba(231, 76, 60, 0.05)' : 'transparent',
-                    }}
-                    onClick={() => {
-                      if (!hasVitalEvents) {
-                        handleCellClick('temperature', resident.id, resident.name);
-                      }
-                    }}
-                  >
-                    {hasVitalEvents ? (
-                      <div onClick={(e) => {
-                        e.stopPropagation();
-                        handleEventClick(vitalEvents[0], resident.id, resident.name);
-                      }}>
-                        <VitalSigns events={vitalEvents} status={vitalStatus} />
-                      </div>
-                    ) : (
+                  return (
+                    <div
+                      key={`${resident.id}-vitals`}
+                      className="p-2 border-b border-r border-gray-200 text-sm text-center hover:bg-gray-50 transition-colors cursor-pointer min-h-16"
+                      style={{
+                        backgroundColor: hasVitalEvents ? 'rgba(231, 76, 60, 0.05)' : 'transparent',
+                      }}
+                      onClick={() => {
+                        if (!hasVitalEvents) {
+                          handleCellClick('temperature', resident.id, resident.name);
+                        }
+                      }}
+                    >
+                      {hasVitalEvents ? (
+                        <div onClick={(e) => {
+                          e.stopPropagation();
+                          handleEventClick(vitalEvents[0], resident.id, resident.name);
+                        }}>
+                          <VitalSigns events={vitalEvents} status={vitalStatus} />
+                        </div>
+                      ) : (
+                        <span className="text-gray-300">-</span>
+                      )}
+                    </div>
+                  );
+                }
+                // 血圧と脈拍のカテゴリはスキップ（バイタルにまとめるため）
+                else if (category.key === 'pulse' || category.key === 'bloodPressure') {
+                  return (
+                    <div
+                      key={`${resident.id}-${category.key}`}
+                      className="p-2 border-b border-r border-gray-200 text-sm text-center hover:bg-gray-50 transition-colors cursor-pointer min-h-16"
+                    >
                       <span className="text-gray-300">-</span>
-                    )}
-                  </div>
-                );
-              }
-              // 血圧と脈拍のカテゴリはスキップ（バイタルにまとめるため）
-              else if (category.key === 'pulse' || category.key === 'bloodPressure') {
-                return (
-                  <div
-                    key={`${resident.id}-${category.key}`}
-                    className="p-2 border-b border-r border-gray-200 text-sm text-center hover:bg-gray-50 transition-colors cursor-pointer min-h-16"
-                  >
-                    <span className="text-gray-300">-</span>
-                  </div>
-                );
-              }
-              // その他の通常カテゴリ
-              else {
-                const event = getNonVitalEventForCategory(resident.events, category.key);
-                const bgColor = category.key
-                  ? CARE_CATEGORY_COLORS[category.key] + '10'
-                  : '#f0f0f0';
-                return (
-                  <div
-                    key={`${resident.id}-${category.key}`}
-                    className="p-2 border-b border-r border-gray-200 text-sm text-center hover:bg-gray-50 transition-colors cursor-pointer min-h-16"
-                    style={{ backgroundColor: event ? bgColor : 'transparent' }}
-                    onClick={() => {
-                      if (!event) {
-                        handleCellClick(category.key, resident.id, resident.name);
-                      }
-                    }}
-                  >
-                    {event ? (
-                      <div onClick={(e) => {
-                        e.stopPropagation();
-                        handleEventClick(event, resident.id, resident.name);
-                      }}>
-                        <CareEventStatus
-                          event={event}
-                          category={category.key}
-                          status={getEventStatus(event)}
-                        />
-                      </div>
-                    ) : (
-                      <span className="text-gray-300">-</span>
-                    )}
-                  </div>
-                );
-              }
-            })}
-          </div>
-        ))}
+                    </div>
+                  );
+                }
+                // その他の通常カテゴリ
+                else {
+                  const event = getNonVitalEventForCategory(resident.events, category.key);
+                  const bgColor = category.key
+                    ? CARE_CATEGORY_COLORS[category.key] + '10'
+                    : '#f0f0f0';
+                  return (
+                    <div
+                      key={`${resident.id}-${category.key}`}
+                      className="p-2 border-b border-r border-gray-200 text-sm text-center hover:bg-gray-50 transition-colors cursor-pointer min-h-16"
+                      style={{ backgroundColor: event ? bgColor : 'transparent' }}
+                      onClick={() => {
+                        if (!event) {
+                          handleCellClick(category.key, resident.id, resident.name);
+                        }
+                      }}
+                    >
+                      {event ? (
+                        <div onClick={(e) => {
+                          e.stopPropagation();
+                          handleEventClick(event, resident.id, resident.name);
+                        }}>
+                          <CareEventStatus
+                            event={event}
+                            category={category.key}
+                            status={getEventStatus(event)}
+                          />
+                        </div>
+                      ) : (
+                        <span className="text-gray-300">-</span>
+                      )}
+                    </div>
+                  );
+                }
+              })}
+            </div>
+          ))}
+        </div>
       </div>
-    </div>
-    {selectedEvent && (
-      <CareRecordModal
-        event={selectedEvent.event}
-        residentId={selectedEvent.residentId}
-        residentName={selectedEvent.residentName}
-        isNew={selectedEvent.isNew}
-        onClose={() => setSelectedEvent(null)}
-        onSave={handleSaveRecord}
-      />
-    )}
+      {selectedEvent && (
+        <CareRecordModal
+          event={selectedEvent.event}
+          residentId={selectedEvent.residentId}
+          residentName={selectedEvent.residentName}
+          isNew={selectedEvent.isNew}
+          onClose={() => setSelectedEvent(null)}
+          onSave={handleSaveRecord}
+        />
+      )}
+    </>
   );
 }

@@ -1,8 +1,8 @@
 import { cn } from '@/lib/utils';
 import { CareCategoryKey, CareEvent, careBoardData } from '@/mocks/care-board-data';
-import { useEffect, useRef, useState, useCallback } from 'react';
-import { ResidentInfoCell, CareEventStatus, VitalSigns, CareRecordModal } from './care-board-utils';
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
+import { CareEventStatus, CareRecordModal, ResidentInfoCell, VitalSigns } from './care-board-utils';
 
 export function TimeBaseView() {
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
