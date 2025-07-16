@@ -8,7 +8,7 @@ export function TimeBaseView() {
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
   const currentTimeRowRef = useRef<HTMLDivElement | null>(null);
   const [isClient, setIsClient] = useState(false);
-  const [currentTime, setCurrentTime] = useState('07:00'); // デフォルト値を設定
+  const [currentTime, setCurrentTime] = useState(''); // 空文字で初期化
   const [selectedEvent, setSelectedEvent] = useState<{
     event: CareEvent;
     residentId: number;
@@ -268,7 +268,18 @@ export function TimeBaseView() {
   }
 
   return (
-    <DragDropContext onDragEnd={handleDragEnd}>
+    <>
+    {!isClient ? (
+      // Server-side rendering fallback
+      <div className="bg-white rounded-lg shadow-md overflow-hidden border border-gray-200">
+        <div className="overflow-auto max-h-[calc(100vh-200px)]">
+          <div className="flex items-center justify-center p-8">
+            <div className="text-gray-500">読み込み中...</div>
+          </div>
+        </div>
+      </div>
+    ) : (
+      <DragDropContext onDragEnd={handleDragEnd}>
     <div className="bg-white rounded-lg shadow-md overflow-hidden border border-gray-200">
       <div className="overflow-auto max-h-[calc(100vh-200px)]" ref={scrollContainerRef}>
         <div
@@ -336,6 +347,8 @@ export function TimeBaseView() {
         onSave={handleSaveRecord}
       />
     )}
-    </DragDropContext>
+      </DragDropContext>
+    )}
+    </>
   );
 }

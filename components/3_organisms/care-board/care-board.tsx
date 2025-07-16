@@ -29,10 +29,10 @@ type ActiveTabView = 'time' | 'user';
 
 export function CareBoard() {
   const [activeView, setActiveView] = useState<ActiveTabView>('time');
-  const [selectedDate, setSelectedDate] = useState<Date>(new Date('2025-01-01T00:00:00Z'));
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [showFilters, setShowFilters] = useState<boolean>(false);
 
-  // Update to current date on client side to avoid hydration mismatch
+  // Set current date on client side to avoid hydration mismatch
   useEffect(() => {
     setSelectedDate(new Date());
   }, []);
@@ -109,7 +109,7 @@ export function CareBoard() {
                 className="w-[160px] justify-start text-left font-medium text-carebase-text-primary text-base bg-white border-carebase-blue hover:bg-carebase-blue-light px-3 py-2 shadow-sm"
               >
                 <CalendarIcon className="mr-2 h-4 w-4 text-carebase-blue" />
-                {format(selectedDate, 'M月d日 (E)', { locale: ja })}
+                {selectedDate ? format(selectedDate, 'M月d日 (E)', { locale: ja }) : '読み込み中...'}
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-auto p-0">
