@@ -1,7 +1,7 @@
 import { getLucideIcon } from '@/lib/lucide-icon-registry';
 import { careBoardData, careCategories, CareCategoryKey, CareEvent } from '@/mocks/care-board-data';
 import React, { useCallback, useEffect, useState } from 'react';
-import { CARE_CATEGORY_COLORS, CareEventStatus, CareRecordModal, ResidentInfoCell, rgbToString, VitalSigns } from './care-board-utils';
+import { CARE_CATEGORY_COLORS, CareEventStatus, CareRecordModal, ResidentInfoCell, rgbToString, VitalSigns, rgbToRgba } from './care-board-utils';
 
 export function UserBaseView() {
   const [isClient, setIsClient] = useState(false);
@@ -9,6 +9,7 @@ export function UserBaseView() {
     event: CareEvent;
     residentId: number;
     residentName: string;
+    status?: CareEventStatus;
     isNew?: boolean;
   } | null>(null);
   const [careEvents, setCareEvents] = useState<Record<number, CareEvent[]>>({});
@@ -39,7 +40,8 @@ export function UserBaseView() {
     setSelectedEvent({
       event,
       residentId,
-      residentName
+      residentName,
+      status: getEventStatus(event)
     });
   }, []);
 
@@ -229,6 +231,7 @@ export function UserBaseView() {
           event={selectedEvent.event}
           residentId={selectedEvent.residentId}
           residentName={selectedEvent.residentName}
+          status={selectedEvent.status}
           isNew={selectedEvent.isNew}
           onClose={() => setSelectedEvent(null)}
           onSave={handleSaveRecord}
