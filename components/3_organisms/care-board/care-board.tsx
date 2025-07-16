@@ -26,29 +26,28 @@ import {
 } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link'; // Import Link
-import { useEffect, useRef, useState } from 'react';
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 type ActiveTabView = 'time' | 'user';
 
 // ケア種別ごとの色定義
 const CARE_CATEGORY_COLORS: Record<CareCategoryKey, string> = {
-  drinking: '#3498DB',     // 飲水: 青色系
-  excretion: '#795548',    // 排泄: 茶色系
-  breakfast: '#F39C12',    // 朝食: オレンジ系
-  lunch: '#F39C12',        // 昼食: オレンジ系
-  snack: '#F1C40F',        // おやつ: 黄色系
-  dinner: '#F39C12',       // 夕食: オレンジ系
-  bedtimeMeal: '#F39C12',  // 眠前食: オレンジ系
-  medication: '#9B59B6',   // 服薬: 紫色系
-  oralCare: '#9B59B6',     // 口腔ケア: 紫色系
-  eyeDrops: '#9B59B6',     // 点眼: 紫色系
-  bathing: '#4A90E2',      // 入浴: 水色系
-  temperature: '#E74C3C',  // 体温: 赤色系
-  pulse: '#E74C3C',        // 脈拍: 赤色系
-  bloodPressure: '#E74C3C',// 血圧: 赤色系
-  respiration: '#E74C3C',  // 呼吸: 赤色系
-  spo2: '#E74C3C',         // SpO2: 赤色系
+  drinking: '#3498DB', // 飲水: 青色系
+  excretion: '#795548', // 排泄: 茶色系
+  breakfast: '#F39C12', // 朝食: オレンジ系
+  lunch: '#F39C12', // 昼食: オレンジ系
+  snack: '#F1C40F', // おやつ: 黄色系
+  dinner: '#F39C12', // 夕食: オレンジ系
+  bedtimeMeal: '#F39C12', // 眠前食: オレンジ系
+  medication: '#9B59B6', // 服薬: 紫色系
+  oralCare: '#9B59B6', // 口腔ケア: 紫色系
+  eyeDrops: '#9B59B6', // 点眼: 紫色系
+  bathing: '#4A90E2', // 入浴: 水色系
+  temperature: '#E74C3C', // 体温: 赤色系
+  pulse: '#E74C3C', // 脈拍: 赤色系
+  bloodPressure: '#E74C3C', // 血圧: 赤色系
+  respiration: '#E74C3C', // 呼吸: 赤色系
+  spo2: '#E74C3C', // SpO2: 赤色系
 };
 
 // ケアイベントのステータス表示用コンポーネント
@@ -61,17 +60,15 @@ const CareEventStatus: React.FC<CareEventStatusProps> = ({ event, category }) =>
   const Icon = getLucideIcon(event.icon);
   const bgColor = category ? CARE_CATEGORY_COLORS[category] + '20' : '#f0f0f0'; // 20は透明度
   const textColor = category ? CARE_CATEGORY_COLORS[category] : '#333333';
-  
+
   return (
-    <div 
+    <div
       className="flex items-center gap-1 p-1 rounded-md text-xs"
       style={{ backgroundColor: bgColor, color: textColor, borderLeft: `3px solid ${textColor}` }}
     >
       <Icon className="h-3.5 w-3.5 flex-shrink-0" />
       <span className="font-medium truncate">{event.label}</span>
-      {event.time !== 'N/A' && (
-        <span className="text-xs opacity-75 ml-auto">{event.time}</span>
-      )}
+      {event.time !== 'N/A' && <span className="text-xs opacity-75 ml-auto">{event.time}</span>}
     </div>
   );
 };
@@ -82,7 +79,7 @@ function TimeBaseView() {
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
   // 現在時刻の行への参照
   const currentTimeRowRef = useRef<HTMLDivElement | null>(null);
-  
+
   // 画面読み込み完了後に現在時刻の行へスクロールする
   useEffect(() => {
     // 少し遅延させてDOMが完全に描画された後に実行
@@ -91,18 +88,18 @@ function TimeBaseView() {
         // 現在時刻の行の位置を取得
         const containerRect = scrollContainerRef.current.getBoundingClientRect();
         const rowRect = currentTimeRowRef.current.getBoundingClientRect();
-        
+
         // スクロール位置を計算（現在時刻の行が上部に来るように）
         const scrollTop = rowRect.top - containerRect.top - 20; // 20pxのオフセットで少し上に表示
-        
+
         // スムーズにスクロール
         scrollContainerRef.current.scrollTo({
           top: scrollTop,
-          behavior: 'smooth'
+          behavior: 'smooth',
         });
       }
     }, 300); // 300ms遅延
-    
+
     return () => clearTimeout(scrollTimer);
   }, []);
 
@@ -147,7 +144,7 @@ function TimeBaseView() {
       // 時間指定がある場合は時間で判断
       return event.time.startsWith(time.split(':')[0]);
     });
-    
+
     return (
       <div
         className={`h-16 border-b border-gray-200 p-1.5 flex flex-col items-start justify-start gap-1.5 overflow-y-auto`}
@@ -155,10 +152,10 @@ function TimeBaseView() {
         {relevantEvents.map((event) => {
           const category = event.categoryKey;
           return (
-            <CareEventStatus 
-              key={`${event.time}-${event.label}`} 
-              event={event} 
-              category={category} 
+            <CareEventStatus
+              key={`${event.time}-${event.label}`}
+              event={event}
+              category={category}
             />
           );
         })}
@@ -168,10 +165,7 @@ function TimeBaseView() {
 
   return (
     <div className="bg-white rounded-lg shadow-md overflow-hidden border border-gray-200">
-      <div
-        className="overflow-auto max-h-[calc(100vh-200px)]"
-        ref={scrollContainerRef}
-      > 
+      <div className="overflow-auto max-h-[calc(100vh-200px)]" ref={scrollContainerRef}>
         <div
           className="grid relative" // relative for sticky positioning context
           style={{
@@ -189,7 +183,10 @@ function TimeBaseView() {
               key={resident.id}
               className="sticky top-0 bg-carebase-blue text-white z-20 flex flex-col items-center py-2 border-b border-r border-gray-300 p-2"
             >
-              <Link href={`/residents/${resident.id}`} className="flex items-center gap-2 group w-full">
+              <Link
+                href={`/residents/${resident.id}`}
+                className="flex items-center gap-2 group w-full"
+              >
                 <div className="relative w-12 h-12 rounded-full overflow-hidden">
                   {' '}
                   <Image
@@ -287,7 +284,10 @@ function UserBaseView() {
         {careBoardData.map((resident) => (
           <div key={resident.id} className="contents">
             <div className="flex items-center gap-3 p-3 border-b border-r border-gray-200 bg-gray-50 sticky left-0 z-[5] hover:bg-gray-100 transition-colors">
-              <Link href={`/residents/${resident.id}`} className="flex items-center gap-2 group w-full">
+              <Link
+                href={`/residents/${resident.id}`}
+                className="flex items-center gap-2 group w-full"
+              >
                 <div className="relative w-12 h-12 rounded-full overflow-hidden">
                   {' '}
                   <Image
@@ -311,7 +311,7 @@ function UserBaseView() {
             {careCategories.map((category) => {
               const event = getEventForCategory(resident.events, category.key);
               const bgColor = category.key ? CARE_CATEGORY_COLORS[category.key] + '10' : '#f0f0f0'; // 10は透明度
-              
+
               return (
                 <div
                   key={`${resident.id}-${category.key}`}
@@ -350,8 +350,8 @@ export function CareBoard() {
             <Button
               onClick={() => setActiveView('time')}
               className={`px-4 py-2.5 font-medium text-base ${
-                activeView === 'time' 
-                  ? 'bg-carebase-blue hover:bg-carebase-blue-dark text-white shadow-sm' 
+                activeView === 'time'
+                  ? 'bg-carebase-blue hover:bg-carebase-blue-dark text-white shadow-sm'
                   : 'bg-transparent text-gray-700 hover:bg-gray-300'
               }`}
             >
@@ -361,8 +361,8 @@ export function CareBoard() {
             <Button
               onClick={() => setActiveView('user')}
               className={`px-4 py-2.5 font-medium text-base ${
-                activeView === 'user' 
-                  ? 'bg-carebase-blue hover:bg-carebase-blue-dark text-white shadow-sm' 
+                activeView === 'user'
+                  ? 'bg-carebase-blue hover:bg-carebase-blue-dark text-white shadow-sm'
                   : 'bg-transparent text-gray-700 hover:bg-gray-300'
               }`}
             >
@@ -452,15 +452,20 @@ export function CareBoard() {
             <div>
               <h3 className="text-sm font-medium mb-2">ケア種別</h3>
               <div className="flex flex-wrap gap-2">
-                {careCategories.slice(0, 6).map(category => (
-                  <Button 
-                    key={category.key} 
-                    variant="outline" 
+                {careCategories.slice(0, 6).map((category) => (
+                  <Button
+                    key={category.key}
+                    variant="outline"
                     size="sm"
                     className="text-xs"
-                    style={{ borderColor: CARE_CATEGORY_COLORS[category.key], color: CARE_CATEGORY_COLORS[category.key] }}
+                    style={{
+                      borderColor: CARE_CATEGORY_COLORS[category.key],
+                      color: CARE_CATEGORY_COLORS[category.key],
+                    }}
                   >
-                    {React.createElement(getLucideIcon(category.icon), { className: 'h-3 w-3 mr-1' })}
+                    {React.createElement(getLucideIcon(category.icon), {
+                      className: 'h-3 w-3 mr-1',
+                    })}
                     {category.label}
                   </Button>
                 ))}
@@ -469,16 +474,34 @@ export function CareBoard() {
             <div>
               <h3 className="text-sm font-medium mb-2">実施状況</h3>
               <div className="flex gap-2">
-                <Button variant="outline" size="sm" className="text-xs border-green-500 text-green-600">実施済</Button>
-                <Button variant="outline" size="sm" className="text-xs border-red-500 text-red-600">未実施</Button>
-                <Button variant="outline" size="sm" className="text-xs border-gray-400 text-gray-600">予定のみ</Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="text-xs border-green-500 text-green-600"
+                >
+                  実施済
+                </Button>
+                <Button variant="outline" size="sm" className="text-xs border-red-500 text-red-600">
+                  未実施
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="text-xs border-gray-400 text-gray-600"
+                >
+                  予定のみ
+                </Button>
               </div>
             </div>
             <div>
               <h3 className="text-sm font-medium mb-2">表示設定</h3>
               <div className="flex gap-2">
-                <Button variant="outline" size="sm" className="text-xs">全て表示</Button>
-                <Button variant="outline" size="sm" className="text-xs">現在時刻付近</Button>
+                <Button variant="outline" size="sm" className="text-xs">
+                  全て表示
+                </Button>
+                <Button variant="outline" size="sm" className="text-xs">
+                  現在時刻付近
+                </Button>
               </div>
             </div>
           </div>
@@ -486,7 +509,6 @@ export function CareBoard() {
       )}
 
       {activeView === 'time' ? <TimeBaseView /> : <UserBaseView />}
-
     </div>
   );
 }
