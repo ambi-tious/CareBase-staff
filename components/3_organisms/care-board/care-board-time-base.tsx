@@ -3,9 +3,7 @@ import { CareEvent, careBoardData } from '@/mocks/care-board-data';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
 import Image from 'next/image';
-import { getLucideIcon } from '@/lib/lucide-icon-registry';
-import { Check } from 'lucide-react';
-import { CARE_CATEGORY_COLORS } from './care-board-utils';
+import { CARE_CATEGORY_COLORS, VitalSigns } from './care-board-utils';
 
 // CareEventStatusコンポーネントは共通化するためutilsまたは別ファイルに分離推奨
 import { CareEventStatus } from './care-board-utils';
@@ -54,29 +52,59 @@ export function TimeBaseView() {
   const currentTime = getCurrentTimeSlot();
 
   // 予定と実績をランダムに割り当てる関数（デモ用）
-  const getEventStatus = (event: CareEvent): 'scheduled' | 'completed' => {
+  const getEventStatus = (_event: CareEvent): 'scheduled' | 'completed' => {
     // 実際の実装では、APIからのデータに基づいてステータスを設定します
     // ここではデモのためにランダムに割り当てています
     return Math.random() > 0.5 ? 'completed' : 'scheduled';
   };
 
   function EventCell({ events, time }: { events: CareEvent[]; time: string }) {
-    const relevantEvents = events.filter((event) => {
-      if (event.time === 'N/A' && event.categoryKey) {
-        const hour = parseInt(time.split(':')[0]);
-        if (event.categoryKey === 'breakfast' && hour >= 7 && hour < 9) return true;
-        if (event.categoryKey === 'lunch' && hour >= 12 && hour < 14) return true;
-        if (event.categoryKey === 'dinner' && hour >= 18 && hour < 20) return true;
-        return false;
+    // バイタル関連のカテゴリキー
+    const vitalCategories: CareCategoryKey[] = ['temperature', 'pulse', 'bloodPressure'];
+    
+    // バイタル以外のイベントをフィルタリング
+    const nonVitalEvents = events.filter((event) => {
+      if (!event.categoryKey || !vitalCategories.includes(event.categoryKey)) {
+        if (event.time === 'N/A') {
+          const hour = parseInt(time.split(':')[0]);
+          if (event.categoryKey === 'breakfast' && hour >= 7 && hour < 9) return true;
+          if (event.categoryKey === 'lunch' && hour >= 12 && hour < 14) return true;
+          if (event.categoryKey === 'dinner' && hour >= 18 && hour < 20) return true;
+          return false;
+        }
+        return event.time.startsWith(time.split(':')[0]);
       }
-      return event.time.startsWith(time.split(':')[0]);
+      return false;
     });
+    
+    // バイタルイベントをフィルタリング
+    const vitalEvents = events.filter((event) => {
+      if (event.time === 'N/A' && event.categoryKey) {
+        return false; // N/Aのバイタルは表示しない
+      }
+      if (event.time.startsWith(time.split(':')[0]) && event.categoryKey && vitalCategories.includes(event.categoryKey)) {
+        return true;
+      }
+      return false;
+    });
+    
+    // バイタルイベントがあるかどうか
+    const hasVitalEvents = vitalEvents.length > 0;
+    
+    // バイタルのステータスを決定（すべてのバイタルイベントが同じステータスと仮定）
+    const vitalStatus = hasVitalEvents ? getEventStatus(vitalEvents[0]) : 'scheduled';
 
     return (
       <div
         className={`min-h-16 border-b border-gray-200 p-1.5 flex flex-col items-start justify-start gap-1.5`}
       >
-        {relevantEvents.map((event) => {
+        {/* バイタルイベントがあれば統合表示 */}
+        {hasVitalEvents && (
+          <VitalSigns events={vitalEvents} status={vitalStatus} />
+        )}
+        
+        {/* その他のイベントを個別表示 */}
+        {nonVitalEvents.map((event) => {
           const category = event.categoryKey;
           // 各イベントに予定または実績のステータスを割り当て
           const status = getEventStatus(event);

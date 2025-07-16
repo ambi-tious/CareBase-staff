@@ -1,7 +1,7 @@
 import React from 'react';
 import { CareEvent, careBoardData, careCategories, CareCategoryKey } from '@/mocks/care-board-data';
 import { getLucideIcon } from '@/lib/lucide-icon-registry';
-import { CARE_CATEGORY_COLORS, rgbToString } from './care-board-utils';
+import { CARE_CATEGORY_COLORS, rgbToString, VitalSigns } from './care-board-utils';
 import Link from 'next/link';
 import Image from 'next/image';
 import { CareEventStatus } from './care-board-utils';
@@ -11,17 +11,32 @@ type CareEventStatusType = 'scheduled' | 'completed';
 
 export function UserBaseView() {
   // 予定と実績をランダムに割り当てる関数（デモ用）
-  const getEventStatus = (event: CareEvent): 'scheduled' | 'completed' => {
+  const getEventStatus = (_event: CareEvent): 'scheduled' | 'completed' => {
     // 実際の実装では、APIからのデータに基づいてステータスを設定します
     // ここではデモのためにランダムに割り当てています
     return Math.random() > 0.5 ? 'completed' : 'scheduled';
   };
 
-  const getEventForCategory = (
+  // バイタル関連のカテゴリキー
+  const vitalCategories: CareCategoryKey[] = ['temperature', 'pulse', 'bloodPressure'];
+  
+  // 通常のイベントを取得する関数
+  const getNonVitalEventForCategory = (
     residentEvents: CareEvent[],
     categoryKey: CareCategoryKey
   ): CareEvent | undefined => {
+    // バイタルカテゴリの場合はnullを返す
+    if (vitalCategories.includes(categoryKey)) {
+      return undefined;
+    }
     return residentEvents.find((event) => event.categoryKey === categoryKey);
+  };
+  
+  // バイタルイベントを取得する関数
+  const getVitalEventsForResident = (residentEvents: CareEvent[]): CareEvent[] => {
+    return residentEvents.filter((event) => 
+      event.categoryKey && vitalCategories.includes(event.categoryKey)
+    );
   };
 
   return (
@@ -53,25 +68,59 @@ export function UserBaseView() {
               <ResidentInfoCell resident={resident} />
             </div>
             {careCategories.map((category) => {
-              const event = getEventForCategory(resident.events, category.key);
-              const bgColor = category.key ? CARE_CATEGORY_COLORS[category.key] + '10' : '#f0f0f0';
-              return (
-                <div
-                  key={`${resident.id}-${category.key}`}
-                  className="p-2 border-b border-r border-gray-200 text-sm text-center hover:bg-gray-50 transition-colors cursor-pointer min-h-16"
-                  style={{ backgroundColor: event ? bgColor : 'transparent' }}
-                >
-                  {event ? (
-                    <CareEventStatus 
-                      event={event} 
-                      category={category.key} 
-                      status={getEventStatus(event)} 
-                    />
-                  ) : (
+              // バイタルカテゴリの特別処理
+              if (category.key === 'temperature') {
+                const vitalEvents = getVitalEventsForResident(resident.events);
+                const hasVitalEvents = vitalEvents.length > 0;
+                const vitalStatus = hasVitalEvents ? getEventStatus(vitalEvents[0]) : 'scheduled';
+                
+                return (
+                  <div
+                    key={`${resident.id}-vitals`}
+                    className="p-2 border-b border-r border-gray-200 text-sm text-center hover:bg-gray-50 transition-colors cursor-pointer min-h-16"
+                    style={{ backgroundColor: hasVitalEvents ? 'rgba(231, 76, 60, 0.05)' : 'transparent' }}
+                  >
+                    {hasVitalEvents ? (
+                      <VitalSigns events={vitalEvents} status={vitalStatus} />
+                    ) : (
+                      <span className="text-gray-300">-</span>
+                    )}
+                  </div>
+                );
+              } 
+              // 血圧と脈拍のカテゴリはスキップ（バイタルにまとめるため）
+              else if (category.key === 'pulse' || category.key === 'bloodPressure') {
+                return (
+                  <div
+                    key={`${resident.id}-${category.key}`}
+                    className="p-2 border-b border-r border-gray-200 text-sm text-center hover:bg-gray-50 transition-colors cursor-pointer min-h-16"
+                  >
                     <span className="text-gray-300">-</span>
-                  )}
-                </div>
-              );
+                  </div>
+                );
+              }
+              // その他の通常カテゴリ
+              else {
+                const event = getNonVitalEventForCategory(resident.events, category.key);
+                const bgColor = category.key ? CARE_CATEGORY_COLORS[category.key] + '10' : '#f0f0f0';
+                return (
+                  <div
+                    key={`${resident.id}-${category.key}`}
+                    className="p-2 border-b border-r border-gray-200 text-sm text-center hover:bg-gray-50 transition-colors cursor-pointer min-h-16"
+                    style={{ backgroundColor: event ? bgColor : 'transparent' }}
+                  >
+                    {event ? (
+                      <CareEventStatus 
+                        event={event} 
+                        category={category.key} 
+                        status={getEventStatus(event)} 
+                      />
+                    ) : (
+                      <span className="text-gray-300">-</span>
+                    )}
+                  </div>
+                );
+              }
             })}
           </div>
         ))}

@@ -1,6 +1,6 @@
 import { CareEvent, CareCategoryKey } from '@/mocks/care-board-data';
 import { getLucideIcon } from '@/lib/lucide-icon-registry';
-import { Check } from 'lucide-react';
+import { Check, Thermometer, HeartPulse, Droplets } from 'lucide-react';
 import React from 'react';
 import { Badge } from '@/components/ui/badge';
 
@@ -43,6 +43,99 @@ export const ResidentInfoCell: React.FC<ResidentInfoCellProps> = ({ resident, cl
         </Badge>
       </div>
     </Link>
+  );
+};
+
+// バイタル記録をまとめて表示するコンポーネント
+interface VitalSignsProps {
+  events: CareEvent[];
+  status?: 'scheduled' | 'completed';
+}
+
+export const VitalSigns: React.FC<VitalSignsProps> = ({ events, status = 'scheduled' }) => {
+  // バイタル関連のカテゴリキー
+  const vitalCategories: CareCategoryKey[] = ['temperature', 'pulse', 'bloodPressure'];
+  
+  // バイタル関連のイベントをフィルタリング
+  const vitalEvents = events.filter(event => 
+    event.categoryKey && vitalCategories.includes(event.categoryKey)
+  );
+  
+  // バイタルイベントがない場合は何も表示しない
+  if (vitalEvents.length === 0) {
+    return null;
+  }
+  
+  // 最初のバイタルイベントのカテゴリを取得（スタイル用）
+  const firstCategory = vitalEvents[0].categoryKey as CareCategoryKey;
+  const baseColorArr: number[] = CARE_CATEGORY_COLORS[firstCategory] || [231, 76, 60]; // デフォルトは赤系
+  const baseColor = rgbToString(baseColorArr);
+  
+  // ステータスに応じたスタイルを取得
+  const getStatusStyles = () => {
+    switch (status) {
+      case 'completed':
+        return {
+          background: rgbToRgba(baseColorArr, 0.25),
+          border: `2px solid ${baseColor}`,
+          borderStyle: 'solid',
+        };
+      default:
+        return {
+          background: rgbToRgba(baseColorArr, 0.08),
+          border: `1.5px solid ${baseColor}`,
+          borderStyle: 'dotted',
+        };
+    }
+  };
+  
+  const statusStyles = getStatusStyles();
+  
+  // 各バイタルの値を取得
+  const temperature = vitalEvents.find(e => e.categoryKey === 'temperature')?.label || '-';
+  const pulse = vitalEvents.find(e => e.categoryKey === 'pulse')?.label || '-';
+  const bloodPressure = vitalEvents.find(e => e.categoryKey === 'bloodPressure')?.label || '-';
+  
+  // 記録時間を取得（すべて同じ時間と仮定）
+  const time = vitalEvents[0]?.time !== 'N/A' ? vitalEvents[0]?.time : '';
+  
+  return (
+    <div
+      className="flex flex-col p-2 rounded-md text-xs relative transition-all duration-200 w-full"
+      style={{
+        backgroundColor: statusStyles.background,
+        border: statusStyles.border,
+        borderStyle: statusStyles.borderStyle as any,
+        color: baseColor,
+      }}
+    >
+      <div className="flex items-center justify-between mb-1">
+        <span className="font-medium">バイタル</span>
+        {time && <span className="text-xs opacity-75">{time}</span>}
+      </div>
+      
+      <div className="grid grid-cols-3 gap-1">
+        <div className="flex items-center gap-1">
+          <Thermometer className="h-3 w-3 flex-shrink-0" />
+          <span>{temperature}</span>
+        </div>
+        <div className="flex items-center gap-1">
+          <HeartPulse className="h-3 w-3 flex-shrink-0" />
+          <span>{pulse}</span>
+        </div>
+        <div className="flex items-center gap-1">
+          <Droplets className="h-3 w-3 flex-shrink-0" />
+          <span>{bloodPressure}</span>
+        </div>
+      </div>
+      
+      {/* 実施済みの場合のみチェックマークを表示 */}
+      {status === 'completed' && (
+        <div className="absolute -top-2 -right-2 bg-green-500 text-white rounded-full w-4 h-4 flex items-center justify-center">
+          <Check className="h-3 w-3" />
+        </div>
+      )}
+    </div>
   );
 };
 
