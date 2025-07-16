@@ -22,10 +22,11 @@ import {
   Clock as ClockIcon,
   Filter,
   Printer,
+  Users,
 } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link'; // Import Link
-import { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 type ActiveTabView = 'time' | 'user';
 
@@ -202,9 +203,9 @@ function TimeBaseView() {
                       target.src = '/placeholder.svg';
                     }}
                   />
+                </div>
                 <span className="text-sm font-medium text-center">{resident.name}</span>
                 <span className="text-xs bg-white/20 px-1.5 py-0.5 rounded-full">{resident.careLevel}</span>
-                <span className="text-base font-medium">{resident.name}</span>
               </Link>
             </div>
           ))}
