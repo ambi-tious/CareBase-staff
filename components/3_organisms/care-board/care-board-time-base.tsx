@@ -394,8 +394,10 @@ export function TimeBaseView() {
                   gridTemplateColumns: `80px repeat(${careBoardData.length}, minmax(160px, 1fr))`,
                 }}
               >
-                <div className="sticky top-0 left-0 bg-gray-100 z-30 flex items-center justify-center p-3 border-b border-r border-gray-300"
-                ref={headerRowRef}>
+                <div
+                  className="sticky top-0 left-0 bg-gray-100 z-30 flex items-center justify-center p-3 border-b border-r border-gray-300"
+                  ref={headerRowRef}
+                >
                   <span className="font-semibold text-base">時間</span>
                 </div>
                 {careBoardData.map((resident) => (
@@ -410,7 +412,6 @@ export function TimeBaseView() {
                   <div
                     key={time}
                     className={`contents ${isClient && time === currentTime ? 'current-time-row' : ''}`}
-                    
                   >
                     <div
                       className={cn(
@@ -428,7 +429,7 @@ export function TimeBaseView() {
                         key={`${resident.id}-${time}`}
                         className={cn(
                           'border-r border-gray-200 relative',
-                          isClient && time === currentTime ? 'bg-yellow-50' : '',
+                          isClient && time === currentTime ? 'bg-yellow-50' : ''
                         )}
                         data-droppable-id={time}
                       >
