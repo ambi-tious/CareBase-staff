@@ -1,26 +1,19 @@
 'use client';
 
-import { useState } from 'react';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogDescription,
 } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { AlertCircle } from 'lucide-react';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import type { IconName } from '@/lib/lucide-icon-registry';
+import { AlertCircle } from 'lucide-react';
+import { useState } from 'react';
 
 interface CategoryCreationModalProps {
   isOpen: boolean;
@@ -30,19 +23,6 @@ interface CategoryCreationModalProps {
   description: string;
   submitLabel: string;
 }
-
-const iconOptions: { value: IconName; label: string }[] = [
-  { value: 'Utensils', label: '食事' },
-  { value: 'Bath', label: '入浴' },
-  { value: 'Pill', label: '服薬' },
-  { value: 'Tooth', label: '口腔ケア' },
-  { value: 'Eye', label: '点眼' },
-  { value: 'GlassWater', label: '飲水' },
-  { value: 'ExcretionIcon', label: '排泄' },
-  { value: 'Activity', label: '活動' },
-  { value: 'Users', label: '接遇' },
-  { value: 'FileText', label: 'その他' },
-];
 
 export const CategoryCreationModal: React.FC<CategoryCreationModalProps> = ({
   isOpen,
@@ -111,29 +91,6 @@ export const CategoryCreationModal: React.FC<CategoryCreationModalProps> = ({
               disabled={isSubmitting}
             />
           </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="category-icon">
-              アイコン <span className="text-red-500">*</span>
-            </Label>
-            <Select
-              value={icon}
-              onValueChange={(value) => setIcon(value as IconName)}
-              disabled={isSubmitting}
-            >
-              <SelectTrigger id="category-icon">
-                <SelectValue placeholder="アイコンを選択" />
-              </SelectTrigger>
-              <SelectContent>
-                {iconOptions.map((option) => (
-                  <SelectItem key={option.value} value={option.value}>
-                    {option.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-
           <div className="flex justify-end gap-3 pt-4">
             <Button type="button" variant="outline" onClick={onClose} disabled={isSubmitting}>
               キャンセル
