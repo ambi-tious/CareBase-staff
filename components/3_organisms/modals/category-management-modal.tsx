@@ -30,6 +30,7 @@ import {
 import { AlertCircle, Edit, Trash2, Save, X, Plus, Check } from 'lucide-react';
 import { getLucideIcon } from '@/lib/lucide-icon-registry';
 import type { IconName } from '@/lib/lucide-icon-registry';
+import React from 'react';
 
 export interface CategoryItem {
   id: string;
