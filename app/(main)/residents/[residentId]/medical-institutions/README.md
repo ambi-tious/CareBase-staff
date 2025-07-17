@@ -6,13 +6,14 @@ URL: https://carebase-staff.vercel.app/residents/[residentId]
 
 ## 概要
 
-CareBase-staffアプリケーションの利用者詳細画面内のかかりつけ医療機関タブ設計書です。  
+利用者詳細画面内のかかりつけ医療機関タブ設計書です。  
 利用者のかかりつけ医療機関情報の表示、登録、編集、削除機能を提供します。  
 複数の医療機関を登録可能で、医療機関名、医師名、連絡先情報を効率的に管理できます。
 
 Issue: [#133 [設計] #005 利用者｜利用者詳細（基本情報）](https://github.com/ambi-tious/CareBase-staff/issues/133)
 
 ## 全体レイアウト
+<img width="1046" height="514" alt="image" src="https://github.com/user-attachments/assets/a7ae73c3-4d5e-4e14-82be-605e26d38602" />
 
 ### 画面構成
 
@@ -53,6 +54,8 @@ Issue: [#133 [設計] #005 利用者｜利用者詳細（基本情報）](https:
 | 削除処理 | 既存のかかりつけ医療機関を削除 | `/api/v1/residents/{id}/medical-institutions/{institutionId}` | 同一画面（モーダル閉じる） |
 
 ### モーダル仕様
+<img height="350" alt="image" src="https://github.com/user-attachments/assets/dc902764-82d7-43d2-9278-d4866efc5bd7" />
+<img height="350" alt="image" src="https://github.com/user-attachments/assets/7b976ac0-972c-4d6d-81cc-941125feff50" />
 
 #### 登録モーダル
 
@@ -80,6 +83,7 @@ Issue: [#133 [設計] #005 利用者｜利用者詳細（基本情報）](https:
 | 登録ボタンラベル | 更新 |
 
 #### 削除確認モーダル
+<img height="200" alt="image" src="https://github.com/user-attachments/assets/f58dd0da-ada0-4e3c-8b0e-38b523ff342c" />
 
 | 項目名 | コンポーネント | 必須 | 初期値 | 備考 |
 | --- | --- | --- | --- | --- |
