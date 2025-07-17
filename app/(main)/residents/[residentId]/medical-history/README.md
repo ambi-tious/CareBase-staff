@@ -6,7 +6,7 @@ URL: https://carebase-staff.vercel.app/residents/[residentId]/medical-history
 
 ## 概要
 
-CareBase-staffアプリケーションの利用者詳細画面の既往歴タブ設計書です。  
+利用者詳細画面の既往歴タブ設計書です。  
 利用者の既往歴情報を表示・管理し、複数の既往歴を登録可能で発症年月順でソート表示するインターフェースを提供します。  
 既往歴の追加、編集、削除機能を備え、医療従事者が利用者の過去の疾患履歴を効率的に管理できます。
 
@@ -14,6 +14,7 @@ Issue: [#172 [設計] #005-4 利用者｜利用者詳細（既往歴）](https:/
 親Issue: [#133 [設計] #005 利用者｜利用者詳細（基本情報）](https://github.com/ambi-tious/CareBase-staff/issues/133)
 
 ## 全体レイアウト
+<img width="1046" height="405" alt="image" src="https://github.com/user-attachments/assets/933bd707-7ba0-4523-a77c-c1820aac63bb" />
 
 ### 画面構成
 
@@ -44,6 +45,7 @@ Issue: [#172 [設計] #005-4 利用者｜利用者詳細（既往歴）](https:/
 | 削除確認モーダル   | GenericDeleteModal   | -    | 削除ボタン押下時 | -      | 既往歴情報の削除確認                  |
 
 ## 機能仕様
+<img width="824" height="587" alt="image" src="https://github.com/user-attachments/assets/df016e3e-2335-4678-9edf-b65e13d2054e" />
 
 ### アクション
 
