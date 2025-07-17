@@ -6,13 +6,14 @@ URL: https://carebase-staff.vercel.app/residents/[residentId]
 
 ## 概要
 
-CareBase-staffアプリケーションの利用者詳細画面内の服薬状況タブ設計書です。  
+利用者詳細画面内の服薬状況タブ設計書です。  
 利用者の服薬状況記録の表示、登録、編集、削除機能を提供します。  
 複数の服薬状況記録を管理し、登録日順でソート表示することで、服薬の経過を効率的に追跡できます。
 
 Issue: [#174 [設計] #005-6 利用者｜利用者詳細（服薬状況）](https://github.com/ambi-tious/CareBase-staff/issues/174)
 
 ## 全体レイアウト
+<img width="1051" height="266" alt="image" src="https://github.com/user-attachments/assets/aa16f3d2-1ea3-423d-a90f-4e2e7f3ef81b" />
 
 ### 画面構成
 
@@ -58,6 +59,8 @@ Issue: [#174 [設計] #005-6 利用者｜利用者詳細（服薬状況）](http
 - **更新時**: 編集時は登録日が変更されない限り表示順序を維持
 
 ### モーダル仕様
+<img height="350" alt="image" src="https://github.com/user-attachments/assets/ac04e5e8-0bf0-4183-8269-e9675c40826c" />
+<img height="350" alt="image" src="https://github.com/user-attachments/assets/7dafaa34-febb-4e89-8a6c-04268b88916c" />
 
 #### 登録モーダル
 
@@ -82,6 +85,7 @@ Issue: [#174 [設計] #005-6 利用者｜利用者詳細（服薬状況）](http
 | 登録ボタンラベル | 更新                             |
 
 #### 削除確認モーダル
+<img height="200" alt="image" src="https://github.com/user-attachments/assets/d772a534-f66a-4d7e-82f8-f70cac62aade" />
 
 | 項目名           | コンポーネント | 必須 | 初期値                                             | 備考                     |
 | ---------------- | -------------- | ---- | -------------------------------------------------- | ------------------------ |
