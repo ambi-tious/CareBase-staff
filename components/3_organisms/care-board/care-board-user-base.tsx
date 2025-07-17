@@ -5,9 +5,10 @@ import {
   CARE_CATEGORY_COLORS,
   CareEventStatusComponent as CareEventStatus,
   CareRecordModal,
+  getEventStatus,
   ResidentInfoCell,
   rgbToString,
-  type CareEventStatus as CareEventStatusType
+  type CareEventStatus as CareEventStatusType,
 } from './care-board-utils';
 
 export function UserBaseView() {
@@ -33,16 +34,6 @@ export function UserBaseView() {
     setCareEvents(initialEvents);
   }, []);
 
-  // 予定と実績をランダムに割り当てる関数（デモ用）
-  const getEventStatus = (_event: CareEvent): 'scheduled' | 'completed' => {
-    // 実際の実装では、APIからのデータに基づいてステータスを設定します
-    // ここではデモのためにランダムに割り当てています
-    // 固定のシード値を使用して決定論的な結果を生成
-    const eventId = _event.time + _event.label;
-    const hash = [...eventId].reduce((acc, char) => acc + char.charCodeAt(0), 0);
-    return hash % 2 === 0 ? 'completed' : 'scheduled';
-  };
-
   const handleEventClick = useCallback(
     (event: CareEvent, residentId: number, residentName: string) => {
       setSelectedEvent({
@@ -59,8 +50,12 @@ export function UserBaseView() {
     (categoryKey: CareCategoryKey, residentId: number, residentName: string) => {
       // Create a new empty event
       const category = careCategories.find((c) => c.key === categoryKey);
+      const now = new Date();
+      const currentTime = now.getHours().toString().padStart(2, '0') + ':00';
+      
       const newEvent: CareEvent = {
-        time: new Date().getHours().toString().padStart(2, '0') + ':00',
+        scheduledTime: currentTime,
+        time: currentTime,
         icon: category?.icon || 'ClipboardList',
         label: '',
         categoryKey,
@@ -88,7 +83,7 @@ export function UserBaseView() {
         } else {
           // Update existing event
           const index = residentEvents.findIndex(
-            (e) => e.time === selectedEvent?.event.time && e.label === selectedEvent?.event.label
+            (e) => e.scheduledTime === selectedEvent?.event.scheduledTime && e.label === selectedEvent?.event.label
           );
 
           if (index !== -1) {
@@ -137,7 +132,8 @@ export function UserBaseView() {
                 <ResidentInfoCell resident={resident} />
               </div>
               {careCategories.map((category) => {
-                const event = resident.events.find((e) => e.categoryKey === category.key);
+                const eventsForCategory = (careEvents[resident.id] || resident.events).filter((e) => e.categoryKey === category.key);
+                const event = eventsForCategory[0]; // 最初のイベントを使用
                 const bgColor = category.key
                   ? CARE_CATEGORY_COLORS[category.key] + '10'
                   : '#f0f0f0';
