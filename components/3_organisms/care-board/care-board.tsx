@@ -4,305 +4,135 @@ import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { getLucideIcon } from '@/lib/lucide-icon-registry';
-import {
-  careBoardData,
-  careCategories,
-  type CareCategoryKey,
-  type CareEvent,
-} from '@/mocks/care-board-data';
+import { careBoardData, careCategories, CareEvent } from '@/mocks/care-board-data';
 import { addDays, format } from 'date-fns';
 import { ja } from 'date-fns/locale';
-import { BookOpen, CalendarIcon, ChevronLeft, ChevronRight, ClipboardEdit } from 'lucide-react';
-import Image from 'next/image';
-import Link from 'next/link'; // Import Link
-import { useEffect, useRef, useState } from 'react';
+import {
+  CalendarIcon,
+  Check,
+  ChevronLeft,
+  ChevronRight,
+  ClipboardEdit,
+  Clock as ClockIcon,
+  Filter,
+  Printer,
+  Users,
+} from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { toast } from 'sonner';
+import { BulkCareRecordModal } from './bulk-care-record-modal';
+import { TimeBaseView } from './care-board-time-base';
+import { UserBaseView } from './care-board-user-base';
+import { CARE_CATEGORY_COLORS, rgbToString } from './care-board-utils';
 
 type ActiveTabView = 'time' | 'user';
 
-// Component for Time Base View - 24時間縦スクロール対応
-function TimeBaseView() {
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
-
-  // 24時間分のタイムスロットを生成（30分間隔）
-  const generateTimeSlots = () => {
-    const slots = [];
-    for (let hour = 0; hour < 24; hour++) {
-      for (let minute = 0; minute < 60; minute += 30) {
-        const timeString = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
-        slots.push(timeString);
-      }
-    }
-    return slots;
-  };
-
-  const allTimeSlots = generateTimeSlots();
-
-  // 現在時刻を取得
-  const getCurrentTimeSlot = () => {
-    const now = new Date();
-    const hour = now.getHours();
-    const minute = now.getMinutes();
-    const roundedMinute = minute < 30 ? 0 : 30;
-    return `${hour.toString().padStart(2, '0')}:${roundedMinute.toString().padStart(2, '0')}`;
-  };
-
-  const currentTime = getCurrentTimeSlot();
-
-  useEffect(() => {
-    // 少し遅延させて現在時刻の位置にスクロール
-    setTimeout(() => {
-      const currentTimeElement = document.getElementById('current-time-row');
-      if (currentTimeElement && scrollContainerRef.current) {
-        const containerTop = scrollContainerRef.current.getBoundingClientRect().top;
-        const elementTop = currentTimeElement.getBoundingClientRect().top;
-        const offset =
-          elementTop -
-          containerTop -
-          scrollContainerRef.current.clientHeight / 2 +
-          currentTimeElement.clientHeight / 2;
-        scrollContainerRef.current.scrollTop += offset;
-      }
-    }, 100);
-  }, []);
-
-  function EventCell({ events, time }: { events: CareEvent[]; time: string }) {
-    const relevantEvents = events.filter((event) => event.time.startsWith(time.split(':')[0]));
-    return (
-      <div
-        className={`h-10 border-b border-gray-200 p-1 flex flex-col flex-wrap items-start justify-start gap-0.5`}
-      >
-        {relevantEvents.map((event) => {
-          const Icon = getLucideIcon(event.icon);
-          return (
-            <div key={event.label} className="flex items-center gap-0.5">
-              <Icon className="h-2.5 w-2.5 text-carebase-blue" />
-              <span className="truncate text-[10px]">{event.label}</span>
-            </div>
-          );
-        })}
-      </div>
-    );
-  }
-
-  return (
-    <div className="bg-white rounded-lg shadow-sm overflow-hidden">
-      <div className="overflow-auto max-h-[calc(100vh-220px)]" ref={scrollContainerRef}>
-        {' '}
-        {/* Adjusted max-height */}
-        <div
-          className="grid relative" // relative for sticky positioning context
-          style={{
-            gridTemplateColumns: `80px repeat(${careBoardData.length}, minmax(120px, 1fr))`,
-          }} // Adjusted minmax for resident column
-        >
-          {/* Top-left corner (empty or title) */}
-          <div className="sticky top-0 left-0 bg-carebase-blue text-white z-30 flex items-center justify-center p-2 border-b border-r border-gray-300">
-            <span className="font-semibold text-sm">時間</span>
-          </div>
-
-          {/* Resident names header (sticky top) */}
-          {careBoardData.map((resident) => (
-            <div
-              key={resident.id}
-              className="sticky top-0 bg-carebase-blue text-white z-20 flex flex-col items-center p-2 border-b border-r border-gray-300"
-            >
-              <Link
-                href={`/residents/${resident.id}`}
-                className="flex flex-col items-center text-white hover:text-gray-200"
-              >
-                <div className="relative w-8 h-8 rounded-full overflow-hidden mb-1">
-                  {' '}
-                  {/* Adjusted avatar size */}
-                  <Image
-                    src={resident.avatarUrl || '/placeholder.svg'}
-                    alt={resident.name}
-                    fill
-                    style={{ objectFit: 'cover' }}
-                    className="rounded-full"
-                    onError={(e) => {
-                      const target = e.target as HTMLImageElement;
-                      target.src = '/placeholder.svg';
-                    }}
-                  />
-                </div>
-                <span className="text-xs text-center font-medium">{resident.name}</span>
-              </Link>
-            </div>
-          ))}
-
-          {/* Time slots and events */}
-          {allTimeSlots.map((time) => (
-            <div
-              key={time}
-              className={`contents ${time === currentTime ? 'bg-yellow-50' : ''}`}
-              id={time === currentTime ? 'current-time-row' : undefined}
-            >
-              {/* Time slot label (sticky left) */}
-              <div
-                className={`sticky left-0 flex items-center justify-center p-1 border-b border-r border-gray-200 text-xs font-medium z-10 h-10 ${time === currentTime ? 'bg-yellow-100 text-yellow-800' : 'bg-gray-50 text-gray-700'}`} // Adjusted padding and height
-              >
-                {time}
-              </div>
-              {/* Event cells for each resident */}
-              {careBoardData.map((resident) => (
-                <div
-                  key={`${resident.id}-${time}`}
-                  className={`border-r border-gray-200 ${time === currentTime ? 'bg-yellow-50' : ''}`}
-                >
-                  <EventCell events={resident.events} time={time} />
-                </div>
-              ))}
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// Component for User Base View (new logic)
-function UserBaseView() {
-  const getEventForCategory = (
-    residentEvents: CareEvent[],
-    categoryKey: CareCategoryKey
-  ): CareEvent | undefined => {
-    return residentEvents.find((event) => event.categoryKey === categoryKey);
-  };
-
-  return (
-    <div className="overflow-x-auto bg-white rounded-lg shadow-sm">
-      <div
-        className="grid"
-        style={{ gridTemplateColumns: `180px repeat(${careCategories.length}, minmax(90px, 1fr))` }} // Adjusted column widths
-      >
-        <div className="sticky top-0 left-0 bg-carebase-blue text-white p-2 border-b border-r border-gray-300 z-20 flex items-center justify-center">
-          利用者名
-        </div>
-        {careCategories.map((category) => (
-          <div
-            key={category.key}
-            className="sticky top-0 bg-carebase-blue text-white p-2 border-b border-r border-gray-300 z-10 text-xs text-center flex items-center justify-center"
-          >
-            {category.label}
-          </div>
-        ))}
-        {careBoardData.map((resident) => (
-          <div key={resident.id} className="contents">
-            <div className="flex items-center gap-2 p-2 border-b border-r border-gray-200 bg-gray-50 sticky left-0 z-[5]">
-              <Link href={`/residents/${resident.id}`} className="flex items-center gap-2 group">
-                <div className="relative w-8 h-8 rounded-full overflow-hidden">
-                  {' '}
-                  {/* Container for consistent image size */}
-                  <Image
-                    src={resident.avatarUrl || '/placeholder.svg'}
-                    alt={resident.name}
-                    fill
-                    style={{ objectFit: 'cover' }}
-                    className="rounded-full"
-                    onError={(e) => {
-                      const target = e.target as HTMLImageElement;
-                      target.src = '/placeholder.svg';
-                    }}
-                  />
-                </div>
-                <span className="text-sm group-hover:underline">{resident.name}</span>
-              </Link>
-            </div>
-            {careCategories.map((category) => {
-              const event = getEventForCategory(resident.events, category.key);
-              return (
-                <div
-                  key={`${resident.id}-${category.key}`}
-                  className="p-2 border-b border-r border-gray-200 text-xs text-center whitespace-pre-line"
-                >
-                  {event ? (
-                    event.details ? (
-                      <>
-                        {event.label}
-                        <br />
-                        {event.details}
-                      </>
-                    ) : (
-                      event.label
-                    )
-                  ) : (
-                    '-'
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
 export function CareBoard() {
   const [activeView, setActiveView] = useState<ActiveTabView>('time');
-  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [showFilters, setShowFilters] = useState<boolean>(false);
+  const [showBulkRecordModal, setShowBulkRecordModal] = useState<boolean>(false);
+
+  // Set current date on client side to avoid hydration mismatch
+  useEffect(() => {
+    setSelectedDate(new Date());
+  }, []);
+
+  // 一括記録の保存処理
+  const handleSaveBulkRecords = (records: { residentId: number; event: CareEvent }[]) => {
+    // 実際の実装では、APIを呼び出してデータを保存します
+    // TODO: API呼び出しの実装
+
+    // モックデータの更新（実際の実装ではAPIを使用）
+    records.forEach(({ residentId, event }) => {
+      const residentIndex = careBoardData.findIndex((r) => r.id === residentId);
+      if (residentIndex !== -1) {
+        careBoardData[residentIndex].events.push(event);
+      }
+    });
+
+    // 成功メッセージ（実際の実装ではトースト通知などを使用）
+    toast.success(`${records.length}件の記録を保存しました`);
+  };
 
   return (
-    <div data-testid="care-board" className="p-4 md:p-6 bg-carebase-bg min-h-screen">
-      <div className="mb-4 flex flex-col md:flex-row md:items-center md:justify-between gap-2">
-        <div className="flex items-center gap-1 flex-wrap">
-          <div className="flex items-center gap-0.5 rounded-lg bg-gray-200 p-0.5">
+    <div data-testid="care-board" className="p-4 md:p-6 bg-carebase-bg max-h-screen">
+      <div className="mb-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div className="flex items-center gap-3 flex-wrap">
+          <div className="flex items-center gap-1 rounded-lg bg-gray-200 p-1 shadow-sm">
             <Button
               onClick={() => setActiveView('time')}
-              className={`px-3 py-2 font-medium text-sm ${activeView === 'time' ? 'bg-carebase-blue hover:bg-carebase-blue-dark text-white' : 'bg-transparent text-gray-700 hover:bg-gray-300'}`}
+              className={`px-4 py-2.5 font-medium text-base ${
+                activeView === 'time'
+                  ? 'bg-carebase-blue hover:bg-carebase-blue-dark text-white shadow-sm'
+                  : 'bg-transparent text-gray-700 hover:bg-gray-300'
+              }`}
             >
+              <ClockIcon className="h-4 w-4 mr-2" />
               時間ベース
             </Button>
             <Button
               onClick={() => setActiveView('user')}
-              className={`px-3 py-2 font-medium text-sm ${activeView === 'user' ? 'bg-carebase-blue hover:bg-carebase-blue-dark text-white' : 'bg-transparent text-gray-700 hover:bg-gray-300'}`}
+              className={`px-4 py-2.5 font-medium text-base ${
+                activeView === 'user'
+                  ? 'bg-carebase-blue hover:bg-carebase-blue-dark text-white shadow-sm'
+                  : 'bg-transparent text-gray-700 hover:bg-gray-300'
+              }`}
             >
+              <Users className="h-4 w-4 mr-2" />
               ご利用者ベース
             </Button>
           </div>
-          {activeView === 'user' && (
-            <>
-              <Button
-                variant="outline"
-                className="bg-white border-carebase-blue text-carebase-blue hover:bg-carebase-blue-light font-medium px-2 py-1.5 text-xs"
-              >
-                <ClipboardEdit className="h-3 w-3 mr-1 text-carebase-blue" />
-                まとめて記録
-              </Button>
-              <Button
-                variant="outline"
-                className="bg-white border-carebase-blue text-carebase-blue hover:bg-carebase-blue-light font-medium px-2 py-1.5 text-xs"
-              >
-                <BookOpen className="h-3 w-3 mr-1 text-carebase-blue" />
-                マニュアルガイド
-              </Button>
-            </>
-          )}
-        </div>
-
-        <div className="flex items-center gap-1">
           <Button
             variant="outline"
-            className="bg-white border-carebase-blue text-carebase-blue hover:bg-carebase-blue-light font-medium px-2 py-1.5 text-xs"
-            onClick={() => setSelectedDate(addDays(selectedDate, -1))}
+            className="bg-white border-carebase-blue text-carebase-blue hover:bg-carebase-blue-light font-medium px-3 py-2 text-sm shadow-sm"
+            onClick={() => setShowBulkRecordModal(true)}
           >
-            <ChevronLeft className="h-3 w-3 mr-0.5" />
+            <ClipboardEdit className="h-4 w-4 mr-2 text-carebase-blue" />
+            まとめて記録
+          </Button>
+          <Button
+            variant="outline"
+            className="bg-white border-carebase-blue text-carebase-blue hover:bg-carebase-blue-light font-medium px-3 py-2 text-sm shadow-sm"
+            onClick={() => setShowFilters(!showFilters)}
+          >
+            <Filter className="h-4 w-4 mr-2 text-carebase-blue" />
+            フィルター
+          </Button>
+          <Button
+            variant="outline"
+            className="bg-white border-carebase-blue text-carebase-blue hover:bg-carebase-blue-light font-medium px-3 py-2 text-sm shadow-sm"
+          >
+            <Printer className="h-4 w-4 mr-2 text-carebase-blue" />
+            印刷
+          </Button>
+        </div>
+
+        <div className="flex items-center gap-2 flex-wrap">
+          <Button
+            variant="outline"
+            className="bg-white border-carebase-blue text-carebase-blue hover:bg-carebase-blue-light font-medium px-3 py-2 text-sm shadow-sm"
+            onClick={() => selectedDate && setSelectedDate(addDays(selectedDate, -1))}
+          >
+            <ChevronLeft className="h-4 w-4 mr-1" />
             前日
           </Button>
           <Popover>
             <PopoverTrigger asChild>
               <Button
                 variant={'outline'}
-                className="w-[140px] justify-start text-left font-medium text-carebase-text-primary text-sm bg-white border-carebase-blue hover:bg-carebase-blue-light px-2 py-1.5"
+                className="w-[160px] justify-start text-left font-medium text-carebase-text-primary text-base bg-white border-carebase-blue hover:bg-carebase-blue-light px-3 py-2 shadow-sm"
               >
-                <CalendarIcon className="mr-1 h-3 w-3 text-carebase-blue" />
-                {format(selectedDate, 'M月d日 (E)', { locale: ja })}
+                <CalendarIcon className="mr-2 h-4 w-4 text-carebase-blue" />
+                {selectedDate
+                  ? format(selectedDate, 'M月d日 (E)', { locale: ja })
+                  : '読み込み中...'}
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-auto p-0">
               <Calendar
                 mode="single"
-                selected={selectedDate}
+                selected={selectedDate || undefined}
                 onSelect={(date) => {
                   if (date) {
                     setSelectedDate(date);
@@ -315,16 +145,88 @@ export function CareBoard() {
           </Popover>
           <Button
             variant="outline"
-            className="bg-white border-carebase-blue text-carebase-blue hover:bg-carebase-blue-light font-medium px-2 py-1.5 text-xs"
-            onClick={() => setSelectedDate(addDays(selectedDate, 1))}
+            className="bg-white border-carebase-blue text-carebase-blue hover:bg-carebase-blue-light font-medium px-3 py-2 text-sm shadow-sm"
+            onClick={() => selectedDate && setSelectedDate(addDays(selectedDate, 1))}
           >
             翌日
-            <ChevronRight className="h-3 w-3 ml-0.5" />
+            <ChevronRight className="h-4 w-4 ml-1" />
           </Button>
         </div>
       </div>
 
+      {/* フィルターパネル */}
+      {showFilters && (
+        <div className="mb-4 p-4 bg-white rounded-lg shadow-sm border border-gray-200">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <h3 className="text-sm font-medium mb-2">ケア種別</h3>
+              <div className="flex flex-wrap gap-2">
+                {careCategories.slice(0, 6).map((category) => (
+                  <Button
+                    key={category.key}
+                    variant="outline"
+                    size="sm"
+                    className="text-xs"
+                    style={{
+                      borderColor: rgbToString(CARE_CATEGORY_COLORS[category.key]),
+                      color: rgbToString(CARE_CATEGORY_COLORS[category.key]),
+                    }}
+                  >
+                    {React.createElement(getLucideIcon(category.icon), {
+                      className: 'h-3 w-3 mr-1',
+                    })}
+                    {category.label}
+                  </Button>
+                ))}
+              </div>
+            </div>
+            <div>
+              <h3 className="text-sm font-medium mb-2">実施状況</h3>
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="text-xs border-green-500 text-green-600"
+                >
+                  <Check className="h-3 w-3 mr-1" />
+                  実施済
+                </Button>
+                <Button variant="outline" size="sm" className="text-xs border-red-500 text-red-600">
+                  未実施
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="text-xs border-gray-400 text-gray-600"
+                >
+                  予定のみ
+                </Button>
+              </div>
+            </div>
+            <div>
+              <h3 className="text-sm font-medium mb-2">表示設定</h3>
+              <div className="flex gap-2">
+                <Button variant="outline" size="sm" className="text-xs">
+                  全て表示
+                </Button>
+                <Button variant="outline" size="sm" className="text-xs">
+                  現在時刻付近
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {activeView === 'time' ? <TimeBaseView /> : <UserBaseView />}
+
+      {/* 一括記録モーダル */}
+      <BulkCareRecordModal
+        isOpen={showBulkRecordModal}
+        onClose={() => setShowBulkRecordModal(false)}
+        residents={careBoardData.filter((r) => r.admissionStatus === '入居中')}
+        onSave={handleSaveBulkRecords}
+      />
     </div>
   );
 }

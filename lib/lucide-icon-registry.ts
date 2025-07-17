@@ -3,6 +3,7 @@
 import {
   Activity,
   AlertTriangle,
+  Clock as ClockIcon,
   Bath,
   Bed,
   Book,
@@ -49,6 +50,9 @@ import {
 
 // Icon registry mapping string names to icon components
 const iconRegistry: Record<string, LucideIcon> = {
+  // Clock icon for current time button
+  ClockIcon,
+
   // Dashboard menu icons
   Users,
   ClipboardList,
