@@ -54,7 +54,7 @@ export default function DocumentEditPage({ params: paramsPromise }: DocumentEdit
           status: 'draft' as const,
           tags: '会議,報告,サンプル',
         });
-        
+
         // エディタ内容も設定
         setContent('<p>これはサンプル文書の内容です。</p><p>編集して保存してください。</p>');
         setFontFamily('Arial, sans-serif');

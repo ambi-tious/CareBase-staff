@@ -33,7 +33,7 @@ export const DocumentDetailHeader: React.FC<DocumentDetailHeaderProps> = ({
     <div className={`space-y-4 ${className}`}>
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div className="flex items-center gap-2">
-          <Link href="/documents/minutes">
+          <Link href="/documents?category=minutes">
             <Button variant="outline" size="sm" className="flex items-center gap-1">
               <ArrowLeft className="h-4 w-4" />
               一覧へ戻る

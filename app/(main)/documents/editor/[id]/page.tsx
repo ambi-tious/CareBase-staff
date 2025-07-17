@@ -138,4 +138,4 @@ export default function DocumentEditorPage({
       <DocumentForm initialDocument={document} onSave={handleSaveDocument} />
     </div>
   );
-};
+}

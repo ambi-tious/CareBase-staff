@@ -56,7 +56,7 @@ export const DocumentItemCard: React.FC<DocumentItemCardProps> = ({
     if (item.type === 'file') {
       return `/documents/view/${item.id}`;
     } else if (item.type === 'folder') {
-      return `/documents/${item.id}`;
+      return `/documents?folder=${item.id}`;
     }
     return '#'; // フォルダの場合は現在のページにとどまる
   };
