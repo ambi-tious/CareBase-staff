@@ -170,9 +170,6 @@ export function UserBaseView() {
                     <div
                       key={`${resident.id}-vitals`}
                       className="p-2 border-b border-r border-gray-200 text-sm text-center hover:bg-gray-50 transition-colors cursor-pointer min-h-16"
-                      style={{
-                        backgroundColor: hasVitalEvents ? 'rgba(231, 76, 60, 0.05)' : 'transparent',
-                      }}
                       onClick={() => {
                         if (!hasVitalEvents) {
                           handleCellClick('temperature', resident.id, resident.name);

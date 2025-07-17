@@ -67,6 +67,7 @@ function DraggableEvent({
 export function TimeBaseView() {
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
   const currentTimeRowRef = useRef<HTMLDivElement | null>(null);
+  const headerRowRef = useRef<HTMLDivElement | null>(null);
   const [isClient, setIsClient] = useState(false);
   const [currentTime, setCurrentTime] = useState(''); // 空文字で初期化
   const [selectedEvent, setSelectedEvent] = useState<{
@@ -115,16 +116,16 @@ export function TimeBaseView() {
     if (!isClient) return;
 
     const scrollTimer = setTimeout(() => {
-      if (scrollContainerRef.current && currentTimeRowRef.current) {
-        const containerRect = scrollContainerRef.current.getBoundingClientRect();
+      if (scrollContainerRef.current && currentTimeRowRef.current && headerRowRef.current) {
         const rowRect = currentTimeRowRef.current.getBoundingClientRect();
-        const scrollTop = rowRect.top - containerRect.top - 20;
+        const headerRowRect = headerRowRef.current.getBoundingClientRect();
+        const scrollTop = rowRect.top - headerRowRect.bottom;
         scrollContainerRef.current.scrollTo({
           top: scrollTop,
           behavior: 'smooth',
         });
       }
-    }, 300);
+    }, 100);
     return () => clearTimeout(scrollTimer);
   }, [isClient, currentTime]);
 
@@ -372,7 +373,7 @@ export function TimeBaseView() {
       {!isClient ? (
         // Server-side rendering fallback
         <div className="min-h-16 border-b border-gray-200 p-1.5 flex flex-col items-start justify-start gap-1.5 w-full">
-          <div className="overflow-auto max-h-[calc(100vh-200px)]">
+          <div className="overflow-auto max-h-[calc(100vh-180px)]">
             <div className="flex items-center justify-center p-8">
               <div className="text-gray-500">読み込み中...</div>
             </div>
@@ -386,14 +387,15 @@ export function TimeBaseView() {
           onDragEnd={handleDragEnd}
         >
           <div className="bg-white rounded-lg shadow-md overflow-hidden border border-gray-200">
-            <div className="overflow-auto max-h-[calc(100vh-200px)]" ref={scrollContainerRef}>
+            <div className="overflow-auto max-h-[calc(100vh-180px)]" ref={scrollContainerRef}>
               <div
                 className="grid relative"
                 style={{
                   gridTemplateColumns: `80px repeat(${careBoardData.length}, minmax(160px, 1fr))`,
                 }}
               >
-                <div className="sticky top-0 left-0 bg-gray-100 z-30 flex items-center justify-center p-3 border-b border-r border-gray-300">
+                <div className="sticky top-0 left-0 bg-gray-100 z-30 flex items-center justify-center p-3 border-b border-r border-gray-300"
+                ref={headerRowRef}>
                   <span className="font-semibold text-base">時間</span>
                 </div>
                 {careBoardData.map((resident) => (
@@ -408,7 +410,7 @@ export function TimeBaseView() {
                   <div
                     key={time}
                     className={`contents ${isClient && time === currentTime ? 'current-time-row' : ''}`}
-                    ref={isClient && time === currentTime ? currentTimeRowRef : undefined}
+                    
                   >
                     <div
                       className={cn(
@@ -417,6 +419,7 @@ export function TimeBaseView() {
                           ? 'bg-yellow-100 text-yellow-800 font-bold border-l-4 border-yellow-500'
                           : 'bg-gray-50 text-gray-700'
                       )}
+                      ref={isClient && time === currentTime ? currentTimeRowRef : undefined}
                     >
                       {time}
                     </div>
@@ -426,7 +429,6 @@ export function TimeBaseView() {
                         className={cn(
                           'border-r border-gray-200 relative',
                           isClient && time === currentTime ? 'bg-yellow-50' : '',
-                          parseInt(time.split(':')[0]) % 2 === 0 ? 'bg-gray-50/50' : ''
                         )}
                         data-droppable-id={time}
                       >
