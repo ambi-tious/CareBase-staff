@@ -6,11 +6,13 @@ URL: https://carebase-staff.vercel.app/residents/[residentId]
 
 ## 概要
 
-CareBase-staffアプリケーションの利用者詳細画面内の居宅介護支援事業所タブ設計書です。  
+利用者詳細画面内の居宅介護支援事業所タブ設計書です。  
 利用者の居宅介護支援事業所情報の表示、登録、編集、削除機能を提供します。  
-1利用者につき1事業所の登録を可能にし、事業所名、ケアマネージャー名、連絡先情報を効率的に管理できます。
+1利用者につき複数事業所の登録を可能にし、事業所名、ケアマネージャー名、連絡先情報を効率的に管理できます。
 
 ## 全体レイアウト
+
+<img width="1047" height="274" alt="image" src="https://github.com/user-attachments/assets/a78d37d7-7b2d-494b-87f7-ca4ed1301938" />
 
 ### 画面構成
 
@@ -52,6 +54,8 @@ CareBase-staffアプリケーションの利用者詳細画面内の居宅介護
 | 削除処理   | 既存の居宅介護支援事業所情報を削除   | `/api/v1/residents/{id}/home-care-office/{officeId}` | 同一画面（モーダル閉じる） |
 
 ### モーダル仕様
+<img height="300" alt="image" src="https://github.com/user-attachments/assets/71cc6461-62ed-465b-8786-95f829fb324b" />
+<img height="300" alt="image" src="https://github.com/user-attachments/assets/386a9fdf-8ea7-4a4a-bd64-baa884c480a8" />
 
 #### 登録モーダル
 
@@ -79,6 +83,7 @@ CareBase-staffアプリケーションの利用者詳細画面内の居宅介護
 | 登録ボタンラベル | 更新                             |
 
 #### 削除確認モーダル
+<img height="200" alt="image" src="https://github.com/user-attachments/assets/348b6cbd-8f99-4781-ac26-20aeeaa8365a" />
 
 | 項目名           | コンポーネント | 必須 | 初期値                                        | 備考                     |
 | ---------------- | -------------- | ---- | --------------------------------------------- | ------------------------ |
