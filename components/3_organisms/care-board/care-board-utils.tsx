@@ -188,7 +188,7 @@ export const CareEventStatusComponent: React.FC<CareEventStatusProps> = ({
   const Icon = getLucideIcon(event.icon);
   const baseColorArr: number[] = category ? CARE_CATEGORY_COLORS[category] : [51, 51, 51];
   const baseColor = rgbToString(baseColorArr);
-  
+
   // 実際のステータスを実施時間の有無で判定
   const actualStatus = getEventStatus(event);
 
@@ -212,7 +212,7 @@ export const CareEventStatusComponent: React.FC<CareEventStatusProps> = ({
   };
 
   const statusStyles = getStatusStyles();
-  
+
   // 表示する時間（実施時間があれば実施時間、なければ予定時間）
   const displayTime = event.actualTime || event.scheduledTime;
 
@@ -265,15 +265,15 @@ export const CareRecordModal: React.FC<CareRecordModalProps> = ({
   const [updatedEvent, setUpdatedEvent] = useState<CareEvent>({ ...event });
   const [staffName, setStaffName] = useState<string>(''); // 担当者
   const [errors, setErrors] = useState<Record<string, string>>({});
-  
+
   // 予定時間の時・分
   const [scheduledHour, setScheduledHour] = useState<string>('');
   const [scheduledMinute, setScheduledMinute] = useState<string>('');
-  
+
   // 実施時間の時・分
   const [actualHour, setActualHour] = useState<string>('');
   const [actualMinute, setActualMinute] = useState<string>('');
-  
+
   // 実施時間入力欄の表示/非表示
   const [isActualTimeVisible, setIsActualTimeVisible] = useState<boolean>(false);
 
@@ -354,7 +354,7 @@ export const CareRecordModal: React.FC<CareRecordModalProps> = ({
   const toggleActualTimeVisibility = () => {
     const newVisibility = !isActualTimeVisible;
     setIsActualTimeVisible(newVisibility);
-    
+
     if (!newVisibility) {
       // 非表示にする場合は実施時間をクリア
       setActualHour('');
@@ -369,8 +369,11 @@ export const CareRecordModal: React.FC<CareRecordModalProps> = ({
   // 時間と分を結合して更新
   const updateTimes = () => {
     const formattedScheduledTime = `${scheduledHour}:${scheduledMinute}`;
-    const formattedActualTime = isActualTimeVisible && actualHour && actualMinute ? `${actualHour}:${actualMinute}` : undefined;
-    
+    const formattedActualTime =
+      isActualTimeVisible && actualHour && actualMinute
+        ? `${actualHour}:${actualMinute}`
+        : undefined;
+
     setUpdatedEvent((prev) => ({
       ...prev,
       scheduledTime: formattedScheduledTime,
@@ -459,22 +462,24 @@ export const CareRecordModal: React.FC<CareRecordModalProps> = ({
                   </Select>
                 </div>
               </div>
-              {errors.scheduledTime && <p className="text-red-500 text-xs mt-1">{errors.scheduledTime}</p>}
+              {errors.scheduledTime && (
+                <p className="text-red-500 text-xs mt-1">{errors.scheduledTime}</p>
+              )}
             </div>
 
             <div className="border rounded-md overflow-hidden">
-              <div 
+              <div
                 className={`p-4 cursor-pointer transition-colors ${
-                  isActualTimeVisible ? 'bg-green-50 border-green-200' : 'bg-blue-50 hover:bg-blue-100'
+                  isActualTimeVisible
+                    ? 'bg-green-50 border-green-200'
+                    : 'bg-blue-50 hover:bg-blue-100'
                 }`}
                 onClick={toggleActualTimeVisibility}
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center">
                     <Check className="h-4 w-4 mr-2" />
-                    <label className="text-sm font-medium cursor-pointer">
-                      実施時間
-                    </label>
+                    <label className="text-sm font-medium cursor-pointer">実施時間</label>
                   </div>
                   <div className="flex items-center">
                     {isActualTimeVisible && actualHour && actualMinute && (
@@ -482,15 +487,31 @@ export const CareRecordModal: React.FC<CareRecordModalProps> = ({
                         {actualHour}:{actualMinute}
                       </span>
                     )}
-                    <div className={`transform transition-transform ${isActualTimeVisible ? 'rotate-180' : ''}`}>
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M6 9L12 15L18 9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    <div
+                      className={`transform transition-transform ${isActualTimeVisible ? 'rotate-180' : ''}`}
+                    >
+                      <svg
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M6 9L12 15L18 9"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
                       </svg>
                     </div>
                   </div>
                 </div>
                 <p className="text-xs text-gray-600 mt-1">
-                  {isActualTimeVisible ? '実施時間が設定されています（実施済み）' : 'クリックして実施時間を入力（未実施）'}
+                  {isActualTimeVisible
+                    ? '実施時間が設定されています（実施済み）'
+                    : 'クリックして実施時間を入力（未実施）'}
                 </p>
               </div>
 

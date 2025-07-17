@@ -52,7 +52,7 @@ export function UserBaseView() {
       const category = careCategories.find((c) => c.key === categoryKey);
       const now = new Date();
       const currentTime = now.getHours().toString().padStart(2, '0') + ':00';
-      
+
       const newEvent: CareEvent = {
         scheduledTime: currentTime,
         time: currentTime,
@@ -83,7 +83,9 @@ export function UserBaseView() {
         } else {
           // Update existing event
           const index = residentEvents.findIndex(
-            (e) => e.scheduledTime === selectedEvent?.event.scheduledTime && e.label === selectedEvent?.event.label
+            (e) =>
+              e.scheduledTime === selectedEvent?.event.scheduledTime &&
+              e.label === selectedEvent?.event.label
           );
 
           if (index !== -1) {
@@ -132,7 +134,9 @@ export function UserBaseView() {
                 <ResidentInfoCell resident={resident} />
               </div>
               {careCategories.map((category) => {
-                const eventsForCategory = (careEvents[resident.id] || resident.events).filter((e) => e.categoryKey === category.key);
+                const eventsForCategory = (careEvents[resident.id] || resident.events).filter(
+                  (e) => e.categoryKey === category.key
+                );
                 const event = eventsForCategory[0]; // 最初のイベントを使用
                 const bgColor = category.key
                   ? CARE_CATEGORY_COLORS[category.key] + '10'
