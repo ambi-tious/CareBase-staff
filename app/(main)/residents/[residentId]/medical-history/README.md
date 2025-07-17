@@ -6,7 +6,7 @@ URL: https://carebase-staff.vercel.app/residents/[residentId]
 
 ## 概要
 
-CareBase-staffアプリケーションの利用者詳細画面内の既往歴タブ設計書です。  
+利用者詳細画面内の既往歴タブ設計書です。  
 利用者の既往歴情報の表示、登録、編集、削除機能を提供します。  
 複数の既往歴を登録可能で発症年月順でソート表示し、各既往歴の詳細情報を効率的に管理できます。
 
@@ -53,10 +53,10 @@ CareBase-staffアプリケーションの利用者詳細画面内の既往歴タ
 | 削除処理   | 既存の既往歴情報を削除       | `residentDataService.deleteMedicalHistory` | 同一画面（モーダル閉じる） |
 
 ### モーダル仕様
+<img height="350" alt="image" src="https://github.com/user-attachments/assets/df016e3e-2335-4678-9edf-b65e13d2054e" />
+<img height="350" alt="image" src="https://github.com/user-attachments/assets/b9871e99-2824-4f18-8d89-58204f3a61a5" />
 
 #### 登録モーダル
-
-<img width="824" height="587" alt="image" src="https://github.com/user-attachments/assets/df016e3e-2335-4678-9edf-b65e13d2054e" />
 
 | 項目名           | コンポーネント    | 必須 | 初期値                                       | 備考                                      |
 | ---------------- | ----------------- | ---- | -------------------------------------------- | ----------------------------------------- |
@@ -81,6 +81,7 @@ CareBase-staffアプリケーションの利用者詳細画面内の既往歴タ
 | 登録ボタンラベル | 更新                             |
 
 #### 削除確認モーダル
+<img height="200" alt="image" src="https://github.com/user-attachments/assets/5f2cfacd-20f2-4467-8acd-92c9aae053da" />
 
 | 項目名           | コンポーネント | 必須 | 初期値                                             | 備考                       |
 | ---------------- | -------------- | ---- | -------------------------------------------------- | -------------------------- |
