@@ -1,8 +1,14 @@
 import { getLucideIcon } from '@/lib/lucide-icon-registry';
-import { careBoardData, careCategories, CareCategoryKey, CareEvent } from '@/mocks/care-board-data';
+import {
+  careBoardData,
+  CareCategoryGroupKey,
+  careCategoryGroups,
+  CareCategoryKey,
+  CareEvent,
+  getCategoriesByGroup,
+} from '@/mocks/care-board-data';
 import React, { useCallback, useEffect, useState } from 'react';
 import {
-  CARE_CATEGORY_COLORS,
   CareEventStatusComponent as CareEventStatus,
   CareRecordModal,
   getEventStatus,
@@ -47,18 +53,19 @@ export function UserBaseView() {
   );
 
   const handleCellClick = useCallback(
-    (categoryKey: CareCategoryKey, residentId: number, residentName: string) => {
-      // Create a new empty event
-      const category = careCategories.find((c) => c.key === categoryKey);
+    (groupKey: CareCategoryGroupKey, residentId: number, residentName: string) => {
+      // グループの最初のカテゴリで新規イベントを作成
+      const groupCategories = getCategoriesByGroup(groupKey);
+      const firstCategory = groupCategories[0];
       const now = new Date();
       const currentTime = now.getHours().toString().padStart(2, '0') + ':00';
 
       const newEvent: CareEvent = {
         scheduledTime: currentTime,
         time: currentTime,
-        icon: category?.icon || 'ClipboardList',
+        icon: firstCategory?.icon || 'ClipboardList',
         label: '',
-        categoryKey,
+        categoryKey: firstCategory?.key,
         details: '',
       };
 
@@ -104,69 +111,91 @@ export function UserBaseView() {
     [selectedEvent]
   );
 
+  // グループに属するイベントを取得する関数
+  const getEventsForGroup = (events: CareEvent[], groupKey: CareCategoryGroupKey): CareEvent[] => {
+    const groupCategories = getCategoriesByGroup(groupKey);
+    const groupCategoryKeys = groupCategories.map((cat) => cat.key);
+
+    return events.filter(
+      (event) => event.categoryKey && groupCategoryKeys.includes(event.categoryKey)
+    );
+  };
+
   return (
     <>
       <div className="overflow-x-auto bg-white rounded-lg shadow-md max-h-[calc(100vh-200px)]">
         <div
           className="grid"
           style={{
-            gridTemplateColumns: `200px repeat(${careCategories.length}, minmax(120px, 1fr))`,
+            gridTemplateColumns: `200px repeat(${careCategoryGroups.length}, minmax(160px, 1fr))`,
           }}
         >
-          <div className="sticky top-0 left-0 bg-carebase-blue text-white p-3 border-b border-r border-gray-300 z-20 flex items-center justify-center">
+          {/* ヘッダー行 */}
+          <div className="sticky top-0 left-0 bg-gray-100 p-3 border-b border-r border-gray-300 z-20 flex items-center justify-center">
             <span className="text-base font-semibold">利用者名</span>
           </div>
-          {careCategories.map((category) => (
+          {careCategoryGroups.map((group) => (
             <div
-              key={category.key}
-              className="sticky top-0 bg-carebase-blue text-white border-b border-r border-gray-300 z-10 text-sm text-center flex flex-col items-center justify-center"
-              style={{ backgroundColor: rgbToString(CARE_CATEGORY_COLORS[category.key]) }}
+              key={group.key}
+              className="sticky top-0 bg-gray-100 border-b border-r border-gray-300 z-10 text-sm text-center flex flex-col items-center justify-center p-2"
             >
               <div className="flex items-center justify-center">
-                {React.createElement(getLucideIcon(category.icon), { className: 'h-5 w-5 mr-1' })}
-                <span>{category.label}</span>
+                {React.createElement(getLucideIcon(group.icon), {
+                  className: 'h-5 w-5 mr-1',
+                  style: { color: rgbToString([...group.color]) },
+                })}
+                <span className="font-medium">{group.label}</span>
               </div>
             </div>
           ))}
+
+          {/* 利用者行 */}
           {careBoardData.map((resident) => (
             <div key={resident.id} className="contents">
               <div className="flex items-center gap-3 p-3 border-b border-r border-gray-200 bg-gray-50 sticky left-0 z-[5] hover:bg-gray-100 transition-colors">
                 <ResidentInfoCell resident={resident} />
               </div>
-              {careCategories.map((category) => {
-                const eventsForCategory = (careEvents[resident.id] || resident.events).filter(
-                  (e) => e.categoryKey === category.key
-                );
-                const event = eventsForCategory[0]; // 最初のイベントを使用
-                const bgColor = category.key
-                  ? CARE_CATEGORY_COLORS[category.key] + '10'
-                  : '#f0f0f0';
+              {careCategoryGroups.map((group) => {
+                const residentEvents = careEvents[resident.id] || resident.events;
+                const groupEvents = getEventsForGroup(residentEvents, group.key);
+
                 return (
                   <div
-                    key={`${resident.id}-${category.key}`}
-                    className="p-2 border-b border-r border-gray-200 text-sm text-center hover:bg-gray-50 transition-colors cursor-pointer min-h-16"
-                    style={{ backgroundColor: event ? bgColor : 'transparent' }}
+                    key={`${resident.id}-${group.key}`}
+                    className="p-2 border-b border-r border-gray-200 text-sm hover:bg-gray-50 transition-colors cursor-pointer min-h-16"
+                    style={{
+                      backgroundColor:
+                        groupEvents.length > 0
+                          ? rgbToString([...group.color]) + '10'
+                          : 'transparent',
+                    }}
                     onClick={() => {
-                      if (!event) {
-                        handleCellClick(category.key, resident.id, resident.name);
+                      if (groupEvents.length === 0) {
+                        handleCellClick(group.key, resident.id, resident.name);
                       }
                     }}
                   >
-                    {event ? (
-                      <div
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleEventClick(event, resident.id, resident.name);
-                        }}
-                      >
-                        <CareEventStatus
-                          event={event}
-                          category={category.key}
-                          status={getEventStatus(event)}
-                        />
-                      </div>
+                    {groupEvents.length > 0 ? (
+                      groupEvents.map((event, index) => (
+                        <div
+                          key={index}
+                          className="text-xs p-1 rounded hover:bg-white/50 transition-colors"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleEventClick(event, resident.id, resident.name);
+                          }}
+                        >
+                          <CareEventStatus
+                            event={event}
+                            category={event.categoryKey as CareCategoryKey}
+                            status={getEventStatus(event)}
+                          />
+                        </div>
+                      ))
                     ) : (
-                      <span className="text-gray-300">-</span>
+                      <div className="flex items-center justify-center h-full">
+                        <span className="text-gray-300">-</span>
+                      </div>
                     )}
                   </div>
                 );

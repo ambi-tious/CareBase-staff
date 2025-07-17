@@ -16,7 +16,16 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { getLucideIcon } from '@/lib/lucide-icon-registry';
-import { CareCategoryKey, CareEvent, careCategories } from '@/mocks/care-board-data';
+import {
+  CareCategoryGroupKey,
+  CareCategoryKey,
+  CareEvent,
+  careCategories,
+  careCategoryGroups,
+  getCareGroup,
+  getCategoriesByGroup,
+  getGroupByCategory,
+} from '@/mocks/care-board-data';
 import { Check, Clock, HeartPulse, Save, User, X } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 
@@ -78,7 +87,13 @@ interface VitalSignsProps {
 
 export const VitalSigns: React.FC<VitalSignsProps> = ({ events, status = 'scheduled' }) => {
   // バイタル関連のカテゴリキー
-  const vitalCategories: CareCategoryKey[] = ['temperature', 'pulse', 'bloodPressure'];
+  const vitalCategories: CareCategoryKey[] = [
+    'temperature',
+    'pulse',
+    'bloodPressure',
+    'respiration',
+    'spo2',
+  ];
 
   // バイタル関連のイベントをフィルタリング
   const vitalEvents = events.filter(
@@ -90,9 +105,11 @@ export const VitalSigns: React.FC<VitalSignsProps> = ({ events, status = 'schedu
     return null;
   }
 
-  // 最初のバイタルイベントのカテゴリを取得（スタイル用）
-  const firstCategory = vitalEvents[0].categoryKey as CareCategoryKey;
-  const baseColorArr: number[] = CARE_CATEGORY_COLORS[firstCategory] || [231, 76, 60]; // デフォルトは赤系
+  // バイタルグループの色を取得
+  const vitalGroup = getCareGroup('vital');
+  const baseColorArr: [number, number, number] = vitalGroup?.color
+    ? ([...vitalGroup.color] as [number, number, number])
+    : [231, 76, 60]; // デフォルトは赤系
   const baseColor = rgbToString(baseColorArr);
 
   // ステータスに応じたスタイルを取得
@@ -126,12 +143,11 @@ export const VitalSigns: React.FC<VitalSignsProps> = ({ events, status = 'schedu
         backgroundColor: statusStyles.background,
         border: statusStyles.border,
         borderStyle: statusStyles.borderStyle as 'solid' | 'dotted',
-        color: baseColor,
         width: '100%',
         maxWidth: '100%',
       }}
     >
-      <HeartPulse className="h-3 w-3 flex-shrink-0" />
+      <HeartPulse className="h-3 w-3 flex-shrink-0" style={{ color: baseColor }} />
       <span className="font-medium flex-1 truncate">バイタル</span>
       <span className="text-xs opacity-75 ml-auto">{displayTime}</span>
 
@@ -145,25 +161,18 @@ export const VitalSigns: React.FC<VitalSignsProps> = ({ events, status = 'schedu
   );
 };
 
-// RGB配列で色を定義
-export const CARE_CATEGORY_COLORS: Record<CareCategoryKey, [number, number, number]> = {
-  drinking: [52, 152, 219],
-  excretion: [121, 85, 72],
-  breakfast: [243, 156, 18],
-  lunch: [243, 156, 18],
-  snack: [243, 156, 18],
-  dinner: [243, 156, 18],
-  bedtimeMeal: [243, 156, 18],
-  medication: [155, 89, 182],
-  oralCare: [155, 89, 182],
-  eyeDrops: [155, 89, 182],
-  bathing: [74, 144, 226],
-  temperature: [231, 76, 60],
-  pulse: [231, 76, 60],
-  bloodPressure: [231, 76, 60],
-  respiration: [231, 76, 60],
-  spo2: [231, 76, 60],
-};
+// カテゴリグループごとの色を定義
+export const CARE_CATEGORY_COLORS: Record<CareCategoryKey, [number, number, number]> =
+  careCategories.reduce(
+    (acc, category) => {
+      const group = getCareGroup(category.groupKey);
+      acc[category.key] = group?.color
+        ? ([...group.color] as [number, number, number])
+        : [128, 128, 128]; // デフォルトはグレー
+      return acc;
+    },
+    {} as Record<CareCategoryKey, [number, number, number]>
+  );
 
 // number[]型で受け取るよう修正
 function rgbToRgba(rgb: number[], alpha: number) {
@@ -223,12 +232,11 @@ export const CareEventStatusComponent: React.FC<CareEventStatusProps> = ({
         backgroundColor: statusStyles.background,
         border: statusStyles.border,
         borderStyle: statusStyles.borderStyle as 'solid' | 'dotted',
-        color: baseColor,
         width: '100%',
         maxWidth: '100%',
       }}
     >
-      <Icon className="h-3.5 w-3.5 flex-shrink-0" />
+      <Icon className="h-3.5 w-3.5 flex-shrink-0" style={{ color: baseColor }} />
       <span className="font-medium truncate flex-1">{event.label}</span>
       <span className="text-xs opacity-75 ml-auto">{displayTime}</span>
 
@@ -257,25 +265,45 @@ export const CareRecordModal: React.FC<CareRecordModalProps> = ({
   event,
   residentId,
   residentName,
-  status = 'scheduled',
+  status,
   isNew = false,
   onClose,
   onSave,
 }) => {
-  const [updatedEvent, setUpdatedEvent] = useState<CareEvent>({ ...event });
-  const [staffName, setStaffName] = useState<string>(''); // 担当者
+  const [updatedEvent, setUpdatedEvent] = useState<CareEvent>(event);
+  const [scheduledHour, setScheduledHour] = useState('');
+  const [scheduledMinute, setScheduledMinute] = useState('');
+  const [actualHour, setActualHour] = useState('');
+  const [actualMinute, setActualMinute] = useState('');
+  const [isActualTimeVisible, setIsActualTimeVisible] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [staffName, setStaffName] = useState('');
+  const [selectedGroupKey, setSelectedGroupKey] = useState<CareCategoryGroupKey | ''>('');
 
-  // 予定時間の時・分
-  const [scheduledHour, setScheduledHour] = useState<string>('');
-  const [scheduledMinute, setScheduledMinute] = useState<string>('');
+  // カテゴリグループを選択したときに最初のカテゴリを自動選択
+  useEffect(() => {
+    if (selectedGroupKey) {
+      const groupCategories = getCategoriesByGroup(selectedGroupKey);
+      if (groupCategories.length > 0) {
+        const firstCategory = groupCategories[0];
+        setUpdatedEvent({
+          ...updatedEvent,
+          categoryKey: firstCategory.key,
+          icon: firstCategory.icon,
+        });
+      }
+    }
+  }, [selectedGroupKey]);
 
-  // 実施時間の時・分
-  const [actualHour, setActualHour] = useState<string>('');
-  const [actualMinute, setActualMinute] = useState<string>('');
-
-  // 実施時間入力欄の表示/非表示
-  const [isActualTimeVisible, setIsActualTimeVisible] = useState<boolean>(false);
+  // 初期値設定時にグループも設定
+  useEffect(() => {
+    if (updatedEvent.categoryKey) {
+      const group = getGroupByCategory(updatedEvent.categoryKey);
+      if (group) {
+        setSelectedGroupKey(group.key);
+      }
+    }
+  }, [updatedEvent.categoryKey]);
 
   // ログインユーザー情報を取得
   useEffect(() => {
@@ -334,8 +362,12 @@ export const CareRecordModal: React.FC<CareRecordModalProps> = ({
       newErrors.scheduledTime = '予定時間を選択してください';
     }
 
+    if (!selectedGroupKey) {
+      newErrors.groupKey = '種別グループを選択してください';
+    }
+
     if (!updatedEvent.categoryKey) {
-      newErrors.categoryKey = 'ケア種別を選択してください';
+      newErrors.categoryKey = '詳細種別を選択してください';
     }
 
     if (!updatedEvent.label || updatedEvent.label.trim() === '') {
@@ -414,7 +446,7 @@ export const CareRecordModal: React.FC<CareRecordModalProps> = ({
           </DialogTitle>
         </DialogHeader>
 
-        <div className="py-4 space-y-4">
+        <div className="space-y-4">
           <div className="flex items-center gap-2 text-sm text-gray-500 mb-2">
             <User className="h-4 w-4" />
             <span>
@@ -552,38 +584,73 @@ export const CareRecordModal: React.FC<CareRecordModalProps> = ({
               )}
             </div>
 
-            <div className="space-y-2">
-              <label className="text-sm font-medium">
-                種別 <span className="text-red-500 ml-1">*</span>
-              </label>
-              <Select
-                value={updatedEvent.categoryKey}
-                onValueChange={(value) => {
-                  const category = careCategories.find((c) => c.key === value);
-                  setUpdatedEvent({
-                    ...updatedEvent,
-                    categoryKey: value as CareCategoryKey,
-                    icon: category?.icon || 'ClipboardList',
-                  });
-                }}
-              >
-                <SelectTrigger className={errors.categoryKey ? 'border-red-500' : ''}>
-                  <SelectValue placeholder="ケア種別を選択" />
-                </SelectTrigger>
-                <SelectContent>
-                  {careCategories.map((category) => (
-                    <SelectItem key={category.key} value={category.key}>
-                      <div className="flex items-center gap-2">
-                        {React.createElement(getLucideIcon(category.icon), {
-                          className: 'h-4 w-4',
-                        })}
-                        <span>{category.label}</span>
-                      </div>
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              {errors.categoryKey && <p className="text-red-500 text-xs">{errors.categoryKey}</p>}
+            <div className="space-y-4">
+              {/* カテゴリグループ選択 */}
+              <div className="space-y-2">
+                <label className="text-sm font-medium">
+                  種別グループ <span className="text-red-500 ml-1">*</span>
+                </label>
+                <Select
+                  value={selectedGroupKey}
+                  onValueChange={(value) => setSelectedGroupKey(value as CareCategoryGroupKey)}
+                >
+                  <SelectTrigger className={errors.groupKey ? 'border-red-500' : ''}>
+                    <SelectValue placeholder="ケア種別グループを選択" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {careCategoryGroups.map((group) => (
+                      <SelectItem key={group.key} value={group.key}>
+                        <div className="flex items-center gap-2">
+                          {React.createElement(getLucideIcon(group.icon), {
+                            className: 'h-4 w-4',
+                          })}
+                          <span>{group.label}</span>
+                        </div>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {errors.groupKey && <p className="text-red-500 text-xs">{errors.groupKey}</p>}
+              </div>
+
+              {/* カテゴリ選択（グループが選択された場合のみ表示） */}
+              {selectedGroupKey && (
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">
+                    詳細種別 <span className="text-red-500 ml-1">*</span>
+                  </label>
+                  <Select
+                    value={updatedEvent.categoryKey}
+                    onValueChange={(value) => {
+                      const category = careCategories.find((c) => c.key === value);
+                      setUpdatedEvent({
+                        ...updatedEvent,
+                        categoryKey: value as CareCategoryKey,
+                        icon: category?.icon || 'ClipboardList',
+                      });
+                    }}
+                  >
+                    <SelectTrigger className={errors.categoryKey ? 'border-red-500' : ''}>
+                      <SelectValue placeholder="詳細種別を選択" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {getCategoriesByGroup(selectedGroupKey).map((category) => (
+                        <SelectItem key={category.key} value={category.key}>
+                          <div className="flex items-center gap-2">
+                            {React.createElement(getLucideIcon(category.icon), {
+                              className: 'h-4 w-4',
+                            })}
+                            <span>{category.label}</span>
+                          </div>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  {errors.categoryKey && (
+                    <p className="text-red-500 text-xs">{errors.categoryKey}</p>
+                  )}
+                </div>
+              )}
             </div>
 
             <div className="space-y-2">
