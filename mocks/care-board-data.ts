@@ -7,7 +7,7 @@ export const careCategories = [
   { key: 'drinking', label: '飲水', icon: 'GlassWater' },
   { key: 'excretion', label: '排泄', icon: 'ExcretionIcon' },
   { key: 'breakfast', label: '朝食', icon: 'Utensils' },
-  { key: 'lunch', label: '昼食', icon: 'Soup' },
+  { key: 'lunch', label: '昼食', icon: 'Utensils' },
   { key: 'snack', label: 'おやつ', icon: 'Cookie' },
   { key: 'dinner', label: '夕食', icon: 'Utensils' },
   { key: 'bedtimeMeal', label: '眠前食', icon: 'Bed' },

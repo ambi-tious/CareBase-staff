@@ -7,8 +7,7 @@ import {
   CareRecordModal,
   ResidentInfoCell,
   rgbToString,
-  VitalSigns,
-  type CareEventStatus as CareEventStatusType,
+  type CareEventStatus as CareEventStatusType
 } from './care-board-utils';
 
 export function UserBaseView() {
@@ -108,28 +107,6 @@ export function UserBaseView() {
     [selectedEvent]
   );
 
-  // バイタル関連のカテゴリキー
-  const vitalCategories: CareCategoryKey[] = ['temperature', 'pulse', 'bloodPressure'];
-
-  // 通常のイベントを取得する関数
-  const getNonVitalEventForCategory = (
-    residentEvents: CareEvent[],
-    categoryKey: CareCategoryKey
-  ): CareEvent | undefined => {
-    // バイタルカテゴリの場合はnullを返す
-    if (vitalCategories.includes(categoryKey)) {
-      return undefined;
-    }
-    return residentEvents.find((event) => event.categoryKey === categoryKey);
-  };
-
-  // バイタルイベントを取得する関数
-  const getVitalEventsForResident = (residentEvents: CareEvent[]): CareEvent[] => {
-    return residentEvents.filter(
-      (event) => event.categoryKey && vitalCategories.includes(event.categoryKey)
-    );
-  };
-
   return (
     <>
       <div className="overflow-x-auto bg-white rounded-lg shadow-md max-h-[calc(100vh-200px)]">
@@ -160,84 +137,39 @@ export function UserBaseView() {
                 <ResidentInfoCell resident={resident} />
               </div>
               {careCategories.map((category) => {
-                // バイタルカテゴリの特別処理
-                if (category.key === 'temperature') {
-                  const vitalEvents = getVitalEventsForResident(resident.events);
-                  const hasVitalEvents = vitalEvents.length > 0;
-                  const vitalStatus = hasVitalEvents ? getEventStatus(vitalEvents[0]) : 'scheduled';
-
-                  return (
-                    <div
-                      key={`${resident.id}-vitals`}
-                      className="p-2 border-b border-r border-gray-200 text-sm text-center hover:bg-gray-50 transition-colors cursor-pointer min-h-16"
-                      onClick={() => {
-                        if (!hasVitalEvents) {
-                          handleCellClick('temperature', resident.id, resident.name);
-                        }
-                      }}
-                    >
-                      {hasVitalEvents ? (
-                        <div
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleEventClick(vitalEvents[0], resident.id, resident.name);
-                          }}
-                        >
-                          <VitalSigns events={vitalEvents} status={vitalStatus} />
-                        </div>
-                      ) : (
-                        <span className="text-gray-300">-</span>
-                      )}
-                    </div>
-                  );
-                }
-                // 血圧と脈拍のカテゴリはスキップ（バイタルにまとめるため）
-                else if (category.key === 'pulse' || category.key === 'bloodPressure') {
-                  return (
-                    <div
-                      key={`${resident.id}-${category.key}`}
-                      className="p-2 border-b border-r border-gray-200 text-sm text-center hover:bg-gray-50 transition-colors cursor-pointer min-h-16"
-                    >
+                const event = resident.events.find((e) => e.categoryKey === category.key);
+                const bgColor = category.key
+                  ? CARE_CATEGORY_COLORS[category.key] + '10'
+                  : '#f0f0f0';
+                return (
+                  <div
+                    key={`${resident.id}-${category.key}`}
+                    className="p-2 border-b border-r border-gray-200 text-sm text-center hover:bg-gray-50 transition-colors cursor-pointer min-h-16"
+                    style={{ backgroundColor: event ? bgColor : 'transparent' }}
+                    onClick={() => {
+                      if (!event) {
+                        handleCellClick(category.key, resident.id, resident.name);
+                      }
+                    }}
+                  >
+                    {event ? (
+                      <div
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleEventClick(event, resident.id, resident.name);
+                        }}
+                      >
+                        <CareEventStatus
+                          event={event}
+                          category={category.key}
+                          status={getEventStatus(event)}
+                        />
+                      </div>
+                    ) : (
                       <span className="text-gray-300">-</span>
-                    </div>
-                  );
-                }
-                // その他の通常カテゴリ
-                else {
-                  const event = getNonVitalEventForCategory(resident.events, category.key);
-                  const bgColor = category.key
-                    ? CARE_CATEGORY_COLORS[category.key] + '10'
-                    : '#f0f0f0';
-                  return (
-                    <div
-                      key={`${resident.id}-${category.key}`}
-                      className="p-2 border-b border-r border-gray-200 text-sm text-center hover:bg-gray-50 transition-colors cursor-pointer min-h-16"
-                      style={{ backgroundColor: event ? bgColor : 'transparent' }}
-                      onClick={() => {
-                        if (!event) {
-                          handleCellClick(category.key, resident.id, resident.name);
-                        }
-                      }}
-                    >
-                      {event ? (
-                        <div
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleEventClick(event, resident.id, resident.name);
-                          }}
-                        >
-                          <CareEventStatus
-                            event={event}
-                            category={category.key}
-                            status={getEventStatus(event)}
-                          />
-                        </div>
-                      ) : (
-                        <span className="text-gray-300">-</span>
-                      )}
-                    </div>
-                  );
-                }
+                    )}
+                  </div>
+                );
               })}
             </div>
           ))}
