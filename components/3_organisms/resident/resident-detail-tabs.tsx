@@ -8,16 +8,17 @@ import { IndividualPointCard } from '@/components/2_molecules/resident/individua
 import { MedicalHistoryCard } from '@/components/2_molecules/resident/medical-history-card';
 import { MedicalInstitutionCard } from '@/components/2_molecules/resident/medical-institution-card';
 import { MedicationCard as OldMedicationCard } from '@/components/2_molecules/resident/medication-card';
+import { CategoryCreationModal } from '@/components/3_organisms/modals/category-creation-modal';
 import { ContactRegistrationModal } from '@/components/3_organisms/modals/contact-registration-modal';
 import { HomeCareOfficeModal } from '@/components/3_organisms/modals/home-care-office-modal';
-import { CategoryCreationModal } from '@/components/3_organisms/modals/category-creation-modal';
+import { IndividualPointModal } from '@/components/3_organisms/modals/individual-point-modal';
 import { MedicalHistoryModal } from '@/components/3_organisms/modals/medical-history-modal';
 import { MedicalInstitutionModal } from '@/components/3_organisms/modals/medical-institution-modal';
 import { MedicationRegistrationModal } from '@/components/3_organisms/modals/medication-registration-modal';
 import { MedicationStatusRegistrationModal } from '@/components/3_organisms/modals/medication-status-registration-modal';
-import { IndividualPointModal } from '@/components/3_organisms/modals/individual-point-modal';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import type { IconName } from '@/lib/lucide-icon-registry';
 import type {
   ContactPerson,
   HomeCareOffice,
@@ -37,11 +38,9 @@ import type {
   MedicalHistoryFormData,
   MedicalInstitutionFormData,
 } from '@/types/resident-data';
-import { PlusCircle, Settings } from 'lucide-react';
+import { PlusCircle } from 'lucide-react';
 import type React from 'react';
 import { useState } from 'react';
-import { CategoryEditModal } from '@/components/3_organisms/modals/category-edit-modal';
-import type { IconName } from '@/lib/lucide-icon-registry';
 
 interface ResidentDetailTabsProps {
   resident: Resident;
@@ -55,7 +54,6 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
   const [isMedicationModalOpen, setIsMedicationModalOpen] = useState(false);
   const [isMedicationStatusModalOpen, setIsMedicationStatusModalOpen] = useState(false);
   const [selectedPointCategory, setSelectedPointCategory] = useState<string | null>(null);
-  const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
   const [isPointModalOpen, setIsPointModalOpen] = useState(false);
   const [isAddCategoryModalOpen, setIsAddCategoryModalOpen] = useState(false);
   const [pointContents, setPointContents] = useState<Record<string, string>>({
@@ -180,16 +178,6 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
     // Simulate API call delay
     await new Promise((resolve) => setTimeout(resolve, 800));
     return Promise.resolve();
-  };
-
-  // --- 追加: カテゴリ編集・削除ハンドラ ---
-  const handleCategoryUpdate = (updated: { id: string; category: string; icon: IconName }) => {
-    setIndividualPoints((prev) =>
-      prev.map((cat) => (cat.id === updated.id ? { ...cat, ...updated } : cat))
-    );
-  };
-  const handleCategoryDelete = (id: string) => {
-    setIndividualPoints((prev) => prev.filter((cat) => cat.id !== id));
   };
 
   const handleContactSubmit = async (contactData: ContactFormData): Promise<boolean> => {
@@ -537,14 +525,6 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
                 すべて表示
               </Button>
             </div>
-            <Button
-              variant="outline"
-              className="bg-white"
-              onClick={() => setIsCategoryModalOpen(true)}
-            >
-              <Settings className="h-4 w-4 mr-2" />
-              カテゴリを編集
-            </Button>
           </div>
 
           <div className="mb-4 flex justify-end">
@@ -614,16 +594,6 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
         residentName={resident.name}
       />
 
-      {/* --- 追加: カテゴリ編集モーダル --- */}
-      <CategoryEditModal
-        isOpen={isCategoryModalOpen}
-        onClose={() => setIsCategoryModalOpen(false)}
-        categories={individualPoints}
-        onUpdate={handleCategoryUpdate}
-        onDelete={handleCategoryDelete}
-      />
-
-      {/* --- 追加用モーダルは追加ボタン専用に --- */}
       <CategoryCreationModal
         isOpen={isAddCategoryModalOpen}
         onClose={() => setIsAddCategoryModalOpen(false)}
