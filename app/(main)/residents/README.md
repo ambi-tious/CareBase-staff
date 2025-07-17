@@ -1,13 +1,13 @@
 # 利用者一覧画面設計書
 
-画面名: `利用者一覧`  
-パス: `/residents`  
+画面名: `利用者一覧`
+パス: `/residents`
 URL: https://carebase-staff.vercel.app/residents
 
 ## 概要
 
-CareBase-staffアプリケーションの利用者一覧画面設計書です。  
-ログインしているグループとチームに紐づいた利用者の一覧表示、検索機能、アラート状態の検知機能を提供します。  
+CareBase-staffアプリケーションの利用者一覧画面設計書です。
+ログインしているグループとチームに紐づいた利用者の一覧表示、検索機能、アラート状態の検知機能を提供します。
 利用者の基本情報とアラート状況を一目で把握でき、詳細画面への遷移や新規利用者登録が可能です。
 
 ## 全体レイアウト
@@ -79,51 +79,6 @@ CareBase-staffアプリケーションの利用者一覧画面設計書です。
 - 検索結果0件時の適切なメッセージ表示
 - API通信エラー時のフォールバック表示
 - 画像読み込み失敗時のプレースホルダー表示
-
-## データ構造
-
-### Resident（利用者）
-
-```typescript
-interface Resident {
-  id: number;
-  name: string; // 利用者名
-  furigana: string; // ふりがな
-  age: number; // 年齢
-  sex: '男' | '女'; // 性別
-  careLevel: string; // 要介護度（例: "要介護1", "要支援2"）
-  admissionStatus: '入居中' | '退所済'; // 入居状態
-  roomInfo?: string; // 部屋情報（例: "もみじ404号室"）
-  unitTeam?: string; // 所属チーム（例: "テストチーム3"）
-  avatarUrl?: string; // プロフィール画像URL
-  admissionDate: string; // 入居日
-  dischargeDate?: string; // 退所日（退所済みの場合）
-}
-```
-
-### ResidentAlert（利用者アラート）
-
-```typescript
-interface ResidentAlert {
-  residentId: number;
-  high: number; // 緊急アラート件数
-  medium: number; // 注意アラート件数
-  low: number; // 情報アラート件数
-  lastUpdated: string; // 最終更新日時
-}
-```
-
-### SearchFilter（検索フィルター）
-
-```typescript
-interface SearchFilter {
-  query: string; // 検索キーワード
-  showDischargedResidents: boolean; // 退所済み表示フラグ
-  careLevel?: string[]; // 要介護度フィルター
-  team?: string[]; // チームフィルター
-  alertLevel?: 'high' | 'medium' | 'low'; // アラートレベルフィルター
-}
-```
 
 ## UI/UX仕様
 
