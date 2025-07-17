@@ -171,6 +171,7 @@ export const BulkCareRecordModal: React.FC<BulkCareRecordModalProps> = ({
         .map((selection) => {
           // 基本イベント情報
           const event: CareEvent = {
+            scheduledTime: timeString,
             time: timeString,
             icon: category?.icon || 'ClipboardList',
             label: commonLabel,
