@@ -265,7 +265,13 @@ export function TimeBaseView() {
     residentName: string;
   }) {
     // バイタル関連のカテゴリキー
-    const vitalCategories: CareCategoryKey[] = ['temperature', 'pulse', 'bloodPressure'];
+    const vitalCategories: CareCategoryKey[] = [
+      'temperature',
+      'pulse',
+      'bloodPressure',
+      'respiration',
+      'spo2',
+    ];
 
     // バイタル以外のイベントをフィルタリング
     const nonVitalEvents = events.filter((event) => {
@@ -305,10 +311,7 @@ export function TimeBaseView() {
 
     return (
       <div
-        className="min-h-16 border-b border-gray-200 p-1.5 flex flex-col items-start justify-start gap-1.5 w-full"
-        style={{
-          backgroundColor: hasVitalEvents ? 'rgba(231, 76, 60, 0.05)' : 'transparent',
-        }}
+        className="h-full min-h-12 border-b border-gray-200 p-1.5 flex flex-col items-start justify-start gap-1.5 w-full"
         onClick={() =>
           nonVitalEvents.length === 0 &&
           !hasVitalEvents &&
@@ -318,6 +321,7 @@ export function TimeBaseView() {
         {/* バイタルイベントがあれば統合表示 */}
         {hasVitalEvents && (
           <div
+            className="w-full cursor-grab active:cursor-grabbing"
             onClick={(e) => {
               e.stopPropagation();
               handleEventClick(vitalEvents[0], residentId, residentName);
@@ -408,7 +412,7 @@ export function TimeBaseView() {
                   >
                     <div
                       className={cn(
-                        'sticky left-0 flex items-center justify-center p-2 border-b border-r border-gray-200 text-sm font-medium z-10 h-16',
+                        'sticky left-0 flex items-center justify-center p-2 border-b border-r border-gray-200 text-sm font-medium z-10',
                         isClient && time === currentTime
                           ? 'bg-yellow-100 text-yellow-800 font-bold border-l-4 border-yellow-500'
                           : 'bg-gray-50 text-gray-700'
@@ -420,7 +424,7 @@ export function TimeBaseView() {
                       <div
                         key={`${resident.id}-${time}`}
                         className={cn(
-                          'border-r border-gray-200 relative h-auto',
+                          'border-r border-gray-200 relative',
                           isClient && time === currentTime ? 'bg-yellow-50' : '',
                           parseInt(time.split(':')[0]) % 2 === 0 ? 'bg-gray-50/50' : ''
                         )}

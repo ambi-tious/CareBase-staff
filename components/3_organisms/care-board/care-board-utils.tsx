@@ -19,7 +19,7 @@ import {
 } from '@/components/ui/select';
 import { getLucideIcon } from '@/lib/lucide-icon-registry';
 import { CareCategoryKey, CareEvent, careCategories } from '@/mocks/care-board-data';
-import { Calendar, Check, Clock, Save, Thermometer, User, X } from 'lucide-react';
+import { Calendar, Check, Clock, HeartPulse, Save, User, X } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 
 // 利用者情報セル（アイコン・名前・careLevelバッジ）共通化
@@ -127,9 +127,9 @@ export const VitalSigns: React.FC<VitalSignsProps> = ({ events, status = 'schedu
         maxWidth: '100%',
       }}
     >
-      <Thermometer className="h-3 w-3 flex-shrink-0" />
+      <HeartPulse className="h-3 w-3 flex-shrink-0" />
       <span className="font-medium flex-1 truncate">バイタル</span>
-      <span className="text-xs opacity-75 ml-auto">{time !== 'N/A' && time ? time : '07:00'}</span>
+      <span className="text-xs opacity-75 ml-auto">{time}</span>
 
       {/* 実施済みの場合のみチェックマークを表示 */}
       {status === 'completed' && (
@@ -220,9 +220,7 @@ export const CareEventStatusComponent: React.FC<CareEventStatusProps> = ({
     >
       <Icon className="h-3.5 w-3.5 flex-shrink-0" />
       <span className="font-medium truncate flex-1">{event.label}</span>
-      <span className="text-xs opacity-75 ml-auto">
-        {event.time !== 'N/A' && event.time ? event.time : '07:00'}
-      </span>
+      <span className="text-xs opacity-75 ml-auto">{event.time}</span>
 
       {/* 実施済みの場合のみチェックマークを表示 */}
       {status === 'completed' && (
