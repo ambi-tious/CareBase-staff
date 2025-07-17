@@ -221,37 +221,7 @@ export default function DocumentsPage() {
 
   return (
     <div className="p-4 md:p-6 bg-carebase-bg min-h-screen">
-      {/* ヘッダー */}
       <div className="mb-6">
-        <div className="flex items-center gap-4 mb-4">
-          {isFolderView && (
-            <Button
-              variant="outline"
-              onClick={() => router.back()}
-              className="flex items-center gap-2"
-            >
-              <ArrowLeft className="h-4 w-4" />
-              戻る
-            </Button>
-          )}
-          <div className="flex items-center gap-3">
-            {isFolderView ? (
-              <FolderOpen className="h-6 w-6 text-carebase-blue" />
-            ) : category ? (
-              <FileText className="h-6 w-6 text-carebase-blue" />
-            ) : (
-              <FileText className="h-6 w-6 text-carebase-blue" />
-            )}
-            <h1 className="text-2xl font-bold text-carebase-text-primary">
-              {isFolderView
-                ? folder?.name || 'フォルダ'
-                : category
-                  ? category.name || 'カテゴリー'
-                  : '書類管理'}
-            </h1>
-          </div>
-        </div>
-
         {/* パンくずリスト */}
         <FolderBreadcrumb path={breadcrumbPath} className="mb-4" />
 
