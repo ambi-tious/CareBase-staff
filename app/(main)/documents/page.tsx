@@ -1,22 +1,28 @@
 'use client';
 
-import React from 'react';
-import { useState, useEffect } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { notFound } from 'next/navigation';
 import { FolderBreadcrumb } from '@/components/2_molecules/documents/folder-breadcrumb';
 import { FolderContentsView } from '@/components/3_organisms/documents/folder-contents-view';
-import { Button } from '@/components/ui/button';
 import { FileUploadModal } from '@/components/3_organisms/modals/file-upload-modal';
 import { GenericDeleteModal } from '@/components/3_organisms/modals/generic-delete-modal';
+import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
-import { getDocumentsByCategory, getCategoryByKey } from '@/mocks/documents-data';
-import { getFolderContents, getFolderPath, getFolder } from '@/mocks/hierarchical-documents';
-import { FileText, FolderPlus, ArrowLeft, FolderOpen, Upload, Trash2 } from 'lucide-react';
+import type { DocumentCategory } from '@/mocks/documents-data';
+import { getCategoryByKey, getDocumentsByCategory } from '@/mocks/documents-data';
+import { getFolder, getFolderContents, getFolderPath } from '@/mocks/hierarchical-documents';
+import type { DocumentItem, Folder } from '@/types/document';
+import { FileText, FolderPlus, Trash2, Upload } from 'lucide-react';
 import Link from 'next/link';
-import type { DocumentItem, Folder, Document, BreadcrumbItem } from '@/types/document';
+import { notFound, useRouter, useSearchParams } from 'next/navigation';
+import { Suspense, useEffect, useState } from 'react';
 
-export default function DocumentsPage() {
+// パンくずリストアイテムの型定義
+interface BreadcrumbPathItem {
+  id: string;
+  name: string;
+  path: string;
+}
+
+function DocumentsContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { toast } = useToast();
@@ -24,11 +30,10 @@ export default function DocumentsPage() {
   // URLパラメータからカテゴリーまたはフォルダIDを取得
   const categoryOrFolderId = searchParams.get('category') || searchParams.get('folder') || null;
 
-  const [categoryKey, setCategoryKey] = useState<string>('');
-  const [category, setCategory] = useState<any>(null);
+  const [category, setCategory] = useState<DocumentCategory | null>(null);
   const [documents, setDocuments] = useState<DocumentItem[]>([]);
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
-  const [breadcrumbPath, setBreadcrumbPath] = useState<any[]>([]);
+  const [breadcrumbPath, setBreadcrumbPath] = useState<BreadcrumbPathItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
@@ -60,7 +65,6 @@ export default function DocumentsPage() {
           // フォルダIDかカテゴリーキーかを判定
           const isFolderId = categoryOrFolderId.startsWith('folder-');
           setIsFolderView(isFolderId);
-          setCategoryKey(categoryOrFolderId);
 
           if (isFolderId) {
             // フォルダビューの場合
@@ -87,7 +91,7 @@ export default function DocumentsPage() {
           } else {
             // カテゴリービューの場合
             const cat = getCategoryByKey(categoryOrFolderId);
-            setCategory(cat);
+            setCategory(cat ?? null);
 
             if (!cat) {
               notFound();
@@ -317,7 +321,7 @@ export default function DocumentsPage() {
             isOpen={isUploadModalOpen}
             onClose={() => setIsUploadModalOpen(false)}
             onUpload={handleUpload}
-            folderId={categoryKey || 'root'}
+            folderId={categoryOrFolderId || 'root'}
             folderName={isFolderView ? folder?.name || 'フォルダ' : 'ホーム'}
           />
 
@@ -332,5 +336,24 @@ export default function DocumentsPage() {
         </>
       )}
     </div>
+  );
+}
+
+// ローディングフォールバックコンポーネント
+function DocumentsLoading() {
+  return (
+    <div className="p-4 md:p-6 bg-carebase-bg min-h-screen">
+      <div className="flex justify-center items-center h-64">
+        <p className="text-gray-500">読み込み中...</p>
+      </div>
+    </div>
+  );
+}
+
+export default function DocumentsPage() {
+  return (
+    <Suspense fallback={<DocumentsLoading />}>
+      <DocumentsContent />
+    </Suspense>
   );
 }
