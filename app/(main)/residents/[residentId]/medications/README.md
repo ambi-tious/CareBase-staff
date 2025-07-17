@@ -6,13 +6,14 @@ URL: https://carebase-staff.vercel.app/residents/[residentId]
 
 ## 概要
 
-CareBase-staffアプリケーションの利用者詳細画面内のお薬情報タブ設計書です。  
+利用者詳細画面内のお薬情報タブ設計書です。  
 利用者のお薬情報の表示、登録、編集、削除機能を提供します。  
 薬剤名、用法用量、処方医療機関、服用期間を管理し、複数の薬剤情報を効率的に管理できます。
 
 Issue: [#173 [設計] #005-5 利用者｜利用者詳細（お薬情報）](https://github.com/ambi-tious/CareBase-staff/issues/173)
 
 ## 全体レイアウト
+<img width="1055" height="557" alt="image" src="https://github.com/user-attachments/assets/8fd06c99-db5a-4a20-b574-92f949bcb8a1" />
 
 ### 画面構成
 
@@ -54,6 +55,8 @@ Issue: [#173 [設計] #005-5 利用者｜利用者詳細（お薬情報）](http
 | 削除処理 | 既存のお薬情報を削除 | `/api/v1/residents/{id}/medications/{medicationId}` | 同一画面（モーダル閉じる） |
 
 ### モーダル仕様
+<img height="350" alt="image" src="https://github.com/user-attachments/assets/f2253143-5571-49e7-9bbf-359b097e75c0" />
+<img height="350" alt="image" src="https://github.com/user-attachments/assets/8fae7242-241d-44cf-abf4-4bec72348a4d" />
 
 #### 登録モーダル
 
@@ -81,6 +84,7 @@ Issue: [#173 [設計] #005-5 利用者｜利用者詳細（お薬情報）](http
 | 登録ボタンラベル | 更新 |
 
 #### 削除確認モーダル
+<img height="200" alt="image" src="https://github.com/user-attachments/assets/d80f28f1-b90f-4b19-8cfb-b6cdcc7bedd6" />
 
 | 項目名 | コンポーネント | 必須 | 初期値 | 備考 |
 | --- | --- | --- | --- | --- |
