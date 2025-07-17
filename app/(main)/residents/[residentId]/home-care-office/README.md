@@ -54,6 +54,7 @@ URL: https://carebase-staff.vercel.app/residents/[residentId]
 | 削除処理   | 既存の居宅介護支援事業所情報を削除   | `/api/v1/residents/{id}/home-care-office/{officeId}` | 同一画面（モーダル閉じる） |
 
 ### モーダル仕様
+
 <img height="300" alt="image" src="https://github.com/user-attachments/assets/71cc6461-62ed-465b-8786-95f829fb324b" />
 <img height="300" alt="image" src="https://github.com/user-attachments/assets/386a9fdf-8ea7-4a4a-bd64-baa884c480a8" />
 
@@ -83,6 +84,7 @@ URL: https://carebase-staff.vercel.app/residents/[residentId]
 | 登録ボタンラベル | 更新                             |
 
 #### 削除確認モーダル
+
 <img height="200" alt="image" src="https://github.com/user-attachments/assets/348b6cbd-8f99-4781-ac26-20aeeaa8365a" />
 
 | 項目名           | コンポーネント | 必須 | 初期値                                        | 備考                     |
