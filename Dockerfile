@@ -61,4 +61,4 @@ ENV NEXT_PUBLIC_ENV_VARIABLE=${NEXT_PUBLIC_ENV_VARIABLE}
 
 # Note: Don't expose ports here, Compose will handle that for us
 
-CMD ["node", ".next/standalone/server.js"]
+CMD ["node", "server.js"]
