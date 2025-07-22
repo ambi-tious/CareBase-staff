@@ -12,7 +12,6 @@ import { CategoryCreationModal } from '@/components/3_organisms/modals/category-
 import { ContactRegistrationModal } from '@/components/3_organisms/modals/contact-registration-modal';
 import { HomeCareOfficeModal } from '@/components/3_organisms/modals/home-care-office-modal';
 import { IndividualPointModal } from '@/components/3_organisms/modals/individual-point-modal';
-import { MedicalHistoryModal } from '@/components/3_organisms/modals/medical-history-modal';
 import { MedicalInstitutionModal } from '@/components/3_organisms/modals/medical-institution-modal';
 import { MedicationRegistrationModal } from '@/components/3_organisms/modals/medication-registration-modal';
 import { MedicationStatusRegistrationModal } from '@/components/3_organisms/modals/medication-status-registration-modal';
@@ -41,12 +40,14 @@ import type {
 import { PlusCircle } from 'lucide-react';
 import type React from 'react';
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 interface ResidentDetailTabsProps {
   resident: Resident;
 }
 
 export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident }) => {
+  const router = useRouter();
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
   const [isHomeCareModalOpen, setIsHomeCareModalOpen] = useState(false);
   const [isMedicalModalOpen, setIsMedicalModalOpen] = useState(false);
@@ -54,7 +55,6 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
   const [isMedicationModalOpen, setIsMedicationModalOpen] = useState(false);
   const [isMedicationStatusModalOpen, setIsMedicationStatusModalOpen] = useState(false);
   const [selectedPointCategory, setSelectedPointCategory] = useState<string | null>(null);
-  const [isPointModalOpen, setIsPointModalOpen] = useState(false);
   const [isAddCategoryModalOpen, setIsAddCategoryModalOpen] = useState(false);
   const [pointContents, setPointContents] = useState<Record<string, string>>({
     食事: '<h2>食事に関する個別ポイント</h2><p>朝食：全粥・常菜・常食</p><p>昼食：全粥・常菜・常食</p><p>夕食：全粥・常菜・常食</p><ul><li>嚥下機能は良好</li><li>自力摂取可能</li><li>食事の際は前かがみの姿勢を保持</li><li>水分とろみ剤使用（中間のとろみ）</li></ul>',
@@ -129,8 +129,8 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
   };
 
   const handlePointCategoryClick = (category: string) => {
-    setSelectedPointCategory(category);
-    setIsPointModalOpen(true);
+    // Navigate to individual point detail page
+    router.push(`/residents/${resident.id}/individual-points/${encodeURIComponent(category)}`);
   };
 
   const handlePointDetailSave = async (content: string) => {
@@ -603,22 +603,6 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
         submitLabel="作成"
       />
 
-      <IndividualPointModal
-        isOpen={isPointModalOpen}
-        onClose={() => setIsPointModalOpen(false)}
-        category={selectedPointCategory || ''}
-        content={
-          selectedPointCategory && pointContents[selectedPointCategory]
-            ? pointContents[selectedPointCategory]
-            : ''
-        }
-        onSave={handlePointDetailSave}
-        onDelete={
-          selectedPointCategory && pointContents[selectedPointCategory]
-            ? handlePointDetailDelete
-            : undefined
-        }
-      />
     </>
   );
 };
