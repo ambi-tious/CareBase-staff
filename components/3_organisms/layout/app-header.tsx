@@ -187,13 +187,20 @@ export function AppHeader() {
             >
               <Menu className="h-6 w-6 text-carebase-blue tablet:h-7 tablet:w-7" />
             </SheetTrigger>
-            <SheetContent side="right" className="sm:max-w-full bg-carebase-bg p-0 overflow-y-auto tablet:max-w-[90vw]">
+            <SheetContent
+              side="right"
+              className="sm:max-w-full bg-carebase-bg p-0 overflow-y-auto tablet:max-w-[90vw]"
+            >
               <SheetHeader className="flex flex-row items-center justify-between py-2 px-4 tablet:py-4 tablet:px-6 sticky top-0 bg-carebase-bg z-10 border-b">
                 <SheetTitle className="text-xl font-bold text-carebase-text-primary tablet:text-tablet-2xl">
                   メニュー
                 </SheetTitle>
                 <SheetClose asChild>
-                  <Button variant="ghost" size="icon" className="tablet:h-12 tablet:w-12 min-h-touch-target min-w-touch-target">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="tablet:h-12 tablet:w-12 min-h-touch-target min-w-touch-target"
+                  >
                     <X className="h-6 w-6 tablet:h-7 tablet:w-7" />
                     <span className="sr-only">Close menu</span>
                   </Button>

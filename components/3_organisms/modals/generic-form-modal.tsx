@@ -7,11 +7,11 @@
 'use client';
 
 import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogHeader,
-    DialogTitle,
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
 } from '@/components/ui/dialog';
 import type React from 'react';
 
@@ -60,9 +60,7 @@ export const GenericFormModal: React.FC<GenericFormModalProps> = ({
           )}
         </DialogHeader>
 
-        <div className="tablet:mt-6">
-          {children}
-        </div>
+        <div className="tablet:mt-6">{children}</div>
       </DialogContent>
     </Dialog>
   );

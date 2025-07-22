@@ -9,12 +9,12 @@
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
 } from '@/components/ui/dialog';
 import { AlertTriangle, Trash2 } from 'lucide-react';
 import type React from 'react';
@@ -71,15 +71,17 @@ export const GenericDeleteModal: React.FC<GenericDeleteModalProps> = ({
           {error && (
             <Alert className="border-red-200 bg-red-50 mt-4">
               <AlertTriangle className="h-4 w-4 text-red-600 tablet:h-5 tablet:w-5" />
-              <AlertDescription className="text-red-700 tablet:text-tablet-base">{error}</AlertDescription>
+              <AlertDescription className="text-red-700 tablet:text-tablet-base">
+                {error}
+              </AlertDescription>
             </Alert>
           )}
         </div>
 
         <DialogFooter className="flex justify-end gap-2 tablet:gap-4">
-          <Button 
-            variant="outline" 
-            onClick={onClose} 
+          <Button
+            variant="outline"
+            onClick={onClose}
             disabled={isDeleting}
             className="tablet:px-6 tablet:py-3"
           >

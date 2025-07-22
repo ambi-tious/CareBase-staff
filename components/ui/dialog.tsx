@@ -59,13 +59,19 @@ const DialogContent = React.forwardRef<
 DialogContent.displayName = DialogPrimitive.Content.displayName;
 
 const DialogHeader = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
-  <div className={cn('flex flex-col space-y-1.5 text-center sm:text-left tablet:space-y-3', className)} {...props} />
+  <div
+    className={cn('flex flex-col space-y-1.5 text-center sm:text-left tablet:space-y-3', className)}
+    {...props}
+  />
 );
 DialogHeader.displayName = 'DialogHeader';
 
 const DialogFooter = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
   <div
-    className={cn('flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2 tablet:space-x-4 tablet:pt-4', className)}
+    className={cn(
+      'flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2 tablet:space-x-4 tablet:pt-4',
+      className
+    )}
     {...props}
   />
 );
@@ -77,7 +83,10 @@ const DialogTitle = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <DialogPrimitive.Title
     ref={ref}
-    className={cn('text-lg font-semibold leading-none tracking-tight tablet:text-tablet-xl tablet:leading-tight', className)}
+    className={cn(
+      'text-lg font-semibold leading-none tracking-tight tablet:text-tablet-xl tablet:leading-tight',
+      className
+    )}
     {...props}
   />
 ));
@@ -89,22 +98,24 @@ const DialogDescription = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <DialogPrimitive.Description
     ref={ref}
-    className={cn('text-sm text-muted-foreground tablet:text-tablet-base tablet:leading-relaxed', className)}
+    className={cn(
+      'text-sm text-muted-foreground tablet:text-tablet-base tablet:leading-relaxed',
+      className
+    )}
     {...props}
   />
 ));
 DialogDescription.displayName = DialogPrimitive.Description.displayName;
 
 export {
-    Dialog,
-    DialogClose,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogOverlay,
-    DialogPortal,
-    DialogTitle,
-    DialogTrigger
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogOverlay,
+  DialogPortal,
+  DialogTitle,
+  DialogTrigger,
 };
-

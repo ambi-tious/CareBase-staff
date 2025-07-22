@@ -67,7 +67,9 @@ export const ResidentInfoCell: React.FC<ResidentInfoCellProps> = ({ resident, cl
         />
       </div>
       <div className="flex flex-col min-w-0">
-        <span className="text-base font-medium truncate tablet-landscape:text-lg">{resident.name}</span>
+        <span className="text-base font-medium truncate tablet-landscape:text-lg">
+          {resident.name}
+        </span>
         <Badge
           variant="outline"
           className="mt-0.5 w-fit px-2 py-0.5 text-xs font-normal text-carebase-blue border-carebase-blue bg-carebase-blue/10 tablet-landscape:text-sm tablet-landscape:px-3 tablet-landscape:py-1"
@@ -147,7 +149,10 @@ export const VitalSigns: React.FC<VitalSignsProps> = ({ events, status = 'schedu
         maxWidth: '100%',
       }}
     >
-      <HeartPulse className="h-3 w-3 flex-shrink-0 tablet-landscape:h-4 tablet-landscape:w-4" style={{ color: baseColor }} />
+      <HeartPulse
+        className="h-3 w-3 flex-shrink-0 tablet-landscape:h-4 tablet-landscape:w-4"
+        style={{ color: baseColor }}
+      />
       <span className="font-medium flex-1 truncate">バイタル</span>
       <span className="text-xs opacity-75 ml-auto tablet-landscape:text-sm">{displayTime}</span>
 
@@ -236,7 +241,10 @@ export const CareEventStatusComponent: React.FC<CareEventStatusProps> = ({
         maxWidth: '100%',
       }}
     >
-      <Icon className="h-3.5 w-3.5 flex-shrink-0 tablet-landscape:h-4 tablet-landscape:w-4" style={{ color: baseColor }} />
+      <Icon
+        className="h-3.5 w-3.5 flex-shrink-0 tablet-landscape:h-4 tablet-landscape:w-4"
+        style={{ color: baseColor }}
+      />
       <span className="font-medium truncate flex-1">{event.label}</span>
       <span className="text-xs opacity-75 ml-auto tablet-landscape:text-sm">{displayTime}</span>
 
@@ -482,7 +490,9 @@ export const CareRecordModal: React.FC<CareRecordModalProps> = ({
                       </SelectContent>
                     </Select>
                   </div>
-                  <div className="text-sm flex items-center justify-center tablet-landscape:text-base">:</div>
+                  <div className="text-sm flex items-center justify-center tablet-landscape:text-base">
+                    :
+                  </div>
                   <div className="flex-1">
                     <Select value={scheduledMinute} onValueChange={setScheduledMinute}>
                       <SelectTrigger>
@@ -499,7 +509,9 @@ export const CareRecordModal: React.FC<CareRecordModalProps> = ({
                   </div>
                 </div>
                 {errors.scheduledTime && (
-                  <p className="text-red-500 text-xs mt-1 tablet-landscape:text-sm">{errors.scheduledTime}</p>
+                  <p className="text-red-500 text-xs mt-1 tablet-landscape:text-sm">
+                    {errors.scheduledTime}
+                  </p>
                 )}
               </div>
 
@@ -516,7 +528,9 @@ export const CareRecordModal: React.FC<CareRecordModalProps> = ({
                   <div className="flex items-center justify-between">
                     <div className="flex items-center">
                       <Check className="h-4 w-4 mr-2 tablet-landscape:h-5 tablet-landscape:w-5" />
-                      <label className="text-sm font-medium cursor-pointer tablet-landscape:text-base">実施時間</label>
+                      <label className="text-sm font-medium cursor-pointer tablet-landscape:text-base">
+                        実施時間
+                      </label>
                     </div>
                     <div className="flex items-center">
                       {isActualTimeVisible && actualHour && actualMinute && (
@@ -570,7 +584,9 @@ export const CareRecordModal: React.FC<CareRecordModalProps> = ({
                           </SelectContent>
                         </Select>
                       </div>
-                      <div className="text-sm flex items-center justify-center tablet-landscape:text-base">:</div>
+                      <div className="text-sm flex items-center justify-center tablet-landscape:text-base">
+                        :
+                      </div>
                       <div className="flex-1">
                         <Select value={actualMinute} onValueChange={setActualMinute}>
                           <SelectTrigger>
@@ -618,7 +634,9 @@ export const CareRecordModal: React.FC<CareRecordModalProps> = ({
                     ))}
                   </SelectContent>
                 </Select>
-                {errors.groupKey && <p className="text-red-500 text-xs tablet-landscape:text-sm">{errors.groupKey}</p>}
+                {errors.groupKey && (
+                  <p className="text-red-500 text-xs tablet-landscape:text-sm">{errors.groupKey}</p>
+                )}
               </div>
 
               {/* カテゴリ選択（グループが選択された場合のみ表示） */}
@@ -655,7 +673,9 @@ export const CareRecordModal: React.FC<CareRecordModalProps> = ({
                     </SelectContent>
                   </Select>
                   {errors.categoryKey && (
-                    <p className="text-red-500 text-xs tablet-landscape:text-sm">{errors.categoryKey}</p>
+                    <p className="text-red-500 text-xs tablet-landscape:text-sm">
+                      {errors.categoryKey}
+                    </p>
                   )}
                 </div>
               )}
@@ -683,7 +703,9 @@ export const CareRecordModal: React.FC<CareRecordModalProps> = ({
                 placeholder="例: 食事摂取量8割"
                 className={errors.label ? 'border-red-500' : ''}
               />
-              {errors.label && <p className="text-red-500 text-xs tablet-landscape:text-sm">{errors.label}</p>}
+              {errors.label && (
+                <p className="text-red-500 text-xs tablet-landscape:text-sm">{errors.label}</p>
+              )}
             </div>
 
             {/* 備考入力 */}
@@ -701,11 +723,18 @@ export const CareRecordModal: React.FC<CareRecordModalProps> = ({
         </div>
 
         <DialogFooter className="flex justify-end gap-2 tablet-landscape:gap-4 tablet-landscape:pt-6">
-          <Button variant="outline" onClick={onClose} className="tablet-landscape:px-6 tablet-landscape:py-3">
+          <Button
+            variant="outline"
+            onClick={onClose}
+            className="tablet-landscape:px-6 tablet-landscape:py-3"
+          >
             <X className="h-4 w-4 mr-2 tablet-landscape:h-5 tablet-landscape:w-5" />
             キャンセル
           </Button>
-          <Button onClick={handleSave} className="bg-carebase-blue hover:bg-carebase-blue-dark tablet-landscape:px-6 tablet-landscape:py-3">
+          <Button
+            onClick={handleSave}
+            className="bg-carebase-blue hover:bg-carebase-blue-dark tablet-landscape:px-6 tablet-landscape:py-3"
+          >
             <Save className="h-4 w-4 mr-2 tablet-landscape:h-5 tablet-landscape:w-5" />
             {isNew ? '登録' : '更新'}
           </Button>

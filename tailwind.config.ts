@@ -21,15 +21,19 @@ const config = {
     extend: {
       // タブレット向けの画面設定
       screens: {
-        'tablet': '768px',
+        tablet: '768px',
         'tablet-lg': '1024px',
-        'tablet-portrait': { 'raw': '(min-width: 768px) and (max-width: 1024px) and (orientation: portrait)' },
-        'tablet-landscape': { 'raw': '(min-width: 1024px) and (max-width: 1366px) and (orientation: landscape)' },
+        'tablet-portrait': {
+          raw: '(min-width: 768px) and (max-width: 1024px) and (orientation: portrait)',
+        },
+        'tablet-landscape': {
+          raw: '(min-width: 1024px) and (max-width: 1366px) and (orientation: landscape)',
+        },
       },
       // タブレット向けのスペーシング
       spacing: {
         'tablet-xs': '0.75rem',
-        'tablet-sm': '1rem', 
+        'tablet-sm': '1rem',
         'tablet-md': '1.5rem',
         'tablet-lg': '2rem',
         'tablet-xl': '3rem',

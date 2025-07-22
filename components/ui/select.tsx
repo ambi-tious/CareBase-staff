@@ -104,7 +104,10 @@ const SelectLabel = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <SelectPrimitive.Label
     ref={ref}
-    className={cn('py-1.5 pl-8 pr-2 text-sm font-semibold tablet:py-2 tablet:pl-10 tablet:pr-3 tablet:text-tablet-sm', className)}
+    className={cn(
+      'py-1.5 pl-8 pr-2 text-sm font-semibold tablet:py-2 tablet:pl-10 tablet:pr-3 tablet:text-tablet-sm',
+      className
+    )}
     {...props}
   />
 ));
@@ -148,15 +151,14 @@ const SelectSeparator = React.forwardRef<
 SelectSeparator.displayName = SelectPrimitive.Separator.displayName;
 
 export {
-    Select,
-    SelectContent,
-    SelectGroup,
-    SelectItem,
-    SelectLabel,
-    SelectScrollDownButton,
-    SelectScrollUpButton,
-    SelectSeparator,
-    SelectTrigger,
-    SelectValue
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectScrollDownButton,
+  SelectScrollUpButton,
+  SelectSeparator,
+  SelectTrigger,
+  SelectValue,
 };
-
