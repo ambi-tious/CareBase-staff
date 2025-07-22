@@ -474,29 +474,27 @@ export const IndividualPointDetailPage: React.FC<IndividualPointDetailPageProps>
             <div className="flex items-center gap-2">
               {isEditing ? (
                 <>
-                  <Button
-                    variant="outline"
-                    onClick={isNewCreation ? handleCancel : handleCancelEdit}
-                    disabled={isSaving}
-                    size="sm"
-                  >
-                    キャンセル
-                  </Button>
-                  <Button
-                    onClick={handleSave}
-                    disabled={isSaving}
-                    className="bg-carebase-blue hover:bg-carebase-blue-dark"
-                    size="sm"
-                  >
-                    <Save className="h-3 w-3 mr-1" />
-                    {isSaving
-                      ? isNewCreation
-                        ? '登録中...'
-                        : '保存中...'
-                      : isNewCreation
-                        ? '登録'
-                        : '保存'}
-                  </Button>
+                  {!isNewCreation && (
+                    <Button
+                      variant="outline"
+                      onClick={handleCancelEdit}
+                      disabled={isSaving}
+                      size="sm"
+                    >
+                      キャンセル
+                    </Button>
+                  )}
+                  {!isNewCreation && (
+                    <Button
+                      onClick={handleSave}
+                      disabled={isSaving}
+                      className="bg-carebase-blue hover:bg-carebase-blue-dark"
+                      size="sm"
+                    >
+                      <Save className="h-3 w-3 mr-1" />
+                      {isSaving ? '保存中...' : '保存'}
+                    </Button>
+                  )}
                 </>
               ) : (
                 <>
@@ -563,6 +561,19 @@ export const IndividualPointDetailPage: React.FC<IndividualPointDetailPageProps>
                   <p className="text-xs text-yellow-600 font-medium">未保存の変更があります</p>
                 )}
               </div>
+              {/* 新規作成時の登録ボタンをカード内右下に配置 */}
+              {isNewCreation && (
+                <div className="flex justify-end mt-6">
+                  <Button
+                    onClick={handleSave}
+                    disabled={isSaving}
+                    className="bg-carebase-blue hover:bg-carebase-blue-dark"
+                  >
+                    <Save className="h-4 w-4 mr-2" />
+                    {isSaving ? '登録中...' : '登録'}
+                  </Button>
+                </div>
+              )}
             </div>
           ) : (
             <div className="min-h-96">
