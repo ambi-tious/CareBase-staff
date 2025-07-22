@@ -644,4 +644,4 @@ export const careBoardData: Resident[] = [
 // Helper to find a resident by ID
 export const getResidentById = (id: number): Resident | undefined => {
   return careBoardData.find((resident) => resident.id === id);
-}; 
+};

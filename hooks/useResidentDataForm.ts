@@ -6,19 +6,19 @@
  */
 
 import type {
-    FormOptions,
-    HomeCareOfficeFormData,
-    MedicalHistoryFormData as MedicalHistoryFormDataType,
-    MedicalInstitutionFormData,
-    MedicationInfoFormData,
-    MedicationStatusFormData,
+  FormOptions,
+  HomeCareOfficeFormData,
+  MedicalHistoryFormData as MedicalHistoryFormDataType,
+  MedicalInstitutionFormData,
+  MedicationInfoFormData,
+  MedicationStatusFormData,
 } from '@/types/resident-data';
 import {
-    homeCareOfficeFormSchema,
-    medicalHistoryFormSchema as medicalHistoryFormSchemaImport,
-    medicalInstitutionFormSchema,
-    medicationInfoFormSchema,
-    medicationStatusFormSchema,
+  homeCareOfficeFormSchema,
+  medicalHistoryFormSchema as medicalHistoryFormSchemaImport,
+  medicalInstitutionFormSchema,
+  medicationInfoFormSchema,
+  medicationStatusFormSchema,
 } from '@/types/resident-data';
 import { useGenericForm } from './useGenericForm';
 

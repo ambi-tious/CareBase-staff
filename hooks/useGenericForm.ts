@@ -55,21 +55,24 @@ export function useGenericForm<T extends Record<string, any>>(
     fieldErrors: {},
   });
 
-  const updateField = useCallback((field: keyof T, value: any) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
+  const updateField = useCallback(
+    (field: keyof T, value: any) => {
+      setFormData((prev) => ({ ...prev, [field]: value }));
 
-    // Clear field error when user starts typing
-    if (formState.fieldErrors[field as string]) {
-      setFormState((prev) => {
-        const newFieldErrors = { ...prev.fieldErrors };
-        delete newFieldErrors[field as string];
-        return {
-          ...prev,
-          fieldErrors: newFieldErrors,
-        };
-      });
-    }
-  }, [formState.fieldErrors]);
+      // Clear field error when user starts typing
+      if (formState.fieldErrors[field as string]) {
+        setFormState((prev) => {
+          const newFieldErrors = { ...prev.fieldErrors };
+          delete newFieldErrors[field as string];
+          return {
+            ...prev,
+            fieldErrors: newFieldErrors,
+          };
+        });
+      }
+    },
+    [formState.fieldErrors]
+  );
 
   const validateForm = useCallback((): boolean => {
     const result: ValidationResult<T> = validateData(schema, formData);
@@ -173,4 +176,4 @@ export function useGenericForm<T extends Record<string, any>>(
     reset: resetForm,
     retry: handleSubmit,
   };
-} 
+}

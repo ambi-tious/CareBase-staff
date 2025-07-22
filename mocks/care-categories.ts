@@ -1,4 +1,3 @@
-
 // Define Care Category Groups
 export const careCategoryGroups = [
   {
@@ -132,4 +131,4 @@ export const getGroupByCategory = (categoryKey: CareCategoryKey) => {
   const category = getCareCategory(categoryKey);
   if (!category) return null;
   return getCareGroup(category.groupKey);
-}; 
+};

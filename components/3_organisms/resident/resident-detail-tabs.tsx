@@ -2,18 +2,18 @@
 
 import { MedicationCard as NewMedicationCard } from '@/components/2_molecules/medication/medication-card';
 import { MedicationStatusCard } from '@/components/2_molecules/medication/medication-status-card';
-import { ContactInfoCard } from '@/components/2_molecules/resident/contact-info-card';
+import { ContactCard } from '@/components/2_molecules/resident/contact-info-card';
 import { HomeCareOfficeCard } from '@/components/2_molecules/resident/home-care-office-card';
 import { IndividualPointCard } from '@/components/2_molecules/resident/individual-point-card';
 import { MedicalHistoryCard } from '@/components/2_molecules/resident/medical-history-card';
 import { MedicalInstitutionCard } from '@/components/2_molecules/resident/medical-institution-card';
 import { MedicationCard as OldMedicationCard } from '@/components/2_molecules/resident/medication-card';
-import { ContactRegistrationModal } from '@/components/3_organisms/modals/contact-registration-modal';
+import { ContactEditModal } from '@/components/3_organisms/modals/contact-edit-modal';
 import { HomeCareOfficeModal } from '@/components/3_organisms/modals/home-care-office-modal';
 import { MedicalHistoryModal } from '@/components/3_organisms/modals/medical-history-modal';
 import { MedicalInstitutionModal } from '@/components/3_organisms/modals/medical-institution-modal';
-import { MedicationRegistrationModal } from '@/components/3_organisms/modals/medication-registration-modal';
-import { MedicationStatusRegistrationModal } from '@/components/3_organisms/modals/medication-status-registration-modal';
+import { MedicationModal } from '@/components/3_organisms/modals/medication-modal';
+import { MedicationStatusModal } from '@/components/3_organisms/modals/medication-status-modal';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import type {
@@ -301,13 +301,15 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
         <TabsContent value="family">
           {contacts.length > 0 ? (
             contacts.map((contact) => (
-              <ContactInfoCard
+              <ContactCard
                 key={contact.id}
                 contact={contact}
                 residentId={resident.id}
                 residentName={resident.name}
-                onContactUpdate={handleContactUpdate}
-                onContactDelete={handleContactDelete}
+                onUpdate={() => {
+                  // Refresh data logic
+                  window.location.reload();
+                }}
               />
             ))
           ) : (
@@ -452,10 +454,18 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
         </TabsContent>
       </Tabs>
 
-      <ContactRegistrationModal
+      <ContactEditModal
         isOpen={isContactModalOpen}
         onClose={() => setIsContactModalOpen(false)}
         onSubmit={handleContactSubmit}
+        contact={{
+          id: '',
+          name: '',
+          relationship: '',
+          phone1: '',
+          address: '',
+          type: '連絡先',
+        }}
         residentName={resident.name}
       />
 
@@ -483,18 +493,20 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
         mode="create"
       />
 
-      <MedicationRegistrationModal
+      <MedicationModal
         isOpen={isMedicationModalOpen}
         onClose={() => setIsMedicationModalOpen(false)}
         onSubmit={handleMedicationSubmit}
         residentName={resident.name}
+        mode="create"
       />
 
-      <MedicationStatusRegistrationModal
+      <MedicationStatusModal
         isOpen={isMedicationStatusModalOpen}
         onClose={() => setIsMedicationStatusModalOpen(false)}
         onSubmit={handleMedicationStatusSubmit}
         residentName={resident.name}
+        mode="create"
       />
     </>
   );
