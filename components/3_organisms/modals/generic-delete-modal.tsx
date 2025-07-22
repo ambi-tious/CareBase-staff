@@ -9,12 +9,12 @@
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
 } from '@/components/ui/dialog';
 import { AlertTriangle, Trash2 } from 'lucide-react';
 import type React from 'react';
@@ -47,21 +47,21 @@ export const GenericDeleteModal: React.FC<GenericDeleteModalProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-md" data-testid="delete-modal">
+      <DialogContent className="max-w-md tablet:max-w-lg tablet:p-8" data-testid="delete-modal">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2 text-red-600">
-            <AlertTriangle className="h-5 w-5" />
+          <DialogTitle className="flex items-center gap-2 text-red-600 tablet:text-tablet-xl tablet:gap-3">
+            <AlertTriangle className="h-5 w-5 tablet:h-6 tablet:w-6" />
             削除の確認
           </DialogTitle>
-          <DialogDescription className="text-gray-600">
+          <DialogDescription className="text-gray-600 tablet:text-tablet-base tablet:mt-3">
             この操作は取り消すことができません。
           </DialogDescription>
         </DialogHeader>
 
-        <div className="py-4">
+        <div className="py-4 tablet:py-6">
           <Alert className="border-red-200 bg-red-50">
-            <AlertTriangle className="h-4 w-4 text-red-600" />
-            <AlertDescription className="text-red-700">
+            <AlertTriangle className="h-4 w-4 text-red-600 tablet:h-5 tablet:w-5" />
+            <AlertDescription className="text-red-700 tablet:text-tablet-base tablet:leading-relaxed">
               <strong>{itemName}</strong> の{itemType}を削除してもよろしいですか？
               <br />
               削除されたデータは復元できません。
@@ -70,24 +70,29 @@ export const GenericDeleteModal: React.FC<GenericDeleteModalProps> = ({
 
           {error && (
             <Alert className="border-red-200 bg-red-50 mt-4">
-              <AlertTriangle className="h-4 w-4 text-red-600" />
-              <AlertDescription className="text-red-700">{error}</AlertDescription>
+              <AlertTriangle className="h-4 w-4 text-red-600 tablet:h-5 tablet:w-5" />
+              <AlertDescription className="text-red-700 tablet:text-tablet-base">{error}</AlertDescription>
             </Alert>
           )}
         </div>
 
-        <DialogFooter className="gap-2">
-          <Button variant="outline" onClick={onClose} disabled={isDeleting}>
+        <DialogFooter className="flex justify-end gap-2 tablet:gap-4">
+          <Button 
+            variant="outline" 
+            onClick={onClose} 
+            disabled={isDeleting}
+            className="tablet:px-6 tablet:py-3"
+          >
             キャンセル
           </Button>
           <Button
             variant="destructive"
             onClick={handleConfirm}
             disabled={isDeleting}
-            className="bg-red-600 hover:bg-red-700"
+            className="bg-red-600 hover:bg-red-700 tablet:px-6 tablet:py-3"
           >
-            <Trash2 className="h-4 w-4 mr-2" />
-            {isDeleting ? '削除中...' : '削除する'}
+            <Trash2 className="h-4 w-4 mr-2 tablet:h-5 tablet:w-5" />
+            {isDeleting ? '削除中...' : '削除'}
           </Button>
         </DialogFooter>
       </DialogContent>
