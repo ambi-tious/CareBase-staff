@@ -527,18 +527,6 @@ export const IndividualPointDetailPage: React.FC<IndividualPointDetailPageProps>
         <CardContent>
           {isEditing ? (
             <div className="space-y-4">
-              {isNewCreation && (
-                <div className="bg-blue-50 border border-blue-200 rounded-md p-4 mb-4">
-                  <div className="flex items-center gap-2 text-blue-700">
-                    <p className="text-sm font-medium">
-                      {category}に関する詳細情報を入力してください（必須）
-                    </p>
-                  </div>
-                  <p className="text-xs text-blue-600 mt-1">
-                    この情報は利用者様のケアに重要な参考情報として活用されます。
-                  </p>
-                </div>
-              )}
               <div>
                 <label className="text-sm font-medium text-gray-700 mb-2 block">
                   <span className="text-base font-semibold text-gray-800">
@@ -553,7 +541,7 @@ export const IndividualPointDetailPage: React.FC<IndividualPointDetailPageProps>
                       }
                       placeholder={
                         <div className="p-4 text-gray-400 text-sm">
-                          {!isNewCreation && `${category}に関する詳細情報を入力してください`}
+                          {`${category}に関する詳細情報を入力してください`}
                         </div>
                       }
                       ErrorBoundary={LexicalErrorBoundary}
