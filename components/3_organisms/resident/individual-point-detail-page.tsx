@@ -20,7 +20,7 @@ import { HistoryPlugin } from '@lexical/react/LexicalHistoryPlugin';
 import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
 import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
 import { $getRoot } from 'lexical';
-import { AlertCircle, ArrowLeft, Edit, Save, Trash2 } from 'lucide-react';
+import { AlertCircle, AlertTriangle, ArrowLeft, Edit, Save, Trash2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
@@ -273,10 +273,7 @@ export const IndividualPointDetailPage: React.FC<IndividualPointDetailPageProps>
     setIsDeleting(true);
     setError(null);
     try {
-      // Simulate API call
       await new Promise((resolve) => setTimeout(resolve, 1000));
-      // In production, this would call an API to delete the content
-      // await individualPointService.deleteContent(resident.id, category);
       setContent('');
       setShowDeleteConfirm(false);
       delete mockPointContents[category];
@@ -324,7 +321,6 @@ export const IndividualPointDetailPage: React.FC<IndividualPointDetailPageProps>
       {/* Header */}
       <div className="mb-6">
         <div className="flex items-center justify-between gap-4 mb-4">
-          {/* タイトル・利用者名を左寄せ */}
           <div className="flex items-center gap-3">
             <div className="flex h-8 w-8 items-center justify-center rounded-full bg-carebase-blue-light">
               <Icon className="h-5 w-5 text-carebase-blue" />
@@ -339,34 +335,33 @@ export const IndividualPointDetailPage: React.FC<IndividualPointDetailPageProps>
               </p>
             </div>
           </div>
-          {/* 右端にカテゴリの編集ボタンと戻るボタンを並べる */}
           <div className="flex items-center gap-2">
             {!isNewCreation && (
-              <Button
-                size="sm"
-                variant="outline"
-                onClick={() => setIsCategoryEditing(true)}
-                className="flex items-center gap-1"
-              >
-                <Edit className="h-4 w-4 mr-1" />
-                カテゴリの編集
-              </Button>
+              <>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => setIsCategoryEditing(true)}
+                  className="flex items-center gap-1"
+                >
+                  <Edit className="h-4 w-4 mr-1" />
+                  カテゴリの編集
+                </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={handleBack}
+                  className="flex items-center gap-2"
+                  disabled={isSaving || isDeleting}
+                >
+                  <ArrowLeft className="h-4 w-4" />
+                  戻る
+                </Button>
+              </>
             )}
-            <Button
-              size="sm"
-              variant="outline"
-              onClick={handleBack}
-              className="flex items-center gap-2"
-              disabled={isSaving || isDeleting}
-            >
-              <ArrowLeft className="h-4 w-4" />
-              戻る
-            </Button>
           </div>
         </div>
       </div>
-
-      {/* --- カテゴリ編集モーダル --- */}
       <Dialog open={isCategoryEditing} onOpenChange={setIsCategoryEditing}>
         <DialogContent className="max-w-md w-full">
           <DialogHeader>
@@ -380,7 +375,6 @@ export const IndividualPointDetailPage: React.FC<IndividualPointDetailPageProps>
                 setCategoryError('カテゴリ名は必須です');
                 return;
               }
-              // TODO: 保存処理（API連携やstate更新）
               individualPoint.category = categoryName;
               setIsCategoryEditing(false);
             }}
@@ -412,7 +406,6 @@ export const IndividualPointDetailPage: React.FC<IndividualPointDetailPageProps>
           </form>
         </DialogContent>
       </Dialog>
-
       {/* Error Alert */}
       {error && (
         <Alert className="mb-6 border-red-200 bg-red-50">
@@ -420,7 +413,6 @@ export const IndividualPointDetailPage: React.FC<IndividualPointDetailPageProps>
           <AlertDescription className="text-red-700">{error}</AlertDescription>
         </Alert>
       )}
-
       {/* Validation Error Alert */}
       {validationError && (
         <Alert className="mb-6 border-red-200 bg-red-50">
@@ -428,7 +420,6 @@ export const IndividualPointDetailPage: React.FC<IndividualPointDetailPageProps>
           <AlertDescription className="text-red-700">{validationError}</AlertDescription>
         </Alert>
       )}
-
       {/* Unsaved Changes Warning */}
       {hasUnsavedChanges && (
         <Alert className="mb-6 border-yellow-200 bg-yellow-50">
@@ -438,13 +429,12 @@ export const IndividualPointDetailPage: React.FC<IndividualPointDetailPageProps>
           </AlertDescription>
         </Alert>
       )}
-
       {/* Delete Confirmation Modal */}
       {showDeleteConfirm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-30">
           <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
             <div className="flex items-center mb-4">
-              <AlertCircle className="h-6 w-6 text-red-600 mr-2" />
+              <AlertTriangle className="h-6 w-6 text-red-600 mr-2" />
               <span className="text-lg font-semibold text-red-700">削除の確認</span>
             </div>
             <div className="mb-6 text-gray-700">
@@ -466,16 +456,11 @@ export const IndividualPointDetailPage: React.FC<IndividualPointDetailPageProps>
           </div>
         </div>
       )}
-
-      {/* Main Content */}
       <Card className="max-w-4xl">
         <CardHeader>
           <div className="flex items-center justify-end">
             <div className="flex items-center gap-2">
-              {isEditing ? (
-                // 編集モード時はヘッダーにボタンを表示しない
-                null
-              ) : (
+              {isEditing ? null : (
                 <>
                   <Button
                     variant="outline"
@@ -535,25 +520,22 @@ export const IndividualPointDetailPage: React.FC<IndividualPointDetailPageProps>
                   <p className="text-xs text-yellow-600 font-medium">未保存の変更があります</p>
                 )}
               </div>
-              {/* 編集モード時のボタンをカード内右下に配置 */}
-              <div className="flex justify-end gap-3 mt-6 pt-4 border-t border-gray-200">
-                {!isNewCreation && (
-                  <Button
-                    variant="outline"
-                    onClick={handleCancelEdit}
-                    disabled={isSaving}
-                    className="px-6"
-                  >
-                    キャンセル
-                  </Button>
-                )}
+              <div className="flex justify-end gap-3 mt-6 pt-4">
+                <Button
+                  variant="outline"
+                  onClick={handleCancelEdit}
+                  disabled={isSaving}
+                  className="px-6"
+                >
+                  キャンセル
+                </Button>
                 <Button
                   onClick={handleSave}
                   disabled={isSaving}
                   className="bg-carebase-blue hover:bg-carebase-blue-dark px-6"
                 >
                   <Save className="h-4 w-4 mr-2" />
-                  {isSaving ? '登録中...' : isNewCreation ? '登録' : '保存'}
+                  {isSaving ? '登録中...' : '登録'}
                 </Button>
               </div>
             </div>
