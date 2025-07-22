@@ -70,6 +70,8 @@ module.exports = [
         NodeJS: 'readonly',
         calculateCertValidityEnd: 'readonly',
         File: 'readonly',
+        FileReader: 'readonly',
+        ProgressEvent: 'readonly',
       },
     },
     plugins: {
@@ -147,6 +149,8 @@ module.exports = [
         React: 'readonly',
         global: 'readonly',
         NodeJS: 'readonly',
+        FileReader: 'readonly',
+        ProgressEvent: 'readonly',
       },
     },
     plugins: {

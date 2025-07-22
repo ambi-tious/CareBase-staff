@@ -141,7 +141,7 @@ export const DocumentFormEditor: React.FC<DocumentFormEditorProps> = ({
     // テキストファイルの場合はプレビューを生成
     if (file.type === 'text/plain') {
       const reader = new FileReader();
-      reader.onload = (e) => {
+      reader.onload = (e: ProgressEvent<FileReader>) => {
         const text = e.target?.result as string;
         setFilePreview(text);
       };
@@ -164,6 +164,7 @@ export const DocumentFormEditor: React.FC<DocumentFormEditorProps> = ({
     status: initialDocument?.status || 'draft',
     tags: initialDocument?.tags || '',
     folderId: folderId || undefined,
+    category: initialDocument?.category || '',
   };
 
   const { formData, updateField, isSubmitting, error, fieldErrors, handleSubmit } = useDocumentForm(

@@ -27,7 +27,20 @@ interface DocumentDetailProps {
     folderId?: string | null; // 書類が保存されているフォルダID
   };
   className?: string;
-  onDocumentUpdate?: (updatedDocument: any) => void; // 書類更新時のコールバック
+  onDocumentUpdate?: (updatedDocument: {
+    id: string;
+    title: string;
+    content: string;
+    status: 'draft' | 'published' | 'archived';
+    createdAt: Date;
+    updatedAt: Date;
+    createdBy: { id: string; name: string; role: string };
+    category: string;
+    tags?: string[];
+    fontFamily?: string;
+    fontSize?: string;
+    folderId: string | null;
+  }) => void; // 書類更新時のコールバック
 }
 
 export const DocumentDetail: React.FC<DocumentDetailProps> = ({

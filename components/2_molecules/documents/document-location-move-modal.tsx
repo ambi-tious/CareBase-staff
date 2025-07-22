@@ -11,7 +11,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { getFolderPath, rootFolders, subFolders } from '@/mocks/hierarchical-documents';
-import { AlertCircle, Check, Folder, FolderOpen } from 'lucide-react';
+import { AlertCircle, Check, Folder as FolderIcon, FolderOpen } from 'lucide-react';
 import type React from 'react';
 import { useState } from 'react';
 
@@ -100,7 +100,7 @@ export const DocumentLocationMoveModal: React.FC<DocumentLocationMoveModalProps>
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
       // 移動処理をシミュレート
-      console.log(`Moving document ${documentId} to folder ${selectedFolderId}`);
+      // console.log(`Moving document ${documentId} to folder ${selectedFolderId}`);
 
       onMoveSuccess(selectedFolderId);
       onClose();
@@ -121,7 +121,7 @@ export const DocumentLocationMoveModal: React.FC<DocumentLocationMoveModalProps>
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <Folder className="h-5 w-5" />
+            <FolderIcon className="h-5 w-5" />
             書類の場所を移動
           </DialogTitle>
           <DialogDescription>
@@ -151,7 +151,7 @@ export const DocumentLocationMoveModal: React.FC<DocumentLocationMoveModalProps>
                   selectedFolderId === null ? 'bg-blue-50 border-blue-200' : ''
                 }`}
               >
-                <Folder className="h-4 w-4 text-gray-500" />
+                <FolderIcon className="h-4 w-4 text-gray-500" />
                 <span className="text-sm">ルート</span>
                 {selectedFolderId === null && <Check className="h-4 w-4 text-blue-600 ml-auto" />}
               </button>
@@ -166,7 +166,7 @@ export const DocumentLocationMoveModal: React.FC<DocumentLocationMoveModalProps>
                     selectedFolderId === folder.id ? 'bg-blue-50 border-blue-200' : ''
                   }`}
                 >
-                  <Folder className="h-4 w-4 text-gray-500" />
+                  <FolderIcon className="h-4 w-4 text-gray-500" />
                   <span className="text-sm">{getFolderDisplayPath(folder.id)}</span>
                   {selectedFolderId === folder.id && (
                     <Check className="h-4 w-4 text-blue-600 ml-auto" />
@@ -179,7 +179,7 @@ export const DocumentLocationMoveModal: React.FC<DocumentLocationMoveModalProps>
           {/* 移動先プレビュー */}
           {isLocationChanged && (
             <Alert className="border-blue-200 bg-blue-50">
-              <Folder className="h-4 w-4 text-blue-600" />
+              <FolderIcon className="h-4 w-4 text-blue-600" />
               <AlertDescription className="text-blue-700">移動先: {newPath}</AlertDescription>
             </Alert>
           )}

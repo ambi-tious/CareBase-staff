@@ -23,9 +23,9 @@ interface DocumentData {
     role: string;
   };
   category: string;
-  tags: string[];
-  fontFamily: string;
-  fontSize: string;
+  tags?: string[];
+  fontFamily?: string;
+  fontSize?: string;
   folderId: string | null; // 書類が保存されているフォルダID
 }
 
@@ -108,7 +108,7 @@ export default function DocumentViewPage({ params: paramsPromise }: DocumentView
   const handleDocumentUpdate = (updatedDocument: DocumentData) => {
     setDocument(updatedDocument);
     // 実際のアプリケーションではAPIを呼び出して更新を保存
-    console.log('Document updated:', updatedDocument);
+    // console.log('Document updated:', updatedDocument);
   };
 
   if (isLoading) {

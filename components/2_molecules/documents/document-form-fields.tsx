@@ -9,6 +9,7 @@ import type React from 'react';
 
 export interface DocumentFormData {
   title: string;
+  category: string;
   description: string;
   status: 'draft' | 'published' | 'archived';
   tags: string;

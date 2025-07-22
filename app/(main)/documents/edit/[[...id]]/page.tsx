@@ -1,5 +1,6 @@
 'use client';
 
+import type { DocumentFormData } from '@/components/2_molecules/documents/document-form-fields';
 import { DocumentFormEditor } from '@/components/3_organisms/documents/document-form-editor';
 import { useSearchParams } from 'next/navigation';
 import React from 'react';
@@ -37,7 +38,11 @@ export default function DocumentEditPage({ params }: PageProps) {
     : undefined;
 
   // 保存処理
-  const handleSave = async (data: { formData: any; content: string }) => {
+  const handleSave = async (data: {
+    formData: DocumentFormData;
+    content: string;
+    attachedFile?: File;
+  }) => {
     try {
       // 実際のアプリケーションではAPIに送信
       const saveData = {
@@ -45,7 +50,7 @@ export default function DocumentEditPage({ params }: PageProps) {
         folderId, // フォルダIDも保存データに含める
         ...data,
       };
-      console.log('Saving document:', saveData);
+      // console.log('Saving document:', saveData);
 
       // 保存処理をシミュレート
       await new Promise((resolve) => setTimeout(resolve, 500));
