@@ -75,84 +75,84 @@ export const HandoverDetail: React.FC<HandoverDetailProps> = ({ handover, onUpda
             </div>
           </div>
         </CardHeader>
-          <CardContent className="space-y-6">
-            {/* Category */}
-            <div className="flex items-center gap-2">
-              <span className="text-sm font-medium text-gray-500">カテゴリ:</span>
-              <CategoryBadge category={currentHandover.category} />
-            </div>
+        <CardContent className="space-y-6">
+          {/* Category */}
+          <div className="flex items-center gap-2">
+            <span className="text-sm font-medium text-gray-500">カテゴリ:</span>
+            <CategoryBadge category={currentHandover.category} />
+          </div>
 
-            {/* Creator Info */}
-            <div className="flex items-center gap-2 p-3 bg-gray-50 rounded-lg">
-              <User className="h-5 w-5 text-gray-500" />
-              <div>
-                <span className="text-sm font-medium">申し送り者: </span>
-                <span className="text-sm">{currentHandover.createdByName}</span>
-              </div>
+          {/* Creator Info */}
+          <div className="flex items-center gap-2 p-3 bg-gray-50 rounded-lg">
+            <User className="h-5 w-5 text-gray-500" />
+            <div>
+              <span className="text-sm font-medium">申し送り者: </span>
+              <span className="text-sm">{currentHandover.createdByName}</span>
             </div>
+          </div>
 
-            {/* Resident Info */}
-            {currentHandover.residentName && (
-              <div className="p-3 bg-blue-50 rounded-lg">
-                <span className="text-sm font-medium">対象利用者: </span>
-                <Link
-                  href={`/residents/${currentHandover.residentId}`}
-                  className="text-sm text-carebase-blue hover:underline"
-                >
-                  {currentHandover.residentName}
-                </Link>
+          {/* Resident Info */}
+          {currentHandover.residentName && (
+            <div className="p-3 bg-blue-50 rounded-lg">
+              <span className="text-sm font-medium">対象利用者: </span>
+              <Link
+                href={`/residents/${currentHandover.residentId}`}
+                className="text-sm text-carebase-blue hover:underline"
+              >
+                {currentHandover.residentName}
+              </Link>
+            </div>
+          )}
+
+          {/* Scheduled Date/Time */}
+          {(currentHandover.scheduledDate || currentHandover.scheduledTime) && (
+            <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+              <span className="text-sm font-medium text-yellow-800">実施予定: </span>
+              <span className="text-sm text-yellow-700">
+                {currentHandover.scheduledDate &&
+                  format(new Date(currentHandover.scheduledDate), 'yyyy年MM月dd日', {
+                    locale: ja,
+                  })}
+                {currentHandover.scheduledTime && ` ${currentHandover.scheduledTime}`}
+              </span>
+            </div>
+          )}
+
+          {/* Content */}
+          <div className="space-y-2">
+            <h3 className="text-lg font-semibold text-carebase-text-primary">内容</h3>
+            <div className="p-4 bg-white border border-gray-200 rounded-lg">
+              <p className="text-gray-700 whitespace-pre-line leading-relaxed">
+                {currentHandover.content}
+              </p>
+            </div>
+          </div>
+
+          {/* Timestamps */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 border-t">
+            <div className="text-sm">
+              <span className="font-medium text-gray-500">作成日時:</span>
+              <div className="mt-1">{formatDateTime(currentHandover.createdAt)}</div>
+            </div>
+            <div className="text-sm">
+              <span className="font-medium text-gray-500">更新日時:</span>
+              <div className="mt-1">{formatDateTime(currentHandover.updatedAt)}</div>
+            </div>
+            {currentHandover.readAt && (
+              <div className="text-sm">
+                <span className="font-medium text-gray-500">既読日時:</span>
+                <div className="mt-1">{formatDateTime(currentHandover.readAt)}</div>
               </div>
             )}
-
-            {/* Scheduled Date/Time */}
-            {(currentHandover.scheduledDate || currentHandover.scheduledTime) && (
-              <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
-                <span className="text-sm font-medium text-yellow-800">実施予定: </span>
-                <span className="text-sm text-yellow-700">
-                  {currentHandover.scheduledDate &&
-                    format(new Date(currentHandover.scheduledDate), 'yyyy年MM月dd日', {
-                      locale: ja,
-                    })}
-                  {currentHandover.scheduledTime && ` ${currentHandover.scheduledTime}`}
-                </span>
+            {currentHandover.completedAt && (
+              <div className="text-sm">
+                <span className="font-medium text-gray-500">対応完了日時:</span>
+                <div className="mt-1">{formatDateTime(currentHandover.completedAt)}</div>
               </div>
             )}
-
-            {/* Content */}
-            <div className="space-y-2">
-              <h3 className="text-lg font-semibold text-carebase-text-primary">内容</h3>
-              <div className="p-4 bg-white border border-gray-200 rounded-lg">
-                <p className="text-gray-700 whitespace-pre-line leading-relaxed">
-                  {currentHandover.content}
-                </p>
-              </div>
-            </div>
-
-            {/* Timestamps */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 border-t">
-              <div className="text-sm">
-                <span className="font-medium text-gray-500">作成日時:</span>
-                <div className="mt-1">{formatDateTime(currentHandover.createdAt)}</div>
-              </div>
-              <div className="text-sm">
-                <span className="font-medium text-gray-500">更新日時:</span>
-                <div className="mt-1">{formatDateTime(currentHandover.updatedAt)}</div>
-              </div>
-              {currentHandover.readAt && (
-                <div className="text-sm">
-                  <span className="font-medium text-gray-500">既読日時:</span>
-                  <div className="mt-1">{formatDateTime(currentHandover.readAt)}</div>
-                </div>
-              )}
-              {currentHandover.completedAt && (
-                <div className="text-sm">
-                  <span className="font-medium text-gray-500">対応完了日時:</span>
-                  <div className="mt-1">{formatDateTime(currentHandover.completedAt)}</div>
-                </div>
-              )}
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-    );
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
 };
