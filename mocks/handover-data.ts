@@ -4,7 +4,8 @@ export const handoverData: Handover[] = [
   {
     id: 'handover-001',
     title: '佐藤清様の血圧について',
-    content: '本日朝のバイタル測定時に血圧が156/110と高値でした。かかりつけ医への連絡を検討してください。',
+    content:
+      '本日朝のバイタル測定時に血圧が156/110と高値でした。かかりつけ医への連絡を検討してください。',
     category: 'medical',
     priority: 'high',
     status: 'unread',
@@ -21,7 +22,8 @@ export const handoverData: Handover[] = [
   {
     id: 'handover-002',
     title: '鈴木幸子様の食事摂取量低下',
-    content: '昨日から食事摂取量が普段の半分程度になっています。体調確認と栄養補助食品の検討をお願いします。',
+    content:
+      '昨日から食事摂取量が普段の半分程度になっています。体調確認と栄養補助食品の検討をお願いします。',
     category: 'care',
     priority: 'medium',
     status: 'read',
@@ -39,7 +41,8 @@ export const handoverData: Handover[] = [
   {
     id: 'handover-003',
     title: '夜勤帯の見回り強化について',
-    content: '最近、夜間の転倒リスクが高い利用者様が増えています。22時と2時の見回りを強化してください。',
+    content:
+      '最近、夜間の転倒リスクが高い利用者様が増えています。22時と2時の見回りを強化してください。',
     category: 'communication',
     priority: 'medium',
     status: 'completed',

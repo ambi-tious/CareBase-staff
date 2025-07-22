@@ -39,7 +39,9 @@ export const HandoverFilters: React.FC<HandoverFiltersProps> = ({
 
       <Select
         value={selectedPriority || ''}
-        onValueChange={(value) => onPriorityChange(value === 'all' ? undefined : value as HandoverPriority)}
+        onValueChange={(value) =>
+          onPriorityChange(value === 'all' ? undefined : (value as HandoverPriority))
+        }
       >
         <SelectTrigger className="w-32">
           <SelectValue placeholder="重要度" />
@@ -56,9 +58,13 @@ export const HandoverFilters: React.FC<HandoverFiltersProps> = ({
 
       <Select
         value={selectedStatus || 'unread'}
-        onValueChange={(value) => onStatusChange(value === 'all' ? undefined : value as HandoverStatus)}
+        onValueChange={(value) =>
+          onStatusChange(value === 'all' ? undefined : (value as HandoverStatus))
+        }
       >
-        <SelectTrigger className={`w-36 ${selectedStatus === 'unread' ? 'border-blue-500 bg-blue-50' : ''}`}>
+        <SelectTrigger
+          className={`w-36 ${selectedStatus === 'unread' ? 'border-blue-500 bg-blue-50' : ''}`}
+        >
           <SelectValue placeholder="ステータス" />
         </SelectTrigger>
         <SelectContent>
@@ -75,11 +81,9 @@ export const HandoverFilters: React.FC<HandoverFiltersProps> = ({
         <RotateCcw className="h-4 w-4 mr-2" />
         リセット
       </Button>
-      
+
       {selectedStatus === 'unread' && (
-        <div className="text-xs text-blue-600 bg-blue-50 px-2 py-1 rounded">
-          未読のみ表示
-        </div>
+        <div className="text-xs text-blue-600 bg-blue-50 px-2 py-1 rounded">未読のみ表示</div>
       )}
     </div>
   );

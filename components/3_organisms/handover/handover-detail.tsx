@@ -35,7 +35,7 @@ export const HandoverDetail: React.FC<HandoverDetailProps> = ({ handover, onUpda
   const handleEditSubmit = async (data: HandoverFormData): Promise<boolean> => {
     try {
       // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
       // Mock API call - in production, this would call the actual API
       const updatedHandover: Handover = {
@@ -150,7 +150,10 @@ export const HandoverDetail: React.FC<HandoverDetailProps> = ({ handover, onUpda
               <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
                 <span className="text-sm font-medium text-yellow-800">実施予定: </span>
                 <span className="text-sm text-yellow-700">
-                  {currentHandover.scheduledDate && format(new Date(currentHandover.scheduledDate), 'yyyy年MM月dd日', { locale: ja })}
+                  {currentHandover.scheduledDate &&
+                    format(new Date(currentHandover.scheduledDate), 'yyyy年MM月dd日', {
+                      locale: ja,
+                    })}
                   {currentHandover.scheduledTime && ` ${currentHandover.scheduledTime}`}
                 </span>
               </div>

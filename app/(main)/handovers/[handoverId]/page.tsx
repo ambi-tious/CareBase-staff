@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import { HandoverDetail } from '@/components/3_organisms/handover/handover-detail';
 import { getHandoverById } from '@/mocks/handover-data';
@@ -38,11 +38,7 @@ export default function HandoverDetailPage({
   }
 
   if (!handover) {
-    return (
-      <div className="p-6 text-center text-red-500">
-        申し送りが見つかりません。
-      </div>
-    );
+    return <div className="p-6 text-center text-red-500">申し送りが見つかりません。</div>;
   }
 
   return <HandoverDetail handover={handover} onUpdate={handleHandoverUpdate} />;

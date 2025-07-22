@@ -25,17 +25,18 @@ export const ResidentSelector: React.FC<ResidentSelectorProps> = ({
   const [isOpen, setIsOpen] = useState(false);
 
   // Filter active residents only
-  const activeResidents = careBoardData.filter(resident => resident.admissionStatus === '入居中');
+  const activeResidents = careBoardData.filter((resident) => resident.admissionStatus === '入居中');
 
   // Filter residents based on search query
-  const filteredResidents = activeResidents.filter((resident) =>
-    resident.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    resident.furigana.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    resident.roomInfo?.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredResidents = activeResidents.filter(
+    (resident) =>
+      resident.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      resident.furigana.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      resident.roomInfo?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const selectedResident = selectedResidentId 
-    ? activeResidents.find(r => r.id.toString() === selectedResidentId)
+  const selectedResident = selectedResidentId
+    ? activeResidents.find((r) => r.id.toString() === selectedResidentId)
     : undefined;
 
   const handleResidentSelect = (resident: Resident) => {
@@ -50,9 +51,7 @@ export const ResidentSelector: React.FC<ResidentSelectorProps> = ({
 
   return (
     <div className={`space-y-2 ${className}`}>
-      <label className="text-sm font-medium text-gray-700">
-        対象利用者（任意）
-      </label>
+      <label className="text-sm font-medium text-gray-700">対象利用者（任意）</label>
 
       {/* Selected Resident Display */}
       {selectedResident ? (
@@ -61,9 +60,7 @@ export const ResidentSelector: React.FC<ResidentSelectorProps> = ({
             <div className="flex items-center gap-2">
               <User className="h-4 w-4 text-green-600" />
               <div>
-                <span className="text-sm font-medium text-green-800">
-                  {selectedResident.name}
-                </span>
+                <span className="text-sm font-medium text-green-800">{selectedResident.name}</span>
                 <div className="text-xs text-green-600">
                   {selectedResident.roomInfo} | {selectedResident.careLevel}
                 </div>
@@ -98,12 +95,7 @@ export const ResidentSelector: React.FC<ResidentSelectorProps> = ({
           <CardHeader className="py-3">
             <div className="flex items-center justify-between">
               <CardTitle className="text-sm">利用者選択</CardTitle>
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
-                onClick={() => setIsOpen(false)}
-              >
+              <Button type="button" variant="ghost" size="sm" onClick={() => setIsOpen(false)}>
                 <X className="h-4 w-4" />
               </Button>
             </div>

@@ -13,16 +13,52 @@ export type HandoverPriority = 'high' | 'medium' | 'low';
 export type HandoverStatus = 'unread' | 'read' | 'completed';
 
 // Handover categories
-export type HandoverCategory = 'medical' | 'care' | 'communication' | 'emergency' | 'family' | 'other';
+export type HandoverCategory =
+  | 'medical'
+  | 'care'
+  | 'communication'
+  | 'emergency'
+  | 'family'
+  | 'other';
 
 // Category options
 export const categoryOptions = [
-  { value: 'medical', label: '医療', icon: 'Stethoscope', color: 'bg-red-100 text-red-700 border-red-200' },
-  { value: 'care', label: '介護', icon: 'Heart', color: 'bg-blue-100 text-blue-700 border-blue-200' },
-  { value: 'communication', label: '連絡事項', icon: 'MessageCircle', color: 'bg-green-100 text-green-700 border-green-200' },
-  { value: 'emergency', label: '緊急', icon: 'AlertTriangle', color: 'bg-orange-100 text-orange-700 border-orange-200' },
-  { value: 'family', label: '家族対応', icon: 'Users', color: 'bg-purple-100 text-purple-700 border-purple-200' },
-  { value: 'other', label: 'その他', icon: 'FileText', color: 'bg-gray-100 text-gray-700 border-gray-200' },
+  {
+    value: 'medical',
+    label: '医療',
+    icon: 'Stethoscope',
+    color: 'bg-red-100 text-red-700 border-red-200',
+  },
+  {
+    value: 'care',
+    label: '介護',
+    icon: 'Heart',
+    color: 'bg-blue-100 text-blue-700 border-blue-200',
+  },
+  {
+    value: 'communication',
+    label: '連絡事項',
+    icon: 'MessageCircle',
+    color: 'bg-green-100 text-green-700 border-green-200',
+  },
+  {
+    value: 'emergency',
+    label: '緊急',
+    icon: 'AlertTriangle',
+    color: 'bg-orange-100 text-orange-700 border-orange-200',
+  },
+  {
+    value: 'family',
+    label: '家族対応',
+    icon: 'Users',
+    color: 'bg-purple-100 text-purple-700 border-purple-200',
+  },
+  {
+    value: 'other',
+    label: 'その他',
+    icon: 'FileText',
+    color: 'bg-gray-100 text-gray-700 border-gray-200',
+  },
 ] as const;
 
 // Handover read status determination

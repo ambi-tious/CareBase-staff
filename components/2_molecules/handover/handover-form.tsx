@@ -62,23 +62,26 @@ export const HandoverForm: React.FC<HandoverFormProps> = ({
   }, []);
 
   // Memoize options to prevent unnecessary re-renders
-  const categorySelectOptions = useMemo(() => 
-    categoryOptions.map(cat => ({ value: cat.value, label: cat.label })), 
+  const categorySelectOptions = useMemo(
+    () => categoryOptions.map((cat) => ({ value: cat.value, label: cat.label })),
     []
   );
 
-  const prioritySelectOptions = useMemo(() => 
-    priorityOptions.map(pri => ({ value: pri.value, label: pri.label })), 
+  const prioritySelectOptions = useMemo(
+    () => priorityOptions.map((pri) => ({ value: pri.value, label: pri.label })),
     []
   );
 
-  const onFormSubmit = useCallback(async (e: React.FormEvent) => {
-    e.preventDefault();
-    const success = await submitFinal();
-    if (success) {
-      onCancel(); // Close form on success
-    }
-  }, [submitFinal, onCancel]);
+  const onFormSubmit = useCallback(
+    async (e: React.FormEvent) => {
+      e.preventDefault();
+      const success = await submitFinal();
+      if (success) {
+        onCancel(); // Close form on success
+      }
+    },
+    [submitFinal, onCancel]
+  );
 
   const handleSaveDraft = useCallback(async () => {
     const success = await saveDraft();
@@ -93,37 +96,61 @@ export const HandoverForm: React.FC<HandoverFormProps> = ({
   }, [clearError]);
 
   // Memoize field update callbacks to prevent re-renders
-  const handleTitleChange = useCallback((value: string) => {
-    updateField('title', value);
-  }, [updateField]);
+  const handleTitleChange = useCallback(
+    (value: string) => {
+      updateField('title', value);
+    },
+    [updateField]
+  );
 
-  const handleCategoryChange = useCallback((value: string) => {
-    updateField('category', value);
-  }, [updateField]);
+  const handleCategoryChange = useCallback(
+    (value: string) => {
+      updateField('category', value);
+    },
+    [updateField]
+  );
 
-  const handlePriorityChange = useCallback((value: string) => {
-    updateField('priority', value);
-  }, [updateField]);
+  const handlePriorityChange = useCallback(
+    (value: string) => {
+      updateField('priority', value);
+    },
+    [updateField]
+  );
 
-  const handleScheduledDateChange = useCallback((value: string) => {
-    updateField('scheduledDate', value);
-  }, [updateField]);
+  const handleScheduledDateChange = useCallback(
+    (value: string) => {
+      updateField('scheduledDate', value);
+    },
+    [updateField]
+  );
 
-  const handleScheduledTimeChange = useCallback((value: string) => {
-    updateField('scheduledTime', value);
-  }, [updateField]);
+  const handleScheduledTimeChange = useCallback(
+    (value: string) => {
+      updateField('scheduledTime', value);
+    },
+    [updateField]
+  );
 
-  const handleContentChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    updateField('content', e.target.value);
-  }, [updateField]);
+  const handleContentChange = useCallback(
+    (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+      updateField('content', e.target.value);
+    },
+    [updateField]
+  );
 
-  const handleStaffSelectionChange = useCallback((staffIds: string[]) => {
-    updateField('targetStaffIds', staffIds);
-  }, [updateField]);
+  const handleStaffSelectionChange = useCallback(
+    (staffIds: string[]) => {
+      updateField('targetStaffIds', staffIds);
+    },
+    [updateField]
+  );
 
-  const handleResidentSelectionChange = useCallback((residentId?: string) => {
-    updateField('residentId', residentId || '');
-  }, [updateField]);
+  const handleResidentSelectionChange = useCallback(
+    (residentId?: string) => {
+      updateField('residentId', residentId || '');
+    },
+    [updateField]
+  );
 
   const isNetworkError = error?.includes('ネットワークエラー');
 
@@ -158,9 +185,7 @@ export const HandoverForm: React.FC<HandoverFormProps> = ({
           <User className="h-4 w-4 text-blue-600" />
           <span className="text-sm font-medium text-blue-800">申し送り者: {currentStaffName}</span>
         </div>
-        <p className="text-xs text-blue-600 mt-1">
-          ログイン中のユーザーが自動的に設定されます
-        </p>
+        <p className="text-xs text-blue-600 mt-1">ログイン中のユーザーが自動的に設定されます</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -264,9 +289,7 @@ export const HandoverForm: React.FC<HandoverFormProps> = ({
             {fieldErrors.content}
           </p>
         )}
-        <div className="text-xs text-gray-500 mt-1">
-          {formData.content.length}/1000文字
-        </div>
+        <div className="text-xs text-gray-500 mt-1">{formData.content.length}/1000文字</div>
       </div>
 
       {/* Unsaved Changes Warning */}
@@ -289,7 +312,7 @@ export const HandoverForm: React.FC<HandoverFormProps> = ({
         >
           キャンセル
         </Button>
-        
+
         <Button
           type="button"
           variant="outline"

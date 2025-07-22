@@ -27,22 +27,26 @@ export const StaffSelector: React.FC<StaffSelectorProps> = ({
   const allStaff = getAllStaff();
 
   // Filter staff based on search query
-  const filteredStaff = allStaff.filter((staff) =>
-    staff.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    staff.furigana.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    staff.role.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredStaff = allStaff.filter(
+    (staff) =>
+      staff.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      staff.furigana.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      staff.role.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const handleStaffToggle = useCallback((staffId: string) => {
-    const newSelection = selectedStaffIds.includes(staffId)
-      ? selectedStaffIds.filter(id => id !== staffId)
-      : [...selectedStaffIds, staffId];
-    
-    onSelectionChange(newSelection);
-  }, [selectedStaffIds, onSelectionChange]);
+  const handleStaffToggle = useCallback(
+    (staffId: string) => {
+      const newSelection = selectedStaffIds.includes(staffId)
+        ? selectedStaffIds.filter((id) => id !== staffId)
+        : [...selectedStaffIds, staffId];
+
+      onSelectionChange(newSelection);
+    },
+    [selectedStaffIds, onSelectionChange]
+  );
 
   const handleSelectAll = () => {
-    const allStaffIds = filteredStaff.map(staff => staff.id);
+    const allStaffIds = filteredStaff.map((staff) => staff.id);
     onSelectionChange(allStaffIds);
   };
 
@@ -51,7 +55,7 @@ export const StaffSelector: React.FC<StaffSelectorProps> = ({
   };
 
   const getSelectedStaff = () => {
-    return allStaff.filter(staff => selectedStaffIds.includes(staff.id));
+    return allStaff.filter((staff) => selectedStaffIds.includes(staff.id));
   };
 
   const selectedStaff = getSelectedStaff();
@@ -147,7 +151,7 @@ export const StaffSelector: React.FC<StaffSelectorProps> = ({
                     checked={selectedStaffIds.includes(staff.id)}
                     onCheckedChange={() => handleStaffToggle(staff.id)}
                   />
-                  <div 
+                  <div
                     className="flex-1 min-w-0 cursor-pointer"
                     onClick={() => handleStaffToggle(staff.id)}
                   >

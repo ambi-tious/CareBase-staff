@@ -48,10 +48,9 @@ export const HandoverFormModal: React.FC<HandoverFormModalProps> = ({
             {mode === 'create' ? '新規申し送り作成' : '申し送り編集'}
           </DialogTitle>
           <DialogDescription className="text-gray-600">
-            {mode === 'create' 
+            {mode === 'create'
               ? '新しい申し送りを作成してください。必須項目（'
-              : '申し送り内容を編集してください。必須項目（'
-            }
+              : '申し送り内容を編集してください。必須項目（'}
             <span className="text-red-500">*</span>）は必ず入力してください。
           </DialogDescription>
         </DialogHeader>

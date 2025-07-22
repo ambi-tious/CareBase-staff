@@ -17,10 +17,7 @@ interface HandoverTableRowProps {
   onStatusUpdate?: (handoverId: string, status: 'read' | 'completed') => void;
 }
 
-export const HandoverTableRow: React.FC<HandoverTableRowProps> = ({
-  handover,
-  onStatusUpdate,
-}) => {
+export const HandoverTableRow: React.FC<HandoverTableRowProps> = ({ handover, onStatusUpdate }) => {
   const formatDate = (dateString: string) => {
     return format(new Date(dateString), 'MM/dd HH:mm', { locale: ja });
   };

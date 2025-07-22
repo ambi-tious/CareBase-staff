@@ -2,13 +2,7 @@
 
 import type React from 'react';
 import { useState, useMemo } from 'react';
-import {
-  Table,
-  TableBody,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
+import { Table, TableBody, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 import { HandoverSearchBar } from '@/components/2_molecules/handover/handover-search-bar';
 import { HandoverFilters } from '@/components/2_molecules/handover/handover-filters';
@@ -103,10 +97,7 @@ export const HandoverList: React.FC<HandoverListProps> = ({ handovers, onStatusU
 
       {/* Search and Filters */}
       <div className="flex flex-col lg:flex-row gap-4 items-start lg:items-center mb-6">
-        <HandoverSearchBar
-          onSearch={setSearchQuery}
-          className="flex-1 max-w-md"
-        />
+        <HandoverSearchBar onSearch={setSearchQuery} className="flex-1 max-w-md" />
         <HandoverFilters
           selectedPriority={selectedPriority}
           selectedStatus={selectedStatus}

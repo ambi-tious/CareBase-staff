@@ -19,7 +19,10 @@ export const CategoryBadge: React.FC<CategoryBadgeProps> = ({ category, classNam
   const Icon = getLucideIcon(categoryConfig.icon);
 
   return (
-    <Badge className={`${categoryConfig.color} ${className} flex items-center gap-1`} variant="outline">
+    <Badge
+      className={`${categoryConfig.color} ${className} flex items-center gap-1`}
+      variant="outline"
+    >
       <Icon className="h-3 w-3" />
       {categoryConfig.label}
     </Badge>

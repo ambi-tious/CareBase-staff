@@ -21,7 +21,7 @@ export default function NewHandoverPage() {
       setSuccessMessage(null);
 
       // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
       // Mock API call - in production, this would call the actual API
       console.log('Submitting handover:', { ...data, isDraft });
@@ -45,9 +45,9 @@ export default function NewHandoverPage() {
     } catch (error) {
       console.error('Failed to submit handover:', error);
       setSubmitError(
-        error instanceof Error 
-          ? error.message 
-          : isDraft 
+        error instanceof Error
+          ? error.message
+          : isDraft
             ? '下書き保存に失敗しました。もう一度お試しください。'
             : '申し送りの送信に失敗しました。もう一度お試しください。'
       );
@@ -105,11 +105,7 @@ export default function NewHandoverPage() {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <HandoverForm
-            onSubmit={handleSubmit}
-            onCancel={handleCancel}
-            mode="create"
-          />
+          <HandoverForm onSubmit={handleSubmit} onCancel={handleCancel} mode="create" />
         </CardContent>
       </Card>
     </div>
