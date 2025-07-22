@@ -12,6 +12,19 @@ export type HandoverPriority = 'high' | 'medium' | 'low';
 // Handover status
 export type HandoverStatus = 'unread' | 'read' | 'completed';
 
+// Handover categories
+export type HandoverCategory = 'medical' | 'care' | 'communication' | 'emergency' | 'family' | 'other';
+
+// Category options
+export const categoryOptions = [
+  { value: 'medical', label: '医療', icon: 'Stethoscope', color: 'bg-red-100 text-red-700 border-red-200' },
+  { value: 'care', label: '介護', icon: 'Heart', color: 'bg-blue-100 text-blue-700 border-blue-200' },
+  { value: 'communication', label: '連絡事項', icon: 'MessageCircle', color: 'bg-green-100 text-green-700 border-green-200' },
+  { value: 'emergency', label: '緊急', icon: 'AlertTriangle', color: 'bg-orange-100 text-orange-700 border-orange-200' },
+  { value: 'family', label: '家族対応', icon: 'Users', color: 'bg-purple-100 text-purple-700 border-purple-200' },
+  { value: 'other', label: 'その他', icon: 'FileText', color: 'bg-gray-100 text-gray-700 border-gray-200' },
+] as const;
+
 // Handover read status determination
 export const isHandoverUnread = (handover: Handover): boolean => {
   return handover.status === 'unread' && !handover.readAt;
@@ -29,11 +42,16 @@ export const isHandoverCompleted = (handover: Handover): boolean => {
 export const handoverFormSchema = z.object({
   title: z.string().min(1, '件名は必須です').max(100, '件名は100文字以内で入力してください'),
   content: z.string().min(1, '内容は必須です').max(1000, '内容は1000文字以内で入力してください'),
+  category: z.enum(['medical', 'care', 'communication', 'emergency', 'family', 'other'], {
+    required_error: 'カテゴリは必須です',
+  }),
   priority: z.enum(['high', 'medium', 'low'], {
     required_error: '重要度は必須です',
   }),
   targetStaffIds: z.array(z.string()).min(1, '申し送り先を選択してください'),
   residentId: z.string().optional(),
+  scheduledDate: z.string().optional(),
+  scheduledTime: z.string().optional(),
 });
 
 export type HandoverFormData = z.infer<typeof handoverFormSchema>;
@@ -43,6 +61,7 @@ export interface Handover {
   id: string;
   title: string;
   content: string;
+  category: HandoverCategory;
   priority: HandoverPriority;
   status: HandoverStatus;
   createdBy: string;
@@ -50,10 +69,13 @@ export interface Handover {
   targetStaffIds: string[];
   residentId?: string;
   residentName?: string;
+  scheduledDate?: string;
+  scheduledTime?: string;
   createdAt: string;
   updatedAt: string;
   readAt?: string;
   completedAt?: string;
+  isDraft?: boolean;
 }
 
 // API response types

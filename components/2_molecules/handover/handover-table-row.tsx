@@ -5,6 +5,7 @@ import { TableCell, TableRow } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 import { PriorityBadge } from '@/components/1_atoms/handover/priority-badge';
 import { StatusBadge } from '@/components/1_atoms/handover/status-badge';
+import { CategoryBadge } from '@/components/1_atoms/handover/category-badge';
 import type { Handover } from '@/types/handover';
 import { Eye, User } from 'lucide-react';
 import Link from 'next/link';
@@ -42,6 +43,9 @@ export const HandoverTableRow: React.FC<HandoverTableRowProps> = ({
       </TableCell>
       <TableCell>
         <div className="space-y-1">
+          <div className="flex items-center gap-2 mb-1">
+            <CategoryBadge category={handover.category} />
+          </div>
           <Link
             href={`/handovers/${handover.id}`}
             className="text-sm font-medium text-carebase-blue hover:underline"
@@ -51,6 +55,11 @@ export const HandoverTableRow: React.FC<HandoverTableRowProps> = ({
           </Link>
           {handover.residentName && (
             <div className="text-xs text-gray-500">対象: {handover.residentName}</div>
+          )}
+          {handover.scheduledDate && handover.scheduledTime && (
+            <div className="text-xs text-gray-500">
+              予定: {handover.scheduledDate} {handover.scheduledTime}
+            </div>
           )}
         </div>
       </TableCell>

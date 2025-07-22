@@ -135,7 +135,7 @@ export const HandoverList: React.FC<HandoverListProps> = ({ handovers, onStatusU
                 <TableHead className="w-32">申し送りID</TableHead>
                 <TableHead className="w-32">作成日時</TableHead>
                 <TableHead className="w-32">申し送り者</TableHead>
-                <TableHead>件名</TableHead>
+                <TableHead>カテゴリ・件名</TableHead>
                 <TableHead className="w-20">重要度</TableHead>
                 <TableHead className="w-24">ステータス</TableHead>
                 <TableHead className="w-20">操作</TableHead>

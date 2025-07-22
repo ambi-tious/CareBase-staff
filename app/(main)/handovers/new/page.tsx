@@ -1,11 +1,64 @@
 'use client';
 
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, MessageSquarePlus } from 'lucide-react';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { HandoverForm } from '@/components/2_molecules/handover/handover-form';
+import type { HandoverFormData } from '@/types/handover';
+import { ArrowLeft, MessageSquarePlus, CheckCircle } from 'lucide-react';
 import Link from 'next/link';
 
 export default function NewHandoverPage() {
+  const router = useRouter();
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+
+  const handleSubmit = async (data: HandoverFormData, isDraft = false): Promise<boolean> => {
+    try {
+      setSubmitError(null);
+      setSuccessMessage(null);
+
+      // Simulate API call delay
+      await new Promise(resolve => setTimeout(resolve, 1000));
+
+      // Mock API call - in production, this would call the actual API
+      console.log('Submitting handover:', { ...data, isDraft });
+
+      // Simulate occasional errors for testing
+      if (Math.random() < 0.1) {
+        throw new Error('ネットワークエラーが発生しました。');
+      }
+
+      if (isDraft) {
+        setSuccessMessage('下書きを保存しました。');
+        return true;
+      } else {
+        setSuccessMessage('申し送りを送信しました。');
+        // Navigate back to handover list after successful submission
+        setTimeout(() => {
+          router.push('/handovers');
+        }, 1500);
+        return true;
+      }
+    } catch (error) {
+      console.error('Failed to submit handover:', error);
+      setSubmitError(
+        error instanceof Error 
+          ? error.message 
+          : isDraft 
+            ? '下書き保存に失敗しました。もう一度お試しください。'
+            : '申し送りの送信に失敗しました。もう一度お試しください。'
+      );
+      return false;
+    }
+  };
+
+  const handleCancel = () => {
+    router.push('/handovers');
+  };
+
   return (
     <div className="p-4 md:p-6 bg-carebase-bg min-h-screen">
       {/* Header */}
@@ -14,7 +67,7 @@ export default function NewHandoverPage() {
           <Button variant="outline" asChild>
             <Link href="/handovers">
               <ArrowLeft className="h-4 w-4 mr-2" />
-              申し送り一覧に戻る
+              戻る
             </Link>
           </Button>
           <div className="flex items-center gap-3">
@@ -28,27 +81,35 @@ export default function NewHandoverPage() {
         </p>
       </div>
 
-      {/* Form Placeholder */}
-      <Card className="max-w-4xl">
+      {/* Success Message */}
+      {successMessage && (
+        <Alert className="mb-6 border-green-200 bg-green-50">
+          <CheckCircle className="h-4 w-4 text-green-600" />
+          <AlertDescription className="text-green-700">{successMessage}</AlertDescription>
+        </Alert>
+      )}
+
+      {/* Error Alert */}
+      {submitError && (
+        <Alert className="mb-6 border-red-200 bg-red-50">
+          <AlertDescription className="text-red-700">{submitError}</AlertDescription>
+        </Alert>
+      )}
+
+      {/* Form */}
+      <Card className="max-w-6xl">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <MessageSquarePlus className="h-5 w-5" />
-            申し送り情報
+            申し送り作成フォーム
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="text-center py-12">
-            <MessageSquarePlus className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">申し送り作成フォーム</h3>
-            <p className="text-gray-500 mb-4">
-              この画面では申し送り作成フォームが表示されます。
-            </p>
-            <div className="space-y-2 text-sm text-gray-600">
-              <p>• 件名、内容、重要度の入力</p>
-              <p>• 申し送り先スタッフの選択</p>
-              <p>• 対象利用者の選択（任意）</p>
-            </div>
-          </div>
+          <HandoverForm
+            onSubmit={handleSubmit}
+            onCancel={handleCancel}
+            mode="create"
+          />
         </CardContent>
       </Card>
     </div>
