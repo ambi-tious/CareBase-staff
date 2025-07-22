@@ -9,7 +9,18 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Filter, FolderPlus, Grid3X3, List, Search, SortAsc, Upload } from 'lucide-react';
+import {
+  Filter,
+  FolderPlus,
+  Grid3X3,
+  List,
+  Search,
+  Shield,
+  SortAsc,
+  Upload,
+  FileText,
+} from 'lucide-react';
+import Link from 'next/link';
 import type React from 'react';
 
 interface DocumentToolbarProps {
@@ -35,12 +46,33 @@ export const DocumentToolbar: React.FC<DocumentToolbarProps> = ({
   onUploadFile,
   className = '',
 }) => {
+  // 認証状態のモック（実際のアプリケーションでは認証サービスから取得）
+  const isAuthenticated = true;
+  const hasCreatePermission = true;
+
   return (
     <div className={`flex flex-col gap-4 ${className}`}>
       {/* Top row - Actions */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Button onClick={onCreateFolder} className="bg-carebase-blue hover:bg-carebase-blue-dark">
+          <Link href="/documents/edit">
+            <Button className="bg-carebase-blue hover:bg-carebase-blue-dark">
+              <FileText className="h-4 w-4 mr-2" />
+              新規書類
+            </Button>
+          </Link>
+          <Button
+            onClick={onCreateFolder}
+            className="bg-carebase-blue hover:bg-carebase-blue-dark"
+            disabled={!isAuthenticated || !hasCreatePermission}
+            title={
+              !isAuthenticated
+                ? 'ログインが必要です'
+                : !hasCreatePermission
+                  ? '権限がありません'
+                  : '新しいフォルダを作成'
+            }
+          >
             <FolderPlus className="h-4 w-4 mr-2" />
             新しいフォルダ
           </Button>
@@ -48,10 +80,24 @@ export const DocumentToolbar: React.FC<DocumentToolbarProps> = ({
             variant="outline"
             onClick={onUploadFile}
             className="border-carebase-blue text-carebase-blue hover:bg-carebase-blue-light"
+            disabled={!isAuthenticated || !hasCreatePermission}
+            title={
+              !isAuthenticated
+                ? 'ログインが必要です'
+                : !hasCreatePermission
+                  ? '権限がありません'
+                  : 'ファイルをアップロード'
+            }
           >
             <Upload className="h-4 w-4 mr-2" />
             ファイルをアップロード
           </Button>
+          {!isAuthenticated && (
+            <div className="ml-2 flex items-center text-sm text-amber-600">
+              <Shield className="h-4 w-4 mr-1" />
+              ログインが必要です
+            </div>
+          )}
         </div>
         <div className="flex items-center gap-2">
           <Button
