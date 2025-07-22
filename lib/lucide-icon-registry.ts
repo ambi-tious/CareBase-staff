@@ -46,7 +46,7 @@ import {
   Users,
   Utensils,
   Wind,
-  type LucideIcon
+  type LucideIcon,
 } from 'lucide-react';
 
 // Icon registry mapping string names to icon components

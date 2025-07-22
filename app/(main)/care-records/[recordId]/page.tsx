@@ -54,9 +54,7 @@ export default async function CareRecordDetailPage({
         <CardHeader>
           <div className="flex items-start justify-between">
             <div className="space-y-2">
-              <CardTitle className="text-xl text-carebase-text-primary">
-                {record.title}
-              </CardTitle>
+              <CardTitle className="text-xl text-carebase-text-primary">{record.title}</CardTitle>
               <div className="flex items-center gap-4 text-sm text-gray-600">
                 <span>記録ID: {record.id}</span>
                 <div className="flex items-center gap-1">
@@ -115,9 +113,7 @@ export default async function CareRecordDetailPage({
           <div className="space-y-2">
             <h3 className="text-lg font-semibold text-carebase-text-primary">記録内容</h3>
             <div className="p-4 bg-white border border-gray-200 rounded-lg">
-              <p className="text-gray-700 whitespace-pre-line leading-relaxed">
-                {record.content}
-              </p>
+              <p className="text-gray-700 whitespace-pre-line leading-relaxed">{record.content}</p>
             </div>
           </div>
 

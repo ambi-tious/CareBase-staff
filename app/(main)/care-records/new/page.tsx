@@ -31,14 +31,14 @@ export default function NewCareRecordPage() {
   const [success, setSuccess] = useState(false);
 
   const residentOptions = careBoardData
-    .filter(resident => resident.admissionStatus === '入居中')
-    .map(resident => ({
+    .filter((resident) => resident.admissionStatus === '入居中')
+    .map((resident) => ({
       value: resident.id.toString(),
       label: `${resident.name} (${resident.careLevel})`,
     }));
 
   const updateField = (field: keyof CareRecordFormData, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData((prev) => ({ ...prev, [field]: value }));
     setError(null);
   };
 
@@ -60,14 +60,13 @@ export default function NewCareRecordPage() {
       }
 
       // APIコール（モック）
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
       // 成功処理
       setSuccess(true);
       setTimeout(() => {
         router.push('/care-records');
       }, 1500);
-
     } catch (err) {
       setError(err instanceof Error ? err.message : '記録の作成に失敗しました');
     } finally {
@@ -151,7 +150,7 @@ export default function NewCareRecordPage() {
                   id="category"
                   value={formData.category}
                   onChange={(value) => updateField('category', value)}
-                  options={categoryOptions.map(cat => ({ value: cat.value, label: cat.label }))}
+                  options={categoryOptions.map((cat) => ({ value: cat.value, label: cat.label }))}
                   required
                   disabled={isSubmitting}
                 />
@@ -171,7 +170,7 @@ export default function NewCareRecordPage() {
                   id="priority"
                   value={formData.priority}
                   onChange={(value) => updateField('priority', value)}
-                  options={priorityOptions.map(pri => ({ value: pri.value, label: pri.label }))}
+                  options={priorityOptions.map((pri) => ({ value: pri.value, label: pri.label }))}
                   required
                   disabled={isSubmitting}
                 />

@@ -17,9 +17,9 @@ interface CareRecordTableRowProps {
   onRecordClick?: (recordId: string) => void;
 }
 
-export const CareRecordTableRow: React.FC<CareRecordTableRowProps> = ({ 
-  record, 
-  onRecordClick 
+export const CareRecordTableRow: React.FC<CareRecordTableRowProps> = ({
+  record,
+  onRecordClick,
 }) => {
   const formatDateTime = (dateString: string) => {
     return format(new Date(dateString), 'MM/dd HH:mm', { locale: ja });
@@ -32,7 +32,7 @@ export const CareRecordTableRow: React.FC<CareRecordTableRowProps> = ({
   };
 
   return (
-    <TableRow 
+    <TableRow
       className="hover:bg-gray-50 cursor-pointer transition-colors"
       onClick={handleRowClick}
     >
@@ -60,12 +60,8 @@ export const CareRecordTableRow: React.FC<CareRecordTableRowProps> = ({
       </TableCell>
       <TableCell>
         <div className="space-y-1">
-          <div className="text-sm font-medium text-gray-900 line-clamp-1">
-            {record.title}
-          </div>
-          <div className="text-xs text-gray-500 line-clamp-2">
-            {record.summary}
-          </div>
+          <div className="text-sm font-medium text-gray-900 line-clamp-1">{record.title}</div>
+          <div className="text-xs text-gray-500 line-clamp-2">{record.summary}</div>
         </div>
       </TableCell>
       <TableCell>

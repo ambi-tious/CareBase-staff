@@ -1,15 +1,15 @@
 'use client';
 
-import type React from 'react';
-import { useState, useMemo } from 'react';
-import { Table, TableBody, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Button } from '@/components/ui/button';
-import { HandoverSearchBar } from '@/components/2_molecules/handover/handover-search-bar';
 import { HandoverFilters } from '@/components/2_molecules/handover/handover-filters';
+import { HandoverSearchBar } from '@/components/2_molecules/handover/handover-search-bar';
 import { HandoverTableRow } from '@/components/2_molecules/handover/handover-table-row';
+import { Button } from '@/components/ui/button';
+import { Table, TableBody, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import type { Handover, HandoverPriority, HandoverStatus } from '@/types/handover';
-import { MessageSquarePlus, ArrowLeft, MessageCircle } from 'lucide-react';
+import { MessageCircle, MessageSquarePlus } from 'lucide-react';
 import Link from 'next/link';
+import type React from 'react';
+import { useMemo, useState } from 'react';
 
 interface HandoverListProps {
   handovers: Handover[];
@@ -53,38 +53,28 @@ export const HandoverList: React.FC<HandoverListProps> = ({ handovers, onStatusU
 
   return (
     <div className="p-4 md:p-6 bg-carebase-bg min-h-screen">
-      {/* Header */}
-      <div className="mb-6">
-        <div className="flex items-center gap-3 mb-2">
-          <MessageCircle className="h-6 w-6 text-carebase-blue" />
-          <h1 className="text-2xl font-bold text-carebase-text-primary">申し送り一覧</h1>
-          {selectedStatus === 'unread' && unreadCount > 0 && (
-            <div className="bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">
-              {unreadCount}
-            </div>
-          )}
-        </div>
-        <div className="flex items-center gap-4 text-sm text-gray-600">
-          <span>総件数: {totalCount}件</span>
-          <span className={unreadCount > 0 ? 'text-red-600 font-semibold' : ''}>
-            未読: {unreadCount}件
-          </span>
-          <span>表示中: {filteredHandovers.length}件</span>
-          {selectedStatus === 'unread' && (
-            <span className="text-blue-600 font-medium">（未読のみ表示中）</span>
-          )}
-        </div>
-      </div>
-
       {/* Actions */}
       <div className="flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between mb-6">
         <div className="flex items-center gap-4">
-          <Button variant="outline" asChild>
-            <Link href="/">
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              メインメニュー
-            </Link>
-          </Button>
+          <div className="flex items-center gap-3 mb-2">
+            <MessageCircle className="h-6 w-6 text-carebase-blue" />
+            <h1 className="text-2xl font-bold text-carebase-text-primary">申し送り一覧</h1>
+            {selectedStatus === 'unread' && unreadCount > 0 && (
+              <div className="bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">
+                {unreadCount}
+              </div>
+            )}
+          </div>
+          <div className="flex items-center gap-4 text-sm text-gray-600">
+            <span>総件数: {totalCount}件</span>
+            <span className={unreadCount > 0 ? 'text-red-600 font-semibold' : ''}>
+              未読: {unreadCount}件
+            </span>
+            <span>表示中: {filteredHandovers.length}件</span>
+            {selectedStatus === 'unread' && (
+              <span className="text-blue-600 font-medium">（未読のみ表示中）</span>
+            )}
+          </div>
         </div>
 
         <Button className="bg-carebase-blue hover:bg-carebase-blue-dark" asChild>

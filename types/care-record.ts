@@ -7,7 +7,7 @@
 import { z } from 'zod';
 
 // Care record categories
-export type CareRecordCategory = 
+export type CareRecordCategory =
   | 'meal'
   | 'bathing'
   | 'medication'
@@ -26,10 +26,16 @@ export type CareRecordPriority = 'high' | 'medium' | 'low';
 // Care record form data schema
 export const careRecordFormSchema = z.object({
   residentId: z.string().min(1, '利用者を選択してください'),
-  category: z.enum(['meal', 'bathing', 'medication', 'excretion', 'vital', 'exercise', 'communication', 'other'], {
-    required_error: '記録種別は必須です',
-  }),
-  title: z.string().min(1, 'タイトルは必須です').max(100, 'タイトルは100文字以内で入力してください'),
+  category: z.enum(
+    ['meal', 'bathing', 'medication', 'excretion', 'vital', 'exercise', 'communication', 'other'],
+    {
+      required_error: '記録種別は必須です',
+    }
+  ),
+  title: z
+    .string()
+    .min(1, 'タイトルは必須です')
+    .max(100, 'タイトルは100文字以内で入力してください'),
   content: z.string().min(1, '内容は必須です').max(1000, '内容は1000文字以内で入力してください'),
   recordedAt: z.string().min(1, '記録日時は必須です'),
   priority: z.enum(['high', 'medium', 'low'], {
@@ -88,14 +94,54 @@ export interface CareRecordSearchParams {
 
 // Category options
 export const categoryOptions = [
-  { value: 'meal', label: '食事', icon: 'Utensils', color: 'bg-orange-100 text-orange-700 border-orange-200' },
-  { value: 'bathing', label: '入浴', icon: 'Bath', color: 'bg-blue-100 text-blue-700 border-blue-200' },
-  { value: 'medication', label: '服薬', icon: 'Pill', color: 'bg-purple-100 text-purple-700 border-purple-200' },
-  { value: 'excretion', label: '排泄', icon: 'ExcretionIcon', color: 'bg-brown-100 text-brown-700 border-brown-200' },
-  { value: 'vital', label: 'バイタル', icon: 'Activity', color: 'bg-red-100 text-red-700 border-red-200' },
-  { value: 'exercise', label: '運動', icon: 'Dumbbell', color: 'bg-green-100 text-green-700 border-green-200' },
-  { value: 'communication', label: 'コミュニケーション', icon: 'MessageCircle', color: 'bg-indigo-100 text-indigo-700 border-indigo-200' },
-  { value: 'other', label: 'その他', icon: 'FileText', color: 'bg-gray-100 text-gray-700 border-gray-200' },
+  {
+    value: 'meal',
+    label: '食事',
+    icon: 'Utensils',
+    color: 'bg-orange-100 text-orange-700 border-orange-200',
+  },
+  {
+    value: 'bathing',
+    label: '入浴',
+    icon: 'Bath',
+    color: 'bg-blue-100 text-blue-700 border-blue-200',
+  },
+  {
+    value: 'medication',
+    label: '服薬',
+    icon: 'Pill',
+    color: 'bg-purple-100 text-purple-700 border-purple-200',
+  },
+  {
+    value: 'excretion',
+    label: '排泄',
+    icon: 'ExcretionIcon',
+    color: 'bg-brown-100 text-brown-700 border-brown-200',
+  },
+  {
+    value: 'vital',
+    label: 'バイタル',
+    icon: 'Activity',
+    color: 'bg-red-100 text-red-700 border-red-200',
+  },
+  {
+    value: 'exercise',
+    label: '運動',
+    icon: 'Dumbbell',
+    color: 'bg-green-100 text-green-700 border-green-200',
+  },
+  {
+    value: 'communication',
+    label: 'コミュニケーション',
+    icon: 'MessageCircle',
+    color: 'bg-indigo-100 text-indigo-700 border-indigo-200',
+  },
+  {
+    value: 'other',
+    label: 'その他',
+    icon: 'FileText',
+    color: 'bg-gray-100 text-gray-700 border-gray-200',
+  },
 ] as const;
 
 // Priority options
