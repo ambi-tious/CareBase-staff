@@ -33,6 +33,7 @@ export const IndividualPointDetailPage: React.FC<IndividualPointDetailPageProps>
   const [isDeleting, setIsDeleting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [showDeletedAlert, setShowDeletedAlert] = useState(false);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [originalContent, setOriginalContent] = useState('');
 
@@ -171,23 +172,18 @@ export const IndividualPointDetailPage: React.FC<IndividualPointDetailPageProps>
   const handleDelete = async () => {
     setIsDeleting(true);
     setError(null);
-
     try {
       // Simulate API call
       await new Promise((resolve) => setTimeout(resolve, 1000));
-
       // In production, this would call an API to delete the content
       // await individualPointService.deleteContent(resident.id, category);
-
-      // Clear content
       setContent('');
       setShowDeleteConfirm(false);
-
-      // Update mock data
       delete mockPointContents[category];
-
       setHasUnsavedChanges(false);
       setOriginalContent('');
+      setShowDeletedAlert(true);
+      router.push(`/residents/${resident.id}?tab=points`);
     } catch (error) {
       console.error('Failed to delete content:', error);
       setError('削除に失敗しました。もう一度お試しください。');
@@ -267,28 +263,32 @@ export const IndividualPointDetailPage: React.FC<IndividualPointDetailPageProps>
         </Alert>
       )}
 
-      {/* Delete Confirmation Alert */}
+      {/* Delete Confirmation Modal */}
       {showDeleteConfirm && (
-        <Alert className="mb-6 border-red-200 bg-red-50">
-          <AlertCircle className="h-4 w-4 text-red-600" />
-          <AlertDescription className="text-red-700">
-            本当にこの個別ポイント詳細情報を削除しますか？この操作は元に戻せません。
-          </AlertDescription>
-          <div className="flex gap-2 mt-4">
-            <Button variant="destructive" onClick={handleDelete} disabled={isDeleting} size="sm">
-              <Trash2 className="h-3 w-3 mr-1" />
-              {isDeleting ? '削除中...' : '削除'}
-            </Button>
-            <Button
-              variant="outline"
-              onClick={() => setShowDeleteConfirm(false)}
-              disabled={isDeleting}
-              size="sm"
-            >
-              キャンセル
-            </Button>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-30">
+          <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
+            <div className="flex items-center mb-4">
+              <AlertCircle className="h-6 w-6 text-red-600 mr-2" />
+              <span className="text-lg font-semibold text-red-700">削除の確認</span>
+            </div>
+            <div className="mb-6 text-gray-700">
+              本当にこの個別ポイント詳細情報（{category}）を削除しますか？この操作は元に戻せません。
+            </div>
+            {error && <div className="mb-4 text-red-600 text-sm">{error}</div>}
+            <div className="flex justify-end gap-2">
+              <Button
+                variant="outline"
+                onClick={() => setShowDeleteConfirm(false)}
+                disabled={isDeleting}
+              >
+                キャンセル
+              </Button>
+              <Button variant="destructive" onClick={handleDelete} disabled={isDeleting}>
+                {isDeleting ? '削除中...' : '削除'}
+              </Button>
+            </div>
           </div>
-        </Alert>
+        </div>
       )}
 
       {/* Main Content */}
