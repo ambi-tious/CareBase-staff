@@ -65,17 +65,15 @@ export const useHandoverForm = ({ onSubmit, initialData = {}, mode }: UseHandove
   const updateField = useCallback(
     (field: keyof HandoverFormData, value: string | string[]) => {
       setFormData((prev) => ({ ...prev, [field]: value }));
-      setFormState((prev) => ({ ...prev, hasUnsavedChanges: true }));
-
-      // Clear field error when user starts typing
-      if (formState.fieldErrors[field]) {
-        setFormState((prev) => ({
-          ...prev,
-          fieldErrors: { ...prev.fieldErrors, [field]: undefined },
-        }));
-      }
+      setFormState((prev) => ({
+        ...prev,
+        hasUnsavedChanges: true,
+        fieldErrors: prev.fieldErrors[field] 
+          ? { ...prev.fieldErrors, [field]: undefined }
+          : prev.fieldErrors,
+      }));
     },
-    [formState.fieldErrors]
+    []
   );
 
   const validateForm = useCallback((isDraft = false) => {
