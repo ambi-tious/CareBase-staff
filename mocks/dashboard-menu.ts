@@ -50,11 +50,11 @@ export const dashboardMenu: NavCategory[] = [
     title: '書類情報関連',
     icon: 'Folder',
     links: [
-      { label: '議事録', href: '/documents/minutes', icon: 'NotebookText' },
-      { label: 'ヒヤリハット', href: '/documents/incident-reports', icon: 'FileWarning' },
-      { label: '事故報告書', href: '/documents/accident-reports', icon: 'FileClock' },
-      { label: '行事企画書', href: '/documents/event-plans', icon: 'FileSignature' },
-      { label: 'その他書類', href: '/documents/other-documents', icon: 'FileArchive' },
+      { label: '議事録', href: '/documents?category=minutes', icon: 'NotebookText' },
+      { label: 'ヒヤリハット', href: '/documents?category=incident-reports', icon: 'FileWarning' },
+      { label: '事故報告書', href: '/documents?category=accident-reports', icon: 'FileClock' },
+      { label: '行事企画書', href: '/documents?category=event-plans', icon: 'FileSignature' },
+      { label: 'その他書類', href: '/documents?category=other-documents', icon: 'FileArchive' },
     ],
   },
   {

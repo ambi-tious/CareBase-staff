@@ -1,16 +1,10 @@
 'use client';
 
-import type React from 'react';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-} from '@/components/ui/dialog';
 import { MedicalHistoryForm } from '@/components/2_molecules/forms/medical-history-form';
-import type { MedicalHistoryFormData } from '@/types/resident-data';
 import type { MedicalHistory } from '@/mocks/care-board-data';
+import type { MedicalHistoryFormData } from '@/types/resident-data';
+import type React from 'react';
+import { GenericFormModal } from './generic-form-modal';
 
 interface MedicalHistoryModalProps {
   isOpen: boolean;
@@ -40,21 +34,14 @@ export const MedicalHistoryModal: React.FC<MedicalHistoryModalProps> = ({
     : undefined;
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle className="text-xl font-bold text-carebase-text-primary">
-            {mode === 'create' ? '既往歴の登録' : '既往歴の編集'}
-          </DialogTitle>
-          <DialogDescription className="text-gray-600">
-            {residentName && `${residentName}様の`}既往歴情報を{mode === 'create' ? '登録' : '編集'}
-            してください。 必須項目（<span className="text-red-500">*</span>
-            ）は必ず入力してください。
-          </DialogDescription>
-        </DialogHeader>
-
-        <MedicalHistoryForm onSubmit={onSubmit} onCancel={onClose} initialData={initialData} />
-      </DialogContent>
-    </Dialog>
+    <GenericFormModal
+      isOpen={isOpen}
+      onClose={onClose}
+      title={mode === 'create' ? '既往歴の登録' : '既往歴の編集'}
+      description={`既往歴情報を${mode === 'create' ? '登録' : '編集'}してください。`}
+      residentName={residentName}
+    >
+      <MedicalHistoryForm onSubmit={onSubmit} onCancel={onClose} initialData={initialData} />
+    </GenericFormModal>
   );
 };
