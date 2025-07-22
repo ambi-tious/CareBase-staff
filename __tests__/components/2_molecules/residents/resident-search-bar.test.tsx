@@ -1,4 +1,4 @@
-import { ResidentSearchBar } from '@/components/2_molecules/residents/resident-search-bar';
+import { ResidentSearchBar } from '@/components/2_molecules/resident/resident-search-bar';
 import { fireEvent, render, screen } from '@testing-library/react';
 
 describe('ResidentSearchBar', () => {

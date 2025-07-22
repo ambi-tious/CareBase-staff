@@ -155,6 +155,7 @@ export function TimeBaseView() {
   const handleCellClick = useCallback((time: string, residentId: number, residentName: string) => {
     // Create a new empty event
     const newEvent: CareEvent = {
+      scheduledTime: time,
       time,
       icon: 'ClipboardList',
       label: '',

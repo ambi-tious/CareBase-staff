@@ -1,4 +1,4 @@
-import { ResidentCard } from '@/components/2_molecules/residents/resident-card';
+import { ResidentCard } from '@/components/2_molecules/resident/resident-card';
 import type { Resident } from '@/mocks/care-board-data';
 import { render, screen } from '@testing-library/react';
 import { vi } from 'vitest';

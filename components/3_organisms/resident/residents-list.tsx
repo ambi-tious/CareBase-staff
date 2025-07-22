@@ -1,12 +1,12 @@
 'use client';
 
-import type React from 'react';
-import { useState, useMemo } from 'react';
-import { useRouter } from 'next/navigation';
-import { ResidentsToolbar } from '@/components/2_molecules/residents/residents-toolbar';
-import { ResidentCard } from '@/components/2_molecules/residents/resident-card';
+import { ResidentCard } from '@/components/2_molecules/resident/resident-card';
+import { ResidentsToolbar } from '@/components/2_molecules/resident/residents-toolbar';
 import { careBoardData } from '@/mocks/care-board-data';
 import { Users } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import type React from 'react';
+import { useMemo, useState } from 'react';
 
 export const ResidentsList: React.FC = () => {
   const router = useRouter();

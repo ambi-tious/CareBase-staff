@@ -8,8 +8,6 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import {
   Select,
   SelectContent,
@@ -18,8 +16,17 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { getLucideIcon } from '@/lib/lucide-icon-registry';
-import { CareCategoryKey, CareEvent, careCategories } from '@/mocks/care-board-data';
-import { Calendar, Check, Clock, HeartPulse, Save, User, X } from 'lucide-react';
+import {
+  CareCategoryGroupKey,
+  CareCategoryKey,
+  CareEvent,
+  careCategories,
+  careCategoryGroups,
+  getCareGroup,
+  getCategoriesByGroup,
+  getGroupByCategory,
+} from '@/mocks/care-board-data';
+import { Check, Clock, HeartPulse, Save, User, X } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 
 // 利用者情報セル（アイコン・名前・careLevelバッジ）共通化
@@ -29,6 +36,11 @@ import Link from 'next/link';
 
 // ステータスを予定と実績のみに簡略化
 export type CareEventStatus = 'scheduled' | 'completed';
+
+// 実施時間の有無でステータスを判定するヘルパー関数
+export const getEventStatus = (event: CareEvent): CareEventStatus => {
+  return event.actualTime ? 'completed' : 'scheduled';
+};
 
 interface ResidentInfoCellProps {
   resident: Resident;
@@ -75,7 +87,13 @@ interface VitalSignsProps {
 
 export const VitalSigns: React.FC<VitalSignsProps> = ({ events, status = 'scheduled' }) => {
   // バイタル関連のカテゴリキー
-  const vitalCategories: CareCategoryKey[] = ['temperature', 'pulse', 'bloodPressure'];
+  const vitalCategories: CareCategoryKey[] = [
+    'temperature',
+    'pulse',
+    'bloodPressure',
+    'respiration',
+    'spo2',
+  ];
 
   // バイタル関連のイベントをフィルタリング
   const vitalEvents = events.filter(
@@ -87,9 +105,11 @@ export const VitalSigns: React.FC<VitalSignsProps> = ({ events, status = 'schedu
     return null;
   }
 
-  // 最初のバイタルイベントのカテゴリを取得（スタイル用）
-  const firstCategory = vitalEvents[0].categoryKey as CareCategoryKey;
-  const baseColorArr: number[] = CARE_CATEGORY_COLORS[firstCategory] || [231, 76, 60]; // デフォルトは赤系
+  // バイタルグループの色を取得
+  const vitalGroup = getCareGroup('vital');
+  const baseColorArr: [number, number, number] = vitalGroup?.color
+    ? ([...vitalGroup.color] as [number, number, number])
+    : [231, 76, 60]; // デフォルトは赤系
   const baseColor = rgbToString(baseColorArr);
 
   // ステータスに応じたスタイルを取得
@@ -112,8 +132,9 @@ export const VitalSigns: React.FC<VitalSignsProps> = ({ events, status = 'schedu
 
   const statusStyles = getStatusStyles();
 
-  // 記録時間を取得（すべて同じ時間と仮定）
-  const time = vitalEvents[0]?.time !== 'N/A' ? vitalEvents[0]?.time : '';
+  // 記録時間を取得（実施時間があれば実施時間、なければ予定時間）
+  const firstEvent = vitalEvents[0];
+  const displayTime = firstEvent.actualTime || firstEvent.scheduledTime;
 
   return (
     <div
@@ -122,14 +143,13 @@ export const VitalSigns: React.FC<VitalSignsProps> = ({ events, status = 'schedu
         backgroundColor: statusStyles.background,
         border: statusStyles.border,
         borderStyle: statusStyles.borderStyle as 'solid' | 'dotted',
-        color: baseColor,
         width: '100%',
         maxWidth: '100%',
       }}
     >
-      <HeartPulse className="h-3 w-3 flex-shrink-0" />
+      <HeartPulse className="h-3 w-3 flex-shrink-0" style={{ color: baseColor }} />
       <span className="font-medium flex-1 truncate">バイタル</span>
-      <span className="text-xs opacity-75 ml-auto">{time}</span>
+      <span className="text-xs opacity-75 ml-auto">{displayTime}</span>
 
       {/* 実施済みの場合のみチェックマークを表示 */}
       {status === 'completed' && (
@@ -141,25 +161,18 @@ export const VitalSigns: React.FC<VitalSignsProps> = ({ events, status = 'schedu
   );
 };
 
-// RGB配列で色を定義
-export const CARE_CATEGORY_COLORS: Record<CareCategoryKey, [number, number, number]> = {
-  drinking: [52, 152, 219],
-  excretion: [121, 85, 72],
-  breakfast: [243, 156, 18],
-  lunch: [243, 156, 18],
-  snack: [243, 156, 18],
-  dinner: [243, 156, 18],
-  bedtimeMeal: [243, 156, 18],
-  medication: [155, 89, 182],
-  oralCare: [155, 89, 182],
-  eyeDrops: [155, 89, 182],
-  bathing: [74, 144, 226],
-  temperature: [231, 76, 60],
-  pulse: [231, 76, 60],
-  bloodPressure: [231, 76, 60],
-  respiration: [231, 76, 60],
-  spo2: [231, 76, 60],
-};
+// カテゴリグループごとの色を定義
+export const CARE_CATEGORY_COLORS: Record<CareCategoryKey, [number, number, number]> =
+  careCategories.reduce(
+    (acc, category) => {
+      const group = getCareGroup(category.groupKey);
+      acc[category.key] = group?.color
+        ? ([...group.color] as [number, number, number])
+        : [128, 128, 128]; // デフォルトはグレー
+      return acc;
+    },
+    {} as Record<CareCategoryKey, [number, number, number]>
+  );
 
 // number[]型で受け取るよう修正
 function rgbToRgba(rgb: number[], alpha: number) {
@@ -185,8 +198,11 @@ export const CareEventStatusComponent: React.FC<CareEventStatusProps> = ({
   const baseColorArr: number[] = category ? CARE_CATEGORY_COLORS[category] : [51, 51, 51];
   const baseColor = rgbToString(baseColorArr);
 
+  // 実際のステータスを実施時間の有無で判定
+  const actualStatus = getEventStatus(event);
+
   const getStatusStyles = () => {
-    switch (status) {
+    switch (actualStatus) {
       case 'completed':
         // 実施済み: 濃い色調、実線枠
         return {
@@ -206,6 +222,9 @@ export const CareEventStatusComponent: React.FC<CareEventStatusProps> = ({
 
   const statusStyles = getStatusStyles();
 
+  // 表示する時間（実施時間があれば実施時間、なければ予定時間）
+  const displayTime = event.actualTime || event.scheduledTime;
+
   return (
     <div
       className="flex items-center gap-1 p-1.5 rounded-md text-xs relative transition-all duration-200 w-full box-border"
@@ -213,17 +232,16 @@ export const CareEventStatusComponent: React.FC<CareEventStatusProps> = ({
         backgroundColor: statusStyles.background,
         border: statusStyles.border,
         borderStyle: statusStyles.borderStyle as 'solid' | 'dotted',
-        color: baseColor,
         width: '100%',
         maxWidth: '100%',
       }}
     >
-      <Icon className="h-3.5 w-3.5 flex-shrink-0" />
+      <Icon className="h-3.5 w-3.5 flex-shrink-0" style={{ color: baseColor }} />
       <span className="font-medium truncate flex-1">{event.label}</span>
-      <span className="text-xs opacity-75 ml-auto">{event.time}</span>
+      <span className="text-xs opacity-75 ml-auto">{displayTime}</span>
 
       {/* 実施済みの場合のみチェックマークを表示 */}
-      {status === 'completed' && (
+      {actualStatus === 'completed' && (
         <div className="absolute -top-2 -right-2 bg-green-500 text-white rounded-full w-4 h-4 flex items-center justify-center">
           <Check className="h-3 w-3" />
         </div>
@@ -247,17 +265,45 @@ export const CareRecordModal: React.FC<CareRecordModalProps> = ({
   event,
   residentId,
   residentName,
-  status = 'scheduled',
+  status,
   isNew = false,
   onClose,
   onSave,
 }) => {
-  const [updatedEvent, setUpdatedEvent] = useState<CareEvent>({ ...event });
-  const [staffName, setStaffName] = useState<string>(''); // 担当者
-  const [eventStatus, setEventStatus] = useState<CareEventStatus>(status);
+  const [updatedEvent, setUpdatedEvent] = useState<CareEvent>(event);
+  const [scheduledHour, setScheduledHour] = useState('');
+  const [scheduledMinute, setScheduledMinute] = useState('');
+  const [actualHour, setActualHour] = useState('');
+  const [actualMinute, setActualMinute] = useState('');
+  const [isActualTimeVisible, setIsActualTimeVisible] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [hour, setHour] = useState<string>('');
-  const [minute, setMinute] = useState<string>('');
+  const [staffName, setStaffName] = useState('');
+  const [selectedGroupKey, setSelectedGroupKey] = useState<CareCategoryGroupKey | ''>('');
+
+  // カテゴリグループを選択したときに最初のカテゴリを自動選択
+  useEffect(() => {
+    if (selectedGroupKey) {
+      const groupCategories = getCategoriesByGroup(selectedGroupKey);
+      if (groupCategories.length > 0) {
+        const firstCategory = groupCategories[0];
+        setUpdatedEvent({
+          ...updatedEvent,
+          categoryKey: firstCategory.key,
+          icon: firstCategory.icon,
+        });
+      }
+    }
+  }, [selectedGroupKey]);
+
+  // 初期値設定時にグループも設定
+  useEffect(() => {
+    if (updatedEvent.categoryKey) {
+      const group = getGroupByCategory(updatedEvent.categoryKey);
+      if (group) {
+        setSelectedGroupKey(group.key);
+      }
+    }
+  }, [updatedEvent.categoryKey]);
 
   // ログインユーザー情報を取得
   useEffect(() => {
@@ -277,18 +323,28 @@ export const CareRecordModal: React.FC<CareRecordModalProps> = ({
     }
   }, []);
 
+  // 予定時間と実施時間の初期値を設定
   useEffect(() => {
-    if (updatedEvent.time && updatedEvent.time !== 'N/A') {
-      const [hourPart, minutePart] = updatedEvent.time.split(':');
-      setHour(hourPart);
-      setMinute(minutePart || '00');
+    // 予定時間の設定
+    if (updatedEvent.scheduledTime && updatedEvent.scheduledTime !== 'N/A') {
+      const [hourPart, minutePart] = updatedEvent.scheduledTime.split(':');
+      setScheduledHour(hourPart);
+      setScheduledMinute(minutePart || '00');
     } else {
       // 現在時刻をデフォルト値として設定
       const now = new Date();
-      setHour(now.getHours().toString().padStart(2, '0'));
-      setMinute(now.getMinutes().toString().padStart(2, '0'));
+      setScheduledHour(now.getHours().toString().padStart(2, '0'));
+      setScheduledMinute(now.getMinutes().toString().padStart(2, '0'));
     }
-  }, [updatedEvent.time]);
+
+    // 実施時間の設定
+    if (updatedEvent.actualTime) {
+      const [hourPart, minutePart] = updatedEvent.actualTime.split(':');
+      setActualHour(hourPart);
+      setActualMinute(minutePart || '00');
+      setIsActualTimeVisible(true); // 実施時間が設定されている場合は入力欄を表示
+    }
+  }, [updatedEvent.scheduledTime, updatedEvent.actualTime]);
 
   // 分オプションを生成（5分間隔）
   const minuteOptions = Array.from({ length: 12 }).map((_, index) => {
@@ -302,12 +358,16 @@ export const CareRecordModal: React.FC<CareRecordModalProps> = ({
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
 
-    if (!hour) {
-      newErrors.time = '時間を選択してください';
+    if (!scheduledHour) {
+      newErrors.scheduledTime = '予定時間を選択してください';
+    }
+
+    if (!selectedGroupKey) {
+      newErrors.groupKey = '種別グループを選択してください';
     }
 
     if (!updatedEvent.categoryKey) {
-      newErrors.categoryKey = 'ケア種別を選択してください';
+      newErrors.categoryKey = '詳細種別を選択してください';
     }
 
     if (!updatedEvent.label || updatedEvent.label.trim() === '') {
@@ -322,21 +382,44 @@ export const CareRecordModal: React.FC<CareRecordModalProps> = ({
     return Object.keys(newErrors).length === 0;
   };
 
+  // 実施時間の表示/非表示を切り替える
+  const toggleActualTimeVisibility = () => {
+    const newVisibility = !isActualTimeVisible;
+    setIsActualTimeVisible(newVisibility);
+
+    if (!newVisibility) {
+      // 非表示にする場合は実施時間をクリア
+      setActualHour('');
+      setActualMinute('');
+    } else if (!actualMinute) {
+      // 表示する場合で分が未設定の場合は00に設定
+      setActualHour(scheduledHour);
+      setActualMinute(scheduledMinute);
+    }
+  };
+
   // 時間と分を結合して更新
-  const updateTime = () => {
-    const formattedTime = `${hour}:${minute}`;
+  const updateTimes = () => {
+    const formattedScheduledTime = `${scheduledHour}:${scheduledMinute}`;
+    const formattedActualTime =
+      isActualTimeVisible && actualHour && actualMinute
+        ? `${actualHour}:${actualMinute}`
+        : undefined;
+
     setUpdatedEvent((prev) => ({
       ...prev,
-      time: formattedTime,
+      scheduledTime: formattedScheduledTime,
+      actualTime: formattedActualTime,
+      time: formattedActualTime || formattedScheduledTime, // 後方互換性
     }));
   };
 
   // 時間または分が変更されたときに更新
   useEffect(() => {
-    if (hour && minute) {
-      updateTime();
+    if (scheduledHour && scheduledMinute) {
+      updateTimes();
     }
-  }, [hour, minute]);
+  }, [scheduledHour, scheduledMinute, actualHour, actualMinute]);
 
   const handleSave = () => {
     if (!validateForm()) return;
@@ -348,7 +431,6 @@ export const CareRecordModal: React.FC<CareRecordModalProps> = ({
       {
         ...updatedEvent,
         details,
-        status: eventStatus, // 実施状況を保存
       },
       residentId,
       isNew
@@ -364,7 +446,7 @@ export const CareRecordModal: React.FC<CareRecordModalProps> = ({
           </DialogTitle>
         </DialogHeader>
 
-        <div className="py-4 space-y-4">
+        <div className="space-y-4">
           <div className="flex items-center gap-2 text-sm text-gray-500 mb-2">
             <User className="h-4 w-4" />
             <span>
@@ -377,15 +459,14 @@ export const CareRecordModal: React.FC<CareRecordModalProps> = ({
               <div className="flex items-center mb-2">
                 <Clock className="h-4 w-4 mr-2" />
                 <label className="text-sm font-medium">
-                  時間 <span className="text-red-500">*</span>
+                  予定時間 <span className="text-red-500">*</span>
                 </label>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="text-xs text-gray-500 mb-1 block">時</label>
-                  <Select value={hour} onValueChange={setHour}>
-                    <SelectTrigger className={errors.time ? 'border-red-500' : ''}>
+              <div className="flex gap-2">
+                <div className="flex-1">
+                  <Select value={scheduledHour} onValueChange={setScheduledHour}>
+                    <SelectTrigger className={errors.scheduledTime ? 'border-red-500' : ''}>
                       <SelectValue placeholder="時" />
                     </SelectTrigger>
                     <SelectContent>
@@ -397,9 +478,9 @@ export const CareRecordModal: React.FC<CareRecordModalProps> = ({
                     </SelectContent>
                   </Select>
                 </div>
-                <div>
-                  <label className="text-xs text-gray-500 mb-1 block">分</label>
-                  <Select value={minute} onValueChange={setMinute}>
+                <div className="text-sm flex items-center justify-center">:</div>
+                <div className="flex-1">
+                  <Select value={scheduledMinute} onValueChange={setScheduledMinute}>
                     <SelectTrigger>
                       <SelectValue placeholder="分" />
                     </SelectTrigger>
@@ -413,41 +494,163 @@ export const CareRecordModal: React.FC<CareRecordModalProps> = ({
                   </Select>
                 </div>
               </div>
-              {errors.time && <p className="text-red-500 text-xs mt-1">{errors.time}</p>}
+              {errors.scheduledTime && (
+                <p className="text-red-500 text-xs mt-1">{errors.scheduledTime}</p>
+              )}
             </div>
 
-            <div className="space-y-2">
-              <label className="text-sm font-medium">
-                ケア種別 <span className="text-red-500 ml-1">*</span>
-              </label>
-              <Select
-                value={updatedEvent.categoryKey}
-                onValueChange={(value) => {
-                  const category = careCategories.find((c) => c.key === value);
-                  setUpdatedEvent({
-                    ...updatedEvent,
-                    categoryKey: value as CareCategoryKey,
-                    icon: category?.icon || 'ClipboardList',
-                  });
-                }}
+            <div className="border rounded-md overflow-hidden">
+              <div
+                className={`p-4 cursor-pointer transition-colors ${
+                  isActualTimeVisible
+                    ? 'bg-green-50 border-green-200'
+                    : 'bg-blue-50 hover:bg-blue-100'
+                }`}
+                onClick={toggleActualTimeVisibility}
               >
-                <SelectTrigger className={errors.categoryKey ? 'border-red-500' : ''}>
-                  <SelectValue placeholder="ケア種別を選択" />
-                </SelectTrigger>
-                <SelectContent>
-                  {careCategories.map((category) => (
-                    <SelectItem key={category.key} value={category.key}>
-                      <div className="flex items-center gap-2">
-                        {React.createElement(getLucideIcon(category.icon), {
-                          className: 'h-4 w-4',
-                        })}
-                        <span>{category.label}</span>
-                      </div>
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              {errors.categoryKey && <p className="text-red-500 text-xs">{errors.categoryKey}</p>}
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center">
+                    <Check className="h-4 w-4 mr-2" />
+                    <label className="text-sm font-medium cursor-pointer">実施時間</label>
+                  </div>
+                  <div className="flex items-center">
+                    {isActualTimeVisible && actualHour && actualMinute && (
+                      <span className="text-sm text-green-600 font-medium mr-2">
+                        {actualHour}:{actualMinute}
+                      </span>
+                    )}
+                    <div
+                      className={`transform transition-transform ${isActualTimeVisible ? 'rotate-180' : ''}`}
+                    >
+                      <svg
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M6 9L12 15L18 9"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+                <p className="text-xs text-gray-600 mt-1">
+                  {isActualTimeVisible
+                    ? '実施時間が設定されています（実施済み）'
+                    : 'クリックして実施時間を入力（未実施）'}
+                </p>
+              </div>
+
+              {isActualTimeVisible && (
+                <div className="p-4 bg-white border-t">
+                  <div className="flex gap-2">
+                    <div className="flex-1">
+                      <Select value={actualHour} onValueChange={setActualHour}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="時" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {Array.from({ length: 24 }).map((_, i) => (
+                            <SelectItem key={i} value={i.toString().padStart(2, '0')}>
+                              {i.toString().padStart(2, '0')}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="text-sm flex items-center justify-center">:</div>
+                    <div className="flex-1">
+                      <Select value={actualMinute} onValueChange={setActualMinute}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="分" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {minuteOptions.map((option) => (
+                            <SelectItem key={option.value} value={option.value}>
+                              {option.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <div className="space-y-4">
+              {/* カテゴリグループ選択 */}
+              <div className="space-y-2">
+                <label className="text-sm font-medium">
+                  種別グループ <span className="text-red-500 ml-1">*</span>
+                </label>
+                <Select
+                  value={selectedGroupKey}
+                  onValueChange={(value) => setSelectedGroupKey(value as CareCategoryGroupKey)}
+                >
+                  <SelectTrigger className={errors.groupKey ? 'border-red-500' : ''}>
+                    <SelectValue placeholder="ケア種別グループを選択" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {careCategoryGroups.map((group) => (
+                      <SelectItem key={group.key} value={group.key}>
+                        <div className="flex items-center gap-2">
+                          {React.createElement(getLucideIcon(group.icon), {
+                            className: 'h-4 w-4',
+                          })}
+                          <span>{group.label}</span>
+                        </div>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {errors.groupKey && <p className="text-red-500 text-xs">{errors.groupKey}</p>}
+              </div>
+
+              {/* カテゴリ選択（グループが選択された場合のみ表示） */}
+              {selectedGroupKey && (
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">
+                    詳細種別 <span className="text-red-500 ml-1">*</span>
+                  </label>
+                  <Select
+                    value={updatedEvent.categoryKey}
+                    onValueChange={(value) => {
+                      const category = careCategories.find((c) => c.key === value);
+                      setUpdatedEvent({
+                        ...updatedEvent,
+                        categoryKey: value as CareCategoryKey,
+                        icon: category?.icon || 'ClipboardList',
+                      });
+                    }}
+                  >
+                    <SelectTrigger className={errors.categoryKey ? 'border-red-500' : ''}>
+                      <SelectValue placeholder="詳細種別を選択" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {getCategoriesByGroup(selectedGroupKey).map((category) => (
+                        <SelectItem key={category.key} value={category.key}>
+                          <div className="flex items-center gap-2">
+                            {React.createElement(getLucideIcon(category.icon), {
+                              className: 'h-4 w-4',
+                            })}
+                            <span>{category.label}</span>
+                          </div>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  {errors.categoryKey && (
+                    <p className="text-red-500 text-xs">{errors.categoryKey}</p>
+                  )}
+                </div>
+              )}
             </div>
 
             <div className="space-y-2">
@@ -464,42 +667,6 @@ export const CareRecordModal: React.FC<CareRecordModalProps> = ({
             </div>
 
             <div className="space-y-2">
-              <div className="flex items-center mb-2">
-                <User className="h-4 w-4 mr-2" />
-                <label className="text-sm font-medium">担当者</label>
-              </div>
-              <div className="p-3 border rounded-md bg-gray-50">
-                <p className="text-sm font-medium">{staffName}</p>
-              </div>
-            </div>
-
-            <div className="space-y-2 border p-4 rounded-md bg-gray-50">
-              <div className="flex items-center mb-2">
-                <Calendar className="h-4 w-4 mr-2" />
-                <label className="text-sm font-medium">実施状況</label>
-              </div>
-              <RadioGroup
-                value={eventStatus}
-                onValueChange={(value) => setEventStatus(value as CareEventStatus)}
-              >
-                <div className="flex items-center space-x-6">
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="scheduled" id="scheduled" />
-                    <Label htmlFor="scheduled" className="text-sm">
-                      予定
-                    </Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="completed" id="completed" />
-                    <Label htmlFor="completed" className="text-sm">
-                      実施済み
-                    </Label>
-                  </div>
-                </div>
-              </RadioGroup>
-            </div>
-
-            <div className="space-y-2">
               <label className="text-sm font-medium">備考</label>
               <textarea
                 value={updatedEvent.details || ''}
@@ -508,6 +675,13 @@ export const CareRecordModal: React.FC<CareRecordModalProps> = ({
                 className="w-full px-3 py-2 border border-gray-300 rounded-md"
                 rows={3}
               />
+            </div>
+
+            <div className="flex items-center gap-2 text-sm text-gray-500">
+              <User className="h-4 w-4" />
+              <span>
+                担当者: <strong>{staffName}</strong>
+              </span>
             </div>
           </div>
         </div>

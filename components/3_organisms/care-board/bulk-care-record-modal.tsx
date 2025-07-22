@@ -18,7 +18,15 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { getLucideIcon } from '@/lib/lucide-icon-registry';
-import { careCategories, CareCategoryKey, CareEvent, Resident } from '@/mocks/care-board-data';
+import {
+  careCategories,
+  CareCategoryGroupKey,
+  careCategoryGroups,
+  CareCategoryKey,
+  CareEvent,
+  getCategoriesByGroup,
+  Resident,
+} from '@/mocks/care-board-data';
 import { Clock, Save, User, X } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 
@@ -42,6 +50,7 @@ export const BulkCareRecordModal: React.FC<BulkCareRecordModalProps> = ({
   onSave,
 }) => {
   const [residentSelections, setResidentSelections] = useState<ResidentSelection[]>([]);
+  const [selectedGroupKey, setSelectedGroupKey] = useState<CareCategoryGroupKey | ''>('');
   const [selectedCategory, setSelectedCategory] = useState<CareCategoryKey | ''>('');
   const [commonLabel, setCommonLabel] = useState('');
   const [hour, setHour] = useState('');
@@ -58,6 +67,18 @@ export const BulkCareRecordModal: React.FC<BulkCareRecordModalProps> = ({
       label: minute.toString().padStart(2, '0'),
     };
   });
+
+  // カテゴリグループを選択したときに最初のカテゴリを自動選択
+  useEffect(() => {
+    if (selectedGroupKey) {
+      const groupCategories = getCategoriesByGroup(selectedGroupKey);
+      if (groupCategories.length > 0) {
+        setSelectedCategory(groupCategories[0].key);
+      }
+    } else {
+      setSelectedCategory('');
+    }
+  }, [selectedGroupKey]);
 
   // 初期化
   useEffect(() => {
@@ -91,6 +112,7 @@ export const BulkCareRecordModal: React.FC<BulkCareRecordModalProps> = ({
       }
 
       // フォームをリセット
+      setSelectedGroupKey('');
       setSelectedCategory('');
       setCommonLabel('');
       setErrors({});
@@ -129,23 +151,29 @@ export const BulkCareRecordModal: React.FC<BulkCareRecordModalProps> = ({
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
 
-    if (!hour || !minute) {
+    if (!hour) {
       newErrors.time = '時間を選択してください';
     }
 
+    if (!selectedGroupKey) {
+      newErrors.groupKey = '種別グループを選択してください';
+    }
+
     if (!selectedCategory) {
-      newErrors.category = 'ケア種別を選択してください';
+      newErrors.category = '詳細種別を選択してください';
     }
 
     if (!commonLabel || commonLabel.trim() === '') {
       newErrors.label = '内容を入力してください';
     }
 
-    const selectedCount = residentSelections.filter((s) => s.selected).length;
+    if (!staffName || staffName.trim() === '') {
+      newErrors.staffName = '担当者を入力してください';
+    }
+
+    const selectedCount = residentSelections.filter((selection) => selection.selected).length;
     if (selectedCount === 0) {
       newErrors.residents = '少なくとも1人の利用者を選択してください';
-    } else if (selectedCount > 20) {
-      newErrors.residents = '一度に選択できる利用者は最大20人です';
     }
 
     setErrors(newErrors);
@@ -171,6 +199,7 @@ export const BulkCareRecordModal: React.FC<BulkCareRecordModalProps> = ({
         .map((selection) => {
           // 基本イベント情報
           const event: CareEvent = {
+            scheduledTime: timeString,
             time: timeString,
             icon: category?.icon || 'ClipboardList',
             label: commonLabel,
@@ -253,33 +282,63 @@ export const BulkCareRecordModal: React.FC<BulkCareRecordModalProps> = ({
             {errors.time && <p className="text-red-500 text-xs mt-1">{errors.time}</p>}
           </div>
 
-          {/* ケア種別選択 */}
+          {/* カテゴリグループ選択 */}
           <div className="space-y-2">
             <label className="text-sm font-medium">
-              ケア種別 <span className="text-red-500 ml-1">*</span>
+              種別グループ <span className="text-red-500 ml-1">*</span>
             </label>
             <Select
-              value={selectedCategory}
-              onValueChange={(value) => setSelectedCategory(value as CareCategoryKey)}
+              value={selectedGroupKey}
+              onValueChange={(value) => setSelectedGroupKey(value as CareCategoryGroupKey)}
             >
-              <SelectTrigger className={errors.category ? 'border-red-500' : ''}>
-                <SelectValue placeholder="ケア種別を選択" />
+              <SelectTrigger className={errors.groupKey ? 'border-red-500' : ''}>
+                <SelectValue placeholder="ケア種別グループを選択" />
               </SelectTrigger>
               <SelectContent>
-                {careCategories.map((category) => (
-                  <SelectItem key={category.key} value={category.key}>
+                {careCategoryGroups.map((group) => (
+                  <SelectItem key={group.key} value={group.key}>
                     <div className="flex items-center gap-2">
-                      {React.createElement(getLucideIcon(category.icon), {
+                      {React.createElement(getLucideIcon(group.icon), {
                         className: 'h-4 w-4',
                       })}
-                      <span>{category.label}</span>
+                      <span>{group.label}</span>
                     </div>
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
-            {errors.category && <p className="text-red-500 text-xs">{errors.category}</p>}
+            {errors.groupKey && <p className="text-red-500 text-xs">{errors.groupKey}</p>}
           </div>
+
+          {/* カテゴリ選択（グループが選択された場合のみ表示） */}
+          {selectedGroupKey && (
+            <div className="space-y-2">
+              <label className="text-sm font-medium">
+                詳細種別 <span className="text-red-500 ml-1">*</span>
+              </label>
+              <Select
+                value={selectedCategory}
+                onValueChange={(value) => setSelectedCategory(value as CareCategoryKey)}
+              >
+                <SelectTrigger className={errors.category ? 'border-red-500' : ''}>
+                  <SelectValue placeholder="詳細種別を選択" />
+                </SelectTrigger>
+                <SelectContent>
+                  {getCategoriesByGroup(selectedGroupKey).map((category) => (
+                    <SelectItem key={category.key} value={category.key}>
+                      <div className="flex items-center gap-2">
+                        {React.createElement(getLucideIcon(category.icon), {
+                          className: 'h-4 w-4',
+                        })}
+                        <span>{category.label}</span>
+                      </div>
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              {errors.category && <p className="text-red-500 text-xs">{errors.category}</p>}
+            </div>
+          )}
 
           {/* 共通内容 */}
           <div className="space-y-2">
