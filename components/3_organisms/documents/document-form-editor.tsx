@@ -15,7 +15,17 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { useDocumentForm } from '@/hooks/useDocumentForm';
 import { getFolder } from '@/mocks/hierarchical-documents';
 import { getCategoryFromFolderId, getFolderIdFromSearchParams } from '@/utils/folder-utils';
-import { AlertCircle, ArrowLeft, CheckCircle2, Eye, File, FileText, Save, Upload, X } from 'lucide-react';
+import {
+  AlertCircle,
+  ArrowLeft,
+  CheckCircle2,
+  Eye,
+  File,
+  FileText,
+  Save,
+  Upload,
+  X,
+} from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
 
@@ -38,7 +48,11 @@ interface DocumentFormEditorProps {
       url: string;
     };
   };
-  onSave?: (data: { formData: DocumentFormData; content: string; attachedFile?: File }) => Promise<boolean>;
+  onSave?: (data: {
+    formData: DocumentFormData;
+    content: string;
+    attachedFile?: File;
+  }) => Promise<boolean>;
   className?: string;
 }
 
@@ -111,11 +125,13 @@ export const DocumentFormEditor: React.FC<DocumentFormEditorProps> = ({
       'text/plain',
       'image/jpeg',
       'image/png',
-      'image/gif'
+      'image/gif',
     ];
 
     if (!supportedTypes.includes(file.type)) {
-      setSaveError('サポートされていないファイル形式です。PDF、Word文書、テキストファイル、または画像ファイルを選択してください');
+      setSaveError(
+        'サポートされていないファイル形式です。PDF、Word文書、テキストファイル、または画像ファイルを選択してください'
+      );
       return;
     }
 
@@ -167,7 +183,11 @@ export const DocumentFormEditor: React.FC<DocumentFormEditorProps> = ({
             return false;
           }
 
-          if (contentInputMode === 'attachment' && !attachedFile && !initialDocument?.attachedFile) {
+          if (
+            contentInputMode === 'attachment' &&
+            !attachedFile &&
+            !initialDocument?.attachedFile
+          ) {
             setSaveError('ファイルを添付してください');
             setIsSaving(false);
             return false;
@@ -175,8 +195,13 @@ export const DocumentFormEditor: React.FC<DocumentFormEditorProps> = ({
 
           if (onSave) {
             const finalContent = contentInputMode === 'manual' ? content : '';
-            const finalFile = contentInputMode === 'attachment' ? attachedFile || undefined : undefined;
-            success = await onSave({ formData: data, content: finalContent, attachedFile: finalFile });
+            const finalFile =
+              contentInputMode === 'attachment' ? attachedFile || undefined : undefined;
+            success = await onSave({
+              formData: data,
+              content: finalContent,
+              attachedFile: finalFile,
+            });
           } else {
             // デフォルトの保存処理
             await new Promise((resolve) => setTimeout(resolve, 500));
@@ -331,11 +356,15 @@ export const DocumentFormEditor: React.FC<DocumentFormEditorProps> = ({
                   >
                     <div className="flex items-center space-x-2">
                       <RadioGroupItem value="manual" id="manual" />
-                      <Label htmlFor="manual" className="cursor-pointer">手動入力</Label>
+                      <Label htmlFor="manual" className="cursor-pointer">
+                        手動入力
+                      </Label>
                     </div>
                     <div className="flex items-center space-x-2">
                       <RadioGroupItem value="attachment" id="attachment" />
-                      <Label htmlFor="attachment" className="cursor-pointer">ファイル添付</Label>
+                      <Label htmlFor="attachment" className="cursor-pointer">
+                        ファイル添付
+                      </Label>
                     </div>
                   </RadioGroup>
                 </div>
@@ -382,7 +411,8 @@ export const DocumentFormEditor: React.FC<DocumentFormEditorProps> = ({
                         <Upload className="h-4 w-4 text-gray-400" />
                       </div>
                       <p className="text-xs text-gray-500">
-                        対応形式: PDF, Word文書(.doc, .docx), テキストファイル(.txt), 画像ファイル(.jpg, .png, .gif) | 最大10MB
+                        対応形式: PDF, Word文書(.doc, .docx), テキストファイル(.txt),
+                        画像ファイル(.jpg, .png, .gif) | 最大10MB
                       </p>
                     </div>
 
@@ -393,9 +423,12 @@ export const DocumentFormEditor: React.FC<DocumentFormEditorProps> = ({
                           <div className="flex items-center gap-3">
                             <File className="h-5 w-5 text-blue-500" />
                             <div>
-                              <p className="font-medium text-sm">{initialDocument.attachedFile.name}</p>
+                              <p className="font-medium text-sm">
+                                {initialDocument.attachedFile.name}
+                              </p>
                               <p className="text-xs text-gray-500">
-                                {formatFileSize(initialDocument.attachedFile.size)} • {initialDocument.attachedFile.type}
+                                {formatFileSize(initialDocument.attachedFile.size)} •{' '}
+                                {initialDocument.attachedFile.type}
                               </p>
                             </div>
                           </div>
@@ -443,7 +476,9 @@ export const DocumentFormEditor: React.FC<DocumentFormEditorProps> = ({
                         {filePreview && (
                           <div className="mt-3 p-3 bg-white border rounded max-h-48 overflow-y-auto">
                             <p className="text-xs text-gray-500 mb-2">プレビュー:</p>
-                            <pre className="text-sm text-gray-700 whitespace-pre-wrap">{filePreview}</pre>
+                            <pre className="text-sm text-gray-700 whitespace-pre-wrap">
+                              {filePreview}
+                            </pre>
                           </div>
                         )}
                       </div>
