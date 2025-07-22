@@ -1,13 +1,23 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { ArrowLeft, Save, Edit, Trash2, AlertCircle } from 'lucide-react';
+import { ArrowLeft, Save, Edit, Trash2, AlertCircle, Type, Bold, Italic, Underline, List, ListOrdered, AlignLeft, AlignCenter, AlignRight, Palette } from 'lucide-react';
 import type { Resident, IndividualPoint } from '@/mocks/care-board-data';
 import { getLucideIcon } from '@/lib/lucide-icon-registry';
+import dynamic from 'next/dynamic';
+
+// Dynamically import ReactQuill to avoid SSR issues
+const ReactQuill = dynamic(() => import('react-quill'), { 
+  ssr: false,
+  loading: () => <div className="h-64 bg-gray-100 animate-pulse rounded-md" />
+});
+
+// Import Quill styles
+import 'react-quill/dist/quill.snow.css';
 
 interface IndividualPointDetailPageProps {
   resident: Resident;
@@ -27,6 +37,8 @@ export const IndividualPointDetailPage: React.FC<IndividualPointDetailPageProps>
   const [isDeleting, setIsDeleting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  const [originalContent, setOriginalContent] = useState('');
 
   const Icon = getLucideIcon(individualPoint.icon);
 
@@ -83,21 +95,49 @@ export const IndividualPointDetailPage: React.FC<IndividualPointDetailPageProps>
   useEffect(() => {
     const initialContent = mockPointContents[category] || '';
     setContent(initialContent);
+    setOriginalContent(initialContent);
   }, [category]);
 
+  // Handle beforeunload event to warn about unsaved changes
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (hasUnsavedChanges) {
+        e.preventDefault();
+        e.returnValue = '編集中の内容が保存されていません。ページを離れてもよろしいですか？';
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, [hasUnsavedChanges]);
+
   const handleBack = () => {
+    if (hasUnsavedChanges) {
+      const confirmLeave = window.confirm('編集中の内容が保存されていません。ページを離れてもよろしいですか？');
+      if (!confirmLeave) {
+        return;
+      }
+    }
     router.push(`/residents/${resident.id}`);
   };
 
   const handleEdit = () => {
     setIsEditing(true);
     setError(null);
+    setHasUnsavedChanges(false);
   };
 
   const handleCancelEdit = () => {
+    if (hasUnsavedChanges) {
+      const confirmCancel = window.confirm('編集中の内容が保存されていません。編集を破棄してもよろしいですか？');
+      if (!confirmCancel) {
+        return;
+      }
+    }
+    
     setIsEditing(false);
     setError(null);
-    // Reset content to original
+    setHasUnsavedChanges(false);
     const originalContent = mockPointContents[category] || '';
     setContent(originalContent);
   };
@@ -117,6 +157,9 @@ export const IndividualPointDetailPage: React.FC<IndividualPointDetailPageProps>
       
       // Update mock data
       mockPointContents[category] = content;
+      
+      setHasUnsavedChanges(false);
+      setOriginalContent(content);
       
     } catch (error) {
       console.error('Failed to save content:', error);
@@ -144,6 +187,9 @@ export const IndividualPointDetailPage: React.FC<IndividualPointDetailPageProps>
       // Update mock data
       delete mockPointContents[category];
       
+      setHasUnsavedChanges(false);
+      setOriginalContent('');
+      
     } catch (error) {
       console.error('Failed to delete content:', error);
       setError('削除に失敗しました。もう一度お試しください。');
@@ -153,6 +199,35 @@ export const IndividualPointDetailPage: React.FC<IndividualPointDetailPageProps>
   };
 
   const hasContent = content.trim().length > 0;
+
+  // Handle content change in rich text editor
+  const handleContentChange = useCallback((value: string) => {
+    setContent(value);
+    setHasUnsavedChanges(value !== originalContent);
+  }, [originalContent]);
+
+  // Rich text editor configuration
+  const quillModules = {
+    toolbar: [
+      [{ 'header': [1, 2, 3, false] }],
+      ['bold', 'italic', 'underline', 'strike'],
+      [{ 'color': [] }, { 'background': [] }],
+      [{ 'font': [] }, { 'size': ['small', false, 'large', 'huge'] }],
+      [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+      [{ 'align': [] }],
+      ['blockquote', 'code-block'],
+      ['link'],
+      ['clean']
+    ],
+  };
+
+  const quillFormats = [
+    'header', 'font', 'size',
+    'bold', 'italic', 'underline', 'strike', 'blockquote',
+    'list', 'bullet', 'align',
+    'link', 'color', 'background',
+    'code-block'
+  ];
 
   return (
     <div className="p-4 md:p-6 bg-carebase-bg min-h-screen">
@@ -185,6 +260,16 @@ export const IndividualPointDetailPage: React.FC<IndividualPointDetailPageProps>
         <Alert className="mb-6 border-red-200 bg-red-50">
           <AlertCircle className="h-4 w-4 text-red-600" />
           <AlertDescription className="text-red-700">{error}</AlertDescription>
+        </Alert>
+      )}
+
+      {/* Unsaved Changes Warning */}
+      {hasUnsavedChanges && (
+        <Alert className="mb-6 border-yellow-200 bg-yellow-50">
+          <AlertCircle className="h-4 w-4 text-yellow-600" />
+          <AlertDescription className="text-yellow-700">
+            編集中の内容が保存されていません。変更を保存するか、編集をキャンセルしてください。
+          </AlertDescription>
         </Alert>
       )}
 
@@ -281,24 +366,40 @@ export const IndividualPointDetailPage: React.FC<IndividualPointDetailPageProps>
                 <label className="text-sm font-medium text-gray-700 mb-2 block">
                   詳細内容
                 </label>
-                <textarea
-                  value={content}
-                  onChange={(e) => setContent(e.target.value)}
-                  placeholder={`${category}に関する詳細情報を入力してください...`}
-                  className="w-full h-96 p-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-carebase-blue focus:border-carebase-blue resize-none"
-                  disabled={isSaving}
-                />
+                <div className="border border-gray-300 rounded-md overflow-hidden">
+                  <ReactQuill
+                    theme="snow"
+                    value={content}
+                    onChange={handleContentChange}
+                    modules={quillModules}
+                    formats={quillFormats}
+                    placeholder={`${category}に関する詳細情報を入力してください...`}
+                    style={{ 
+                      height: '400px',
+                      backgroundColor: isSaving ? '#f9fafb' : 'white'
+                    }}
+                    readOnly={isSaving}
+                  />
+                </div>
               </div>
-              <p className="text-xs text-gray-500">
-                改行は自動的に反映されます。詳細な情報を記録してください。
-              </p>
+              <div className="flex items-center justify-between">
+                <p className="text-xs text-gray-500">
+                  リッチテキストエディタを使用して詳細な情報を記録してください。
+                </p>
+                {hasUnsavedChanges && (
+                  <p className="text-xs text-yellow-600 font-medium">
+                    未保存の変更があります
+                  </p>
+                )}
+              </div>
             </div>
           ) : (
             <div className="min-h-96">
               {hasContent ? (
-                <div className="whitespace-pre-line text-gray-800 leading-relaxed">
-                  {content}
-                </div>
+                <div 
+                  className="prose prose-sm max-w-none text-gray-800 leading-relaxed"
+                  dangerouslySetInnerHTML={{ __html: content }}
+                />
               ) : (
                 <div className="flex items-center justify-center h-96 text-gray-500">
                   <div className="text-center">
