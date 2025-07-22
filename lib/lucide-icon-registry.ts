@@ -3,7 +3,6 @@
 import {
   Activity,
   AlertTriangle,
-  Clock as ClockIcon,
   Bath,
   Bed,
   Book,
@@ -14,8 +13,10 @@ import {
   Clipboard,
   ClipboardList,
   Clock,
+  Clock as ClockIcon,
   Cookie,
   Droplets,
+  Dumbbell,
   DeleteIcon as ExcretionIcon,
   Eye,
   FileArchive,
@@ -45,11 +46,7 @@ import {
   Users,
   Utensils,
   Wind,
-  type LucideIcon,
-  Bath,
-  Pill,
-  Activity,
-  Dumbbell,
+  type LucideIcon
 } from 'lucide-react';
 
 // Icon registry mapping string names to icon components
@@ -105,8 +102,6 @@ const iconRegistry: Record<string, LucideIcon> = {
   Bed,
   Wind,
   Activity,
-  Bath,
-  Pill,
   Dumbbell,
 };
 

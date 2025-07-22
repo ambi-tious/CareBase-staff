@@ -1,8 +1,10 @@
-import type React from 'react';
+'use client';
+
 import { Badge } from '@/components/ui/badge';
+import { getLucideIcon } from '@/lib/lucide-icon-registry';
 import type { CareRecordCategory } from '@/types/care-record';
 import { categoryOptions } from '@/types/care-record';
-import { getLucideIcon } from '@/lib/lucide-icon-registry';
+import type React from 'react';
 
 interface CategoryBadgeProps {
   category: CareRecordCategory;
