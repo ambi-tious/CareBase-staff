@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
-import { getHandoverById } from '@/mocks/handover-data';
+"use client";
+
 import { HandoverDetail } from '@/components/3_organisms/handover/handover-detail';
+import { getHandoverById } from '@/mocks/handover-data';
 import type { Handover } from '@/types/handover';
+import React, { useState } from 'react';
 
 export default function HandoverDetailPage({
   params,

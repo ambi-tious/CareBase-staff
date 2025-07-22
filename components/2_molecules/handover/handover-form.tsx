@@ -1,19 +1,19 @@
 'use client';
 
-import type React from 'react';
 import { FormField } from '@/components/1_atoms/forms/form-field';
 import { FormSelect } from '@/components/1_atoms/forms/form-select';
-import { StaffSelector } from './staff-selector';
-import { ResidentSelector } from './resident-selector';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 import { useHandoverForm } from '@/hooks/useHandoverForm';
 import type { HandoverFormData } from '@/types/handover';
 import { categoryOptions, priorityOptions } from '@/types/handover';
-import { AlertCircle, Save, Send, RefreshCw, User } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { AlertCircle, RefreshCw, Save, Send, User } from 'lucide-react';
+import type React from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { ResidentSelector } from './resident-selector';
+import { StaffSelector } from './staff-selector';
 
 interface HandoverFormProps {
   onSubmit: (data: HandoverFormData, isDraft?: boolean) => Promise<boolean>;
@@ -61,21 +61,69 @@ export const HandoverForm: React.FC<HandoverFormProps> = ({
     }
   }, []);
 
-  const onFormSubmit = async (e: React.FormEvent) => {
+  // Memoize options to prevent unnecessary re-renders
+  const categorySelectOptions = useMemo(() => 
+    categoryOptions.map(cat => ({ value: cat.value, label: cat.label })), 
+    []
+  );
+
+  const prioritySelectOptions = useMemo(() => 
+    priorityOptions.map(pri => ({ value: pri.value, label: pri.label })), 
+    []
+  );
+
+  const onFormSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
     const success = await submitFinal();
     if (success) {
       onCancel(); // Close form on success
     }
-  };
+  }, [submitFinal, onCancel]);
 
-  const handleSaveDraft = async () => {
+  const handleSaveDraft = useCallback(async () => {
     const success = await saveDraft();
     if (success) {
       // Show success message but don't close form
       console.log('Draft saved successfully');
     }
-  };
+  }, [saveDraft]);
+
+  const handleClearError = useCallback(() => {
+    clearError();
+  }, [clearError]);
+
+  // Memoize field update callbacks to prevent re-renders
+  const handleTitleChange = useCallback((value: string) => {
+    updateField('title', value);
+  }, [updateField]);
+
+  const handleCategoryChange = useCallback((value: string) => {
+    updateField('category', value);
+  }, [updateField]);
+
+  const handlePriorityChange = useCallback((value: string) => {
+    updateField('priority', value);
+  }, [updateField]);
+
+  const handleScheduledDateChange = useCallback((value: string) => {
+    updateField('scheduledDate', value);
+  }, [updateField]);
+
+  const handleScheduledTimeChange = useCallback((value: string) => {
+    updateField('scheduledTime', value);
+  }, [updateField]);
+
+  const handleContentChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    updateField('content', e.target.value);
+  }, [updateField]);
+
+  const handleStaffSelectionChange = useCallback((staffIds: string[]) => {
+    updateField('targetStaffIds', staffIds);
+  }, [updateField]);
+
+  const handleResidentSelectionChange = useCallback((residentId?: string) => {
+    updateField('residentId', residentId || '');
+  }, [updateField]);
 
   const isNetworkError = error?.includes('ネットワークエラー');
 
@@ -92,7 +140,7 @@ export const HandoverForm: React.FC<HandoverFormProps> = ({
                 type="button"
                 variant="outline"
                 size="sm"
-                onClick={clearError}
+                onClick={handleClearError}
                 disabled={isSubmitting || isSavingDraft}
                 className="ml-2"
               >
@@ -126,7 +174,7 @@ export const HandoverForm: React.FC<HandoverFormProps> = ({
             label="件名"
             id="title"
             value={formData.title}
-            onChange={(value) => updateField('title', value)}
+            onChange={handleTitleChange}
             placeholder="例：佐藤様の血圧について"
             required
             error={fieldErrors.title}
@@ -137,8 +185,8 @@ export const HandoverForm: React.FC<HandoverFormProps> = ({
             label="カテゴリ"
             id="category"
             value={formData.category}
-            onChange={(value) => updateField('category', value)}
-            options={categoryOptions.map(cat => ({ value: cat.value, label: cat.label }))}
+            onChange={handleCategoryChange}
+            options={categorySelectOptions}
             required
             error={fieldErrors.category}
             disabled={isSubmitting || isSavingDraft}
@@ -148,8 +196,8 @@ export const HandoverForm: React.FC<HandoverFormProps> = ({
             label="重要度"
             id="priority"
             value={formData.priority}
-            onChange={(value) => updateField('priority', value)}
-            options={priorityOptions.map(pri => ({ value: pri.value, label: pri.label }))}
+            onChange={handlePriorityChange}
+            options={prioritySelectOptions}
             required
             error={fieldErrors.priority}
             disabled={isSubmitting || isSavingDraft}
@@ -161,7 +209,7 @@ export const HandoverForm: React.FC<HandoverFormProps> = ({
               id="scheduledDate"
               type="date"
               value={formData.scheduledDate || ''}
-              onChange={(value) => updateField('scheduledDate', value)}
+              onChange={handleScheduledDateChange}
               error={fieldErrors.scheduledDate}
               disabled={isSubmitting || isSavingDraft}
             />
@@ -171,7 +219,7 @@ export const HandoverForm: React.FC<HandoverFormProps> = ({
               id="scheduledTime"
               type="time"
               value={formData.scheduledTime || ''}
-              onChange={(value) => updateField('scheduledTime', value)}
+              onChange={handleScheduledTimeChange}
               error={fieldErrors.scheduledTime}
               disabled={isSubmitting || isSavingDraft}
             />
@@ -186,13 +234,13 @@ export const HandoverForm: React.FC<HandoverFormProps> = ({
 
           <StaffSelector
             selectedStaffIds={formData.targetStaffIds}
-            onSelectionChange={(staffIds) => updateField('targetStaffIds', staffIds)}
+            onSelectionChange={handleStaffSelectionChange}
             error={fieldErrors.targetStaffIds}
           />
 
           <ResidentSelector
             selectedResidentId={formData.residentId}
-            onSelectionChange={(residentId) => updateField('residentId', residentId || '')}
+            onSelectionChange={handleResidentSelectionChange}
           />
         </div>
       </div>
@@ -205,7 +253,7 @@ export const HandoverForm: React.FC<HandoverFormProps> = ({
         <Textarea
           id="content"
           value={formData.content}
-          onChange={(e) => updateField('content', e.target.value)}
+          onChange={handleContentChange}
           placeholder="申し送り内容を詳しく記入してください。&#10;&#10;例：&#10;・本日朝のバイタル測定時に血圧が156/110と高値でした&#10;・かかりつけ医への連絡を検討してください&#10;・次回測定時も注意深く観察をお願いします"
           disabled={isSubmitting || isSavingDraft}
           className={`min-h-32 ${fieldErrors.content ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : ''}`}

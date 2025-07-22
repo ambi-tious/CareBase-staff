@@ -1,15 +1,14 @@
 'use client';
 
-import type React from 'react';
-import { useState } from 'react';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { getAllStaff } from '@/mocks/staff-data';
-import type { Staff } from '@/mocks/staff-data';
-import { Search, X, Users } from 'lucide-react';
+import { Search, Users, X } from 'lucide-react';
+import type React from 'react';
+import { useCallback, useState } from 'react';
 
 interface StaffSelectorProps {
   selectedStaffIds: string[];
@@ -34,13 +33,13 @@ export const StaffSelector: React.FC<StaffSelectorProps> = ({
     staff.role.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const handleStaffToggle = (staffId: string) => {
+  const handleStaffToggle = useCallback((staffId: string) => {
     const newSelection = selectedStaffIds.includes(staffId)
       ? selectedStaffIds.filter(id => id !== staffId)
       : [...selectedStaffIds, staffId];
     
     onSelectionChange(newSelection);
-  };
+  }, [selectedStaffIds, onSelectionChange]);
 
   const handleSelectAll = () => {
     const allStaffIds = filteredStaff.map(staff => staff.id);
@@ -142,14 +141,16 @@ export const StaffSelector: React.FC<StaffSelectorProps> = ({
               {filteredStaff.map((staff) => (
                 <div
                   key={staff.id}
-                  className="flex items-center space-x-3 p-2 hover:bg-gray-50 rounded-md cursor-pointer"
-                  onClick={() => handleStaffToggle(staff.id)}
+                  className="flex items-center space-x-3 p-2 hover:bg-gray-50 rounded-md"
                 >
                   <Checkbox
                     checked={selectedStaffIds.includes(staff.id)}
-                    onChange={() => handleStaffToggle(staff.id)}
+                    onCheckedChange={() => handleStaffToggle(staff.id)}
                   />
-                  <div className="flex-1 min-w-0">
+                  <div 
+                    className="flex-1 min-w-0 cursor-pointer"
+                    onClick={() => handleStaffToggle(staff.id)}
+                  >
                     <div className="flex items-center gap-2">
                       <span className="text-sm font-medium">{staff.name}</span>
                       <Badge variant="outline" className="text-xs">

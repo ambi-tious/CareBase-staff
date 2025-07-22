@@ -4,9 +4,9 @@
  * Manages handover form state and validation for create/edit operations
  */
 
-import { useState, useCallback, useEffect } from 'react';
 import type { HandoverFormData } from '@/types/handover';
 import { handoverFormSchema } from '@/types/handover';
+import { useCallback, useEffect, useState } from 'react';
 
 interface UseHandoverFormOptions {
   onSubmit: (data: HandoverFormData, isDraft?: boolean) => Promise<boolean>;
@@ -34,10 +34,11 @@ const initialFormData: HandoverFormData = {
 };
 
 export const useHandoverForm = ({ onSubmit, initialData = {}, mode }: UseHandoverFormOptions) => {
-  const [formData, setFormData] = useState<HandoverFormData>({
+  // Initialize form data only once with initial data
+  const [formData, setFormData] = useState<HandoverFormData>(() => ({
     ...initialFormData,
     ...initialData,
-  });
+  }));
 
   const [formState, setFormState] = useState<HandoverFormState>({
     isSubmitting: false,
@@ -47,9 +48,9 @@ export const useHandoverForm = ({ onSubmit, initialData = {}, mode }: UseHandove
     hasUnsavedChanges: false,
   });
 
-  // Set default date and time on mount
+  // Set default date and time on mount - only run once for create mode
   useEffect(() => {
-    if (mode === 'create' && !initialData?.scheduledDate) {
+    if (mode === 'create' && !formData.scheduledDate) {
       const now = new Date();
       const today = now.toISOString().split('T')[0];
       const currentTime = now.toTimeString().slice(0, 5);
@@ -60,7 +61,7 @@ export const useHandoverForm = ({ onSubmit, initialData = {}, mode }: UseHandove
         scheduledTime: currentTime,
       }));
     }
-  }, [mode, initialData]);
+  }, []); // Run only once on mount
 
   const updateField = useCallback(
     (field: keyof HandoverFormData, value: string | string[]) => {
@@ -167,7 +168,10 @@ export const useHandoverForm = ({ onSubmit, initialData = {}, mode }: UseHandove
   }, [handleSubmit]);
 
   const reset = useCallback(() => {
-    setFormData({ ...initialFormData, ...initialData });
+    setFormData({
+      ...initialFormData,
+      ...initialData,
+    });
     setFormState({
       isSubmitting: false,
       isSavingDraft: false,
