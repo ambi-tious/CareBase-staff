@@ -527,9 +527,26 @@ export const IndividualPointDetailPage: React.FC<IndividualPointDetailPageProps>
         <CardContent>
           {isEditing ? (
             <div className="space-y-4">
+              {/* プレースホルダーを一番上に移動 */}
+              {isNewCreation && (
+                <div className="bg-blue-50 border border-blue-200 rounded-md p-4 mb-4">
+                  <div className="flex items-center gap-2 text-blue-700">
+                    <Icon className="h-5 w-5" />
+                    <p className="text-sm font-medium">
+                      {category}に関する詳細情報を入力してください（必須）
+                    </p>
+                  </div>
+                  <p className="text-xs text-blue-600 mt-1">
+                    この情報は利用者様のケアに重要な参考情報として活用されます。
+                  </p>
+                </div>
+              )}
               <div>
                 <label className="text-sm font-medium text-gray-700 mb-2 block">
-                  詳細内容 <span className="text-red-500">*</span>
+                  {/* フォントサイズを大きく調整 */}
+                  <span className="text-base font-semibold text-gray-800">
+                    詳細内容 <span className="text-red-500">*</span>
+                  </span>
                 </label>
                 <div className="border border-gray-300 rounded-md overflow-hidden bg-white">
                   <LexicalComposer initialConfig={lexicalConfig}>
@@ -538,10 +555,8 @@ export const IndividualPointDetailPage: React.FC<IndividualPointDetailPageProps>
                         <ContentEditable className="min-h-[400px] p-4 outline-none" />
                       }
                       placeholder={
-                        <div className="p-4 text-gray-400">
-                          {isNewCreation
-                            ? `${category}に関する詳細情報を入力してください（必須）`
-                            : `${category}に関する詳細情報を入力してください`}
+                        <div className="p-4 text-gray-400 text-sm">
+                          {!isNewCreation && `${category}に関する詳細情報を入力してください`}
                         </div>
                       }
                       ErrorBoundary={LexicalErrorBoundary}
@@ -556,7 +571,7 @@ export const IndividualPointDetailPage: React.FC<IndividualPointDetailPageProps>
                   <p className="text-xs text-yellow-600 font-medium">未保存の変更があります</p>
                 )}
               </div>
-              {/* 新規作成時の登録ボタンをカード内右下に配置 */}
+              {/* 新規作成時の登録ボタンをカード内右下に配置（位置は変更なし） */}
               {isNewCreation && (
                 <div className="flex justify-end mt-6">
                   <Button
@@ -584,7 +599,7 @@ export const IndividualPointDetailPage: React.FC<IndividualPointDetailPageProps>
                     <p className="text-lg font-medium mb-2">詳細情報がありません</p>
                     <p className="text-sm">
                       {isNewCreation
-                        ? `${category}に関する詳細情報を入力してください。`
+                        ? `編集モードで${category}に関する詳細情報を入力してください。`
                         : `「編集」ボタンをクリックして${category}に関する詳細情報を追加してください。`}
                     </p>
                   </div>
