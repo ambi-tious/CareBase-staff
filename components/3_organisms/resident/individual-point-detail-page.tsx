@@ -553,7 +553,7 @@ export const IndividualPointDetailPage: React.FC<IndividualPointDetailPageProps>
                       }
                       placeholder={
                         <div className="p-4 text-gray-400 text-sm">
-                          {`${category}に関する詳細情報を入力してください（必須）`}
+                          {!isNewCreation && `${category}に関する詳細情報を入力してください`}
                         </div>
                       }
                       ErrorBoundary={LexicalErrorBoundary}
@@ -609,5 +609,3 @@ export const IndividualPointDetailPage: React.FC<IndividualPointDetailPageProps>
     </div>
   );
 };
-
-export { IndividualPointDetailPage }
