@@ -609,3 +609,5 @@ export const IndividualPointDetailPage: React.FC<IndividualPointDetailPageProps>
     </div>
   );
 };
+
+export { IndividualPointDetailPage }
