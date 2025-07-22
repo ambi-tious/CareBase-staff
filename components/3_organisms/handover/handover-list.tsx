@@ -25,7 +25,7 @@ interface HandoverListProps {
 export const HandoverList: React.FC<HandoverListProps> = ({ handovers, onStatusUpdate }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedPriority, setSelectedPriority] = useState<HandoverPriority | undefined>();
-  const [selectedStatus, setSelectedStatus] = useState<HandoverStatus | undefined>();
+  const [selectedStatus, setSelectedStatus] = useState<HandoverStatus | undefined>('unread');
 
   // Filter and search handovers
   const filteredHandovers = useMemo(() => {
@@ -51,7 +51,7 @@ export const HandoverList: React.FC<HandoverListProps> = ({ handovers, onStatusU
   const handleResetFilters = () => {
     setSearchQuery('');
     setSelectedPriority(undefined);
-    setSelectedStatus(undefined);
+    setSelectedStatus('unread');
   };
 
   const unreadCount = handovers.filter((h) => h.status === 'unread').length;
@@ -64,11 +64,21 @@ export const HandoverList: React.FC<HandoverListProps> = ({ handovers, onStatusU
         <div className="flex items-center gap-3 mb-2">
           <MessageCircle className="h-6 w-6 text-carebase-blue" />
           <h1 className="text-2xl font-bold text-carebase-text-primary">申し送り一覧</h1>
+          {selectedStatus === 'unread' && unreadCount > 0 && (
+            <div className="bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">
+              {unreadCount}
+            </div>
+          )}
         </div>
         <div className="flex items-center gap-4 text-sm text-gray-600">
           <span>総件数: {totalCount}件</span>
-          <span>未読: {unreadCount}件</span>
+          <span className={unreadCount > 0 ? 'text-red-600 font-semibold' : ''}>
+            未読: {unreadCount}件
+          </span>
           <span>表示中: {filteredHandovers.length}件</span>
+          {selectedStatus === 'unread' && (
+            <span className="text-blue-600 font-medium">（未読のみ表示中）</span>
+          )}
         </div>
       </div>
 

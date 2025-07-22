@@ -55,10 +55,10 @@ export const HandoverFilters: React.FC<HandoverFiltersProps> = ({
       </Select>
 
       <Select
-        value={selectedStatus || ''}
+        value={selectedStatus || 'unread'}
         onValueChange={(value) => onStatusChange(value === 'all' ? undefined : value as HandoverStatus)}
       >
-        <SelectTrigger className="w-32">
+        <SelectTrigger className={`w-36 ${selectedStatus === 'unread' ? 'border-blue-500 bg-blue-50' : ''}`}>
           <SelectValue placeholder="ステータス" />
         </SelectTrigger>
         <SelectContent>
@@ -75,6 +75,12 @@ export const HandoverFilters: React.FC<HandoverFiltersProps> = ({
         <RotateCcw className="h-4 w-4 mr-2" />
         リセット
       </Button>
+      
+      {selectedStatus === 'unread' && (
+        <div className="text-xs text-blue-600 bg-blue-50 px-2 py-1 rounded">
+          未読のみ表示
+        </div>
+      )}
     </div>
   );
 };

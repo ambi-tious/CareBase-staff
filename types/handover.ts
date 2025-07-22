@@ -12,6 +12,19 @@ export type HandoverPriority = 'high' | 'medium' | 'low';
 // Handover status
 export type HandoverStatus = 'unread' | 'read' | 'completed';
 
+// Handover read status determination
+export const isHandoverUnread = (handover: Handover): boolean => {
+  return handover.status === 'unread' && !handover.readAt;
+};
+
+export const isHandoverRead = (handover: Handover): boolean => {
+  return handover.status === 'read' && !!handover.readAt;
+};
+
+export const isHandoverCompleted = (handover: Handover): boolean => {
+  return handover.status === 'completed' && !!handover.completedAt;
+};
+
 // Handover form data schema
 export const handoverFormSchema = z.object({
   title: z.string().min(1, '件名は必須です').max(100, '件名は100文字以内で入力してください'),
