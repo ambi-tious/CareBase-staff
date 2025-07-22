@@ -1,15 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
-import { Input } from '@/components/ui/input';
+import { FileIcon } from '@/components/1_atoms/documents/file-icon';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import {
@@ -18,6 +9,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { Input } from '@/components/ui/input';
 import {
   Select,
   SelectContent,
@@ -25,25 +17,35 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { FileIcon } from '@/components/1_atoms/documents/file-icon';
 import {
-  Search,
-  MoreVertical,
-  Download,
-  Eye,
-  Edit,
-  Trash2,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import type { DocumentItem } from '@/types/document';
+import {
   ArrowUpDown,
+  Download,
+  Edit,
+  Eye,
   Folder,
+  MoreVertical,
+  Search,
+  Trash2,
 } from 'lucide-react';
 import Link from 'next/link';
-import type { DocumentItem } from '@/types/document';
+import { useMemo, useState } from 'react';
 
 interface FolderContentsViewProps {
   items: DocumentItem[];
   selectedItems: string[];
   onItemSelection: (itemId: string, isSelected: boolean) => void;
   onSelectAll: (isSelected: boolean) => void;
+  onEditFolder?: (folder: DocumentItem) => void;
+  onDeleteFolder?: (folder: DocumentItem) => void;
 }
 
 export function FolderContentsView({
@@ -51,6 +53,8 @@ export function FolderContentsView({
   selectedItems,
   onItemSelection,
   onSelectAll,
+  onEditFolder,
+  onDeleteFolder,
 }: FolderContentsViewProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState('name');
@@ -273,7 +277,21 @@ export function FolderContentsView({
                             {item.type === 'folder' ? '開く' : '表示'}
                           </Link>
                         </DropdownMenuItem>
-                        {item.type === 'document' && (
+                        {item.type === 'folder' ? (
+                          <>
+                            <DropdownMenuItem onClick={() => onEditFolder?.(item)}>
+                              <Edit className="h-4 w-4 mr-2" />
+                              名前を変更
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                              onClick={() => onDeleteFolder?.(item)}
+                              className="text-red-600"
+                            >
+                              <Trash2 className="h-4 w-4 mr-2" />
+                              削除
+                            </DropdownMenuItem>
+                          </>
+                        ) : (
                           <>
                             <DropdownMenuItem asChild>
                               <Link href={`/documents/edit/${item.id}`}>
@@ -285,12 +303,12 @@ export function FolderContentsView({
                               <Download className="h-4 w-4 mr-2" />
                               ダウンロード
                             </DropdownMenuItem>
+                            <DropdownMenuItem className="text-red-600">
+                              <Trash2 className="h-4 w-4 mr-2" />
+                              削除
+                            </DropdownMenuItem>
                           </>
                         )}
-                        <DropdownMenuItem className="text-red-600">
-                          <Trash2 className="h-4 w-4 mr-2" />
-                          削除
-                        </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </TableCell>

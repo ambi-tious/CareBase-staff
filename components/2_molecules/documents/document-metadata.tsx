@@ -1,8 +1,11 @@
-import type React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+'use client';
+
 import { DocumentInfoRow } from '@/components/1_atoms/documents/document-info-row';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { getFolderPath } from '@/mocks/hierarchical-documents';
 import { format } from 'date-fns';
 import { ja } from 'date-fns/locale';
+import type React from 'react';
 
 interface DocumentMetadataProps {
   documentId: string;
@@ -16,6 +19,7 @@ interface DocumentMetadataProps {
   category: string;
   tags?: string[];
   className?: string;
+  folderId?: string | null; // 書類が保存されているフォルダID
 }
 
 export const DocumentMetadata: React.FC<DocumentMetadataProps> = ({
@@ -26,9 +30,28 @@ export const DocumentMetadata: React.FC<DocumentMetadataProps> = ({
   category,
   tags = [],
   className,
+  folderId,
 }) => {
   const formatDate = (date: Date) => {
     return format(date, 'yyyy年MM月dd日 HH:mm', { locale: ja });
+  };
+
+  // フォルダパスを取得して表示文字列を生成
+  const getFolderPathDisplay = () => {
+    if (!folderId) return 'ルート';
+
+    try {
+      const folderPath = getFolderPath(folderId);
+      return (
+        folderPath
+          .filter((item) => item.id !== 'root')
+          .map((item) => item.name)
+          .join(' > ') || 'ルート'
+      );
+    } catch (error) {
+      console.error('Failed to get folder path:', error);
+      return 'ルート';
+    }
   };
 
   return (
@@ -39,6 +62,7 @@ export const DocumentMetadata: React.FC<DocumentMetadataProps> = ({
       <CardContent className="pt-0">
         <div className="space-y-0">
           <DocumentInfoRow label="書類番号" value={documentId} />
+          <DocumentInfoRow label="保存場所" value={getFolderPathDisplay()} />
           <DocumentInfoRow label="カテゴリ" value={category} />
           <DocumentInfoRow label="作成者" value={`${createdBy.name} (${createdBy.role})`} />
           <DocumentInfoRow label="作成日時" value={formatDate(createdAt)} />

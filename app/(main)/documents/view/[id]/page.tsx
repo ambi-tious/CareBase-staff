@@ -1,9 +1,8 @@
 'use client';
 
-import React from 'react';
-import { useState, useEffect } from 'react';
 import { DocumentDetail } from '@/components/3_organisms/documents/document-detail';
 import { useRouter } from 'next/navigation';
+import React, { useEffect, useState } from 'react';
 
 interface DocumentViewPageProps {
   params: Promise<{
@@ -27,6 +26,7 @@ interface DocumentData {
   tags: string[];
   fontFamily: string;
   fontSize: string;
+  folderId: string | null; // 書類が保存されているフォルダID
 }
 
 export default function DocumentViewPage({ params: paramsPromise }: DocumentViewPageProps) {
@@ -52,43 +52,32 @@ export default function DocumentViewPage({ params: paramsPromise }: DocumentView
           id: params.id,
           title: '議事録：2025年度第1回運営会議',
           content: `
-            <h2>会議概要</h2>
-            <p>日時：2025年4月15日 14:00～16:00</p>
-            <p>場所：会議室A</p>
-            <p>出席者：田中部長、佐藤課長、鈴木主任、山田係長、伊藤さん</p>
-            
-            <h2>議題</h2>
-            <ol>
-              <li>前回議事録の確認</li>
-              <li>2025年度事業計画について</li>
-              <li>新システム導入について</li>
-              <li>その他</li>
-            </ol>
-            
-            <h2>議事内容</h2>
-            <h3>1. 前回議事録の確認</h3>
-            <p>前回議事録を確認し、全員の承認を得た。</p>
-            
-            <h3>2. 2025年度事業計画について</h3>
-            <p>田中部長より2025年度の事業計画案が提示された。主な内容は以下の通り：</p>
-            <ul>
-              <li>第1四半期：新サービスの企画・開発</li>
-              <li>第2四半期：新サービスのテスト運用</li>
-              <li>第3四半期：新サービスの本格展開</li>
-              <li>第4四半期：評価・改善</li>
-            </ul>
-            <p>佐藤課長より、第2四半期のスケジュールがタイトであるとの指摘があり、検討の結果、テスト期間を2週間延長することとなった。</p>
-            
-            <h3>3. 新システム導入について</h3>
-            <p>山田係長より新システム導入の進捗状況が報告された。現在、3社からの見積もりを比較検討中。</p>
-            <p>次回会議までに選定を完了し、導入スケジュールを確定させる。</p>
-            
-            <h3>4. その他</h3>
-            <p>伊藤さんより、社内研修の実施について提案があった。人事部と連携して詳細を詰めることとなった。</p>
-            
-            <h2>次回会議</h2>
-            <p>日時：2025年5月20日 14:00～16:00</p>
-            <p>場所：会議室A</p>
+<h2>2025年度第1回運営会議 議事録</h2>
+
+<h3>開催概要</h3>
+<ul>
+  <li><strong>日時:</strong> 2025年1月15日（水）14:00〜16:00</li>
+  <li><strong>場所:</strong> 会議室A</li>
+  <li><strong>参加者:</strong> 田中管理者、山田主任、佐藤職員、高橋職員</li>
+</ul>
+
+<h3>議題</h3>
+<ol>
+  <li>2024年度振り返り</li>
+  <li>2025年度事業計画について</li>
+  <li>新人研修計画</li>
+  <li>設備更新について</li>
+</ol>
+
+<h3>決定事項</h3>
+<ul>
+  <li>新人研修を4月に実施する</li>
+  <li>エアコンの更新を3月に行う</li>
+  <li>次回会議は2月15日（木）14:00〜</li>
+</ul>
+
+<h3>その他</h3>
+<p>利用者様の安全確保を第一に、質の高いサービス提供を心がけてまいります。</p>
           `,
           status: 'published',
           createdAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000), // 1週間前
@@ -102,6 +91,7 @@ export default function DocumentViewPage({ params: paramsPromise }: DocumentView
           tags: ['運営会議', '2025年度', '事業計画'],
           fontFamily: 'Arial, sans-serif',
           fontSize: '16px',
+          folderId: 'folder-1-1', // 議事録 > 運営会議
         });
       } catch (error) {
         console.error('Failed to fetch document:', error);
@@ -113,6 +103,13 @@ export default function DocumentViewPage({ params: paramsPromise }: DocumentView
 
     fetchDocument();
   }, [params.id]);
+
+  // 書類更新時のハンドラー
+  const handleDocumentUpdate = (updatedDocument: DocumentData) => {
+    setDocument(updatedDocument);
+    // 実際のアプリケーションではAPIを呼び出して更新を保存
+    console.log('Document updated:', updatedDocument);
+  };
 
   if (isLoading) {
     return (
@@ -136,7 +133,7 @@ export default function DocumentViewPage({ params: paramsPromise }: DocumentView
 
   return (
     <div className="p-4 md:p-6 bg-carebase-bg min-h-screen">
-      <DocumentDetail document={document} />
+      <DocumentDetail document={document} onDocumentUpdate={handleDocumentUpdate} />
     </div>
   );
 }

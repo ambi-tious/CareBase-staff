@@ -1,9 +1,11 @@
 'use client';
 
-import type React from 'react';
-import { DocumentDetailHeader } from '@/components/2_molecules/documents/document-detail-header';
 import { DocumentContentViewer } from '@/components/2_molecules/documents/document-content-viewer';
+import { DocumentDetailHeader } from '@/components/2_molecules/documents/document-detail-header';
+import { DocumentLocationMoveModal } from '@/components/2_molecules/documents/document-location-move-modal';
 import { DocumentMetadata } from '@/components/2_molecules/documents/document-metadata';
+import type React from 'react';
+import { useState } from 'react';
 
 interface DocumentDetailProps {
   document: {
@@ -22,11 +24,20 @@ interface DocumentDetailProps {
     tags?: string[];
     fontFamily?: string;
     fontSize?: string;
+    folderId?: string | null; // 書類が保存されているフォルダID
   };
   className?: string;
+  onDocumentUpdate?: (updatedDocument: any) => void; // 書類更新時のコールバック
 }
 
-export const DocumentDetail: React.FC<DocumentDetailProps> = ({ document, className }) => {
+export const DocumentDetail: React.FC<DocumentDetailProps> = ({
+  document,
+  className,
+  onDocumentUpdate,
+}) => {
+  const [isMoveModalOpen, setIsMoveModalOpen] = useState(false);
+  const [currentDocument, setCurrentDocument] = useState(document);
+
   const handlePrint = () => {
     const printWindow = window.open('', '_blank');
     if (!printWindow) return;
@@ -35,11 +46,11 @@ export const DocumentDetail: React.FC<DocumentDetailProps> = ({ document, classN
       <!DOCTYPE html>
       <html>
         <head>
-          <title>${document.title || '無題のドキュメント'}</title>
+          <title>${currentDocument.title || '無題のドキュメント'}</title>
           <style>
             body {
-              font-family: ${document.fontFamily || 'Arial, sans-serif'};
-              font-size: ${document.fontSize || '16px'};
+              font-family: ${currentDocument.fontFamily || 'Arial, sans-serif'};
+              font-size: ${currentDocument.fontSize || '16px'};
               padding: 20px;
             }
             .document-title {
@@ -59,13 +70,13 @@ export const DocumentDetail: React.FC<DocumentDetailProps> = ({ document, classN
           </style>
         </head>
         <body>
-          <div class="document-title">${document.title || '無題のドキュメント'}</div>
-          <div class="document-content">${document.content}</div>
+          <div class="document-title">${currentDocument.title || '無題のドキュメント'}</div>
+          <div class="document-content">${currentDocument.content}</div>
           <div class="document-footer">
-            書類番号: ${document.id}<br>
-            作成日時: ${document.createdAt.toLocaleString()}<br>
-            最終更新: ${document.updatedAt.toLocaleString()}<br>
-            作成者: ${document.createdBy.name} (${document.createdBy.role})
+            書類番号: ${currentDocument.id}<br>
+            作成日時: ${currentDocument.createdAt.toLocaleString()}<br>
+            最終更新: ${currentDocument.updatedAt.toLocaleString()}<br>
+            作成者: ${currentDocument.createdBy.name} (${currentDocument.createdBy.role})
           </div>
         </body>
       </html>
@@ -77,36 +88,71 @@ export const DocumentDetail: React.FC<DocumentDetailProps> = ({ document, classN
     printWindow.close();
   };
 
+  const handleMoveLocation = () => {
+    setIsMoveModalOpen(true);
+  };
+
+  const handleMoveSuccess = (newFolderId: string | null) => {
+    // 書類のフォルダIDを更新
+    const updatedDocument = {
+      ...currentDocument,
+      folderId: newFolderId,
+      updatedAt: new Date(), // 最終更新日時も更新
+    };
+
+    setCurrentDocument(updatedDocument);
+
+    // 親コンポーネントに更新を通知
+    if (onDocumentUpdate) {
+      onDocumentUpdate(updatedDocument);
+    }
+
+    setIsMoveModalOpen(false);
+  };
+
   return (
     <div className={`space-y-6 ${className}`}>
       <DocumentDetailHeader
-        documentId={document.id}
-        title={document.title}
-        status={document.status}
-        createdAt={document.createdAt}
+        documentId={currentDocument.id}
+        title={currentDocument.title}
+        status={currentDocument.status}
+        createdAt={currentDocument.createdAt}
         onPrint={handlePrint}
+        folderId={currentDocument.folderId}
+        onMoveLocation={handleMoveLocation}
       />
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         <div className="lg:col-span-3">
           <DocumentContentViewer
-            content={document.content}
-            fontFamily={document.fontFamily}
-            fontSize={document.fontSize}
+            content={currentDocument.content}
+            fontFamily={currentDocument.fontFamily}
+            fontSize={currentDocument.fontSize}
           />
         </div>
 
         <div className="lg:col-span-1">
           <DocumentMetadata
-            documentId={document.id}
-            createdAt={document.createdAt}
-            updatedAt={document.updatedAt}
-            createdBy={document.createdBy}
-            category={document.category}
-            tags={document.tags}
+            documentId={currentDocument.id}
+            createdAt={currentDocument.createdAt}
+            updatedAt={currentDocument.updatedAt}
+            createdBy={currentDocument.createdBy}
+            category={currentDocument.category}
+            tags={currentDocument.tags}
+            folderId={currentDocument.folderId}
           />
         </div>
       </div>
+
+      {/* 場所移動モーダル */}
+      <DocumentLocationMoveModal
+        isOpen={isMoveModalOpen}
+        onClose={() => setIsMoveModalOpen(false)}
+        documentId={currentDocument.id}
+        documentTitle={currentDocument.title}
+        currentFolderId={currentDocument.folderId || null}
+        onMoveSuccess={handleMoveSuccess}
+      />
     </div>
   );
 };

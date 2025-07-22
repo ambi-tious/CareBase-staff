@@ -3,12 +3,23 @@
 import { FolderBreadcrumb } from '@/components/2_molecules/documents/folder-breadcrumb';
 import { FolderContentsView } from '@/components/3_organisms/documents/folder-contents-view';
 import { FileUploadModal } from '@/components/3_organisms/modals/file-upload-modal';
+import { FolderCreateModal } from '@/components/3_organisms/modals/folder-create-modal';
+import { FolderDeleteModal } from '@/components/3_organisms/modals/folder-delete-modal';
+import { FolderEditModal } from '@/components/3_organisms/modals/folder-edit-modal';
 import { GenericDeleteModal } from '@/components/3_organisms/modals/generic-delete-modal';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
-import type { DocumentCategory } from '@/mocks/documents-data';
+import type { DocumentCategory, DocumentFolder } from '@/mocks/documents-data';
 import { getCategoryByKey, getDocumentsByCategory } from '@/mocks/documents-data';
-import { getFolder, getFolderContents, getFolderPath } from '@/mocks/hierarchical-documents';
+import {
+  createFolder,
+  deleteFolder,
+  getExistingFolderNames,
+  getFolder,
+  getFolderContents,
+  getFolderPath,
+  updateFolder,
+} from '@/mocks/hierarchical-documents';
 import type { DocumentItem, Folder } from '@/types/document';
 import { FileText, FolderPlus, Trash2, Upload } from 'lucide-react';
 import Link from 'next/link';
@@ -41,6 +52,13 @@ function DocumentsContent() {
   const [isDeleting, setIsDeleting] = useState(false);
   const [isFolderView, setIsFolderView] = useState(false);
   const [folder, setFolder] = useState<Folder | null>(null);
+
+  // フォルダ操作の状態管理
+  const [isFolderCreateModalOpen, setIsFolderCreateModalOpen] = useState(false);
+  const [isFolderEditModalOpen, setIsFolderEditModalOpen] = useState(false);
+  const [isFolderDeleteModalOpen, setIsFolderDeleteModalOpen] = useState(false);
+  const [selectedFolder, setSelectedFolder] = useState<Folder | null>(null);
+  const [existingFolderNames, setExistingFolderNames] = useState<string[]>([]);
 
   useEffect(() => {
     const initializeData = async () => {
@@ -200,6 +218,100 @@ function DocumentsContent() {
     }
   };
 
+  // フォルダ作成の処理
+  const handleCreateFolder = () => {
+    const existingNames = getExistingFolderNames(categoryOrFolderId);
+    setExistingFolderNames(existingNames);
+    setIsFolderCreateModalOpen(true);
+  };
+
+  const handleFolderCreate = async (folderName: string): Promise<boolean> => {
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 500));
+
+      const newFolder = createFolder(folderName, categoryOrFolderId);
+      setDocuments((prev) => [newFolder, ...prev]);
+
+      toast({
+        title: 'フォルダを作成しました',
+        description: `「${folderName}」フォルダが作成されました`,
+      });
+
+      return true;
+    } catch (error) {
+      console.error('Failed to create folder:', error);
+      return false;
+    }
+  };
+
+  // フォルダ編集の処理
+  const handleEditFolder = (item: DocumentItem) => {
+    if (item.type !== 'folder') return;
+    const folder = item as Folder;
+    setSelectedFolder(folder);
+    const existingNames = getExistingFolderNames(folder.parentId);
+    setExistingFolderNames(existingNames);
+    setIsFolderEditModalOpen(true);
+  };
+
+  const handleFolderUpdate = async (folderId: string, folderName: string): Promise<boolean> => {
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 500));
+
+      const success = updateFolder(folderId, folderName);
+      if (success) {
+        setDocuments((prev) =>
+          prev.map((item) =>
+            item.id === folderId && item.type === 'folder'
+              ? { ...item, name: folderName, updatedAt: new Date().toISOString().split('T')[0] }
+              : item
+          )
+        );
+
+        toast({
+          title: 'フォルダを更新しました',
+          description: `フォルダ名を「${folderName}」に変更しました`,
+        });
+
+        return true;
+      }
+      return false;
+    } catch (error) {
+      console.error('Failed to update folder:', error);
+      return false;
+    }
+  };
+
+  // フォルダ削除の処理
+  const handleDeleteFolder = (item: DocumentItem) => {
+    if (item.type !== 'folder') return;
+    const folder = item as Folder;
+    setSelectedFolder(folder);
+    setIsFolderDeleteModalOpen(true);
+  };
+
+  const handleFolderDelete = async (folderId: string): Promise<boolean> => {
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 500));
+
+      const success = deleteFolder(folderId);
+      if (success) {
+        setDocuments((prev) => prev.filter((item) => item.id !== folderId));
+
+        toast({
+          title: 'フォルダを削除しました',
+          description: '選択したフォルダが削除されました',
+        });
+
+        return true;
+      }
+      return false;
+    } catch (error) {
+      console.error('Failed to delete folder:', error);
+      return false;
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="p-4 md:p-6 bg-carebase-bg min-h-screen">
@@ -235,73 +347,38 @@ function DocumentsContent() {
             {isFolderView && folder?.updatedAt && ` • 最終更新: ${folder.updatedAt}`}
           </p>
           <div className="flex items-center gap-2">
-            {isFolderView ? (
-              <>
-                <Button
-                  onClick={() => setIsUploadModalOpen(true)}
-                  className="bg-carebase-blue hover:bg-carebase-blue-dark"
-                >
-                  <Upload className="h-4 w-4 mr-2" />
-                  ファイルをアップロード
-                </Button>
-                <Button
-                  variant="outline"
-                  onClick={handleDeleteSelected}
-                  disabled={selectedItems.length === 0}
-                  className={
-                    selectedItems.length > 0 ? 'border-red-300 text-red-600 hover:bg-red-50' : ''
-                  }
-                >
-                  <Trash2 className="h-4 w-4 mr-2" />
-                  選択したアイテムを削除
-                </Button>
-              </>
-            ) : category ? (
-              <>
-                <Link href="/documents/edit">
-                  <Button className="bg-carebase-blue hover:bg-carebase-blue-dark">
-                    <FileText className="h-4 w-4 mr-2" />
-                    新規{category.name}
-                  </Button>
-                </Link>
-                <Button className="bg-carebase-blue hover:bg-carebase-blue-dark">
-                  <FolderPlus className="h-4 w-4 mr-2" />
-                  新しいフォルダ
-                </Button>
-              </>
-            ) : (
-              <>
-                <Link href="/documents/edit">
-                  <Button className="bg-carebase-blue hover:bg-carebase-blue-dark">
-                    <FileText className="h-4 w-4 mr-2" />
-                    新規書類
-                  </Button>
-                </Link>
-                <Button className="bg-carebase-blue hover:bg-carebase-blue-dark">
-                  <FolderPlus className="h-4 w-4 mr-2" />
-                  新しいフォルダ
-                </Button>
-                <Button
-                  onClick={() => setIsUploadModalOpen(true)}
-                  variant="outline"
-                  className="border-carebase-blue text-carebase-blue hover:bg-carebase-blue-light"
-                >
-                  <Upload className="h-4 w-4 mr-2" />
-                  ファイルをアップロード
-                </Button>
-                <Button
-                  variant="outline"
-                  onClick={handleDeleteSelected}
-                  disabled={selectedItems.length === 0}
-                  className={
-                    selectedItems.length > 0 ? 'border-red-300 text-red-600 hover:bg-red-50' : ''
-                  }
-                >
-                  <Trash2 className="h-4 w-4 mr-2" />
-                  選択したアイテムを削除
-                </Button>
-              </>
-            )}
+            <Link href="/documents/edit">
+              <Button className="bg-carebase-blue hover:bg-carebase-blue-dark">
+                <FileText className="h-4 w-4 mr-2" />
+                新規書類
+              </Button>
+            </Link>
+            <Button
+              onClick={handleCreateFolder}
+              className="bg-carebase-blue hover:bg-carebase-blue-dark"
+            >
+              <FolderPlus className="h-4 w-4 mr-2" />
+              新しいフォルダ
+            </Button>
+            <Button
+              onClick={() => setIsUploadModalOpen(true)}
+              variant="outline"
+              className="border-carebase-blue text-carebase-blue hover:bg-carebase-blue-light"
+            >
+              <Upload className="h-4 w-4 mr-2" />
+              ファイルをアップロード
+            </Button>
+            <Button
+              variant="outline"
+              onClick={handleDeleteSelected}
+              disabled={selectedItems.length === 0}
+              className={
+                selectedItems.length > 0 ? 'border-red-300 text-red-600 hover:bg-red-50' : ''
+              }
+            >
+              <Trash2 className="h-4 w-4 mr-2" />
+              選択したアイテムを削除
+            </Button>
           </div>
         </div>
       </div>
@@ -312,6 +389,8 @@ function DocumentsContent() {
         selectedItems={selectedItems}
         onItemSelection={handleItemSelection}
         onSelectAll={handleSelectAll}
+        onEditFolder={handleEditFolder}
+        onDeleteFolder={handleDeleteFolder}
       />
 
       {/* モーダル */}
@@ -332,6 +411,52 @@ function DocumentsContent() {
             itemName={`選択された${selectedItems.length}個のアイテム`}
             itemType="アイテム"
             isDeleting={isDeleting}
+          />
+
+          {/* フォルダ操作モーダル */}
+          <FolderCreateModal
+            isOpen={isFolderCreateModalOpen}
+            onClose={() => setIsFolderCreateModalOpen(false)}
+            onCreateFolder={handleFolderCreate}
+            existingFolders={existingFolderNames}
+          />
+
+          <FolderEditModal
+            isOpen={isFolderEditModalOpen}
+            onClose={() => setIsFolderEditModalOpen(false)}
+            onUpdateFolder={handleFolderUpdate}
+            folder={
+              selectedFolder
+                ? ({
+                    id: selectedFolder.id,
+                    name: selectedFolder.name,
+                    type: selectedFolder.type,
+                    createdAt: selectedFolder.createdAt,
+                    updatedAt: selectedFolder.updatedAt,
+                    itemCount: 0, // フォルダ内のアイテム数（実際のアプリケーションでは取得）
+                  } as DocumentFolder)
+                : null
+            }
+            existingFolders={existingFolderNames}
+          />
+
+          <FolderDeleteModal
+            isOpen={isFolderDeleteModalOpen}
+            onClose={() => setIsFolderDeleteModalOpen(false)}
+            onDeleteFolder={handleFolderDelete}
+            folder={
+              selectedFolder
+                ? ({
+                    id: selectedFolder.id,
+                    name: selectedFolder.name,
+                    type: selectedFolder.type,
+                    createdAt: selectedFolder.createdAt,
+                    updatedAt: selectedFolder.updatedAt,
+                    itemCount: 0, // フォルダ内のアイテム数（実際のアプリケーションでは取得）
+                  } as DocumentFolder)
+                : null
+            }
+            hasItems={false}
           />
         </>
       )}

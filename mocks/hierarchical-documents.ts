@@ -1,4 +1,4 @@
-import type { Document, Folder, DocumentItem } from '@/types/document';
+import type { Document, DocumentItem, Folder } from '@/types/document';
 
 // ルートフォルダ
 export const rootFolders: Folder[] = [
@@ -301,4 +301,98 @@ export const getFolder = (folderId: string | null): Folder | null => {
   if (folderId === null) return null;
 
   return [...rootFolders, ...subFolders].find((f) => f.id === folderId) || null;
+};
+
+// フォルダ作成関数
+export const createFolder = (name: string, parentId: string | null): Folder => {
+  const newFolderId = `folder-${Date.now()}`;
+  const parentFolder = parentId ? getFolder(parentId) : null;
+  const path = parentFolder ? [...parentFolder.path, newFolderId] : [newFolderId];
+
+  const newFolder: Folder = {
+    id: newFolderId,
+    name,
+    type: 'folder',
+    parentId,
+    path,
+    createdAt: new Date().toISOString().split('T')[0],
+    updatedAt: new Date().toISOString().split('T')[0],
+    createdBy: '現在のユーザー',
+  };
+
+  // 親フォルダに応じて適切な配列に追加
+  if (parentId === null) {
+    rootFolders.push(newFolder);
+  } else {
+    subFolders.push(newFolder);
+  }
+
+  return newFolder;
+};
+
+// フォルダ更新関数
+export const updateFolder = (folderId: string, name: string): boolean => {
+  // ルートフォルダから検索
+  const rootIndex = rootFolders.findIndex((f) => f.id === folderId);
+  if (rootIndex !== -1) {
+    rootFolders[rootIndex] = {
+      ...rootFolders[rootIndex],
+      name,
+      updatedAt: new Date().toISOString().split('T')[0],
+    };
+    return true;
+  }
+
+  // サブフォルダから検索
+  const subIndex = subFolders.findIndex((f) => f.id === folderId);
+  if (subIndex !== -1) {
+    subFolders[subIndex] = {
+      ...subFolders[subIndex],
+      name,
+      updatedAt: new Date().toISOString().split('T')[0],
+    };
+    return true;
+  }
+
+  return false;
+};
+
+// フォルダ削除関数
+export const deleteFolder = (folderId: string): boolean => {
+  // 子フォルダとドキュメントがあるかチェック
+  const hasChildren = subFolders.some((f) => f.parentId === folderId);
+  const hasDocuments = documents.some((doc) => {
+    const folder = [...rootFolders, ...subFolders].find((f) => f.id === folderId);
+    return folder && doc.category === folder.name;
+  });
+
+  if (hasChildren || hasDocuments) {
+    // 子要素がある場合は削除できない（実際のアプリケーションでは警告を表示）
+    console.warn('フォルダに子要素があるため削除できません');
+  }
+
+  // ルートフォルダから削除
+  const rootIndex = rootFolders.findIndex((f) => f.id === folderId);
+  if (rootIndex !== -1) {
+    rootFolders.splice(rootIndex, 1);
+    return true;
+  }
+
+  // サブフォルダから削除
+  const subIndex = subFolders.findIndex((f) => f.id === folderId);
+  if (subIndex !== -1) {
+    subFolders.splice(subIndex, 1);
+    return true;
+  }
+
+  return false;
+};
+
+// 現在のフォルダ内の既存フォルダ名一覧を取得
+export const getExistingFolderNames = (parentId: string | null): string[] => {
+  if (parentId === null) {
+    return rootFolders.map((f) => f.name);
+  }
+
+  return subFolders.filter((f) => f.parentId === parentId).map((f) => f.name);
 };

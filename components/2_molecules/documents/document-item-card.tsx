@@ -1,18 +1,18 @@
 'use client';
 
-import type React from 'react';
-import type { DocumentItem } from '@/mocks/documents-data';
-import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Folder, MoreVertical, Download, Edit, Trash2, FolderEdit, FolderOpen } from 'lucide-react';
 import { FileIcon } from '@/components/1_atoms/documents/file-icon';
-import Link from 'next/link';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import type { DocumentItem } from '@/mocks/documents-data';
+import { Download, Edit, Folder, FolderEdit, FolderOpen, MoreVertical, Trash2 } from 'lucide-react';
+import Link from 'next/link';
+import type React from 'react';
 
 interface DocumentItemCardProps {
   item: DocumentItem;
@@ -123,7 +123,7 @@ export const DocumentItemCard: React.FC<DocumentItemCardProps> = ({
                     ダウンロード
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
-                    <Link href={`/documents/editor/${item.id}`}>
+                    <Link href={`/documents/edit/${item.id}`}>
                       <Edit className="h-4 w-4 mr-2" />
                       編集
                     </Link>
