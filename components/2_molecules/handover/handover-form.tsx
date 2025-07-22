@@ -87,7 +87,7 @@ export const HandoverForm: React.FC<HandoverFormProps> = ({
     const success = await saveDraft();
     if (success) {
       // Show success message but don't close form
-      console.log('Draft saved successfully');
+      // console.log('Draft saved successfully');
     }
   }, [saveDraft]);
 
