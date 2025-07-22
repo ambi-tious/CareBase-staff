@@ -119,7 +119,7 @@ export function AppHeader() {
 
   return (
     <header className="sticky top-0 z-20 w-full border-b bg-carebase-white/80 backdrop-blur-md">
-      <div className="mx-auto flex h-16 tablet:h-20 items-center justify-between px-4 md:px-6 tablet:px-8">
+      <div className="mx-auto flex h-16 items-center justify-between px-4 md:px-6">
         <Link href="/" className="flex items-center gap-2">
           <Logo />
         </Link>

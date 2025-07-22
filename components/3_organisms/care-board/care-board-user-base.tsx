@@ -123,7 +123,7 @@ export function UserBaseView() {
 
   return (
     <>
-      <div className="overflow-x-auto bg-white rounded-lg shadow-md max-h-[calc(100vh-200px)]">
+      <div className="overflow-x-auto bg-white rounded-lg shadow-md max-h-[calc(100vh-180px)]">
         <div
           className="grid"
           style={{
