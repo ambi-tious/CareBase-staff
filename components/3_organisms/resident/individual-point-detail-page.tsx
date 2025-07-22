@@ -1,23 +1,19 @@
 'use client';
 
-import { useState, useEffect, useRef, useCallback } from 'react';
-import { useRouter } from 'next/navigation';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { ArrowLeft, Save, Edit, Trash2, AlertCircle, Type, Bold, Italic, Underline, List, ListOrdered, AlignLeft, AlignCenter, AlignRight, Palette } from 'lucide-react';
-import type { Resident, IndividualPoint } from '@/mocks/care-board-data';
 import { getLucideIcon } from '@/lib/lucide-icon-registry';
-import dynamic from 'next/dynamic';
-
-// Dynamically import ReactQuill to avoid SSR issues
-const ReactQuill = dynamic(() => import('react-quill'), { 
-  ssr: false,
-  loading: () => <div className="h-64 bg-gray-100 animate-pulse rounded-md" />
-});
-
-// Import Quill styles
-import 'react-quill/dist/quill.snow.css';
+import type { IndividualPoint, Resident } from '@/mocks/care-board-data';
+import { LexicalComposer } from '@lexical/react/LexicalComposer';
+import { ContentEditable } from '@lexical/react/LexicalContentEditable';
+import { HistoryPlugin } from '@lexical/react/LexicalHistoryPlugin';
+import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
+import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
+import { $getRoot } from 'lexical';
+import { AlertCircle, ArrowLeft, Edit, Save, Trash2 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 interface IndividualPointDetailPageProps {
   resident: Resident;
@@ -100,7 +96,7 @@ export const IndividualPointDetailPage: React.FC<IndividualPointDetailPageProps>
 
   // Handle beforeunload event to warn about unsaved changes
   useEffect(() => {
-    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+    const handleBeforeUnload = (e: any) => {
       if (hasUnsavedChanges) {
         e.preventDefault();
         e.returnValue = '編集中の内容が保存されていません。ページを離れてもよろしいですか？';
@@ -113,7 +109,9 @@ export const IndividualPointDetailPage: React.FC<IndividualPointDetailPageProps>
 
   const handleBack = () => {
     if (hasUnsavedChanges) {
-      const confirmLeave = window.confirm('編集中の内容が保存されていません。ページを離れてもよろしいですか？');
+      const confirmLeave = window.confirm(
+        '編集中の内容が保存されていません。ページを離れてもよろしいですか？'
+      );
       if (!confirmLeave) {
         return;
       }
@@ -129,12 +127,14 @@ export const IndividualPointDetailPage: React.FC<IndividualPointDetailPageProps>
 
   const handleCancelEdit = () => {
     if (hasUnsavedChanges) {
-      const confirmCancel = window.confirm('編集中の内容が保存されていません。編集を破棄してもよろしいですか？');
+      const confirmCancel = window.confirm(
+        '編集中の内容が保存されていません。編集を破棄してもよろしいですか？'
+      );
       if (!confirmCancel) {
         return;
       }
     }
-    
+
     setIsEditing(false);
     setError(null);
     setHasUnsavedChanges(false);
@@ -149,18 +149,17 @@ export const IndividualPointDetailPage: React.FC<IndividualPointDetailPageProps>
     try {
       // Simulate API call
       await new Promise((resolve) => setTimeout(resolve, 1000));
-      
+
       // In production, this would call an API to save the content
       // await individualPointService.updateContent(resident.id, category, content);
-      
+
       setIsEditing(false);
-      
+
       // Update mock data
       mockPointContents[category] = content;
-      
+
       setHasUnsavedChanges(false);
       setOriginalContent(content);
-      
     } catch (error) {
       console.error('Failed to save content:', error);
       setError('保存に失敗しました。もう一度お試しください。');
@@ -176,20 +175,19 @@ export const IndividualPointDetailPage: React.FC<IndividualPointDetailPageProps>
     try {
       // Simulate API call
       await new Promise((resolve) => setTimeout(resolve, 1000));
-      
+
       // In production, this would call an API to delete the content
       // await individualPointService.deleteContent(resident.id, category);
-      
+
       // Clear content
       setContent('');
       setShowDeleteConfirm(false);
-      
+
       // Update mock data
       delete mockPointContents[category];
-      
+
       setHasUnsavedChanges(false);
       setOriginalContent('');
-      
     } catch (error) {
       console.error('Failed to delete content:', error);
       setError('削除に失敗しました。もう一度お試しください。');
@@ -200,34 +198,30 @@ export const IndividualPointDetailPage: React.FC<IndividualPointDetailPageProps>
 
   const hasContent = content.trim().length > 0;
 
-  // Handle content change in rich text editor
-  const handleContentChange = useCallback((value: string) => {
-    setContent(value);
-    setHasUnsavedChanges(value !== originalContent);
-  }, [originalContent]);
-
-  // Rich text editor configuration
-  const quillModules = {
-    toolbar: [
-      [{ 'header': [1, 2, 3, false] }],
-      ['bold', 'italic', 'underline', 'strike'],
-      [{ 'color': [] }, { 'background': [] }],
-      [{ 'font': [] }, { 'size': ['small', false, 'large', 'huge'] }],
-      [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-      [{ 'align': [] }],
-      ['blockquote', 'code-block'],
-      ['link'],
-      ['clean']
-    ],
+  // Lexicalエディタの初期設定
+  const lexicalConfig = {
+    namespace: 'IndividualPointEditor',
+    theme: {
+      paragraph: 'mb-2',
+    },
+    onError(error: Error) {
+      console.error(error);
+    },
   };
 
-  const quillFormats = [
-    'header', 'font', 'size',
-    'bold', 'italic', 'underline', 'strike', 'blockquote',
-    'list', 'bullet', 'align',
-    'link', 'color', 'background',
-    'code-block'
-  ];
+  // Lexicalエディタの内容をstateに反映
+  const handleLexicalChange = (editorState: any) => {
+    editorState.read(() => {
+      const html = $getRoot().getTextContent();
+      setContent(html);
+      setHasUnsavedChanges(html !== originalContent);
+    });
+  };
+
+  // Lexical用のエラーバウンダリ
+  function LexicalErrorBoundary(props: any) {
+    return <div className="p-2 text-red-600 bg-red-50">エディタでエラーが発生しました</div>;
+  }
 
   return (
     <div className="p-4 md:p-6 bg-carebase-bg min-h-screen">
@@ -281,12 +275,7 @@ export const IndividualPointDetailPage: React.FC<IndividualPointDetailPageProps>
             本当にこの個別ポイント詳細情報を削除しますか？この操作は元に戻せません。
           </AlertDescription>
           <div className="flex gap-2 mt-4">
-            <Button 
-              variant="destructive" 
-              onClick={handleDelete} 
-              disabled={isDeleting}
-              size="sm"
-            >
+            <Button variant="destructive" onClick={handleDelete} disabled={isDeleting} size="sm">
               <Trash2 className="h-3 w-3 mr-1" />
               {isDeleting ? '削除中...' : '削除'}
             </Button>
@@ -363,23 +352,21 @@ export const IndividualPointDetailPage: React.FC<IndividualPointDetailPageProps>
           {isEditing ? (
             <div className="space-y-4">
               <div>
-                <label className="text-sm font-medium text-gray-700 mb-2 block">
-                  詳細内容
-                </label>
-                <div className="border border-gray-300 rounded-md overflow-hidden">
-                  <ReactQuill
-                    theme="snow"
-                    value={content}
-                    onChange={handleContentChange}
-                    modules={quillModules}
-                    formats={quillFormats}
-                    placeholder={`${category}に関する詳細情報を入力してください...`}
-                    style={{ 
-                      height: '400px',
-                      backgroundColor: isSaving ? '#f9fafb' : 'white'
-                    }}
-                    readOnly={isSaving}
-                  />
+                <label className="text-sm font-medium text-gray-700 mb-2 block">詳細内容</label>
+                <div className="border border-gray-300 rounded-md overflow-hidden bg-white">
+                  <LexicalComposer initialConfig={lexicalConfig}>
+                    <RichTextPlugin
+                      contentEditable={
+                        <ContentEditable className="min-h-[400px] p-4 outline-none" />
+                      }
+                      placeholder={
+                        <div className="p-4 text-gray-400">{`${category}に関する詳細情報を入力してください...`}</div>
+                      }
+                      ErrorBoundary={LexicalErrorBoundary}
+                    />
+                    <HistoryPlugin />
+                    <OnChangePlugin onChange={handleLexicalChange} />
+                  </LexicalComposer>
                 </div>
               </div>
               <div className="flex items-center justify-between">
@@ -387,16 +374,14 @@ export const IndividualPointDetailPage: React.FC<IndividualPointDetailPageProps>
                   リッチテキストエディタを使用して詳細な情報を記録してください。
                 </p>
                 {hasUnsavedChanges && (
-                  <p className="text-xs text-yellow-600 font-medium">
-                    未保存の変更があります
-                  </p>
+                  <p className="text-xs text-yellow-600 font-medium">未保存の変更があります</p>
                 )}
               </div>
             </div>
           ) : (
             <div className="min-h-96">
               {hasContent ? (
-                <div 
+                <div
                   className="prose prose-sm max-w-none text-gray-800 leading-relaxed"
                   dangerouslySetInnerHTML={{ __html: content }}
                 />
