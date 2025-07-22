@@ -195,15 +195,6 @@ export const HandoverDetail: React.FC<HandoverDetailProps> = ({ handover, onUpda
           </CardContent>
         </Card>
       </div>
-
-      {/* Edit Modal */}
-      <HandoverFormModal
-        isOpen={isEditModalOpen}
-        onClose={() => setIsEditModalOpen(false)}
-        onSubmit={handleEditSubmit}
-        handover={currentHandover}
-        mode="edit"
-      />
-    </>
+    </div>
   );
 };

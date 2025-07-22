@@ -7,7 +7,7 @@ import { PriorityBadge } from '@/components/1_atoms/handover/priority-badge';
 import { StatusBadge } from '@/components/1_atoms/handover/status-badge';
 import { CategoryBadge } from '@/components/1_atoms/handover/category-badge';
 import type { Handover } from '@/types/handover';
-import { Eye, User } from 'lucide-react';
+import { Eye, User, Edit } from 'lucide-react';
 import Link from 'next/link';
 import { format } from 'date-fns';
 import { ja } from 'date-fns/locale';
