@@ -406,7 +406,7 @@ export const IndividualPointDetailPage: React.FC<IndividualPointDetailPageProps>
                 キャンセル
               </Button>
               <Button type="submit" className="bg-carebase-blue text-white">
-                保存
+                登録
               </Button>
             </div>
           </form>
@@ -492,7 +492,7 @@ export const IndividualPointDetailPage: React.FC<IndividualPointDetailPageProps>
                       size="sm"
                     >
                       <Save className="h-3 w-3 mr-1" />
-                      {isSaving ? '保存中...' : '保存'}
+                      {isSaving ? '登録中...' : '登録'}
                     </Button>
                   )}
                 </>
@@ -527,11 +527,9 @@ export const IndividualPointDetailPage: React.FC<IndividualPointDetailPageProps>
         <CardContent>
           {isEditing ? (
             <div className="space-y-4">
-              {/* プレースホルダーを一番上に移動 */}
               {isNewCreation && (
                 <div className="bg-blue-50 border border-blue-200 rounded-md p-4 mb-4">
                   <div className="flex items-center gap-2 text-blue-700">
-                    <Icon className="h-5 w-5" />
                     <p className="text-sm font-medium">
                       {category}に関する詳細情報を入力してください（必須）
                     </p>
@@ -543,7 +541,6 @@ export const IndividualPointDetailPage: React.FC<IndividualPointDetailPageProps>
               )}
               <div>
                 <label className="text-sm font-medium text-gray-700 mb-2 block">
-                  {/* フォントサイズを大きく調整 */}
                   <span className="text-base font-semibold text-gray-800">
                     詳細内容 <span className="text-red-500">*</span>
                   </span>
