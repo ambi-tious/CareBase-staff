@@ -540,12 +540,6 @@ export const IndividualPointDetailPage: React.FC<IndividualPointDetailPageProps>
                 </div>
               )}
               <div>
-                {/* プレースホルダテキストをフォーム最上部に移動 */}
-                <div className="mb-4 p-3 bg-gray-50 border border-gray-200 rounded-md">
-                  <p className="text-sm text-gray-600">
-                    {category}に関する詳細情報を入力してください
-                  </p>
-                </div>
                 <label className="text-sm font-medium text-gray-700 mb-2 block">
                   <span className="text-base font-semibold text-gray-800">
                     詳細内容 <span className="text-red-500">*</span>
@@ -559,7 +553,7 @@ export const IndividualPointDetailPage: React.FC<IndividualPointDetailPageProps>
                       }
                       placeholder={
                         <div className="p-4 text-gray-400 text-sm">
-                          詳細な内容をここに入力してください...
+                          {!isNewCreation && `${category}に関する詳細情報を入力してください`}
                         </div>
                       }
                       ErrorBoundary={LexicalErrorBoundary}
@@ -574,16 +568,9 @@ export const IndividualPointDetailPage: React.FC<IndividualPointDetailPageProps>
                   <p className="text-xs text-yellow-600 font-medium">未保存の変更があります</p>
                 )}
               </div>
-              {/* ボタンをカード内右下に配置 */}
+              {/* 新規作成時の登録ボタンをカード内右下に配置（位置は変更なし） */}
               {isNewCreation && (
-                <div className="flex justify-end gap-3 mt-6 pt-4 border-t">
-                  <Button
-                    variant="outline"
-                    onClick={handleCancel}
-                    disabled={isSaving}
-                  >
-                    キャンセル
-                  </Button>
+                <div className="flex justify-end mt-6">
                   <Button
                     onClick={handleSave}
                     disabled={isSaving}
