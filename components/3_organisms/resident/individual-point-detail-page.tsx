@@ -470,7 +470,7 @@ export const IndividualPointDetailPage: React.FC<IndividualPointDetailPageProps>
       {/* Main Content */}
       <Card className="max-w-4xl">
         <CardHeader>
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-end">
             <div className="flex items-center gap-2">
               {isEditing ? (
                 <>
@@ -540,8 +540,8 @@ export const IndividualPointDetailPage: React.FC<IndividualPointDetailPageProps>
                       placeholder={
                         <div className="p-4 text-gray-400">
                           {isNewCreation
-                            ? `${category}に関する詳細情報を入力してください（必須）...`
-                            : `${category}に関する詳細情報を入力してください...`}
+                            ? `${category}に関する詳細情報を入力してください（必須）`
+                            : `${category}に関する詳細情報を入力してください`}
                         </div>
                       }
                       ErrorBoundary={LexicalErrorBoundary}
@@ -552,11 +552,6 @@ export const IndividualPointDetailPage: React.FC<IndividualPointDetailPageProps>
                 </div>
               </div>
               <div className="flex items-center justify-between">
-                <p className="text-xs text-gray-500">
-                  {isNewCreation
-                    ? 'リッチテキストエディタを使用して詳細な情報を記録してください。（必須入力）'
-                    : 'リッチテキストエディタを使用して詳細な情報を記録してください。'}
-                </p>
                 {hasUnsavedChanges && (
                   <p className="text-xs text-yellow-600 font-medium">未保存の変更があります</p>
                 )}
