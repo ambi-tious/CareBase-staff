@@ -46,6 +46,10 @@ import {
   Utensils,
   Wind,
   type LucideIcon,
+  Bath,
+  Pill,
+  Activity,
+  Dumbbell,
 } from 'lucide-react';
 
 // Icon registry mapping string names to icon components
@@ -101,6 +105,9 @@ const iconRegistry: Record<string, LucideIcon> = {
   Bed,
   Wind,
   Activity,
+  Bath,
+  Pill,
+  Dumbbell,
 };
 
 // Helper function to get icon component by string name
