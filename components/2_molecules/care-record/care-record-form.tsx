@@ -77,12 +77,13 @@ export const CareRecordForm: React.FC<CareRecordFormProps> = ({
   );
 
   const residentOptions = useMemo(
-    () => careBoardData
-      .filter((resident) => resident.admissionStatus === '入居中')
-      .map((resident) => ({
-        value: resident.id.toString(),
-        label: `${resident.name} (${resident.careLevel})`,
-      })),
+    () =>
+      careBoardData
+        .filter((resident) => resident.admissionStatus === '入居中')
+        .map((resident) => ({
+          value: resident.id.toString(),
+          label: `${resident.name} (${resident.careLevel})`,
+        })),
     []
   );
 
@@ -162,8 +163,8 @@ export const CareRecordForm: React.FC<CareRecordFormProps> = ({
   const isNetworkError = error?.includes('ネットワークエラー');
 
   // Get selected resident info
-  const selectedResident = formData.residentId 
-    ? careBoardData.find(r => r.id.toString() === formData.residentId)
+  const selectedResident = formData.residentId
+    ? careBoardData.find((r) => r.id.toString() === formData.residentId)
     : null;
 
   return (

@@ -97,11 +97,7 @@ export default function NewCareRecordPage() {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <CareRecordForm
-            onSubmit={handleSubmit}
-            onCancel={handleCancel}
-            mode="create"
-          />
+          <CareRecordForm onSubmit={handleSubmit} onCancel={handleCancel} mode="create" />
         </CardContent>
       </Card>
     </div>

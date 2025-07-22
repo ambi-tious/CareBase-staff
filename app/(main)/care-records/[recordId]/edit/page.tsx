@@ -51,7 +51,7 @@ export default function EditCareRecordPage({ params }: EditCareRecordPageProps) 
       setSuccessMessage(null);
 
       const updatedRecord = await careRecordService.updateCareRecord(record.id, data);
-      
+
       if (isDraft) {
         setSuccessMessage('下書きを保存しました。');
         return true;

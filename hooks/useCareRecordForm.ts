@@ -32,7 +32,11 @@ const initialFormData: CareRecordFormData = {
   status: 'completed',
 };
 
-export const useCareRecordForm = ({ onSubmit, initialData = {}, mode }: UseCareRecordFormOptions) => {
+export const useCareRecordForm = ({
+  onSubmit,
+  initialData = {},
+  mode,
+}: UseCareRecordFormOptions) => {
   // Initialize form data only once with initial data
   const [formData, setFormData] = useState<CareRecordFormData>(() => ({
     ...initialFormData,

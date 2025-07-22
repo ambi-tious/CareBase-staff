@@ -143,9 +143,7 @@ class CareRecordService {
     }
 
     // Generate summary from content
-    const summary = data.content.length > 50 
-      ? data.content.substring(0, 47) + '...'
-      : data.content;
+    const summary = data.content.length > 50 ? data.content.substring(0, 47) + '...' : data.content;
 
     // Generate new care record
     const newRecord: CareRecord = {
@@ -172,7 +170,10 @@ class CareRecordService {
   /**
    * Mock care record update for development
    */
-  private async mockUpdateCareRecord(recordId: string, data: CareRecordFormData): Promise<CareRecord> {
+  private async mockUpdateCareRecord(
+    recordId: string,
+    data: CareRecordFormData
+  ): Promise<CareRecord> {
     // Simulate network delay
     await new Promise((resolve) => setTimeout(resolve, 1000));
 
@@ -196,9 +197,7 @@ class CareRecordService {
     }
 
     // Generate summary from content
-    const summary = data.content.length > 50 
-      ? data.content.substring(0, 47) + '...'
-      : data.content;
+    const summary = data.content.length > 50 ? data.content.substring(0, 47) + '...' : data.content;
 
     // Update care record
     const updatedRecord: CareRecord = {
