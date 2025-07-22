@@ -39,13 +39,13 @@ export const HandoverFilters: React.FC<HandoverFiltersProps> = ({
 
       <Select
         value={selectedPriority || ''}
-        onValueChange={(value) => onPriorityChange(value as HandoverPriority || undefined)}
+        onValueChange={(value) => onPriorityChange(value === 'all' ? undefined : value as HandoverPriority)}
       >
         <SelectTrigger className="w-32">
           <SelectValue placeholder="重要度" />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="">すべて</SelectItem>
+          <SelectItem value="all">すべて</SelectItem>
           {priorityOptions.map((option) => (
             <SelectItem key={option.value} value={option.value}>
               {option.label}
@@ -56,13 +56,13 @@ export const HandoverFilters: React.FC<HandoverFiltersProps> = ({
 
       <Select
         value={selectedStatus || ''}
-        onValueChange={(value) => onStatusChange(value as HandoverStatus || undefined)}
+        onValueChange={(value) => onStatusChange(value === 'all' ? undefined : value as HandoverStatus)}
       >
         <SelectTrigger className="w-32">
           <SelectValue placeholder="ステータス" />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="">すべて</SelectItem>
+          <SelectItem value="all">すべて</SelectItem>
           {statusOptions.map((option) => (
             <SelectItem key={option.value} value={option.value}>
               {option.label}
