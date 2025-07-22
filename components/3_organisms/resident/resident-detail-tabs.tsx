@@ -13,6 +13,7 @@ import { ContactRegistrationModal } from '@/components/3_organisms/modals/contac
 import { HomeCareOfficeModal } from '@/components/3_organisms/modals/home-care-office-modal';
 import { IndividualPointModal } from '@/components/3_organisms/modals/individual-point-modal';
 import { MedicalInstitutionModal } from '@/components/3_organisms/modals/medical-institution-modal';
+import { MedicalHistoryModal } from '@/components/3_organisms/modals/medical-history-modal';
 import { MedicationRegistrationModal } from '@/components/3_organisms/modals/medication-registration-modal';
 import { MedicationStatusRegistrationModal } from '@/components/3_organisms/modals/medication-status-registration-modal';
 import { Button } from '@/components/ui/button';
