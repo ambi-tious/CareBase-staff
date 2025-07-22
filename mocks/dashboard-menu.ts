@@ -61,7 +61,7 @@ export const dashboardMenu: NavCategory[] = [
     title: '申し送り・介護記録',
     icon: 'FileText',
     links: [
-      { label: '申し送り一覧', href: '#', icon: 'MessageCircle' },
+      { label: '申し送り一覧', href: '/handovers', icon: 'MessageCircle' },
       { label: '介護記録一覧', href: '#', icon: 'Clipboard' },
       { label: '各項目毎の記録', href: '#', icon: 'List' },
     ],
