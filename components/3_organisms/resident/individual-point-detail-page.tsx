@@ -28,16 +28,18 @@ interface IndividualPointDetailPageProps {
   resident: Resident;
   category: string;
   individualPoint: IndividualPoint;
+  isNewCreation?: boolean;
 }
 
 export const IndividualPointDetailPage: React.FC<IndividualPointDetailPageProps> = ({
   resident,
   category,
   individualPoint,
+  isNewCreation = false,
 }) => {
   const router = useRouter();
   const [content, setContent] = useState('');
-  const [isEditing, setIsEditing] = useState(false);
+  const [isEditing, setIsEditing] = useState(isNewCreation);
   const [isSaving, setIsSaving] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -45,6 +47,7 @@ export const IndividualPointDetailPage: React.FC<IndividualPointDetailPageProps>
   const [showDeletedAlert, setShowDeletedAlert] = useState(false);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [originalContent, setOriginalContent] = useState('');
+  const [validationError, setValidationError] = useState<string | null>(null);
 
   // カテゴリ編集用state
   const [isCategoryEditing, setIsCategoryEditing] = useState(false);
@@ -151,7 +154,7 @@ export const IndividualPointDetailPage: React.FC<IndividualPointDetailPageProps>
 
   // Load content on component mount
   useEffect(() => {
-    const initialContent = mockPointContents[category] || '';
+    const initialContent = isNewCreation ? '' : (mockPointContents[category] || '');
     setContent(initialContent);
     setOriginalContent(initialContent);
   }, [category]);
@@ -172,13 +175,15 @@ export const IndividualPointDetailPage: React.FC<IndividualPointDetailPageProps>
   const handleBack = () => {
     if (hasUnsavedChanges) {
       const confirmLeave = window.confirm(
-        '編集中の内容が保存されていません。ページを離れてもよろしいですか？'
+        isNewCreation 
+          ? '入力中の内容が保存されていません。ページを離れてもよろしいですか？'
+          : '編集中の内容が保存されていません。ページを離れてもよろしいですか？'
       );
       if (!confirmLeave) {
         return;
       }
     }
-    router.push(`/residents/${resident.id}`);
+    router.push(`/residents/${resident.id}?tab=points`);
   };
 
   const handleEdit = () => {
@@ -190,7 +195,9 @@ export const IndividualPointDetailPage: React.FC<IndividualPointDetailPageProps>
   const handleCancelEdit = () => {
     if (hasUnsavedChanges) {
       const confirmCancel = window.confirm(
-        '編集中の内容が保存されていません。編集を破棄してもよろしいですか？'
+        isNewCreation
+          ? '入力中の内容が保存されていません。入力を破棄してもよろしいですか？'
+          : '編集中の内容が保存されていません。編集を破棄してもよろしいですか？'
       );
       if (!confirmCancel) {
         return;
@@ -199,14 +206,28 @@ export const IndividualPointDetailPage: React.FC<IndividualPointDetailPageProps>
 
     setIsEditing(false);
     setError(null);
+    setValidationError(null);
     setHasUnsavedChanges(false);
-    const originalContent = mockPointContents[category] || '';
-    setContent(originalContent);
+    
+    if (isNewCreation) {
+      // 新規作成の場合は個別ポイントタブに戻る
+      router.push(`/residents/${resident.id}?tab=points`);
+    } else {
+      const originalContent = mockPointContents[category] || '';
+      setContent(originalContent);
+    }
   };
 
   const handleSave = async () => {
+    // バリデーション: 必須入力チェック
+    if (!content.trim()) {
+      setValidationError('詳細情報は必須入力です。内容を入力してください。');
+      return;
+    }
+
     setIsSaving(true);
     setError(null);
+    setValidationError(null);
 
     try {
       // Simulate API call
@@ -215,19 +236,37 @@ export const IndividualPointDetailPage: React.FC<IndividualPointDetailPageProps>
       // In production, this would call an API to save the content
       // await individualPointService.updateContent(resident.id, category, content);
 
-      setIsEditing(false);
-
       // Update mock data
       mockPointContents[category] = content;
 
       setHasUnsavedChanges(false);
       setOriginalContent(content);
+      
+      if (isNewCreation) {
+        // 新規作成の場合は詳細画面に遷移
+        router.push(`/residents/${resident.id}/individual-points/${encodeURIComponent(category)}`);
+      } else {
+        // 編集の場合は編集モードを終了
+        setIsEditing(false);
+      }
     } catch (error) {
       console.error('Failed to save content:', error);
       setError('保存に失敗しました。もう一度お試しください。');
     } finally {
       setIsSaving(false);
     }
+  };
+
+  const handleCancel = () => {
+    if (hasUnsavedChanges) {
+      const confirmCancel = window.confirm(
+        '入力中の内容が保存されていません。入力を破棄してもよろしいですか？'
+      );
+      if (!confirmCancel) {
+        return;
+      }
+    }
+    router.push(`/residents/${resident.id}?tab=points`);
   };
 
   const handleDelete = async () => {
@@ -291,13 +330,19 @@ export const IndividualPointDetailPage: React.FC<IndividualPointDetailPageProps>
               <Icon className="h-5 w-5 text-carebase-blue" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-carebase-text-primary">{category}の詳細</h1>
-              <p className="text-gray-600">{resident.name}様の個別ポイント</p>
+              <h1 className="text-2xl font-bold text-carebase-text-primary">
+                {isNewCreation ? `${category}の新規作成` : `${category}の詳細`}
+              </h1>
+              <p className="text-gray-600">
+                {resident.name}様の個別ポイント
+                {isNewCreation && ' - 新規作成'}
+              </p>
             </div>
           </div>
           {/* 右端にカテゴリの編集ボタンと戻るボタンを並べる */}
           <div className="flex items-center gap-2">
-            <Button
+            {!isNewCreation && (
+              <Button
               size="sm"
               variant="outline"
               onClick={() => setIsCategoryEditing(true)}
@@ -306,6 +351,7 @@ export const IndividualPointDetailPage: React.FC<IndividualPointDetailPageProps>
               <Edit className="h-4 w-4 mr-1" />
               カテゴリの編集
             </Button>
+            )}
             <Button
               size="sm"
               variant="outline"
@@ -375,6 +421,14 @@ export const IndividualPointDetailPage: React.FC<IndividualPointDetailPageProps>
         </Alert>
       )}
 
+      {/* Validation Error Alert */}
+      {validationError && (
+        <Alert className="mb-6 border-red-200 bg-red-50">
+          <AlertCircle className="h-4 w-4 text-red-600" />
+          <AlertDescription className="text-red-700">{validationError}</AlertDescription>
+        </Alert>
+      )}
+
       {/* Unsaved Changes Warning */}
       {hasUnsavedChanges && (
         <Alert className="mb-6 border-yellow-200 bg-yellow-50">
@@ -419,14 +473,14 @@ export const IndividualPointDetailPage: React.FC<IndividualPointDetailPageProps>
           <div className="flex items-center justify-between">
             <CardTitle className="flex items-center gap-2">
               <Icon className="h-5 w-5 text-carebase-blue" />
-              {category}の詳細情報
+              {isNewCreation ? `${category}の新規作成` : `${category}の詳細情報`}
             </CardTitle>
             <div className="flex items-center gap-2">
               {isEditing ? (
                 <>
                   <Button
                     variant="outline"
-                    onClick={handleCancelEdit}
+                    onClick={isNewCreation ? handleCancel : handleCancelEdit}
                     disabled={isSaving}
                     size="sm"
                   >
@@ -439,7 +493,7 @@ export const IndividualPointDetailPage: React.FC<IndividualPointDetailPageProps>
                     size="sm"
                   >
                     <Save className="h-3 w-3 mr-1" />
-                    {isSaving ? '保存中...' : '保存'}
+                    {isSaving ? (isNewCreation ? '登録中...' : '保存中...') : (isNewCreation ? '登録' : '保存')}
                   </Button>
                 </>
               ) : (
@@ -474,7 +528,9 @@ export const IndividualPointDetailPage: React.FC<IndividualPointDetailPageProps>
           {isEditing ? (
             <div className="space-y-4">
               <div>
-                <label className="text-sm font-medium text-gray-700 mb-2 block">詳細内容</label>
+                <label className="text-sm font-medium text-gray-700 mb-2 block">
+                  詳細内容 <span className="text-red-500">*</span>
+                </label>
                 <div className="border border-gray-300 rounded-md overflow-hidden bg-white">
                   <LexicalComposer initialConfig={lexicalConfig}>
                     <RichTextPlugin
@@ -482,7 +538,12 @@ export const IndividualPointDetailPage: React.FC<IndividualPointDetailPageProps>
                         <ContentEditable className="min-h-[400px] p-4 outline-none" />
                       }
                       placeholder={
-                        <div className="p-4 text-gray-400">{`${category}に関する詳細情報を入力してください...`}</div>
+                        <div className="p-4 text-gray-400">
+                          {isNewCreation 
+                            ? `${category}に関する詳細情報を入力してください（必須）...`
+                            : `${category}に関する詳細情報を入力してください...`
+                          }
+                        </div>
                       }
                       ErrorBoundary={LexicalErrorBoundary}
                     />
@@ -493,7 +554,10 @@ export const IndividualPointDetailPage: React.FC<IndividualPointDetailPageProps>
               </div>
               <div className="flex items-center justify-between">
                 <p className="text-xs text-gray-500">
-                  リッチテキストエディタを使用して詳細な情報を記録してください。
+                  {isNewCreation 
+                    ? 'リッチテキストエディタを使用して詳細な情報を記録してください。（必須入力）'
+                    : 'リッチテキストエディタを使用して詳細な情報を記録してください。'
+                  }
                 </p>
                 {hasUnsavedChanges && (
                   <p className="text-xs text-yellow-600 font-medium">未保存の変更があります</p>
@@ -502,7 +566,7 @@ export const IndividualPointDetailPage: React.FC<IndividualPointDetailPageProps>
             </div>
           ) : (
             <div className="min-h-96">
-              {hasContent ? (
+              {hasContent && !isNewCreation ? (
                 <div
                   className="prose prose-sm max-w-none text-gray-800 leading-relaxed"
                   dangerouslySetInnerHTML={{ __html: content }}
@@ -513,7 +577,10 @@ export const IndividualPointDetailPage: React.FC<IndividualPointDetailPageProps>
                     <Icon className="h-12 w-12 mx-auto mb-4 text-gray-300" />
                     <p className="text-lg font-medium mb-2">詳細情報がありません</p>
                     <p className="text-sm">
-                      「編集」ボタンをクリックして{category}に関する詳細情報を追加してください。
+                      {isNewCreation
+                        ? `${category}に関する詳細情報を入力してください。`
+                        : `「編集」ボタンをクリックして${category}に関する詳細情報を追加してください。`
+                      }
                     </p>
                   </div>
                 </div>

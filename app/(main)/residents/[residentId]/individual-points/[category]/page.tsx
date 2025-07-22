@@ -7,10 +7,14 @@ interface IndividualPointPageProps {
     residentId: string;
     category: string;
   }>;
+  searchParams: Promise<{
+    mode?: 'create' | 'edit';
+  }>;
 }
 
-export default async function IndividualPointPage({ params }: IndividualPointPageProps) {
+export default async function IndividualPointPage({ params, searchParams }: IndividualPointPageProps) {
   const { residentId, category } = await params;
+  const { mode } = await searchParams;
   const residentIdNum = Number.parseInt(residentId, 10);
   const resident = getResidentById(residentIdNum);
 
@@ -30,11 +34,14 @@ export default async function IndividualPointPage({ params }: IndividualPointPag
     notFound();
   }
 
+  const isNewCreation = mode === 'create';
+
   return (
     <IndividualPointDetailPage
       resident={resident}
       category={decodedCategory}
       individualPoint={individualPoint}
+      isNewCreation={isNewCreation}
     />
   );
 }
