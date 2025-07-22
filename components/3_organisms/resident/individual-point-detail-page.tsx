@@ -3,6 +3,15 @@
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { getLucideIcon } from '@/lib/lucide-icon-registry';
 import type { IndividualPoint, Resident } from '@/mocks/care-board-data';
 import { LexicalComposer } from '@lexical/react/LexicalComposer';
@@ -36,6 +45,58 @@ export const IndividualPointDetailPage: React.FC<IndividualPointDetailPageProps>
   const [showDeletedAlert, setShowDeletedAlert] = useState(false);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [originalContent, setOriginalContent] = useState('');
+
+  // カテゴリ編集用state
+  const [isCategoryEditing, setIsCategoryEditing] = useState(false);
+  const [editCategoryName, setEditCategoryName] = useState(individualPoint.category);
+  const [editIcon, setEditIcon] = useState(individualPoint.icon);
+  const [editError, setEditError] = useState('');
+
+  // カテゴリ編集モーダル用state
+  const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
+  const [categoryName, setCategoryName] = useState(individualPoint.category);
+  const [categoryError, setCategoryError] = useState('');
+
+  // アイコン選択肢例
+  const iconOptions = [
+    { value: 'Activity', label: '活動' },
+    { value: 'Users', label: '接遇' },
+    { value: 'Bath', label: '入浴' },
+    { value: 'Utensils', label: '食事' },
+    { value: 'Pill', label: '服薬' },
+    { value: 'Tooth', label: '口腔ケア' },
+    { value: 'Eye', label: '点眼' },
+    { value: 'GlassWater', label: '飲水' },
+    { value: 'ExcretionIcon', label: '排泄' },
+    { value: 'FileText', label: 'その他' },
+  ];
+
+  // カテゴリ保存処理
+  const handleCategorySave = async () => {
+    setEditError('');
+    if (!editCategoryName.trim()) {
+      setEditError('カテゴリ名は必須です');
+      return;
+    }
+    if (!editIcon) {
+      setEditError('アイコンを選択してください');
+      return;
+    }
+    // TODO: API連携や重複チェック
+    // await api.updateCategory({ id: individualPoint.id, category: editCategoryName, icon: editIcon });
+    setIsCategoryEditing(false);
+    // stateを更新
+    individualPoint.category = editCategoryName;
+    individualPoint.icon = editIcon;
+  };
+
+  // キャンセル処理
+  const handleCategoryCancel = () => {
+    setEditCategoryName(individualPoint.category);
+    setEditIcon(individualPoint.icon);
+    setEditError('');
+    setIsCategoryEditing(false);
+  };
 
   const Icon = getLucideIcon(individualPoint.icon);
 
@@ -223,16 +284,8 @@ export const IndividualPointDetailPage: React.FC<IndividualPointDetailPageProps>
     <div className="p-4 md:p-6 bg-carebase-bg min-h-screen">
       {/* Header */}
       <div className="mb-6">
-        <div className="flex items-center gap-4 mb-4">
-          <Button
-            variant="outline"
-            onClick={handleBack}
-            className="flex items-center gap-2"
-            disabled={isSaving || isDeleting}
-          >
-            <ArrowLeft className="h-4 w-4" />
-            戻る
-          </Button>
+        <div className="flex items-center justify-between gap-4 mb-4">
+          {/* タイトル・利用者名を左寄せ */}
           <div className="flex items-center gap-3">
             <div className="flex h-8 w-8 items-center justify-center rounded-full bg-carebase-blue-light">
               <Icon className="h-5 w-5 text-carebase-blue" />
@@ -242,8 +295,77 @@ export const IndividualPointDetailPage: React.FC<IndividualPointDetailPageProps>
               <p className="text-gray-600">{resident.name}様の個別ポイント</p>
             </div>
           </div>
+          {/* 右端にカテゴリの編集ボタンと戻るボタンを並べる */}
+          <div className="flex items-center gap-2">
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => setIsCategoryEditing(true)}
+              className="flex items-center gap-1"
+            >
+              <Edit className="h-4 w-4 mr-1" />
+              カテゴリの編集
+            </Button>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={handleBack}
+              className="flex items-center gap-2"
+              disabled={isSaving || isDeleting}
+            >
+              <ArrowLeft className="h-4 w-4" />
+              戻る
+            </Button>
+          </div>
         </div>
       </div>
+
+      {/* --- カテゴリ編集モーダル --- */}
+      <Dialog open={isCategoryEditing} onOpenChange={setIsCategoryEditing}>
+        <DialogContent className="max-w-md w-full">
+          <DialogHeader>
+            <DialogTitle>カテゴリの編集</DialogTitle>
+            <DialogDescription>カテゴリ名を編集してください。</DialogDescription>
+          </DialogHeader>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              if (!categoryName.trim()) {
+                setCategoryError('カテゴリ名は必須です');
+                return;
+              }
+              // TODO: 保存処理（API連携やstate更新）
+              individualPoint.category = categoryName;
+              setIsCategoryEditing(false);
+            }}
+            className="space-y-4"
+          >
+            <div>
+              <Label htmlFor="categoryName">カテゴリ名</Label>
+              <Input
+                id="categoryName"
+                value={categoryName}
+                onChange={(e) => {
+                  setCategoryName(e.target.value);
+                  setCategoryError('');
+                }}
+                required
+                aria-required="true"
+                className="w-full"
+              />
+              {categoryError && <div className="text-red-600 text-sm mt-1">{categoryError}</div>}
+            </div>
+            <div className="flex justify-end gap-2">
+              <Button type="button" variant="outline" onClick={() => setIsCategoryEditing(false)}>
+                キャンセル
+              </Button>
+              <Button type="submit" className="bg-carebase-blue text-white">
+                保存
+              </Button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
 
       {/* Error Alert */}
       {error && (
