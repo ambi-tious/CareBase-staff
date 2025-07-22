@@ -360,7 +360,7 @@ export const careBoardData: Resident[] = [
     certValidityStart: '2024/12/15',
     certValidityEnd: '2025/12/14',
     address: '京都府京都市中京区烏丸通2-3-4',
-    avatarUrl: '/elderly-japanese-man-2.png',
+    avatarUrl: '/elderly-man-avatar.png',
     events: [
       {
         scheduledTime: '06:45',
@@ -470,7 +470,7 @@ export const careBoardData: Resident[] = [
     certValidityStart: '2025/01/01',
     certValidityEnd: '2026/01/01',
     address: '神奈川県横浜市港北区新横浜5-6-7',
-    avatarUrl: '/elderly-japanese-woman-2.png',
+    avatarUrl: '/senior-japanese-woman.png',
     events: [
       {
         scheduledTime: '07:30',
@@ -562,7 +562,7 @@ export const careBoardData: Resident[] = [
     ],
   },
   {
-    id: 2,
+    id: 5,
     name: '鈴木幸子',
     furigana: 'スズキサチコ',
     dob: '1942/01/15',
@@ -600,7 +600,7 @@ export const careBoardData: Resident[] = [
     contacts: [],
   },
   {
-    id: 3,
+    id: 6,
     name: '高橋茂',
     furigana: 'タカハシシゲル',
     dob: '1938/05/30',
@@ -620,7 +620,7 @@ export const careBoardData: Resident[] = [
     contacts: [],
   },
   {
-    id: 4,
+    id: 7,
     name: '田中三郎',
     furigana: 'タナカサブロウ',
     dob: '1950/11/02',
