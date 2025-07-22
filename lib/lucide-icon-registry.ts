@@ -19,6 +19,7 @@ import {
   Dumbbell,
   DeleteIcon as ExcretionIcon,
   Eye,
+  Edit3,
   FileArchive,
   FileClock,
   FileSignature,
@@ -103,6 +104,7 @@ const iconRegistry: Record<string, LucideIcon> = {
   Wind,
   Activity,
   Dumbbell,
+  Edit3,
 };
 
 // Helper function to get icon component by string name

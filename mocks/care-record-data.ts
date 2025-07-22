@@ -144,6 +144,14 @@ export const getCareRecordsByCategory = (category: string): CareRecord[] => {
   return careRecordData.filter((record) => record.category === category);
 };
 
+export const getCareRecordsByStatus = (status: string): CareRecord[] => {
+  return careRecordData.filter((record) => record.status === status);
+};
+
+export const getCareRecordsByPriority = (priority: string): CareRecord[] => {
+  return careRecordData.filter((record) => record.priority === priority);
+};
+
 export const searchCareRecords = (query: string): CareRecord[] => {
   const lowercaseQuery = query.toLowerCase();
   return careRecordData.filter(
