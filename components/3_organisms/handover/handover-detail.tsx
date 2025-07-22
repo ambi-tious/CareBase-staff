@@ -1,19 +1,17 @@
 'use client';
 
-import type React from 'react';
-import { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { CategoryBadge } from '@/components/1_atoms/handover/category-badge';
 import { PriorityBadge } from '@/components/1_atoms/handover/priority-badge';
 import { StatusBadge } from '@/components/1_atoms/handover/status-badge';
-import { CategoryBadge } from '@/components/1_atoms/handover/category-badge';
-import { HandoverFormModal } from '@/components/3_organisms/handover/handover-form-modal';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import type { Handover } from '@/types/handover';
-import type { HandoverFormData } from '@/types/handover';
-import { ArrowLeft, User, Calendar, MessageCircle, Edit3 } from 'lucide-react';
-import Link from 'next/link';
 import { format } from 'date-fns';
 import { ja } from 'date-fns/locale';
+import { ArrowLeft, Calendar, Edit3, MessageCircle, User } from 'lucide-react';
+import Link from 'next/link';
+import type React from 'react';
+import { useState } from 'react';
 
 interface HandoverDetailProps {
   handover: Handover;
@@ -21,101 +19,62 @@ interface HandoverDetailProps {
 }
 
 export const HandoverDetail: React.FC<HandoverDetailProps> = ({ handover, onUpdate }) => {
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [currentHandover, setCurrentHandover] = useState(handover);
 
   const formatDateTime = (dateString: string) => {
     return format(new Date(dateString), 'yyyy年MM月dd日 HH:mm', { locale: ja });
   };
 
-  const handleEditClick = () => {
-    setIsEditModalOpen(true);
-  };
-
-  const handleEditSubmit = async (data: HandoverFormData): Promise<boolean> => {
-    try {
-      // Simulate API call delay
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      // Mock API call - in production, this would call the actual API
-      const updatedHandover: Handover = {
-        ...currentHandover,
-        title: data.title,
-        content: data.content,
-        category: data.category,
-        priority: data.priority,
-        targetStaffIds: data.targetStaffIds,
-        residentId: data.residentId || undefined,
-        scheduledDate: data.scheduledDate || undefined,
-        scheduledTime: data.scheduledTime || undefined,
-        updatedAt: new Date().toISOString(),
-      };
-
-      console.log('Updating handover:', updatedHandover);
-
-      // Simulate occasional errors for testing
-      if (Math.random() < 0.1) {
-        throw new Error('ネットワークエラーが発生しました。');
-      }
-
-      setCurrentHandover(updatedHandover);
-      onUpdate?.(updatedHandover);
-      return true;
-    } catch (error) {
-      console.error('Failed to update handover:', error);
-      return false;
-    }
-  };
-
   return (
-    <>
-      <div className="p-4 md:p-6 bg-carebase-bg min-h-screen">
-        {/* Header */}
-        <div className="mb-6">
-          <div className="flex items-center gap-3 mb-4">
-            <Button variant="outline" asChild>
-              <Link href="/handovers">
-                <ArrowLeft className="h-4 w-4 mr-2" />
-                申し送り一覧に戻る
-              </Link>
-            </Button>
-            <div className="flex items-center gap-3">
-              <MessageCircle className="h-6 w-6 text-carebase-blue" />
-              <h1 className="text-2xl font-bold text-carebase-text-primary">申し送り詳細</h1>
-            </div>
+    <div className="p-4 md:p-6 bg-carebase-bg min-h-screen">
+      {/* Header */}
+      <div className="mb-6">
+        <div className="flex items-center gap-3 mb-4">
+          <Button variant="outline" asChild>
+            <Link href="/handovers">
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              申し送り一覧に戻る
+            </Link>
+          </Button>
+          <div className="flex items-center gap-3">
+            <MessageCircle className="h-6 w-6 text-carebase-blue" />
+            <h1 className="text-2xl font-bold text-carebase-text-primary">申し送り詳細</h1>
           </div>
         </div>
+      </div>
 
-        {/* Detail Card */}
-        <Card className="max-w-4xl">
-          <CardHeader>
-            <div className="flex items-start justify-between">
-              <div className="space-y-2">
-                <CardTitle className="text-xl text-carebase-text-primary">
-                  {currentHandover.title}
-                </CardTitle>
-                <div className="flex items-center gap-4 text-sm text-gray-600">
-                  <span>ID: {currentHandover.id}</span>
-                  <div className="flex items-center gap-1">
-                    <Calendar className="h-4 w-4" />
-                    <span>{formatDateTime(currentHandover.createdAt)}</span>
-                  </div>
+      {/* Detail Card */}
+      <Card className="max-w-4xl">
+        <CardHeader>
+          <div className="flex items-start justify-between">
+            <div className="space-y-2">
+              <CardTitle className="text-xl text-carebase-text-primary">
+                {currentHandover.title}
+              </CardTitle>
+              <div className="flex items-center gap-4 text-sm text-gray-600">
+                <span>ID: {currentHandover.id}</span>
+                <div className="flex items-center gap-1">
+                  <Calendar className="h-4 w-4" />
+                  <span>{formatDateTime(currentHandover.createdAt)}</span>
                 </div>
               </div>
-              <div className="flex items-center gap-2">
-                <Button
-                  variant="outline"
-                  onClick={handleEditClick}
-                  className="border-carebase-blue text-carebase-blue hover:bg-carebase-blue-light"
-                >
+            </div>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                asChild
+                className="border-carebase-blue text-carebase-blue hover:bg-carebase-blue-light"
+              >
+                <Link href={`/handovers/edit/${currentHandover.id}`}>
                   <Edit3 className="h-4 w-4 mr-2" />
                   編集
-                </Button>
-                <PriorityBadge priority={currentHandover.priority} />
-                <StatusBadge status={currentHandover.status} />
-              </div>
+                </Link>
+              </Button>
+              <PriorityBadge priority={currentHandover.priority} />
+              <StatusBadge status={currentHandover.status} />
             </div>
-          </CardHeader>
+          </div>
+        </CardHeader>
           <CardContent className="space-y-6">
             {/* Category */}
             <div className="flex items-center gap-2">
@@ -195,6 +154,5 @@ export const HandoverDetail: React.FC<HandoverDetailProps> = ({ handover, onUpda
           </CardContent>
         </Card>
       </div>
-    </div>
-  );
+    );
 };
