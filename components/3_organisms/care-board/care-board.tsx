@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { getLucideIcon } from '@/lib/lucide-icon-registry';
-import { careBoardData, careCategories, CareEvent } from '@/mocks/care-board-data';
+import { careBoardData, careCategoryGroups, CareEvent } from '@/mocks/care-board-data';
 import { addDays, format } from 'date-fns';
 import { ja } from 'date-fns/locale';
 import {
@@ -15,7 +15,6 @@ import {
   ClipboardEdit,
   Clock as ClockIcon,
   Filter,
-  Printer,
   Users,
 } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
@@ -23,7 +22,7 @@ import { toast } from 'sonner';
 import { BulkCareRecordModal } from './bulk-care-record-modal';
 import { TimeBaseView } from './care-board-time-base';
 import { UserBaseView } from './care-board-user-base';
-import { CARE_CATEGORY_COLORS, rgbToString } from './care-board-utils';
+import { rgbToString } from './care-board-utils';
 
 type ActiveTabView = 'time' | 'user';
 
@@ -56,7 +55,7 @@ export function CareBoard() {
   };
 
   return (
-    <div data-testid="care-board" className="p-4 md:p-6 bg-carebase-bg max-h-screen">
+    <div data-testid="care-board" className="p-4 bg-carebase-bg max-h-screen">
       <div className="mb-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div className="flex items-center gap-3 flex-wrap">
           <div className="flex items-center gap-1 rounded-lg bg-gray-200 p-1 shadow-sm">
@@ -98,13 +97,6 @@ export function CareBoard() {
           >
             <Filter className="h-4 w-4 mr-2 text-carebase-blue" />
             フィルター
-          </Button>
-          <Button
-            variant="outline"
-            className="bg-white border-carebase-blue text-carebase-blue hover:bg-carebase-blue-light font-medium px-3 py-2 text-sm shadow-sm"
-          >
-            <Printer className="h-4 w-4 mr-2 text-carebase-blue" />
-            印刷
           </Button>
         </div>
 
@@ -159,23 +151,23 @@ export function CareBoard() {
         <div className="mb-4 p-4 bg-white rounded-lg shadow-sm border border-gray-200">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
-              <h3 className="text-sm font-medium mb-2">ケア種別</h3>
+              <h3 className="text-sm font-medium mb-2">ケアカテゴリ</h3>
               <div className="flex flex-wrap gap-2">
-                {careCategories.slice(0, 6).map((category) => (
+                {careCategoryGroups.map((group) => (
                   <Button
-                    key={category.key}
+                    key={group.key}
                     variant="outline"
                     size="sm"
                     className="text-xs"
                     style={{
-                      borderColor: rgbToString(CARE_CATEGORY_COLORS[category.key]),
-                      color: rgbToString(CARE_CATEGORY_COLORS[category.key]),
+                      borderColor: rgbToString([...group.color]),
+                      color: rgbToString([...group.color]),
                     }}
                   >
-                    {React.createElement(getLucideIcon(category.icon), {
+                    {React.createElement(getLucideIcon(group.icon), {
                       className: 'h-3 w-3 mr-1',
                     })}
-                    {category.label}
+                    {group.label}
                   </Button>
                 ))}
               </div>

@@ -1,15 +1,9 @@
 'use client';
 
 import { MedicationForm } from '@/components/2_molecules/forms/medication-form';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
 import type { Medication, MedicationFormData } from '@/types/medication';
 import type React from 'react';
+import { GenericFormModal } from './generic-form-modal';
 
 interface MedicationModalProps {
   isOpen: boolean;
@@ -40,24 +34,15 @@ export const MedicationModal: React.FC<MedicationModalProps> = ({
     : undefined;
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent
-        className="max-w-4xl max-h-[90vh] overflow-y-auto"
-        data-testid="medication-modal"
-      >
-        <DialogHeader>
-          <DialogTitle className="text-xl font-bold text-carebase-text-primary">
-            {mode === 'create' ? 'お薬情報の登録' : 'お薬情報の編集'}
-          </DialogTitle>
-          <DialogDescription className="text-gray-600">
-            {residentName && `${residentName}様の`}お薬情報を
-            {mode === 'create' ? '登録' : '編集'}してください。 必須項目（
-            <span className="text-red-500">*</span>）は必ず入力してください。
-          </DialogDescription>
-        </DialogHeader>
-
-        <MedicationForm onSubmit={onSubmit} onCancel={onClose} initialData={initialData} />
-      </DialogContent>
-    </Dialog>
+    <GenericFormModal
+      isOpen={isOpen}
+      onClose={onClose}
+      title={mode === 'create' ? 'お薬情報の登録' : 'お薬情報の編集'}
+      description={`お薬情報を${mode === 'create' ? '登録' : '編集'}してください。`}
+      residentName={residentName}
+      testId="medication-modal"
+    >
+      <MedicationForm onSubmit={onSubmit} onCancel={onClose} initialData={initialData} />
+    </GenericFormModal>
   );
 };

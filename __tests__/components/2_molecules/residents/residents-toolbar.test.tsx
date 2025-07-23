@@ -1,4 +1,4 @@
-import { ResidentsToolbar } from '@/components/2_molecules/residents/residents-toolbar';
+import { ResidentsToolbar } from '@/components/2_molecules/resident/residents-toolbar';
 import { fireEvent, render, screen } from '@testing-library/react';
 
 // Mock the ResidentSearchBar component

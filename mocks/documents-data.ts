@@ -17,7 +17,7 @@ export interface DocumentFile {
   createdAt: string;
   updatedAt: string;
   createdBy: string;
-  fileType: 'pdf' | 'doc' | 'xlsx' | 'txt';
+  fileType: 'pdf' | 'doc' | 'xlsx' | 'txt' | 'html';
 }
 
 export type DocumentItem = DocumentFolder | DocumentFile;
@@ -89,7 +89,7 @@ export const documentsData: Record<string, DocumentItem[]> = {
       createdAt: '2025-01-20',
       updatedAt: '2025-01-20',
       createdBy: '田中 花子',
-      fileType: 'pdf',
+      fileType: 'html',
     },
     {
       id: 'file-2',
@@ -99,7 +99,7 @@ export const documentsData: Record<string, DocumentItem[]> = {
       createdAt: '2025-01-18',
       updatedAt: '2025-01-18',
       createdBy: '佐藤 太郎',
-      fileType: 'doc',
+      fileType: 'html',
     },
   ],
   'incident-reports': [
@@ -119,7 +119,7 @@ export const documentsData: Record<string, DocumentItem[]> = {
       createdAt: '2025-01-19',
       updatedAt: '2025-01-19',
       createdBy: '山田 美咲',
-      fileType: 'pdf',
+      fileType: 'html',
     },
     {
       id: 'file-4',
@@ -129,7 +129,7 @@ export const documentsData: Record<string, DocumentItem[]> = {
       createdAt: '2025-01-17',
       updatedAt: '2025-01-17',
       createdBy: '鈴木 一郎',
-      fileType: 'pdf',
+      fileType: 'html',
     },
   ],
   'accident-reports': [
@@ -149,7 +149,7 @@ export const documentsData: Record<string, DocumentItem[]> = {
       createdAt: '2025-01-15',
       updatedAt: '2025-01-15',
       createdBy: '高橋 恵子',
-      fileType: 'pdf',
+      fileType: 'html',
     },
   ],
   'event-plans': [
@@ -169,7 +169,7 @@ export const documentsData: Record<string, DocumentItem[]> = {
       createdAt: '2025-01-05',
       updatedAt: '2025-01-10',
       createdBy: '伊藤 健太',
-      fileType: 'doc',
+      fileType: 'html',
     },
     {
       id: 'file-7',
@@ -179,7 +179,7 @@ export const documentsData: Record<string, DocumentItem[]> = {
       createdAt: '2025-01-20',
       updatedAt: '2025-01-20',
       createdBy: '渡辺 由美',
-      fileType: 'xlsx',
+      fileType: 'html',
     },
   ],
   'other-documents': [
@@ -207,7 +207,7 @@ export const documentsData: Record<string, DocumentItem[]> = {
       createdAt: '2025-01-12',
       updatedAt: '2025-01-12',
       createdBy: '管理者 太郎',
-      fileType: 'pdf',
+      fileType: 'html',
     },
   ],
 };
