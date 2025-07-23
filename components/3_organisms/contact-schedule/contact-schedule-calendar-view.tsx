@@ -3,13 +3,14 @@
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { format, isSameDay } from 'date-fns';
+import { format, isSameDay, startOfWeek, endOfWeek, eachDayOfInterval, startOfMonth, endOfMonth, isSameMonth } from 'date-fns';
 import { ja } from 'date-fns/locale';
 import { Calendar, Clock, MessageCircle, User, Plus } from 'lucide-react';
 import React from 'react';
 
 interface ContactScheduleCalendarViewProps {
   selectedDate: Date | null;
+  viewMode: 'week' | 'month';
 }
 
 // モックデータ（日付別）
@@ -49,6 +50,30 @@ const mockCalendarData = [
     startTime: '08:00',
     endTime: '08:30',
     date: '2025-01-25',
+  },
+  {
+    id: '4',
+    title: '研修会',
+    content: '介護技術研修会を開催します',
+    type: '予定',
+    priority: 'medium',
+    status: 'confirmed',
+    assignedTo: '高橋 恵子',
+    startTime: '13:00',
+    endTime: '17:00',
+    date: '2025-01-27',
+  },
+  {
+    id: '5',
+    title: '新年会準備',
+    content: '利用者様との新年会の準備',
+    type: '予定',
+    priority: 'low',
+    status: 'pending',
+    assignedTo: '伊藤 健太',
+    startTime: '15:00',
+    endTime: '17:00',
+    date: '2025-01-28',
   },
 ];
 
@@ -91,7 +116,7 @@ const getStatusBadge = (status: string) => {
   }
 };
 
-export function ContactScheduleCalendarView({ selectedDate }: ContactScheduleCalendarViewProps) {
+export function ContactScheduleCalendarView({ selectedDate, viewMode }: ContactScheduleCalendarViewProps) {
   if (!selectedDate) {
     return (
       <div className="flex justify-center items-center h-64">
@@ -100,109 +125,190 @@ export function ContactScheduleCalendarView({ selectedDate }: ContactScheduleCal
     );
   }
 
-  // 選択された日付のデータをフィルタリング
-  const dayEvents = mockCalendarData.filter((event) =>
-    isSameDay(new Date(event.date), selectedDate)
-  );
+  // 表示期間を計算
+  const getDisplayPeriod = () => {
+    if (viewMode === 'week') {
+      return {
+        start: startOfWeek(selectedDate, { weekStartsOn: 1 }), // 月曜日開始
+        end: endOfWeek(selectedDate, { weekStartsOn: 1 }),
+      };
+    } else {
+      return {
+        start: startOfMonth(selectedDate),
+        end: endOfMonth(selectedDate),
+      };
+    }
+  };
 
-  // 時間順にソート
-  const sortedEvents = dayEvents.sort((a, b) => a.startTime.localeCompare(b.startTime));
+  const { start, end } = getDisplayPeriod();
+  const days = eachDayOfInterval({ start, end });
 
-  return (
+  // 期間内のイベントを取得
+  const getEventsForDate = (date: Date) => {
+    return mockCalendarData.filter((event) =>
+      isSameDay(new Date(event.date), date)
+    ).sort((a, b) => a.startTime.localeCompare(b.startTime));
+  };
+
+  // 週間表示のレンダリング
+  const renderWeekView = () => (
     <div className="space-y-4">
-      {/* 日付ヘッダー */}
+      {/* 週間ヘッダー */}
       <Card>
         <CardContent className="p-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <Calendar className="h-5 w-5 text-carebase-blue" />
               <h2 className="text-xl font-semibold text-carebase-text-primary">
-                {format(selectedDate, 'yyyy年MM月dd日 (E)', { locale: ja })}
+                {format(start, 'yyyy年MM月dd日', { locale: ja })} 〜 {format(end, 'MM月dd日 (E)', { locale: ja })}
               </h2>
             </div>
             <div className="text-sm text-gray-600">
-              {sortedEvents.length}件の予定・連絡事項
+              週間表示
             </div>
           </div>
         </CardContent>
       </Card>
 
-      {/* イベント一覧 */}
-      {sortedEvents.length > 0 ? (
-        <div className="space-y-3">
-          {sortedEvents.map((event) => (
-            <Card key={event.id} className="hover:shadow-md transition-shadow">
+      {/* 日別表示 */}
+      <div className="space-y-4">
+        {days.map((day) => {
+          const dayEvents = getEventsForDate(day);
+          const isToday = isSameDay(day, new Date());
+          const isSelected = isSameDay(day, selectedDate);
+          
+          return (
+            <Card key={day.toISOString()} className={`${isSelected ? 'ring-2 ring-carebase-blue' : ''} ${isToday ? 'bg-blue-50' : ''}`}>
               <CardContent className="p-4">
                 <div className="flex items-start gap-4">
-                  {/* 時間表示 */}
+                  {/* 日付表示 */}
                   <div className="flex-shrink-0 text-center">
-                    <div className="bg-carebase-blue text-white px-3 py-2 rounded-lg">
-                      <div className="text-sm font-semibold">{event.startTime}</div>
-                      <div className="text-xs">〜{event.endTime}</div>
+                    <div className={`px-3 py-2 rounded-lg ${isToday ? 'bg-carebase-blue text-white' : 'bg-gray-100'}`}>
+                      <div className="text-sm font-semibold">{format(day, 'MM/dd', { locale: ja })}</div>
+                      <div className="text-xs">{format(day, '(E)', { locale: ja })}</div>
                     </div>
                   </div>
 
-                  {/* メインコンテンツ */}
-                  <div className="flex-1 space-y-3">
-                    {/* ヘッダー */}
-                    <div className="flex items-start justify-between">
-                      <h3 className="font-semibold text-carebase-text-primary text-lg">
-                        {event.title}
-                      </h3>
-                      <div className="flex gap-2">
-                        {getTypeBadge(event.type)}
-                        {getPriorityBadge(event.priority)}
-                        {getStatusBadge(event.status)}
+                  {/* イベント一覧 */}
+                  <div className="flex-1">
+                    {dayEvents.length > 0 ? (
+                      <div className="space-y-2">
+                        {dayEvents.map((event) => (
+                          <div key={event.id} className="p-3 bg-white border rounded-lg hover:shadow-sm transition-shadow">
+                            <div className="flex items-start justify-between mb-2">
+                              <h4 className="font-medium text-carebase-text-primary">{event.title}</h4>
+                              <div className="flex gap-1">
+                                {getTypeBadge(event.type)}
+                                {getPriorityBadge(event.priority)}
+                              </div>
+                            </div>
+                            <p className="text-sm text-gray-600 mb-2">{event.content}</p>
+                            <div className="flex items-center justify-between text-xs text-gray-500">
+                              <div className="flex items-center gap-2">
+                                <Clock className="h-3 w-3" />
+                                <span>{event.startTime} - {event.endTime}</span>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <User className="h-3 w-3" />
+                                <span>{event.assignedTo}</span>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
                       </div>
-                    </div>
-
-                    {/* 内容 */}
-                    <p className="text-gray-600">{event.content}</p>
-
-                    {/* 担当者 */}
-                    <div className="flex items-center gap-2 text-sm text-gray-500">
-                      <User className="h-4 w-4" />
-                      <span>担当: {event.assignedTo}</span>
-                    </div>
-
-                    {/* アクションボタン */}
-                    <div className="flex gap-2">
-                      <Button size="sm" variant="outline">
-                        詳細
-                      </Button>
-                      {event.status === 'pending' && (
-                        <Button size="sm" className="bg-carebase-blue hover:bg-carebase-blue-dark">
-                          確認
-                        </Button>
-                      )}
-                      {event.status === 'confirmed' && (
-                        <Button size="sm" className="bg-green-600 hover:bg-green-700">
-                          完了
-                        </Button>
-                      )}
-                    </div>
+                    ) : (
+                      <div className="text-center py-8 text-gray-400">
+                        <MessageCircle className="h-8 w-8 mx-auto mb-2" />
+                        <p className="text-sm">予定がありません</p>
+                      </div>
+                    )}
                   </div>
                 </div>
               </CardContent>
             </Card>
-          ))}
-        </div>
-      ) : (
-        /* 空状態 */
-        <Card className="border-dashed border-2 border-gray-300">
-          <CardContent className="p-12 text-center">
-            <MessageCircle className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">予定・連絡事項がありません</h3>
-            <p className="text-gray-500 mb-4">
-              {format(selectedDate, 'MM月dd日', { locale: ja })}には予定や連絡事項がありません。
-            </p>
-            <Button className="bg-carebase-blue hover:bg-carebase-blue-dark">
-              <Plus className="h-4 w-4 mr-2" />
-              新規作成
-            </Button>
-          </CardContent>
-        </Card>
-      )}
+          );
+        })}
+      </div>
     </div>
+  );
+
+  // 月間表示のレンダリング
+  const renderMonthView = () => (
+    <div className="space-y-4">
+      {/* 月間ヘッダー */}
+      <Card>
+        <CardContent className="p-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <Calendar className="h-5 w-5 text-carebase-blue" />
+              <h2 className="text-xl font-semibold text-carebase-text-primary">
+                {format(selectedDate, 'yyyy年MM月', { locale: ja })}
+              </h2>
+            </div>
+            <div className="text-sm text-gray-600">
+              月間表示
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* カレンダーグリッド */}
+      <Card>
+        <CardContent className="p-4">
+          <div className="grid grid-cols-7 gap-2">
+            {/* 曜日ヘッダー */}
+            {['月', '火', '水', '木', '金', '土', '日'].map((day) => (
+              <div key={day} className="p-2 text-center text-sm font-medium text-gray-500 border-b">
+                {day}
+              </div>
+            ))}
+            
+            {/* 日付セル */}
+            {days.map((day) => {
+              const dayEvents = getEventsForDate(day);
+              const isToday = isSameDay(day, new Date());
+              const isCurrentMonth = isSameMonth(day, selectedDate);
+              
+              return (
+                <div
+                  key={day.toISOString()}
+                  className={`min-h-[120px] p-2 border rounded-lg ${
+                    isToday ? 'bg-blue-50 border-carebase-blue' : 'border-gray-200'
+                  } ${!isCurrentMonth ? 'opacity-50' : ''}`}
+                >
+                  <div className={`text-sm font-medium mb-1 ${isToday ? 'text-carebase-blue' : 'text-gray-700'}`}>
+                    {format(day, 'd')}
+                  </div>
+                  <div className="space-y-1">
+                    {dayEvents.slice(0, 3).map((event) => (
+                      <div
+                        key={event.id}
+                        className={`text-xs p-1 rounded truncate ${
+                          event.type === '予定' ? 'bg-blue-100 text-blue-700' :
+                          event.type === '連絡事項' ? 'bg-green-100 text-green-700' :
+                          'bg-purple-100 text-purple-700'
+                        }`}
+                        title={event.title}
+                      >
+                        {event.startTime} {event.title}
+                      </div>
+                    ))}
+                    {dayEvents.length > 3 && (
+                      <div className="text-xs text-gray-500 text-center">
+                        +{dayEvents.length - 3}件
+                      </div>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+
+  return (
+    viewMode === 'week' ? renderWeekView() : renderMonthView()
   );
 }

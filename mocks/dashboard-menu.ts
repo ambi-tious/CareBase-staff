@@ -33,8 +33,8 @@ export const dashboardMenu: NavCategory[] = [
     title: '連絡・予定',
     icon: 'MessageSquare',
     links: [
-      { label: 'ボード表示', href: '/contact-schedule', icon: 'Presentation' },
-      { label: 'カレンダー表示', href: '/contact-schedule', icon: 'Calendar' },
+      { label: '週間表示', href: '/contact-schedule', icon: 'Calendar' },
+      { label: '月間表示', href: '/contact-schedule', icon: 'Calendar' },
     ],
   },
   {

@@ -4,7 +4,6 @@ import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { addDays, format } from 'date-fns';
 import { ja } from 'date-fns/locale';
 import {
@@ -14,14 +13,12 @@ import {
   Filter,
   MessageSquare,
   Plus,
-  Presentation,
 } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { ContactScheduleCalendarView } from './contact-schedule-calendar-view';
-import { ContactScheduleKanbanView } from './contact-schedule-kanban-view';
 
 export function ContactScheduleBoard() {
-  const [activeView, setActiveView] = useState<'kanban' | 'calendar'>('kanban');
+  const [calendarView, setCalendarView] = useState<'week' | 'month'>('week');
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [showFilters, setShowFilters] = useState<boolean>(false);
 
@@ -42,26 +39,26 @@ export function ContactScheduleBoard() {
           
           <div className="flex items-center gap-1 rounded-lg bg-gray-200 p-1 shadow-sm">
             <Button
-              onClick={() => setActiveView('kanban')}
+              onClick={() => setCalendarView('week')}
               className={`px-4 py-2.5 font-medium text-base ${
-                activeView === 'kanban'
-                  ? 'bg-carebase-blue hover:bg-carebase-blue-dark text-white shadow-sm'
-                  : 'bg-transparent text-gray-700 hover:bg-gray-300'
-              }`}
-            >
-              <Presentation className="h-4 w-4 mr-2" />
-              ボード表示
-            </Button>
-            <Button
-              onClick={() => setActiveView('calendar')}
-              className={`px-4 py-2.5 font-medium text-base ${
-                activeView === 'calendar'
+                calendarView === 'week'
                   ? 'bg-carebase-blue hover:bg-carebase-blue-dark text-white shadow-sm'
                   : 'bg-transparent text-gray-700 hover:bg-gray-300'
               }`}
             >
               <CalendarIcon className="h-4 w-4 mr-2" />
-              カレンダー表示
+              週間表示
+            </Button>
+            <Button
+              onClick={() => setCalendarView('month')}
+              className={`px-4 py-2.5 font-medium text-base ${
+                calendarView === 'month'
+                  ? 'bg-carebase-blue hover:bg-carebase-blue-dark text-white shadow-sm'
+                  : 'bg-transparent text-gray-700 hover:bg-gray-300'
+              }`}
+            >
+              <CalendarIcon className="h-4 w-4 mr-2" />
+              月間表示
             </Button>
           </div>
         </div>
@@ -83,53 +80,51 @@ export function ContactScheduleBoard() {
             新規作成
           </Button>
 
-          {/* 日付選択（カレンダー表示時のみ） */}
-          {activeView === 'calendar' && (
-            <div className="flex items-center gap-2">
-              <Button
-                variant="outline"
-                className="bg-white border-carebase-blue text-carebase-blue hover:bg-carebase-blue-light font-medium px-3 py-2 text-sm shadow-sm"
-                onClick={() => selectedDate && setSelectedDate(addDays(selectedDate, -1))}
-              >
-                <ChevronLeft className="h-4 w-4 mr-1" />
-                前日
-              </Button>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant={'outline'}
-                    className="w-[160px] justify-start text-left font-medium text-carebase-text-primary text-base bg-white border-carebase-blue hover:bg-carebase-blue-light px-3 py-2 shadow-sm"
-                  >
-                    <CalendarIcon className="mr-2 h-4 w-4 text-carebase-blue" />
-                    {selectedDate
-                      ? format(selectedDate, 'M月d日 (E)', { locale: ja })
-                      : '読み込み中...'}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0">
-                  <Calendar
-                    mode="single"
-                    selected={selectedDate || undefined}
-                    onSelect={(date) => {
-                      if (date) {
-                        setSelectedDate(date);
-                      }
-                    }}
-                    initialFocus
-                    locale={ja}
-                  />
-                </PopoverContent>
-              </Popover>
-              <Button
-                variant="outline"
-                className="bg-white border-carebase-blue text-carebase-blue hover:bg-carebase-blue-light font-medium px-3 py-2 text-sm shadow-sm"
-                onClick={() => selectedDate && setSelectedDate(addDays(selectedDate, 1))}
-              >
-                翌日
-                <ChevronRight className="h-4 w-4 ml-1" />
-              </Button>
-            </div>
-          )}
+          {/* 日付ナビゲーション */}
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              className="bg-white border-carebase-blue text-carebase-blue hover:bg-carebase-blue-light font-medium px-3 py-2 text-sm shadow-sm"
+              onClick={() => selectedDate && setSelectedDate(addDays(selectedDate, calendarView === 'week' ? -7 : -30))}
+            >
+              <ChevronLeft className="h-4 w-4 mr-1" />
+              {calendarView === 'week' ? '前週' : '前月'}
+            </Button>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant={'outline'}
+                  className="w-[160px] justify-start text-left font-medium text-carebase-text-primary text-base bg-white border-carebase-blue hover:bg-carebase-blue-light px-3 py-2 shadow-sm"
+                >
+                  <CalendarIcon className="mr-2 h-4 w-4 text-carebase-blue" />
+                  {selectedDate
+                    ? format(selectedDate, calendarView === 'week' ? 'M月d日 (E)' : 'yyyy年M月', { locale: ja })
+                    : '読み込み中...'}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0">
+                <Calendar
+                  mode="single"
+                  selected={selectedDate || undefined}
+                  onSelect={(date) => {
+                    if (date) {
+                      setSelectedDate(date);
+                    }
+                  }}
+                  initialFocus
+                  locale={ja}
+                />
+              </PopoverContent>
+            </Popover>
+            <Button
+              variant="outline"
+              className="bg-white border-carebase-blue text-carebase-blue hover:bg-carebase-blue-light font-medium px-3 py-2 text-sm shadow-sm"
+              onClick={() => selectedDate && setSelectedDate(addDays(selectedDate, calendarView === 'week' ? 7 : 30))}
+            >
+              {calendarView === 'week' ? '翌週' : '翌月'}
+              <ChevronRight className="h-4 w-4 ml-1" />
+            </Button>
+          </div>
         </div>
       </div>
 
@@ -189,11 +184,7 @@ export function ContactScheduleBoard() {
       )}
 
       {/* メインコンテンツ */}
-      {activeView === 'kanban' ? (
-        <ContactScheduleKanbanView />
-      ) : (
-        <ContactScheduleCalendarView selectedDate={selectedDate} />
-      )}
+      <ContactScheduleCalendarView selectedDate={selectedDate} viewMode={calendarView} />
     </div>
   );
 }
