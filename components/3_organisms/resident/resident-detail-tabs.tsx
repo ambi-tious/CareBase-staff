@@ -10,6 +10,7 @@ import { MedicalInstitutionCard } from '@/components/2_molecules/resident/medica
 import { MedicationCard as OldMedicationCard } from '@/components/2_molecules/resident/medication-card';
 import { ContactEditModal } from '@/components/3_organisms/modals/contact-edit-modal';
 import { HomeCareOfficeModal } from '@/components/3_organisms/modals/home-care-office-modal';
+import { MedicalHistoryModal } from '@/components/3_organisms/modals/medical-history-modal';
 import { MedicalInstitutionModal } from '@/components/3_organisms/modals/medical-institution-modal';
 import { MedicationModal } from '@/components/3_organisms/modals/medication-modal';
 import { MedicationStatusModal } from '@/components/3_organisms/modals/medication-status-modal';
@@ -611,6 +612,7 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
         onClose={() => setIsMedicationStatusModalOpen(false)}
         onSubmit={handleMedicationStatusSubmit}
         residentName={resident.name}
+        mode="create"
       />
     </>
   );
