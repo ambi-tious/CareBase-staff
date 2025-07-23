@@ -46,7 +46,7 @@ export const GenericFormModal: React.FC<GenericFormModalProps> = ({
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className={className} data-testid={testId}>
         <DialogHeader>
-          <DialogTitle className="text-xl font-bold text-carebase-text-primary tablet:text-tablet-2xl">
+          <DialogTitle className="text-xl font-bold text-carebase-text-primary">
             {title}
           </DialogTitle>
           {fullDescription && (

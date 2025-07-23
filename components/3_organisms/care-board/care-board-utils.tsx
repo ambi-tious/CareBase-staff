@@ -719,7 +719,7 @@ export const CareRecordModal: React.FC<CareRecordModalProps> = ({
                 value={updatedEvent.details || ''}
                 onChange={(e) => setUpdatedEvent({ ...updatedEvent, details: e.target.value })}
                 placeholder="備考があれば入力してください"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md tablet-landscape:px-4 tablet-landscape:py-3 tablet-landscape:text-base"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md tablet-landscape:px-4 tablet-landscape:py-3"
                 rows={3}
               />
             </div>
