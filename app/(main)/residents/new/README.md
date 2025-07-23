@@ -16,7 +16,7 @@ Issue: [#135 [設計] #004 利用者｜利用者登録](https://github.com/ambi-
 
 ### 画面構成
 
-<img alt="新規利用者登録画面" src="https://github.com/user-attachments/assets/943ca05a-61f1-4ecb-bcc4-150ccee5a4a5" />
+<img width="1041" height="949" alt="image" src="https://github.com/user-attachments/assets/71bde3e1-ece2-41e7-8624-b495e9775a0a" />
 
 職員による利用者情報入力のためのフォーム画面として以下の要素で構成：
 
