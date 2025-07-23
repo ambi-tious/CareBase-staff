@@ -15,7 +15,6 @@ import {
   ClipboardEdit,
   Clock as ClockIcon,
   Filter,
-  Printer,
   Users,
 } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
@@ -56,7 +55,7 @@ export function CareBoard() {
   };
 
   return (
-    <div data-testid="care-board" className="p-4 md:p-6 bg-carebase-bg max-h-screen">
+    <div data-testid="care-board" className="p-4 bg-carebase-bg max-h-screen">
       <div className="mb-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div className="flex items-center gap-3 flex-wrap">
           <div className="flex items-center gap-1 rounded-lg bg-gray-200 p-1 shadow-sm">
@@ -98,13 +97,6 @@ export function CareBoard() {
           >
             <Filter className="h-4 w-4 mr-2 text-carebase-blue" />
             フィルター
-          </Button>
-          <Button
-            variant="outline"
-            className="bg-white border-carebase-blue text-carebase-blue hover:bg-carebase-blue-light font-medium px-3 py-2 text-sm shadow-sm"
-          >
-            <Printer className="h-4 w-4 mr-2 text-carebase-blue" />
-            印刷
           </Button>
         </div>
 

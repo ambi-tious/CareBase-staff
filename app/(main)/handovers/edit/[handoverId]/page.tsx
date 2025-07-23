@@ -1,15 +1,15 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Alert, AlertDescription } from '@/components/ui/alert';
 import { HandoverForm } from '@/components/2_molecules/handover/handover-form';
-import type { HandoverFormData, Handover } from '@/types/handover';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { getHandoverById } from '@/mocks/handover-data';
-import { ArrowLeft, Edit3, CheckCircle } from 'lucide-react';
+import type { Handover, HandoverFormData } from '@/types/handover';
+import { ArrowLeft, CheckCircle, Edit3 } from 'lucide-react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 interface EditHandoverPageProps {
   params: Promise<{ handoverId: string }>;
@@ -43,7 +43,6 @@ export default function EditHandoverPage({ params }: EditHandoverPageProps) {
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
       // Mock API call - in production, this would call the actual API
-      console.log('Updating handover:', { ...data, isDraft, handoverId: handover?.id });
 
       // Simulate occasional errors for testing
       if (Math.random() < 0.1) {

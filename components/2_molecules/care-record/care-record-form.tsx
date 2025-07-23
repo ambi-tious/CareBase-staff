@@ -102,7 +102,6 @@ export const CareRecordForm: React.FC<CareRecordFormProps> = ({
     const success = await saveDraft();
     if (success) {
       // Show success message but don't close form
-      console.log('Draft saved successfully');
     }
   }, [saveDraft]);
 
