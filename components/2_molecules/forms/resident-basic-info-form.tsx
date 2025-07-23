@@ -1,8 +1,8 @@
 'use client';
 
-import type React from 'react';
 import { FormField } from '@/components/1_atoms/forms/form-field';
 import { FormSelect } from '@/components/1_atoms/forms/form-select';
+import type React from 'react';
 
 export interface ResidentBasicInfo {
   name: string;
