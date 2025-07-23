@@ -2,7 +2,9 @@
 
 import { FormField } from '@/components/1_atoms/forms/form-field';
 import { FormSelect } from '@/components/1_atoms/forms/form-select';
+import { getAllGroupOptions, getAllTeamOptions } from '@/utils/staff-utils';
 import type React from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 export interface ResidentBasicInfo {
   name: string;
@@ -24,6 +26,19 @@ interface ResidentBasicInfoFormProps {
   disabled?: boolean;
 }
 
+// Interface for selected staff data from localStorage
+interface SelectedStaffData {
+  staff: {
+    id: string;
+    name: string;
+    furigana: string;
+    role: string;
+    employeeId: string;
+  };
+  groupName: string;
+  teamName: string;
+}
+
 const sexOptions = [
   { value: '男', label: '男性' },
   { value: '女', label: '女性' },
@@ -41,19 +56,9 @@ const careLevelOptions = [
   { value: '要介護5', label: '要介護5' },
 ];
 
-const floorGroupOptions = [
-  { value: 'サンプルグループ101', label: 'サンプルグループ101' },
-  { value: 'サンプルグループ102', label: 'サンプルグループ102' },
-  { value: 'サンプルグループ201', label: 'サンプルグループ201' },
-  { value: 'サンプルグループ202', label: 'サンプルグループ202' },
-];
-
-const unitTeamOptions = [
-  { value: 'テストチーム1', label: 'テストチーム1' },
-  { value: 'テストチーム2', label: 'テストチーム2' },
-  { value: 'テストチーム3', label: 'テストチーム3' },
-  { value: 'テストチーム4', label: 'テストチーム4' },
-];
+// Get options from staff-utils.ts
+const floorGroupOptions = getAllGroupOptions();
+const unitTeamOptions = getAllTeamOptions();
 
 export const ResidentBasicInfoForm: React.FC<ResidentBasicInfoFormProps> = ({
   data,
@@ -61,6 +66,50 @@ export const ResidentBasicInfoForm: React.FC<ResidentBasicInfoFormProps> = ({
   errors,
   disabled = false,
 }) => {
+  const [selectedStaffData, setSelectedStaffData] = useState<SelectedStaffData | null>(null);
+  const hasInitialized = useRef(false);
+
+  // Load current logged-in user's group and team information
+  useEffect(() => {
+    const loadSelectedStaffData = () => {
+      try {
+        const staffData = localStorage.getItem('carebase_selected_staff_data');
+        if (staffData) {
+          const parsedData: SelectedStaffData = JSON.parse(staffData);
+          setSelectedStaffData(parsedData);
+          
+          // Auto-set the group and team fields based on current user only if not already initialized
+          // or if the values are different (e.g., user switched staff)
+          if (!hasInitialized.current || 
+              data.floorGroup !== parsedData.groupName || 
+              data.unitTeam !== parsedData.teamName) {
+            onChange({ 
+              ...data, 
+              floorGroup: parsedData.groupName,
+              unitTeam: parsedData.teamName
+            });
+            hasInitialized.current = true;
+          }
+        }
+      } catch (error) {
+        console.error('Failed to load selected staff data:', error);
+      }
+    };
+
+    loadSelectedStaffData();
+
+    // Listen for storage changes (in case user switches staff)
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'carebase_selected_staff_data') {
+        hasInitialized.current = false; // Reset initialization state when staff changes
+        loadSelectedStaffData();
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
+  }, [data, onChange]); // Added back dependencies but with proper logic to prevent infinite loop
+
   const updateField = (field: keyof ResidentBasicInfo, value: string) => {
     onChange({ ...data, [field]: value });
   };
@@ -138,7 +187,7 @@ export const ResidentBasicInfoForm: React.FC<ResidentBasicInfoFormProps> = ({
           onChange={(value) => updateField('floorGroup', value)}
           options={floorGroupOptions}
           error={errors.floorGroup}
-          disabled={disabled}
+          disabled={true} // Always disabled - set by current user's group
         />
 
         <FormSelect
@@ -148,7 +197,7 @@ export const ResidentBasicInfoForm: React.FC<ResidentBasicInfoFormProps> = ({
           onChange={(value) => updateField('unitTeam', value)}
           options={unitTeamOptions}
           error={errors.unitTeam}
-          disabled={disabled}
+          disabled={true} // Always disabled - set by current user's team
         />
 
         <FormField
