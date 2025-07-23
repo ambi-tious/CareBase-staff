@@ -17,7 +17,7 @@ export const RecordTypeFilter: React.FC<RecordTypeFilterProps> = ({
 }) => {
   const handleTypeToggle = (type: RecordType) => {
     const newTypes = selectedTypes.includes(type)
-      ? selectedTypes.filter(t => t !== type)
+      ? selectedTypes.filter((t) => t !== type)
       : [...selectedTypes, type];
     onTypesChange(newTypes);
   };
@@ -26,7 +26,7 @@ export const RecordTypeFilter: React.FC<RecordTypeFilterProps> = ({
     if (selectedTypes.length === recordTypeOptions.length) {
       onTypesChange([]);
     } else {
-      onTypesChange(recordTypeOptions.map(option => option.value));
+      onTypesChange(recordTypeOptions.map((option) => option.value));
     }
   };
 
@@ -36,9 +36,9 @@ export const RecordTypeFilter: React.FC<RecordTypeFilterProps> = ({
     } else if (selectedTypes.length === recordTypeOptions.length) {
       return 'すべての記録種別';
     } else {
-      const labels = selectedTypes.map(type => 
-        recordTypeOptions.find(option => option.value === type)?.label
-      ).filter(Boolean);
+      const labels = selectedTypes
+        .map((type) => recordTypeOptions.find((option) => option.value === type)?.label)
+        .filter(Boolean);
       return labels.join(', ');
     }
   };
@@ -46,10 +46,7 @@ export const RecordTypeFilter: React.FC<RecordTypeFilterProps> = ({
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button
-          variant="outline"
-          className="min-w-[180px] justify-between"
-        >
+        <Button variant="outline" className="min-w-[180px] justify-between">
           <div className="flex items-center gap-2">
             <Filter className="h-4 w-4" />
             <span className="truncate">{getDisplayText()}</span>
@@ -70,7 +67,7 @@ export const RecordTypeFilter: React.FC<RecordTypeFilterProps> = ({
               {selectedTypes.length === recordTypeOptions.length ? '全解除' : '全選択'}
             </Button>
           </div>
-          
+
           <div className="space-y-2">
             {recordTypeOptions.map((option) => (
               <div key={option.value} className="flex items-center space-x-2">

@@ -68,12 +68,10 @@ export const DailyRecordView: React.FC<DailyRecordViewProps> = ({
         <div className="text-sm text-gray-600">
           {filteredRecords.length}件の記録データ
           {hasFiltersApplied && records.length !== filteredRecords.length && (
-            <span className="text-gray-400 ml-1">
-              (全{records.length}件中)
-            </span>
+            <span className="text-gray-400 ml-1">(全{records.length}件中)</span>
           )}
         </div>
-        
+
         <div className="flex items-center gap-2">
           {onExport && sortedRecords.length > 0 && (
             <Button
@@ -86,7 +84,7 @@ export const DailyRecordView: React.FC<DailyRecordViewProps> = ({
               エクスポート
             </Button>
           )}
-          
+
           {onAddRecord && (
             <Button
               size="sm"
@@ -105,20 +103,14 @@ export const DailyRecordView: React.FC<DailyRecordViewProps> = ({
         {sortedRecords.map((record, index) => (
           <div key={record.id} className="relative">
             {/* Timeline connector */}
-            {index > 0 && (
-              <div className="absolute left-4 -top-4 w-0.5 h-4 bg-gray-200" />
-            )}
-            
+            {index > 0 && <div className="absolute left-4 -top-4 w-0.5 h-4 bg-gray-200" />}
+
             {/* Timeline dot */}
             <div className="absolute left-2 top-6 w-3 h-3 bg-carebase-blue rounded-full border-2 border-white shadow-sm z-10" />
-            
+
             {/* Record card with left margin for timeline */}
             <div className="ml-8">
-              <RecordCard
-                record={record}
-                onEdit={onEditRecord}
-                onDelete={onDeleteRecord}
-              />
+              <RecordCard record={record} onEdit={onEditRecord} onDelete={onDeleteRecord} />
             </div>
           </div>
         ))}
@@ -127,9 +119,7 @@ export const DailyRecordView: React.FC<DailyRecordViewProps> = ({
       {/* Load more or pagination can be added here if needed */}
       {sortedRecords.length > 0 && (
         <div className="text-center pt-4">
-          <div className="text-sm text-gray-500">
-            記録データの表示が完了しました
-          </div>
+          <div className="text-sm text-gray-500">記録データの表示が完了しました</div>
         </div>
       )}
     </div>

@@ -47,7 +47,7 @@ export const RecordDataTabs: React.FC<RecordDataTabsProps> = ({ residentId }) =>
     const isToday = format(selectedDate, 'yyyy-MM-dd') === format(today, 'yyyy-MM-dd');
     const allTypesSelected = selectedTypes.length === 3;
     const noSearchQuery = searchQuery.trim() === '';
-    
+
     return !isToday || !allTypesSelected || !noSearchQuery;
   }, [selectedDate, selectedTypes, searchQuery]);
 
@@ -97,23 +97,16 @@ export const RecordDataTabs: React.FC<RecordDataTabsProps> = ({ residentId }) =>
         <div className="bg-white p-4 rounded-lg border space-y-4">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-              <DateFilter
-                date={selectedDate}
-                onDateChange={setSelectedDate}
-                viewMode={viewMode}
-              />
-              
+              <DateFilter date={selectedDate} onDateChange={setSelectedDate} viewMode={viewMode} />
+
               {viewMode === 'daily' && (
                 <>
                   <RecordTypeFilter
                     selectedTypes={selectedTypes}
                     onTypesChange={setSelectedTypes}
                   />
-                  
-                  <SearchFilter
-                    searchQuery={searchQuery}
-                    onSearchChange={setSearchQuery}
-                  />
+
+                  <SearchFilter searchQuery={searchQuery} onSearchChange={setSearchQuery} />
                 </>
               )}
             </div>
@@ -146,10 +139,7 @@ export const RecordDataTabs: React.FC<RecordDataTabsProps> = ({ residentId }) =>
         </TabsContent>
 
         <TabsContent value="monthly" className="mt-6">
-          <MonthlyRecordView
-            monthlyData={currentMonthlyData}
-            onExport={handleExport}
-          />
+          <MonthlyRecordView monthlyData={currentMonthlyData} onExport={handleExport} />
         </TabsContent>
       </Tabs>
     </div>

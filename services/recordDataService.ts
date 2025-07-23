@@ -1,4 +1,9 @@
-import type { RecordDataItem, MonthlyData, RecordDataResponse, MonthlyDataResponse } from '@/types/record-data';
+import type {
+  RecordDataItem,
+  MonthlyData,
+  RecordDataResponse,
+  MonthlyDataResponse,
+} from '@/types/record-data';
 import { getResidentRecordData, getResidentMonthlyData } from '@/mocks/record-data';
 
 class RecordDataService {
@@ -8,10 +13,10 @@ class RecordDataService {
   async getRecordData(residentId: string, date: string): Promise<RecordDataResponse> {
     try {
       // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 100));
-      
+      await new Promise((resolve) => setTimeout(resolve, 100));
+
       const records = getResidentRecordData(residentId, date);
-      
+
       return {
         date,
         records,
@@ -29,10 +34,10 @@ class RecordDataService {
   async getMonthlyData(residentId: string, month: string): Promise<MonthlyDataResponse> {
     try {
       // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 150));
-      
+      await new Promise((resolve) => setTimeout(resolve, 150));
+
       const data = getResidentMonthlyData(residentId, month);
-      
+
       return {
         month,
         data,
@@ -55,10 +60,11 @@ class RecordDataService {
     try {
       // First get the base data
       const baseResponse = await this.getRecordData(residentId, date);
-      
+
       // Filter records based on search criteria
-      const filteredRecords = baseResponse.records.filter(record => {
-        const matchesQuery = !query || 
+      const filteredRecords = baseResponse.records.filter((record) => {
+        const matchesQuery =
+          !query ||
           record.title.toLowerCase().includes(query.toLowerCase()) ||
           record.content.toLowerCase().includes(query.toLowerCase()) ||
           record.staffName.toLowerCase().includes(query.toLowerCase());
@@ -82,15 +88,20 @@ class RecordDataService {
   /**
    * Create new record data
    */
-  async createRecordData(residentId: string, recordData: Partial<RecordDataItem>): Promise<RecordDataItem> {
+  async createRecordData(
+    residentId: string,
+    recordData: Partial<RecordDataItem>
+  ): Promise<RecordDataItem> {
     try {
       // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 200));
-      
+      await new Promise((resolve) => setTimeout(resolve, 200));
+
       const newRecord: RecordDataItem = {
         id: `rd-${Date.now()}`,
         type: recordData.type || 'care',
-        time: recordData.time || new Date().toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' }),
+        time:
+          recordData.time ||
+          new Date().toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' }),
         title: recordData.title || '',
         content: recordData.content || '',
         staffName: recordData.staffName || 'システムユーザー',
@@ -103,7 +114,7 @@ class RecordDataService {
 
       // In a real app, this would save to a database
       console.log('Created record:', newRecord);
-      
+
       return newRecord;
     } catch (error) {
       console.error('Failed to create record data:', error);
@@ -114,11 +125,14 @@ class RecordDataService {
   /**
    * Update existing record data
    */
-  async updateRecordData(recordId: string, recordData: Partial<RecordDataItem>): Promise<RecordDataItem> {
+  async updateRecordData(
+    recordId: string,
+    recordData: Partial<RecordDataItem>
+  ): Promise<RecordDataItem> {
     try {
       // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 200));
-      
+      await new Promise((resolve) => setTimeout(resolve, 200));
+
       // In a real app, this would update the database
       const updatedRecord: RecordDataItem = {
         id: recordId,
@@ -135,7 +149,7 @@ class RecordDataService {
       };
 
       console.log('Updated record:', updatedRecord);
-      
+
       return updatedRecord;
     } catch (error) {
       console.error('Failed to update record data:', error);
@@ -149,11 +163,11 @@ class RecordDataService {
   async deleteRecordData(recordId: string): Promise<boolean> {
     try {
       // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 100));
-      
+      await new Promise((resolve) => setTimeout(resolve, 100));
+
       // In a real app, this would delete from database
       console.log('Deleted record:', recordId);
-      
+
       return true;
     } catch (error) {
       console.error('Failed to delete record data:', error);
@@ -172,11 +186,11 @@ class RecordDataService {
   ): Promise<Blob> {
     try {
       // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 500));
-      
+      await new Promise((resolve) => setTimeout(resolve, 500));
+
       // In a real app, this would generate and return the file
       const mockData = `日付,時刻,種別,タイトル,内容,担当者\n2025-01-21,08:30,ケア記録,朝食介助,朝食を8割程度摂取...,田中 花子`;
-      
+
       return new Blob([mockData], { type: 'text/csv;charset=utf-8' });
     } catch (error) {
       console.error('Failed to export record data:', error);

@@ -49,12 +49,7 @@ export const DateFilter: React.FC<DateFilterProps> = ({ date, onDateChange, view
 
   return (
     <div className="flex items-center gap-2">
-      <Button
-        variant="outline"
-        size="sm"
-        onClick={handlePrevious}
-        className="h-8 w-8 p-0"
-      >
+      <Button variant="outline" size="sm" onClick={handlePrevious} className="h-8 w-8 p-0">
         <ChevronLeft className="h-4 w-4" />
         <span className="sr-only">前の{viewMode === 'daily' ? '日' : '月'}</span>
       </Button>
@@ -83,22 +78,12 @@ export const DateFilter: React.FC<DateFilterProps> = ({ date, onDateChange, view
         </PopoverContent>
       </Popover>
 
-      <Button
-        variant="outline"
-        size="sm"
-        onClick={handleNext}
-        className="h-8 w-8 p-0"
-      >
+      <Button variant="outline" size="sm" onClick={handleNext} className="h-8 w-8 p-0">
         <ChevronRight className="h-4 w-4" />
         <span className="sr-only">次の{viewMode === 'daily' ? '日' : '月'}</span>
       </Button>
 
-      <Button
-        variant="outline"
-        size="sm"
-        onClick={handleToday}
-        className="ml-2"
-      >
+      <Button variant="outline" size="sm" onClick={handleToday} className="ml-2">
         今{viewMode === 'daily' ? '日' : '月'}
       </Button>
     </div>

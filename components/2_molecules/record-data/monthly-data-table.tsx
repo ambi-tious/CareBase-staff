@@ -2,7 +2,14 @@
 
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
 import type { MonthlyStats } from '@/types/record-data';
 import { format } from 'date-fns';
 import { ja } from 'date-fns/locale';
@@ -34,7 +41,9 @@ export const MonthlyDataTable: React.FC<MonthlyDataTableProps> = ({ stats, month
     }
   };
 
-  const sortedStats = [...stats].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+  const sortedStats = [...stats].sort(
+    (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
+  );
 
   return (
     <div className="space-y-4">
@@ -60,21 +69,25 @@ export const MonthlyDataTable: React.FC<MonthlyDataTableProps> = ({ stats, month
             <TableBody>
               {sortedStats.map((stat) => (
                 <TableRow key={stat.date} className="hover:bg-gray-50">
-                  <TableCell className="font-medium">
-                    {formatDate(stat.date)}
-                  </TableCell>
+                  <TableCell className="font-medium">{formatDate(stat.date)}</TableCell>
                   <TableCell className="text-center">
                     <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
                       {stat.careRecordCount}
                     </Badge>
                   </TableCell>
                   <TableCell className="text-center">
-                    <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
+                    <Badge
+                      variant="outline"
+                      className="bg-green-50 text-green-700 border-green-200"
+                    >
                       {stat.nursingRecordCount}
                     </Badge>
                   </TableCell>
                   <TableCell className="text-center">
-                    <Badge variant="outline" className="bg-orange-50 text-orange-700 border-orange-200">
+                    <Badge
+                      variant="outline"
+                      className="bg-orange-50 text-orange-700 border-orange-200"
+                    >
                       {stat.handoverCount}
                     </Badge>
                   </TableCell>
@@ -91,11 +104,8 @@ export const MonthlyDataTable: React.FC<MonthlyDataTableProps> = ({ stats, month
                   <TableCell className="text-center">
                     {stat.completionRate ? (
                       <div className="flex items-center gap-2">
-                        <Progress 
-                          value={stat.completionRate} 
-                          className="w-16 h-2"
-                        />
-                        <Badge 
+                        <Progress value={stat.completionRate} className="w-16 h-2" />
+                        <Badge
                           variant={getCompletionRateVariant(stat.completionRate)}
                           className="text-xs min-w-[45px]"
                         >
@@ -121,35 +131,41 @@ export const MonthlyDataTable: React.FC<MonthlyDataTableProps> = ({ stats, month
             {stats.reduce((sum, stat) => sum + stat.totalRecords, 0)}
           </div>
         </div>
-        
+
         <div className="bg-white p-4 rounded-lg border">
           <div className="text-sm text-gray-500 mb-1">1日平均</div>
           <div className="text-2xl font-bold text-gray-900">
             {(stats.reduce((sum, stat) => sum + stat.totalRecords, 0) / stats.length).toFixed(1)}
           </div>
         </div>
-        
+
         <div className="bg-white p-4 rounded-lg border">
           <div className="text-sm text-gray-500 mb-1">平均完了率</div>
           <div className="text-2xl font-bold text-gray-900">
-            {stats.filter(s => s.completionRate).length > 0 ? (
-              stats
-                .filter(s => s.completionRate)
-                .reduce((sum, stat) => sum + (stat.completionRate || 0), 0) / 
-              stats.filter(s => s.completionRate).length
-            ).toFixed(1) : '0'}%
+            {stats.filter((s) => s.completionRate).length > 0
+              ? (
+                  stats
+                    .filter((s) => s.completionRate)
+                    .reduce((sum, stat) => sum + (stat.completionRate || 0), 0) /
+                  stats.filter((s) => s.completionRate).length
+                ).toFixed(1)
+              : '0'}
+            %
           </div>
         </div>
-        
+
         <div className="bg-white p-4 rounded-lg border">
           <div className="text-sm text-gray-500 mb-1">平均処理時間</div>
           <div className="text-2xl font-bold text-gray-900">
-            {stats.filter(s => s.averageTime).length > 0 ? (
-              stats
-                .filter(s => s.averageTime)
-                .reduce((sum, stat) => sum + (stat.averageTime || 0), 0) / 
-              stats.filter(s => s.averageTime).length
-            ).toFixed(0) : '0'}分
+            {stats.filter((s) => s.averageTime).length > 0
+              ? (
+                  stats
+                    .filter((s) => s.averageTime)
+                    .reduce((sum, stat) => sum + (stat.averageTime || 0), 0) /
+                  stats.filter((s) => s.averageTime).length
+                ).toFixed(0)
+              : '0'}
+            分
           </div>
         </div>
       </div>

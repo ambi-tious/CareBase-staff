@@ -4,7 +4,16 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { recordTypeOptions, priorityOptions, type RecordDataItem } from '@/types/record-data';
-import { Clock, User, FileText, Edit, Trash2, Heart, Stethoscope, MessageSquare } from 'lucide-react';
+import {
+  Clock,
+  User,
+  FileText,
+  Edit,
+  Trash2,
+  Heart,
+  Stethoscope,
+  MessageSquare,
+} from 'lucide-react';
 
 interface RecordCardProps {
   record: RecordDataItem;
@@ -27,11 +36,11 @@ export const RecordCard: React.FC<RecordCardProps> = ({ record, onEdit, onDelete
   };
 
   const getTypeConfig = (type: string) => {
-    return recordTypeOptions.find(option => option.value === type) || recordTypeOptions[0];
+    return recordTypeOptions.find((option) => option.value === type) || recordTypeOptions[0];
   };
 
   const getPriorityConfig = (priority: string) => {
-    return priorityOptions.find(option => option.value === priority) || priorityOptions[1];
+    return priorityOptions.find((option) => option.value === priority) || priorityOptions[1];
   };
 
   const getStatusColor = (status: string) => {
@@ -68,9 +77,7 @@ export const RecordCard: React.FC<RecordCardProps> = ({ record, onEdit, onDelete
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between gap-3">
           <div className="flex items-center gap-2">
-            <div className={`p-2 rounded-lg ${typeConfig.color}`}>
-              {getTypeIcon(record.type)}
-            </div>
+            <div className={`p-2 rounded-lg ${typeConfig.color}`}>{getTypeIcon(record.type)}</div>
             <div className="flex-1">
               <div className="flex items-center gap-2 mb-1">
                 <Badge variant="outline" className={typeConfig.color}>
@@ -118,13 +125,11 @@ export const RecordCard: React.FC<RecordCardProps> = ({ record, onEdit, onDelete
           </div>
         </div>
       </CardHeader>
-      
+
       <CardContent className="pt-0">
         <div className="space-y-3">
-          <p className="text-gray-700 text-sm leading-relaxed">
-            {record.content}
-          </p>
-          
+          <p className="text-gray-700 text-sm leading-relaxed">{record.content}</p>
+
           {record.notes && (
             <div className="bg-blue-50 border border-blue-200 rounded-md p-3">
               <p className="text-blue-800 text-sm">
