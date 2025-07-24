@@ -14,6 +14,7 @@ import {
   MessageSquare,
   Plus,
 } from 'lucide-react';
+import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
 import { ContactScheduleCalendarView } from './contact-schedule-calendar-view';
 
@@ -75,9 +76,12 @@ export function ContactScheduleBoard() {
           
           <Button
             className="bg-carebase-blue hover:bg-carebase-blue-dark font-medium px-3 py-2 text-sm shadow-sm"
+            asChild
           >
-            <Plus className="h-4 w-4 mr-2" />
-            新規作成
+            <Link href="/contact-schedule/new">
+              <Plus className="h-4 w-4 mr-2" />
+              新規作成
+            </Link>
           </Button>
 
           {/* 日付ナビゲーション */}

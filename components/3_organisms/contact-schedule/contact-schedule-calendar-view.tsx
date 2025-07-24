@@ -162,7 +162,11 @@ export function ContactScheduleCalendarView({ selectedDate, viewMode }: ContactS
                     {dayEvents.length > 0 ? (
                       <div className="space-y-2">
                         {dayEvents.map((event) => (
-                          <div key={event.id} className="p-3 bg-white border rounded-lg hover:shadow-sm transition-shadow">
+                          <div 
+                            key={event.id} 
+                            className="p-3 bg-white border rounded-lg hover:shadow-sm transition-shadow cursor-pointer"
+                            onClick={() => window.location.href = `/contact-schedule/${event.id}`}
+                          >
                             <div className="flex items-start justify-between mb-2">
                               <h4 className="font-medium text-carebase-text-primary">{event.title}</h4>
                               <div className="flex gap-1">
@@ -256,12 +260,13 @@ export function ContactScheduleCalendarView({ selectedDate, viewMode }: ContactS
                     {dayEvents.slice(0, 3).map((event) => (
                       <div
                         key={event.id}
-                        className={`text-xs p-1 rounded truncate ${
+                        className={`text-xs p-1 rounded truncate cursor-pointer hover:opacity-80 transition-opacity ${
                           event.type === '予定' ? 'bg-blue-100 text-blue-800' :
                           event.type === '連絡事項' ? 'bg-green-100 text-green-700' :
                           'bg-purple-100 text-purple-800'
                         }`}
                         title={event.title}
+                        onClick={() => window.location.href = `/contact-schedule/${event.id}`}
                       >
                         <div className="font-medium">{event.startTime} {event.title}</div>
                         {event.relatedResidentName && (
