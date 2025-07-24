@@ -1,0 +1,278 @@
+/* レスポンシブ週間カレンダー専用スタイル */
+
+.responsive-weekly-calendar {
+  @apply bg-white border border-gray-200 rounded-lg overflow-hidden;
+  min-height: 500px;
+}
+
+/* ヘッダー部分 */
+.responsive-weekly-header {
+  @apply grid border-b border-gray-200 bg-gray-50;
+  height: 70px;
+}
+
+.responsive-day-header {
+  @apply flex items-center justify-center p-2 border-r border-gray-200 last:border-r-0;
+  @apply transition-colors duration-200;
+}
+
+.responsive-day-header.today {
+  @apply bg-blue-50 border-blue-200;
+}
+
+.responsive-day-header.weekend {
+  @apply bg-gray-100;
+}
+
+.day-label {
+  @apply text-center;
+}
+
+.day-name {
+  @apply text-xs font-medium text-gray-600 uppercase tracking-wide mb-1;
+}
+
+.day-number {
+  @apply text-base font-semibold text-gray-800;
+  @apply w-7 h-7 flex items-center justify-center rounded-full;
+  @apply transition-all duration-200;
+}
+
+.day-number.today-number {
+  @apply bg-carebase-blue text-white shadow-md;
+}
+
+/* イベントグリッド */
+.responsive-events-grid {
+  @apply grid;
+  min-height: 430px;
+}
+
+.responsive-day-column {
+  @apply border-r border-gray-200 last:border-r-0 relative;
+  @apply transition-colors duration-200;
+  min-height: 430px;
+}
+
+.responsive-day-column.today-column {
+  @apply bg-blue-50/30;
+}
+
+.responsive-day-column.weekend-column {
+  @apply bg-gray-50/50;
+}
+
+.responsive-day-column:hover {
+  @apply bg-gray-50/80;
+}
+
+.responsive-day-column:hover .day-add-button {
+  @apply opacity-100;
+}
+
+/* 今日のインジケーター */
+.today-indicator {
+  @apply absolute top-0 left-0 w-full h-1 bg-carebase-blue z-10;
+}
+
+/* イベント表示エリア */
+.day-events {
+  @apply p-2 space-y-2 h-full;
+  min-height: 390px;
+}
+
+/* レスポンシブイベントアイテム */
+.responsive-event-item {
+  @apply p-2 rounded-lg border cursor-pointer;
+  @apply transition-all duration-200 ease-out;
+  @apply hover:shadow-md hover:scale-[1.02];
+  @apply animate-in fade-in slide-in-from-top-2;
+  animation-duration: 300ms;
+  animation-fill-mode: both;
+}
+
+/* イベント種別別スタイル */
+.responsive-event-item.contact {
+  @apply bg-green-50 border-green-200 hover:bg-green-100;
+}
+
+.responsive-event-item.schedule {
+  @apply bg-blue-50 border-blue-200 hover:bg-blue-100;
+}
+
+.responsive-event-item.handover {
+  @apply bg-purple-50 border-purple-200 hover:bg-purple-100;
+}
+
+/* 重要度別の左ボーダー */
+.responsive-event-item.priority-high {
+  @apply border-l-4 border-l-red-500;
+}
+
+.responsive-event-item.priority-medium {
+  @apply border-l-4 border-l-yellow-500;
+}
+
+.responsive-event-item.priority-low {
+  @apply border-l-4 border-l-blue-500;
+}
+
+/* イベント内容 */
+.event-time {
+  @apply text-xs font-medium text-gray-600 mb-1;
+  @apply flex items-center gap-1;
+}
+
+.event-title {
+  @apply text-sm font-semibold text-gray-800 mb-1 line-clamp-2;
+  @apply leading-tight;
+}
+
+.event-badges {
+  @apply flex gap-1 mb-1 flex-wrap;
+}
+
+.event-resident {
+  @apply text-xs text-blue-600 font-medium;
+}
+
+/* 空の日の表示 */
+.empty-day {
+  @apply flex items-center justify-center h-full min-h-[150px];
+}
+
+.empty-day-content {
+  @apply flex flex-col items-center gap-2 opacity-50;
+  @apply transition-opacity duration-200;
+}
+
+.responsive-day-column:hover .empty-day-content {
+  @apply opacity-70;
+}
+
+/* 新規作成ボタン */
+.day-add-button {
+  @apply absolute bottom-2 right-2 opacity-0;
+  @apply transition-opacity duration-200;
+}
+
+.add-event-btn {
+  @apply w-8 h-8 rounded-full bg-carebase-blue text-white;
+  @apply hover:bg-carebase-blue-dark shadow-lg;
+  @apply transition-all duration-200;
+}
+
+/* タブレット対応 */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .responsive-weekly-calendar {
+    min-height: 450px;
+  }
+  
+  .responsive-events-grid {
+    min-height: 380px;
+  }
+  
+  .responsive-day-column {
+    min-height: 380px;
+  }
+  
+  .day-events {
+    min-height: 340px;
+  }
+  
+  .event-title {
+    @apply text-sm line-clamp-2;
+  }
+}
+
+/* モバイル対応 */
+@media (max-width: 767px) {
+  .responsive-weekly-header {
+    height: 60px;
+  }
+  
+  .responsive-weekly-calendar {
+    min-height: 400px;
+  }
+  
+  .responsive-events-grid {
+    min-height: 340px;
+  }
+  
+  .responsive-day-column {
+    min-height: 340px;
+  }
+  
+  .day-events {
+    @apply p-1 space-y-1;
+    min-height: 300px;
+  }
+  
+  .responsive-event-item {
+    @apply p-2;
+  }
+  
+  .event-title {
+    @apply text-xs line-clamp-1;
+  }
+  
+  .event-badges {
+    @apply hidden;
+  }
+  
+  .event-resident {
+    @apply hidden;
+  }
+  
+  .day-number {
+    @apply text-sm w-6 h-6;
+  }
+  
+  .day-name {
+    @apply text-xs;
+  }
+  
+  .empty-day {
+    min-height: 100px;
+  }
+}
+
+/* アクセシビリティ強化 */
+.responsive-event-item:focus {
+  @apply outline-none ring-2 ring-carebase-blue ring-offset-2;
+}
+
+.add-event-btn:focus {
+  @apply outline-none ring-2 ring-white ring-offset-2 ring-offset-carebase-blue;
+}
+
+/* 高コントラストモード */
+@media (prefers-contrast: high) {
+  .responsive-event-item {
+    @apply border-2;
+  }
+  
+  .day-number.today-number {
+    @apply ring-2 ring-white;
+  }
+  
+  .today-indicator {
+    @apply h-2;
+  }
+}
+
+/* 動きを減らす設定 */
+@media (prefers-reduced-motion: reduce) {
+  .responsive-event-item {
+    @apply transition-none;
+    animation: none;
+  }
+  
+  .responsive-day-column {
+    @apply transition-none;
+  }
+  
+  .day-number {
+    @apply transition-none;
+  }
+}

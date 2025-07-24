@@ -196,12 +196,17 @@ export function ContactScheduleBoard() {
                 </div>
               </div>
             </div>
+            onDateChange={setSelectedDate}
           </CardContent>
         </Card>
       )}
 
       {/* メインコンテンツ */}
-      <ContactScheduleCalendarView selectedDate={selectedDate} viewMode={calendarView} />
+      <ContactScheduleCalendarView 
+        selectedDate={selectedDate} 
+        viewMode={calendarView}
+        onDateChange={setSelectedDate}
+      />
     </div>
   );
 }

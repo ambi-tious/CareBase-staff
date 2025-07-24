@@ -12,14 +12,18 @@ import {
   startOfMonth,
   endOfMonth,
   isSameMonth,
+  isToday,
+  addWeeks,
+  subWeeks,
 } from 'date-fns';
 import { ja } from 'date-fns/locale';
-import { Calendar, Clock, MessageCircle, User, Plus } from 'lucide-react';
+import { Calendar, Clock, MessageCircle, User, Plus, ChevronLeft, ChevronRight } from 'lucide-react';
 import React from 'react';
 
 interface ContactScheduleCalendarViewProps {
   selectedDate: Date | null;
   viewMode: 'week' | 'month';
+  onDateChange?: (date: Date) => void;
 }
 
 import { contactScheduleData } from '@/mocks/contact-schedule-data';
@@ -94,6 +98,7 @@ const getStatusBadge = (status: string) => {
 export function ContactScheduleCalendarView({
   selectedDate,
   viewMode,
+  onDateChange,
 }: ContactScheduleCalendarViewProps) {
   if (!selectedDate) {
     return (
@@ -129,109 +134,159 @@ export function ContactScheduleCalendarView({
       .sort((a, b) => a.startTime.localeCompare(b.startTime));
   };
 
-  // 週間表示のレンダリング
-  const renderWeekView = () => (
-    <div className="space-y-4">
-      {/* 週間ヘッダー */}
-      <Card>
-        <CardContent className="p-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <Calendar className="h-5 w-5 text-carebase-blue" />
-              <h2 className="text-xl font-semibold text-carebase-text-primary">
-                {format(start, 'yyyy年MM月dd日', { locale: ja })} 〜{' '}
-                {format(end, 'MM月dd日 (E)', { locale: ja })}
-              </h2>
-            </div>
-            <div className="text-sm text-gray-600">週間表示</div>
-          </div>
-        </CardContent>
-      </Card>
+  // 週間表示のレンダリング（Googleカレンダー風）
+  const renderWeekView = () => {
+    const weekDays = eachDayOfInterval({
+      start: startOfWeek(selectedDate, { weekStartsOn: 1 }),
+      end: endOfWeek(selectedDate, { weekStartsOn: 1 }),
+    });
 
-      {/* 日別表示 */}
+    const handlePrevWeek = () => {
+      const prevWeek = subWeeks(selectedDate, 1);
+      onDateChange?.(prevWeek);
+    };
+
+    const handleNextWeek = () => {
+      const nextWeek = addWeeks(selectedDate, 1);
+      onDateChange?.(nextWeek);
+    };
+
+    return (
       <div className="space-y-4">
-        {days.map((day) => {
-          const dayEvents = getEventsForDate(day);
-          const isToday = isSameDay(day, new Date());
-          const isSelected = isSameDay(day, selectedDate);
+        {/* 週間ナビゲーションヘッダー */}
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handlePrevWeek}
+                    className="h-8 w-8 p-0"
+                  >
+                    <ChevronLeft className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleNextWeek}
+                    className="h-8 w-8 p-0"
+                  >
+                    <ChevronRight className="h-4 w-4" />
+                  </Button>
+                </div>
+                <div className="flex items-center gap-3">
+                  <Calendar className="h-5 w-5 text-carebase-blue" />
+                  <h2 className="text-xl font-semibold text-carebase-text-primary">
+                    {format(weekDays[0], 'yyyy年MM月dd日', { locale: ja })} 〜{' '}
+                    {format(weekDays[6], 'MM月dd日', { locale: ja })}
+                  </h2>
+                </div>
+              </div>
+              <div className="text-sm text-gray-600">週間表示</div>
+            </div>
+          </CardContent>
+        </Card>
 
-          return (
-            <Card
-              key={day.toISOString()}
-              className={`${isSelected ? 'ring-2 ring-carebase-blue' : ''} ${isToday ? 'bg-blue-50' : ''}`}
-            >
-              <CardContent className="p-4">
-                <div className="flex items-start gap-4">
-                  {/* 日付表示 */}
-                  <div className="flex-shrink-0 text-center">
-                    <div
-                      className={`px-3 py-2 rounded-lg ${isToday ? 'bg-carebase-blue text-white' : 'bg-gray-100'}`}
-                    >
-                      <div className="text-sm font-semibold">
-                        {format(day, 'MM/dd', { locale: ja })}
+        {/* Googleカレンダー風グリッドレイアウト */}
+        <Card className="overflow-hidden">
+          <div className="weekly-calendar-container">
+            {/* 曜日ヘッダー */}
+            <div className="weekly-header">
+              {weekDays.map((day) => {
+                const dayIsToday = isToday(day);
+                const isWeekend = day.getDay() === 0 || day.getDay() === 6;
+                
+                return (
+                  <div
+                    key={day.toISOString()}
+                    className={`weekly-day-header ${dayIsToday ? 'today' : ''} ${isWeekend ? 'weekend' : ''}`}
+                  >
+                    <div className="day-label">
+                      <div className="day-name">{format(day, 'E', { locale: ja })}</div>
+                      <div className={`day-number ${dayIsToday ? 'today-number' : ''}`}>
+                        {format(day, 'd')}
                       </div>
-                      <div className="text-xs">{format(day, '(E)', { locale: ja })}</div>
                     </div>
                   </div>
+                );
+              })}
+            </div>
 
-                  {/* イベント一覧 */}
-                  <div className="flex-1">
-                    {dayEvents.length > 0 ? (
-                      <div className="space-y-2">
-                        {dayEvents.map((event) => (
+            {/* イベントグリッド */}
+            <div className="weekly-events-grid">
+              {weekDays.map((day) => {
+                const dayEvents = getEventsForDate(day);
+                const dayIsToday = isToday(day);
+                const isWeekend = day.getDay() === 0 || day.getDay() === 6;
+
+                return (
+                  <div
+                    key={day.toISOString()}
+                    className={`weekly-day-column ${dayIsToday ? 'today-column' : ''} ${isWeekend ? 'weekend-column' : ''}`}
+                  >
+                    {/* 今日のインジケーター */}
+                    {dayIsToday && <div className="today-indicator" />}
+                    
+                    {/* イベント一覧 */}
+                    <div className="day-events">
+                      {dayEvents.length > 0 ? (
+                        dayEvents.map((event, index) => (
                           <div
                             key={event.id}
-                            className="p-3 bg-white border rounded-lg hover:shadow-sm transition-shadow cursor-pointer"
+                            className={`event-item ${event.type} priority-${event.priority}`}
                             onClick={() => (window.location.href = `/contact-schedule/${event.id}`)}
+                            style={{
+                              animationDelay: `${index * 50}ms`,
+                            }}
                           >
-                            <div className="flex items-start justify-between mb-2">
-                              <h4 className="font-medium text-carebase-text-primary">
-                                {event.title}
-                              </h4>
-                              <div className="flex gap-1">
-                                {getTypeBadge(event.type)}
-                                {getPriorityBadge(event.priority)}
-                              </div>
+                            <div className="event-time">
+                              {event.startTime}
+                              {event.endTime && ` - ${event.endTime}`}
                             </div>
-                            <p className="text-sm text-gray-600 mb-2 line-clamp-2">
-                              {event.content}
-                            </p>
+                            <div className="event-title">{event.title}</div>
+                            <div className="event-badges">
+                              {getTypeBadge(event.type)}
+                              {event.priority === 'high' && getPriorityBadge(event.priority)}
+                            </div>
                             {event.relatedResidentName && (
-                              <div className="text-xs text-blue-600 mb-1">
+                              <div className="event-resident">
                                 対象: {event.relatedResidentName}
                               </div>
                             )}
-                            <div className="flex items-center justify-between text-xs text-gray-500">
-                              <div className="flex items-center gap-2">
-                                <Clock className="h-3 w-3" />
-                                <span>
-                                  {event.startTime}
-                                  {event.endTime && ` - ${event.endTime}`}
-                                </span>
-                              </div>
-                              <div className="flex items-center gap-2">
-                                <User className="h-3 w-3" />
-                                <span>{event.assignedTo}</span>
-                              </div>
-                            </div>
                           </div>
-                        ))}
-                      </div>
-                    ) : (
-                      <div className="text-center py-8 text-gray-400">
-                        <MessageCircle className="h-8 w-8 mx-auto mb-2" />
-                        <p className="text-sm">予定がありません</p>
-                      </div>
-                    )}
+                        ))
+                      ) : (
+                        <div className="empty-day">
+                          <div className="empty-day-content">
+                            <MessageCircle className="h-6 w-6 text-gray-300" />
+                            <span className="text-xs text-gray-400">予定なし</span>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* 新規作成ボタン（ホバー時表示） */}
+                    <div className="day-add-button">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="add-event-btn"
+                        onClick={() => (window.location.href = `/contact-schedule/new?date=${format(day, 'yyyy-MM-dd')}`)}
+                      >
+                        <Plus className="h-4 w-4" />
+                      </Button>
+                    </div>
                   </div>
-                </div>
-              </CardContent>
-            </Card>
-          );
-        })}
+                );
+              })}
+            </div>
+          </div>
+        </Card>
       </div>
-    </div>
-  );
+    );
+  };
 
   // 月間表示のレンダリング
   const renderMonthView = () => (
