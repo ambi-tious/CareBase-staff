@@ -137,7 +137,7 @@ export const careBoardData: Resident[] = [
         phone2: '078-234-5678',
         email: 'k.sato@example.com',
         address: '兵庫県神戸市中央区三宮町1-1-1',
-        notes: '平日19時以降連絡可能'
+        notes: '平日19時以降連絡可能',
       },
       {
         id: 'contact-1-2',
@@ -148,8 +148,8 @@ export const careBoardData: Resident[] = [
         phone1: '080-8765-4321',
         email: 'm.sato@example.com',
         address: '兵庫県神戸市中央区三宮町1-1-1',
-        notes: '日中連絡可能'
-      }
+        notes: '日中連絡可能',
+      },
     ],
     homeCareOffice: {
       id: 'office-1',
@@ -158,7 +158,7 @@ export const careBoardData: Resident[] = [
       phone: '078-333-4444',
       fax: '078-333-4445',
       address: '兵庫県神戸市西区学園西町1-1-1',
-      notes: '毎月第2木曜日訪問予定'
+      notes: '毎月第2木曜日訪問予定',
     },
     medicalInstitutions: [
       {
@@ -168,7 +168,7 @@ export const careBoardData: Resident[] = [
         phone: '078-555-6666',
         fax: '078-555-6667',
         address: '兵庫県神戸市中央区港島中町4-6',
-        notes: '月1回通院、内科・循環器科'
+        notes: '月1回通院、内科・循環器科',
       },
       {
         id: 'medical-1-2',
@@ -177,8 +177,8 @@ export const careBoardData: Resident[] = [
         phone: '078-777-8888',
         fax: '078-777-8889',
         address: '兵庫県神戸市西区伊川谷町有瀬1234',
-        notes: '眼科定期受診'
-      }
+        notes: '眼科定期受診',
+      },
     ],
     medicalHistory: [
       {
@@ -187,7 +187,7 @@ export const careBoardData: Resident[] = [
         diseaseName: '高血圧症',
         treatmentStatus: '治療中',
         treatmentInstitution: '神戸総合病院',
-        notes: 'ACE阻害薬で良好にコントロール中'
+        notes: 'ACE阻害薬で良好にコントロール中',
       },
       {
         id: 'history-1-2',
@@ -195,7 +195,7 @@ export const careBoardData: Resident[] = [
         diseaseName: '糖尿病',
         treatmentStatus: '治療中',
         treatmentInstitution: '神戸総合病院',
-        notes: 'HbA1c 6.8%で安定'
+        notes: 'HbA1c 6.8%で安定',
       },
       {
         id: 'history-1-3',
@@ -203,8 +203,8 @@ export const careBoardData: Resident[] = [
         diseaseName: '白内障',
         treatmentStatus: '完治',
         treatmentInstitution: 'みどりクリニック',
-        notes: '両眼手術済み、経過良好'
-      }
+        notes: '両眼手術済み、経過良好',
+      },
     ],
     medications: [
       {
@@ -215,7 +215,7 @@ export const careBoardData: Resident[] = [
         prescribingInstitution: '神戸総合病院',
         notes: '血圧管理のため',
         createdAt: '2025-01-01T00:00:00Z',
-        updatedAt: '2025-01-01T00:00:00Z'
+        updatedAt: '2025-01-01T00:00:00Z',
       },
       {
         id: 'med-1-2',
@@ -225,8 +225,8 @@ export const careBoardData: Resident[] = [
         prescribingInstitution: '神戸総合病院',
         notes: '糖尿病治療',
         createdAt: '2025-01-01T00:00:00Z',
-        updatedAt: '2025-01-01T00:00:00Z'
-      }
+        updatedAt: '2025-01-01T00:00:00Z',
+      },
     ],
     medicationStatus: [
       {
@@ -235,7 +235,7 @@ export const careBoardData: Resident[] = [
         content: '朝薬正常服用、血圧安定',
         notes: '本人より「調子良い」との発言あり',
         createdAt: '2025-01-20T07:00:00Z',
-        updatedAt: '2025-01-20T07:00:00Z'
+        updatedAt: '2025-01-20T07:00:00Z',
       },
       {
         id: 'status-1-2',
@@ -243,8 +243,8 @@ export const careBoardData: Resident[] = [
         content: '夕薬服用時に軽い咳あり',
         notes: '水分補給後改善、継続観察',
         createdAt: '2025-01-19T19:00:00Z',
-        updatedAt: '2025-01-19T19:00:00Z'
-      }
+        updatedAt: '2025-01-19T19:00:00Z',
+      },
     ],
     events: [
       {
@@ -382,7 +382,7 @@ export const careBoardData: Resident[] = [
         phone2: '090-3333-4444',
         email: 's.tanaka@example.com',
         address: '大阪府大阪市中央区難波1-2-3',
-        notes: '仕事の都合で平日は夕方以降連絡可能'
+        notes: '仕事の都合で平日は夕方以降連絡可能',
       },
       {
         id: 'contact-2-2',
@@ -393,8 +393,8 @@ export const careBoardData: Resident[] = [
         phone1: '075-5555-6666',
         email: 'y.tanaka@example.com',
         address: '京都府京都市下京区烏丸通五条下る',
-        notes: '月2回面会、京都在住'
-      }
+        notes: '月2回面会、京都在住',
+      },
     ],
     homeCareOffice: {
       id: 'office-2',
@@ -403,7 +403,7 @@ export const careBoardData: Resident[] = [
       phone: '06-7777-8888',
       fax: '06-7777-8889',
       address: '大阪府大阪市北区梅田2-3-4',
-      notes: '月1回モニタリング実施'
+      notes: '月1回モニタリング実施',
     },
     medicalInstitutions: [
       {
@@ -413,7 +413,7 @@ export const careBoardData: Resident[] = [
         phone: '06-9999-0000',
         fax: '06-9999-0001',
         address: '大阪府大阪市都島区都島本通2-13-22',
-        notes: '認知症専門外来、月1回受診'
+        notes: '認知症専門外来、月1回受診',
       },
       {
         id: 'medical-2-2',
@@ -422,8 +422,8 @@ export const careBoardData: Resident[] = [
         phone: '06-1234-5678',
         fax: '06-1234-5679',
         address: '大阪府大阪市北区梅田1-5-6',
-        notes: '膝関節症フォロー'
-      }
+        notes: '膝関節症フォロー',
+      },
     ],
     medicalHistory: [
       {
@@ -432,7 +432,7 @@ export const careBoardData: Resident[] = [
         diseaseName: 'アルツハイマー型認知症',
         treatmentStatus: '治療中',
         treatmentInstitution: '大阪市立総合医療センター',
-        notes: 'MMSE 18点、中等度認知症'
+        notes: 'MMSE 18点、中等度認知症',
       },
       {
         id: 'history-2-2',
@@ -440,7 +440,7 @@ export const careBoardData: Resident[] = [
         diseaseName: '変形性膝関節症',
         treatmentStatus: '治療中',
         treatmentInstitution: '梅田整形外科',
-        notes: '両膝に痛み、歩行器使用'
+        notes: '両膝に痛み、歩行器使用',
       },
       {
         id: 'history-2-3',
@@ -448,8 +448,8 @@ export const careBoardData: Resident[] = [
         diseaseName: '不眠症',
         treatmentStatus: '治療中',
         treatmentInstitution: '大阪市立総合医療センター',
-        notes: '睡眠薬調整中'
-      }
+        notes: '睡眠薬調整中',
+      },
     ],
     medications: [
       {
@@ -460,7 +460,7 @@ export const careBoardData: Resident[] = [
         prescribingInstitution: '大阪市立総合医療センター',
         notes: '認知症治療薬',
         createdAt: '2025-01-01T00:00:00Z',
-        updatedAt: '2025-01-01T00:00:00Z'
+        updatedAt: '2025-01-01T00:00:00Z',
       },
       {
         id: 'med-2-2',
@@ -470,7 +470,7 @@ export const careBoardData: Resident[] = [
         prescribingInstitution: '大阪市立総合医療センター',
         notes: '不眠症治療',
         createdAt: '2025-01-01T00:00:00Z',
-        updatedAt: '2025-01-01T00:00:00Z'
+        updatedAt: '2025-01-01T00:00:00Z',
       },
       {
         id: 'med-2-3',
@@ -480,8 +480,8 @@ export const careBoardData: Resident[] = [
         prescribingInstitution: '梅田整形外科',
         notes: '膝痛時頓服',
         createdAt: '2025-01-01T00:00:00Z',
-        updatedAt: '2025-01-01T00:00:00Z'
-      }
+        updatedAt: '2025-01-01T00:00:00Z',
+      },
     ],
     medicationStatus: [
       {
@@ -490,7 +490,7 @@ export const careBoardData: Resident[] = [
         content: '朝薬服用済み、認知機能安定',
         notes: '本日は穏やかで協力的',
         createdAt: '2025-01-20T08:30:00Z',
-        updatedAt: '2025-01-20T08:30:00Z'
+        updatedAt: '2025-01-20T08:30:00Z',
       },
       {
         id: 'status-2-2',
@@ -498,8 +498,8 @@ export const careBoardData: Resident[] = [
         content: '就寝前薬服用、良眠',
         notes: '夜間の徘徊なし',
         createdAt: '2025-01-19T21:00:00Z',
-        updatedAt: '2025-01-19T21:00:00Z'
-      }
+        updatedAt: '2025-01-19T21:00:00Z',
+      },
     ],
     events: [
       {
@@ -622,7 +622,7 @@ export const careBoardData: Resident[] = [
         phone2: '080-4444-5555',
         email: 'm.suzuki@example.com',
         address: '京都府京都市中京区烏丸通2-3-4',
-        notes: '同居中、日中在宅'
+        notes: '同居中、日中在宅',
       },
       {
         id: 'contact-3-2',
@@ -633,8 +633,8 @@ export const careBoardData: Resident[] = [
         phone1: '06-6666-7777',
         email: 'i.suzuki@example.com',
         address: '大阪府大阪市西区新町1-2-3',
-        notes: '大阪在住、週末面会可能'
-      }
+        notes: '大阪在住、週末面会可能',
+      },
     ],
     homeCareOffice: {
       id: 'office-3',
@@ -643,7 +643,7 @@ export const careBoardData: Resident[] = [
       phone: '075-8888-9999',
       fax: '075-8888-9998',
       address: '京都府京都市中京区河原町通御池下る',
-      notes: '毎月15日頃訪問予定'
+      notes: '毎月15日頃訪問予定',
     },
     medicalInstitutions: [
       {
@@ -653,7 +653,7 @@ export const careBoardData: Resident[] = [
         phone: '075-5555-6666',
         fax: '075-5555-6667',
         address: '京都府京都市東山区本町15-749',
-        notes: '心房細動治療、月1回受診'
+        notes: '心房細動治療、月1回受診',
       },
       {
         id: 'medical-3-2',
@@ -662,8 +662,8 @@ export const careBoardData: Resident[] = [
         phone: '075-3333-4444',
         fax: '075-3333-4445',
         address: '京都府京都市中京区烏丸通三条上る',
-        notes: '緑内障定期チェック'
-      }
+        notes: '緑内障定期チェック',
+      },
     ],
     medicalHistory: [
       {
@@ -672,7 +672,7 @@ export const careBoardData: Resident[] = [
         diseaseName: '心房細動',
         treatmentStatus: '治療中',
         treatmentInstitution: '京都第一赤十字病院',
-        notes: '抗凝固薬服用中、定期心電図モニタリング'
+        notes: '抗凝固薬服用中、定期心電図モニタリング',
       },
       {
         id: 'history-3-2',
@@ -680,7 +680,7 @@ export const careBoardData: Resident[] = [
         diseaseName: '緑内障',
         treatmentStatus: '治療中',
         treatmentInstitution: '烏丸眼科',
-        notes: '点眼薬で眼圧コントロール中'
+        notes: '点眼薬で眼圧コントロール中',
       },
       {
         id: 'history-3-3',
@@ -688,8 +688,8 @@ export const careBoardData: Resident[] = [
         diseaseName: '前立腺肥大症',
         treatmentStatus: '治療中',
         treatmentInstitution: '京都第一赤十字病院',
-        notes: 'α1ブロッカーで症状改善'
-      }
+        notes: 'α1ブロッカーで症状改善',
+      },
     ],
     medications: [
       {
@@ -700,7 +700,7 @@ export const careBoardData: Resident[] = [
         prescribingInstitution: '京都第一赤十字病院',
         notes: '心房細動に対する抗凝固療法',
         createdAt: '2025-01-01T00:00:00Z',
-        updatedAt: '2025-01-01T00:00:00Z'
+        updatedAt: '2025-01-01T00:00:00Z',
       },
       {
         id: 'med-3-2',
@@ -710,7 +710,7 @@ export const careBoardData: Resident[] = [
         prescribingInstitution: '烏丸眼科',
         notes: '緑内障治療',
         createdAt: '2025-01-01T00:00:00Z',
-        updatedAt: '2025-01-01T00:00:00Z'
+        updatedAt: '2025-01-01T00:00:00Z',
       },
       {
         id: 'med-3-3',
@@ -720,8 +720,8 @@ export const careBoardData: Resident[] = [
         prescribingInstitution: '京都第一赤十字病院',
         notes: '前立腺肥大症治療',
         createdAt: '2025-01-01T00:00:00Z',
-        updatedAt: '2025-01-01T00:00:00Z'
-      }
+        updatedAt: '2025-01-01T00:00:00Z',
+      },
     ],
     medicationStatus: [
       {
@@ -730,7 +730,7 @@ export const careBoardData: Resident[] = [
         content: '夕薬服用済み、出血傾向なし',
         notes: 'PT-INR 2.1で適正範囲内',
         createdAt: '2025-01-20T19:00:00Z',
-        updatedAt: '2025-01-20T19:00:00Z'
+        updatedAt: '2025-01-20T19:00:00Z',
       },
       {
         id: 'status-3-2',
@@ -738,8 +738,8 @@ export const careBoardData: Resident[] = [
         content: '点眼薬使用、眼の充血なし',
         notes: '本人による点眼確認済み',
         createdAt: '2025-01-19T21:00:00Z',
-        updatedAt: '2025-01-19T21:00:00Z'
-      }
+        updatedAt: '2025-01-19T21:00:00Z',
+      },
     ],
     events: [
       {
@@ -862,7 +862,7 @@ export const careBoardData: Resident[] = [
         phone2: '090-7777-8888',
         email: 'y.yamada@example.com',
         address: '神奈川県横浜市港北区新横浜3-4-5',
-        notes: '近所在住、緊急時即対応可能'
+        notes: '近所在住、緊急時即対応可能',
       },
       {
         id: 'contact-4-2',
@@ -873,8 +873,8 @@ export const careBoardData: Resident[] = [
         phone1: '045-3333-4444',
         email: 'k.yamada@example.com',
         address: '神奈川県横浜市港北区新横浜3-4-5',
-        notes: '買い物等のサポート担当'
-      }
+        notes: '買い物等のサポート担当',
+      },
     ],
     homeCareOffice: {
       id: 'office-4',
@@ -883,7 +883,7 @@ export const careBoardData: Resident[] = [
       phone: '045-5555-6666',
       fax: '045-5555-6667',
       address: '神奈川県横浜市港北区新横浜2-2-2',
-      notes: '月末にプラン見直し予定'
+      notes: '月末にプラン見直し予定',
     },
     medicalInstitutions: [
       {
@@ -893,7 +893,7 @@ export const careBoardData: Resident[] = [
         phone: '045-4748-4748',
         fax: '045-4748-4749',
         address: '神奈川県横浜市港北区小机町3211',
-        notes: '腰椎圧迫骨折フォロー'
+        notes: '腰椎圧迫骨折フォロー',
       },
       {
         id: 'medical-4-2',
@@ -902,8 +902,8 @@ export const careBoardData: Resident[] = [
         phone: '045-6666-7777',
         fax: '045-6666-7778',
         address: '神奈川県横浜市港北区新横浜1-1-1',
-        notes: '骨粗鬆症治療'
-      }
+        notes: '骨粗鬆症治療',
+      },
     ],
     medicalHistory: [
       {
@@ -912,7 +912,7 @@ export const careBoardData: Resident[] = [
         diseaseName: '腰椎圧迫骨折',
         treatmentStatus: '経過観察',
         treatmentInstitution: '横浜労災病院',
-        notes: 'L2圧迫骨折、保存療法で経過良好'
+        notes: 'L2圧迫骨折、保存療法で経過良好',
       },
       {
         id: 'history-4-2',
@@ -920,7 +920,7 @@ export const careBoardData: Resident[] = [
         diseaseName: '骨粗鬆症',
         treatmentStatus: '治療中',
         treatmentInstitution: '新横浜内科クリニック',
-        notes: '骨密度改善傾向'
+        notes: '骨密度改善傾向',
       },
       {
         id: 'history-4-3',
@@ -928,8 +928,8 @@ export const careBoardData: Resident[] = [
         diseaseName: '高脂血症',
         treatmentStatus: '治療中',
         treatmentInstitution: '新横浜内科クリニック',
-        notes: 'LDL-C 120mg/dlで目標達成'
-      }
+        notes: 'LDL-C 120mg/dlで目標達成',
+      },
     ],
     medications: [
       {
@@ -940,7 +940,7 @@ export const careBoardData: Resident[] = [
         prescribingInstitution: '新横浜内科クリニック',
         notes: '骨粗鬆症治療、起床時服用',
         createdAt: '2025-01-01T00:00:00Z',
-        updatedAt: '2025-01-01T00:00:00Z'
+        updatedAt: '2025-01-01T00:00:00Z',
       },
       {
         id: 'med-4-2',
@@ -950,7 +950,7 @@ export const careBoardData: Resident[] = [
         prescribingInstitution: '新横浜内科クリニック',
         notes: '高脂血症治療',
         createdAt: '2025-01-01T00:00:00Z',
-        updatedAt: '2025-01-01T00:00:00Z'
+        updatedAt: '2025-01-01T00:00:00Z',
       },
       {
         id: 'med-4-3',
@@ -960,8 +960,8 @@ export const careBoardData: Resident[] = [
         prescribingInstitution: '新横浜内科クリニック',
         notes: '骨粗鬆症予防',
         createdAt: '2025-01-01T00:00:00Z',
-        updatedAt: '2025-01-01T00:00:00Z'
-      }
+        updatedAt: '2025-01-01T00:00:00Z',
+      },
     ],
     medicationStatus: [
       {
@@ -970,7 +970,7 @@ export const careBoardData: Resident[] = [
         content: '週1回骨粗鬆症薬服用済み',
         notes: '起床時30分前服用、水分多めに摂取',
         createdAt: '2025-01-20T06:30:00Z',
-        updatedAt: '2025-01-20T06:30:00Z'
+        updatedAt: '2025-01-20T06:30:00Z',
       },
       {
         id: 'status-4-2',
@@ -978,8 +978,8 @@ export const careBoardData: Resident[] = [
         content: '夕薬服用、副作用なし',
         notes: '食事摂取良好',
         createdAt: '2025-01-19T19:00:00Z',
-        updatedAt: '2025-01-19T19:00:00Z'
-      }
+        updatedAt: '2025-01-19T19:00:00Z',
+      },
     ],
     events: [
       {
@@ -1099,8 +1099,8 @@ export const careBoardData: Resident[] = [
         phone2: '090-9999-0000',
         email: 't.suzuki@example.com',
         address: '東京都世田谷区豪徳寺1-1-1',
-        notes: '最寄りの親族、平日連絡可能'
-      }
+        notes: '最寄りの親族、平日連絡可能',
+      },
     ],
     homeCareOffice: {
       id: 'office-5',
@@ -1109,7 +1109,7 @@ export const careBoardData: Resident[] = [
       phone: '03-5555-6666',
       fax: '03-5555-6667',
       address: '東京都世田谷区経堂2-2-2',
-      notes: '月2回モニタリング'
+      notes: '月2回モニタリング',
     },
     medicalInstitutions: [
       {
@@ -1119,8 +1119,8 @@ export const careBoardData: Resident[] = [
         phone: '03-3429-1171',
         fax: '03-3429-1172',
         address: '東京都世田谷区上用賀6-25-1',
-        notes: '慢性腎不全フォロー'
-      }
+        notes: '慢性腎不全フォロー',
+      },
     ],
     medicalHistory: [
       {
@@ -1129,7 +1129,7 @@ export const careBoardData: Resident[] = [
         diseaseName: '慢性腎不全',
         treatmentStatus: '治療中',
         treatmentInstitution: '関東中央病院',
-        notes: 'CKD stage 3、食事療法中'
+        notes: 'CKD stage 3、食事療法中',
       },
       {
         id: 'history-5-2',
@@ -1137,8 +1137,8 @@ export const careBoardData: Resident[] = [
         diseaseName: '貧血',
         treatmentStatus: '治療中',
         treatmentInstitution: '関東中央病院',
-        notes: '腎性貧血、EPO製剤使用'
-      }
+        notes: '腎性貧血、EPO製剤使用',
+      },
     ],
     medications: [
       {
@@ -1149,8 +1149,8 @@ export const careBoardData: Resident[] = [
         prescribingInstitution: '関東中央病院',
         notes: '腎性貧血治療',
         createdAt: '2025-01-01T00:00:00Z',
-        updatedAt: '2025-01-01T00:00:00Z'
-      }
+        updatedAt: '2025-01-01T00:00:00Z',
+      },
     ],
     medicationStatus: [
       {
@@ -1159,8 +1159,8 @@ export const careBoardData: Resident[] = [
         content: 'EPO注射実施、注射部位異常なし',
         notes: 'Hb 10.2g/dl、目標範囲内',
         createdAt: '2025-01-18T10:00:00Z',
-        updatedAt: '2025-01-18T10:00:00Z'
-      }
+        updatedAt: '2025-01-18T10:00:00Z',
+      },
     ],
     events: [
       {
@@ -1210,7 +1210,7 @@ export const careBoardData: Resident[] = [
         phone2: '080-4444-5555',
         email: 'n.takahashi@example.com',
         address: '神奈川県横浜市中区元町1-1-1',
-        notes: '週2回面会、買い物支援'
+        notes: '週2回面会、買い物支援',
       },
       {
         id: 'contact-6-2',
@@ -1221,8 +1221,8 @@ export const careBoardData: Resident[] = [
         phone1: '03-7777-8888',
         email: 'm.takahashi@example.com',
         address: '東京都港区赤坂1-1-1',
-        notes: '月1回面会、東京勤務'
-      }
+        notes: '月1回面会、東京勤務',
+      },
     ],
     homeCareOffice: {
       id: 'office-6',
@@ -1231,7 +1231,7 @@ export const careBoardData: Resident[] = [
       phone: '045-1010-2020',
       fax: '045-1010-2021',
       address: '神奈川県横浜市中区本町2-2-2',
-      notes: '要支援プラン管理'
+      notes: '要支援プラン管理',
     },
     medicalInstitutions: [
       {
@@ -1241,8 +1241,8 @@ export const careBoardData: Resident[] = [
         phone: '045-628-6100',
         fax: '045-628-6101',
         address: '神奈川県横浜市中区新山下3-12-1',
-        notes: '前立腺癌術後フォロー'
-      }
+        notes: '前立腺癌術後フォロー',
+      },
     ],
     medicalHistory: [
       {
@@ -1251,8 +1251,8 @@ export const careBoardData: Resident[] = [
         diseaseName: '前立腺癌',
         treatmentStatus: '経過観察',
         treatmentInstitution: '横浜市立みなと赤十字病院',
-        notes: '根治手術後、PSA陰性で経過良好'
-      }
+        notes: '根治手術後、PSA陰性で経過良好',
+      },
     ],
     medications: [],
     medicationStatus: [],
@@ -1286,8 +1286,8 @@ export const careBoardData: Resident[] = [
         phone2: '090-5555-6666',
         email: 'm.tanaka@example.com',
         address: '大阪府大阪市北区梅田1-5-6',
-        notes: '近距離在住、毎日連絡取り合い'
-      }
+        notes: '近距離在住、毎日連絡取り合い',
+      },
     ],
     homeCareOffice: {
       id: 'office-7',
@@ -1296,7 +1296,7 @@ export const careBoardData: Resident[] = [
       phone: '06-4444-5555',
       fax: '06-4444-5556',
       address: '大阪府大阪市北区梅田3-3-3',
-      notes: '自立支援プログラム参加中'
+      notes: '自立支援プログラム参加中',
     },
     medicalInstitutions: [
       {
@@ -1306,8 +1306,8 @@ export const careBoardData: Resident[] = [
         phone: '06-6666-7777',
         fax: '06-6666-7778',
         address: '大阪府大阪市北区梅田2-4-6',
-        notes: '健康管理、年1回健診'
-      }
+        notes: '健康管理、年1回健診',
+      },
     ],
     medicalHistory: [],
     medications: [],

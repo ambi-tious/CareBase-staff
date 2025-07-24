@@ -43,7 +43,7 @@ export const ContactForm: React.FC<ContactFormProps> = ({
         <Alert className="border-red-200 bg-red-50">
           <AlertCircle className="h-4 w-4 text-red-600" />
           <AlertDescription className="text-red-700 flex items-center justify-between">
-            <span>{error}</span>
+            <span className="h-3">{error}</span>
             {isNetworkError && (
               <Button
                 type="button"

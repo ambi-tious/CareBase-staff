@@ -1,13 +1,13 @@
 # お薬情報タブ設計書
 
-画面名: `お薬情報タブ`  
-パス: `/residents/[residentId]` (詳細情報タブ内)  
-URL: https://carebase-staff.vercel.app/residents/[residentId]
+画面名: `お薬情報タブ`
+パス: `/residents/[residentId]` (詳細情報タブ内)
+URL: https://carebase-staff.vercel.app/residents/1
 
 ## 概要
 
-利用者詳細画面内のお薬情報タブ設計書です。  
-利用者のお薬情報の表示、登録、編集、削除機能を提供します。  
+利用者詳細画面内のお薬情報タブ設計書です。
+利用者のお薬情報の表示、登録、編集、削除機能を提供します。
 薬剤名、用法用量、処方医療機関、服用期間を管理し、複数の薬剤情報を効率的に管理できます。
 
 Issue: [#173 [設計] #005-5 利用者｜利用者詳細（お薬情報）](https://github.com/ambi-tious/CareBase-staff/issues/173)

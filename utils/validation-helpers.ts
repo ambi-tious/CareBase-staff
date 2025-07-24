@@ -38,7 +38,7 @@ export const validateData = <T>(schema: z.ZodSchema<T>, data: unknown): Validati
 
   return {
     isValid: false,
-    error: generalError || 'バリデーションエラーが発生しました',
+    error: generalError || '入力内容に誤りがあります',
     fieldErrors,
   };
 };

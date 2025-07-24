@@ -1,13 +1,13 @@
 # 既往歴タブ設計書
 
-画面名: `既往歴タブ`  
-パス: `/residents/[residentId]` (詳細情報タブ内)  
-URL: https://carebase-staff.vercel.app/residents/[residentId]
+画面名: `既往歴タブ`
+パス: `/residents/[residentId]` (詳細情報タブ内)
+URL: https://carebase-staff.vercel.app/residents/1
 
 ## 概要
 
-利用者詳細画面内の既往歴タブ設計書です。  
-利用者の既往歴情報の表示、登録、編集、削除機能を提供します。  
+利用者詳細画面内の既往歴タブ設計書です。
+利用者の既往歴情報の表示、登録、編集、削除機能を提供します。
 複数の既往歴を登録可能で発症年月順でソート表示し、各既往歴の詳細情報を効率的に管理できます。
 
 ## 全体レイアウト
