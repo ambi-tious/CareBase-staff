@@ -1,0 +1,517 @@
+/* 週間カレンダー専用スタイル */
+
+/* ベース変数 */
+:root {
+  --week-slot-height: 60px;
+  --week-header-height: 80px;
+  --week-nav-height: 64px;
+  --week-time-column-width: 80px;
+  
+  /* カラーパレット */
+  --week-bg-primary: #ffffff;
+  --week-bg-secondary: #f8fafc;
+  --week-bg-today: #0891b2;
+  --week-bg-weekend: #f1f5f9;
+  --week-bg-hover: #f0f9ff;
+  
+  --week-border-light: #e2e8f0;
+  --week-border-medium: #cbd5e1;
+  --week-border-strong: #94a3b8;
+  
+  --week-text-primary: #1e293b;
+  --week-text-secondary: #64748b;
+  --week-text-muted: #94a3b8;
+  
+  --week-current-time: #ef4444;
+  --week-shadow-light: 0 1px 3px 0 rgb(0 0 0 / 0.1);
+  --week-shadow-medium: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+}
+
+/* メインコンテナ */
+.week-calendar {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: var(--week-bg-primary);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: var(--week-shadow-medium);
+}
+
+/* ナビゲーションヘッダー */
+.week-navigation {
+  height: var(--week-nav-height);
+  padding: 16px;
+  background: var(--week-bg-secondary);
+  border-bottom: 1px solid var(--week-border-light);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.week-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--week-text-primary);
+  margin: 0;
+}
+
+/* 日付ヘッダー */
+.date-headers {
+  height: var(--week-header-height);
+  display: grid;
+  grid-template-columns: var(--week-time-column-width) repeat(7, 1fr);
+  background: var(--week-bg-secondary);
+  border-bottom: 2px solid var(--week-border-medium);
+  position: sticky;
+  top: 0;
+  z-index: 20;
+}
+
+.time-column-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--week-bg-secondary);
+  border-right: 1px solid var(--week-border-medium);
+  color: var(--week-text-secondary);
+}
+
+.date-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+  border-right: 1px solid var(--week-border-light);
+  transition: background-color 0.2s ease;
+}
+
+.date-header:hover {
+  background: var(--week-bg-hover);
+}
+
+.date-header.today {
+  background: var(--week-bg-today);
+  color: white;
+}
+
+.date-header.weekend {
+  background: var(--week-bg-weekend);
+}
+
+.day-name {
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.day-number {
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+/* メインコンテンツエリア */
+.calendar-content {
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+}
+
+.scrollable-content {
+  height: 100%;
+  overflow-y: auto;
+  scroll-behavior: smooth;
+}
+
+/* グリッドレイアウト */
+.time-grid {
+  display: grid;
+  grid-template-columns: var(--week-time-column-width) repeat(7, 1fr);
+  min-height: calc(48 * var(--week-slot-height)); /* 24時間 × 2スロット */
+}
+
+/* 時間軸列 */
+.time-column {
+  background: var(--week-bg-secondary);
+  border-right: 2px solid var(--week-border-medium);
+  position: sticky;
+  left: 0;
+  z-index: 10;
+}
+
+.time-slot-label {
+  height: var(--week-slot-height);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 4px;
+  border-bottom: 1px solid var(--week-border-light);
+  font-size: 0.75rem;
+  color: var(--week-text-secondary);
+  font-weight: 500;
+}
+
+.time-slot-label.hour-start {
+  border-bottom: 1px solid var(--week-border-medium);
+  font-weight: 600;
+}
+
+/* 日付列 */
+.day-column {
+  border-right: 1px solid var(--week-border-light);
+  position: relative;
+  min-height: 100%;
+}
+
+.day-column.today {
+  background: linear-gradient(to bottom, 
+    rgba(8, 145, 178, 0.03) 0%, 
+    rgba(8, 145, 178, 0.01) 100%);
+}
+
+.day-column.weekend {
+  background: var(--week-bg-weekend);
+}
+
+/* 時間スロット */
+.time-slot {
+  height: var(--week-slot-height);
+  border-bottom: 1px solid var(--week-border-light);
+  position: relative;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.time-slot:hover {
+  background: var(--week-bg-hover);
+}
+
+.time-slot.hour-start {
+  border-bottom: 1px solid var(--week-border-medium);
+}
+
+/* イベントブロック */
+.event-block {
+  position: absolute;
+  min-height: 56px;
+  padding: 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  z-index: 15;
+  overflow: hidden;
+  
+  /* デフォルトスタイル */
+  border: 2px dashed var(--week-border-medium);
+  background: rgba(156, 163, 175, 0.1);
+}
+
+.event-block:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--week-shadow-medium);
+  z-index: 25;
+}
+
+.event-block.completed {
+  border-style: solid;
+  box-shadow: var(--week-shadow-light);
+}
+
+.event-block.high-priority {
+  border-width: 3px;
+  box-shadow: 0 0 0 1px rgba(239, 68, 68, 0.2);
+}
+
+/* イベント内容 */
+.event-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  gap: 2px;
+}
+
+.event-header {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 2px;
+}
+
+.event-icon {
+  width: 12px;
+  height: 12px;
+  flex-shrink: 0;
+}
+
+.event-title {
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1.2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.event-resident {
+  font-size: 0.625rem;
+  color: var(--week-text-secondary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.event-time {
+  font-size: 0.625rem;
+  color: var(--week-text-muted);
+  margin-top: auto;
+}
+
+.event-status-indicator {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #10b981;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.625rem;
+  font-weight: bold;
+}
+
+/* 現在時刻ライン */
+.current-time-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  z-index: 30;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+}
+
+.current-time-label {
+  width: var(--week-time-column-width);
+  background: var(--week-current-time);
+  color: white;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 4px 0 0 4px;
+  text-align: center;
+}
+
+.current-time-indicator {
+  flex: 1;
+  height: 2px;
+  background: var(--week-current-time);
+  position: relative;
+}
+
+.current-time-indicator::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: -4px;
+  width: 8px;
+  height: 8px;
+  background: var(--week-current-time);
+  border-radius: 50%;
+}
+
+/* 週間統計 */
+.week-stats {
+  padding: 16px;
+  background: var(--week-bg-secondary);
+  border-top: 1px solid var(--week-border-light);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.stats-info {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  font-size: 0.875rem;
+  color: var(--week-text-secondary);
+}
+
+.stats-legend {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 0.875rem;
+  color: var(--week-text-secondary);
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.legend-indicator {
+  width: 12px;
+  height: 12px;
+  border-radius: 2px;
+}
+
+.legend-indicator.scheduled {
+  border: 2px dashed var(--week-border-strong);
+  background: rgba(156, 163, 175, 0.1);
+}
+
+.legend-indicator.completed {
+  border: 2px solid #10b981;
+  background: rgba(16, 185, 129, 0.1);
+}
+
+/* レスポンシブ対応 */
+@media (max-width: 1023px) {
+  .time-grid {
+    grid-template-columns: var(--week-time-column-width) repeat(5, 1fr);
+  }
+  
+  .date-headers {
+    grid-template-columns: var(--week-time-column-width) repeat(5, 1fr);
+  }
+}
+
+@media (max-width: 767px) {
+  .time-grid {
+    grid-template-columns: var(--week-time-column-width) 1fr;
+  }
+  
+  .date-headers {
+    grid-template-columns: var(--week-time-column-width) 1fr;
+  }
+  
+  .week-navigation {
+    padding: 12px;
+  }
+  
+  .week-title {
+    font-size: 1rem;
+  }
+  
+  .event-block {
+    min-height: 48px;
+    padding: 6px;
+  }
+  
+  .event-title {
+    font-size: 0.6875rem;
+  }
+}
+
+/* タッチデバイス対応 */
+@media (hover: none) and (pointer: coarse) {
+  .time-slot {
+    min-height: 44px; /* タッチターゲットサイズ確保 */
+  }
+  
+  .event-block {
+    min-height: 44px;
+    padding: 8px;
+  }
+  
+  .event-block:hover {
+    transform: none; /* タッチデバイスではホバー効果を無効化 */
+  }
+}
+
+/* 高コントラストモード対応 */
+@media (prefers-contrast: high) {
+  .event-block {
+    border-width: 3px;
+  }
+  
+  .current-time-line {
+    filter: contrast(1.5);
+  }
+  
+  .date-header.today {
+    outline: 2px solid var(--week-text-primary);
+  }
+}
+
+/* ダークモード対応 */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --week-bg-primary: #1e293b;
+    --week-bg-secondary: #334155;
+    --week-bg-today: #0ea5e9;
+    --week-bg-weekend: #475569;
+    --week-bg-hover: #475569;
+    
+    --week-border-light: #475569;
+    --week-border-medium: #64748b;
+    --week-border-strong: #94a3b8;
+    
+    --week-text-primary: #f1f5f9;
+    --week-text-secondary: #cbd5e1;
+    --week-text-muted: #94a3b8;
+  }
+}
+
+/* アニメーション */
+@keyframes eventAppear {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.event-block.new {
+  animation: eventAppear 0.3s ease-out;
+}
+
+/* スクロールバーのカスタマイズ */
+.scrollable-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.scrollable-content::-webkit-scrollbar-track {
+  background: var(--week-bg-secondary);
+}
+
+.scrollable-content::-webkit-scrollbar-thumb {
+  background: var(--week-border-medium);
+  border-radius: 4px;
+}
+
+.scrollable-content::-webkit-scrollbar-thumb:hover {
+  background: var(--week-border-strong);
+}
+
+/* フォーカス状態 */
+.time-slot:focus,
+.event-block:focus {
+  outline: 2px solid var(--week-bg-today);
+  outline-offset: 2px;
+}
+
+/* 印刷対応 */
+@media print {
+  .week-calendar {
+    box-shadow: none;
+    border: 1px solid var(--week-border-medium);
+  }
+  
+  .current-time-line {
+    display: none;
+  }
+  
+  .week-navigation button {
+    display: none;
+  }
+}
