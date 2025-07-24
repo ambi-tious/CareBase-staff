@@ -37,7 +37,3 @@ export const IndividualPointCard: React.FC<IndividualPointCardProps> = ({
     </div>
   );
 };
-      )}
-    </div>
-  );
-};
