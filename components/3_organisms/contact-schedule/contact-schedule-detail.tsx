@@ -2,10 +2,10 @@
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import type { ContactScheduleItem } from '@/mocks/contact-schedule-data';
+import type { ContactScheduleItem } from '@/types/contact-schedule';
 import { format } from 'date-fns';
 import { ja } from 'date-fns/locale';
-import { ArrowLeft, Calendar, Edit3, MessageSquare, User, Clock, Tag } from 'lucide-react';
+import { ArrowLeft, Calendar, Clock, Edit3, MessageSquare, Tag, User } from 'lucide-react';
 import Link from 'next/link';
 import type React from 'react';
 
@@ -201,7 +201,7 @@ export const ContactScheduleDetail: React.FC<ContactScheduleDetailProps> = ({ it
                     <span className="text-sm font-medium">タグ:</span>
                   </div>
                   <div className="flex flex-wrap gap-2">
-                    {item.tags.map((tag) => (
+                    {item.tags.map((tag: string) => (
                       <span
                         key={tag}
                         className="bg-white border border-gray-200 text-gray-700 px-2 py-1 rounded text-xs"
