@@ -72,7 +72,8 @@ export const ContactScheduleForm: React.FC<ContactScheduleFormProps> = ({
   );
 
   const assignmentSelectOptions = useMemo(
-    () => assignmentOptions.map((assignment) => ({ value: assignment.value, label: assignment.label })),
+    () =>
+      assignmentOptions.map((assignment) => ({ value: assignment.value, label: assignment.label })),
     []
   );
 

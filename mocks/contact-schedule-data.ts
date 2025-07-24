@@ -57,7 +57,8 @@ export const contactScheduleData: ContactScheduleItem[] = [
   {
     id: 'cs-001',
     title: '夏季感染症対策の徹底について',
-    content: '夏季に多発する感染性胃腸炎の予防対策を強化します。食事前後の手洗い徹底、調理器具の消毒強化、利用者様の体調観察を重点的に行ってください。症状が見られた場合は速やかに報告をお願いします。',
+    content:
+      '夏季に多発する感染性胃腸炎の予防対策を強化します。食事前後の手洗い徹底、調理器具の消毒強化、利用者様の体調観察を重点的に行ってください。症状が見られた場合は速やかに報告をお願いします。',
     type: 'contact',
     priority: 'high',
     status: 'pending',
@@ -74,7 +75,8 @@ export const contactScheduleData: ContactScheduleItem[] = [
   {
     id: 'cs-002',
     title: '7月度スタッフ会議',
-    content: '7月度の業務報告と8月の業務計画について話し合います。夏季の水分補給対策、熱中症予防、お盆期間の勤務体制について確認します。資料は事前に配布済みです。',
+    content:
+      '7月度の業務報告と8月の業務計画について話し合います。夏季の水分補給対策、熱中症予防、お盆期間の勤務体制について確認します。資料は事前に配布済みです。',
     type: 'schedule',
     priority: 'high',
     status: 'confirmed',
@@ -91,7 +93,8 @@ export const contactScheduleData: ContactScheduleItem[] = [
   {
     id: 'cs-003',
     title: '佐藤清様の水分補給強化について',
-    content: '主治医の指示により、佐藤清様の水分摂取量を1日1500mlに増量します。熱中症予防のため、定期的な水分補給の声かけと摂取量の記録をお願いします。脱水症状の兆候にも注意してください。',
+    content:
+      '主治医の指示により、佐藤清様の水分摂取量を1日1500mlに増量します。熱中症予防のため、定期的な水分補給の声かけと摂取量の記録をお願いします。脱水症状の兆候にも注意してください。',
     type: 'handover',
     priority: 'high',
     status: 'pending',
@@ -110,7 +113,8 @@ export const contactScheduleData: ContactScheduleItem[] = [
   {
     id: 'cs-004',
     title: '夏祭りイベント準備作業',
-    content: '8月5日の夏祭りイベントに向けて準備を進めます。浴衣の準備、うちわ作り、かき氷機の点検を行います。暑さ対策として屋内での実施を予定しています。',
+    content:
+      '8月5日の夏祭りイベントに向けて準備を進めます。浴衣の準備、うちわ作り、かき氷機の点検を行います。暑さ対策として屋内での実施を予定しています。',
     type: 'schedule',
     priority: 'medium',
     status: 'confirmed',
@@ -127,7 +131,8 @@ export const contactScheduleData: ContactScheduleItem[] = [
   {
     id: 'cs-005',
     title: 'エアコン設備点検実施',
-    content: 'エアコン設備の定期点検を実施します。作業時間中（10:00-12:00）は一部エリアで冷房が停止します。利用者様の居室移動と水分補給の準備をお願いします。',
+    content:
+      'エアコン設備の定期点検を実施します。作業時間中（10:00-12:00）は一部エリアで冷房が停止します。利用者様の居室移動と水分補給の準備をお願いします。',
     type: 'contact',
     priority: 'medium',
     status: 'confirmed',
@@ -144,7 +149,8 @@ export const contactScheduleData: ContactScheduleItem[] = [
   {
     id: 'cs-006',
     title: '熱中症予防研修',
-    content: '夏季の熱中症予防に関する研修を実施します。症状の見分け方、応急処置、予防対策について学習します。全職員の参加をお願いします。',
+    content:
+      '夏季の熱中症予防に関する研修を実施します。症状の見分け方、応急処置、予防対策について学習します。全職員の参加をお願いします。',
     type: 'schedule',
     priority: 'medium',
     status: 'pending',
@@ -161,7 +167,8 @@ export const contactScheduleData: ContactScheduleItem[] = [
   {
     id: 'cs-007',
     title: '田中花子様ご家族面会予定',
-    content: '田中花子様のご長男が7月27日15:00頃に面会予定です。お部屋の準備と、最近の様子をお伝えできるよう準備をお願いします。暑さ対策として冷房の調整もお願いします。',
+    content:
+      '田中花子様のご長男が7月27日15:00頃に面会予定です。お部屋の準備と、最近の様子をお伝えできるよう準備をお願いします。暑さ対策として冷房の調整もお願いします。',
     type: 'contact',
     priority: 'low',
     status: 'pending',
@@ -180,7 +187,8 @@ export const contactScheduleData: ContactScheduleItem[] = [
   {
     id: 'cs-008',
     title: '避難訓練実施のお知らせ',
-    content: '火災避難訓練を実施します。利用者様の安全確保を最優先に、各フロアの避難経路確認と職員の役割分担を再確認します。車椅子利用者様の避難介助についても重点的に訓練します。',
+    content:
+      '火災避難訓練を実施します。利用者様の安全確保を最優先に、各フロアの避難経路確認と職員の役割分担を再確認します。車椅子利用者様の避難介助についても重点的に訓練します。',
     type: 'schedule',
     priority: 'high',
     status: 'confirmed',
@@ -197,7 +205,8 @@ export const contactScheduleData: ContactScheduleItem[] = [
   {
     id: 'cs-009',
     title: 'お盆期間の勤務体制について',
-    content: 'お盆期間（8月13日〜16日）の勤務体制をお知らせします。帰省される職員の代替勤務、面会時間の延長対応、お盆行事の準備について確認をお願いします。',
+    content:
+      'お盆期間（8月13日〜16日）の勤務体制をお知らせします。帰省される職員の代替勤務、面会時間の延長対応、お盆行事の準備について確認をお願いします。',
     type: 'contact',
     priority: 'medium',
     status: 'pending',
@@ -214,7 +223,8 @@ export const contactScheduleData: ContactScheduleItem[] = [
   {
     id: 'cs-010',
     title: '山田みどり様の外出支援',
-    content: '山田みどり様の通院支援を行います。整形外科への定期受診のため、車椅子での移動介助と付き添いをお願いします。暑さ対策として日傘と冷却タオルを準備してください。',
+    content:
+      '山田みどり様の通院支援を行います。整形外科への定期受診のため、車椅子での移動介助と付き添いをお願いします。暑さ対策として日傘と冷却タオルを準備してください。',
     type: 'schedule',
     priority: 'medium',
     status: 'confirmed',

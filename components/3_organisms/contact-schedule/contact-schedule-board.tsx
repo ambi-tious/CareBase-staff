@@ -6,14 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { addDays, format } from 'date-fns';
 import { ja } from 'date-fns/locale';
-import {
-  CalendarIcon,
-  ChevronLeft,
-  ChevronRight,
-  Filter,
-  MessageSquare,
-  Plus,
-} from 'lucide-react';
+import { CalendarIcon, ChevronLeft, ChevronRight, Filter, MessageSquare, Plus } from 'lucide-react';
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
 import { ContactScheduleCalendarView } from './contact-schedule-calendar-view';
@@ -37,7 +30,7 @@ export function ContactScheduleBoard() {
             <MessageSquare className="h-6 w-6 text-carebase-blue" />
             <h1 className="text-2xl font-bold text-carebase-text-primary">連絡・予定</h1>
           </div>
-          
+
           <div className="flex items-center gap-1 rounded-lg bg-gray-200 p-1 shadow-sm">
             <Button
               onClick={() => setCalendarView('week')}
@@ -73,7 +66,7 @@ export function ContactScheduleBoard() {
             <Filter className="h-4 w-4 mr-2 text-carebase-blue" />
             フィルター
           </Button>
-          
+
           <Button
             className="bg-carebase-blue hover:bg-carebase-blue-dark font-medium px-3 py-2 text-sm shadow-sm"
             asChild
@@ -89,7 +82,10 @@ export function ContactScheduleBoard() {
             <Button
               variant="outline"
               className="bg-white border-carebase-blue text-carebase-blue hover:bg-carebase-blue-light font-medium px-3 py-2 text-sm shadow-sm"
-              onClick={() => selectedDate && setSelectedDate(addDays(selectedDate, calendarView === 'week' ? -7 : -30))}
+              onClick={() =>
+                selectedDate &&
+                setSelectedDate(addDays(selectedDate, calendarView === 'week' ? -7 : -30))
+              }
             >
               <ChevronLeft className="h-4 w-4 mr-1" />
               {calendarView === 'week' ? '前週' : '前月'}
@@ -102,7 +98,9 @@ export function ContactScheduleBoard() {
                 >
                   <CalendarIcon className="mr-2 h-4 w-4 text-carebase-blue" />
                   {selectedDate
-                    ? format(selectedDate, calendarView === 'week' ? 'M月d日 (E)' : 'yyyy年M月', { locale: ja })
+                    ? format(selectedDate, calendarView === 'week' ? 'M月d日 (E)' : 'yyyy年M月', {
+                        locale: ja,
+                      })
                     : '読み込み中...'}
                 </Button>
               </PopoverTrigger>
@@ -123,7 +121,10 @@ export function ContactScheduleBoard() {
             <Button
               variant="outline"
               className="bg-white border-carebase-blue text-carebase-blue hover:bg-carebase-blue-light font-medium px-3 py-2 text-sm shadow-sm"
-              onClick={() => selectedDate && setSelectedDate(addDays(selectedDate, calendarView === 'week' ? 7 : 30))}
+              onClick={() =>
+                selectedDate &&
+                setSelectedDate(addDays(selectedDate, calendarView === 'week' ? 7 : 30))
+              }
             >
               {calendarView === 'week' ? '翌週' : '翌月'}
               <ChevronRight className="h-4 w-4 ml-1" />
@@ -171,13 +172,25 @@ export function ContactScheduleBoard() {
               <div>
                 <h3 className="text-sm font-medium mb-2">重要度</h3>
                 <div className="flex gap-2">
-                  <Button variant="outline" size="sm" className="text-xs border-red-500 text-red-600">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="text-xs border-red-500 text-red-600"
+                  >
                     高
                   </Button>
-                  <Button variant="outline" size="sm" className="text-xs border-yellow-500 text-yellow-600">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="text-xs border-yellow-500 text-yellow-600"
+                  >
                     中
                   </Button>
-                  <Button variant="outline" size="sm" className="text-xs border-blue-500 text-blue-600">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="text-xs border-blue-500 text-blue-600"
+                  >
                     低
                   </Button>
                 </div>

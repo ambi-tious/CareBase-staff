@@ -3,7 +3,16 @@
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { format, isSameDay, startOfWeek, endOfWeek, eachDayOfInterval, startOfMonth, endOfMonth, isSameMonth } from 'date-fns';
+import {
+  format,
+  isSameDay,
+  startOfWeek,
+  endOfWeek,
+  eachDayOfInterval,
+  startOfMonth,
+  endOfMonth,
+  isSameMonth,
+} from 'date-fns';
 import { ja } from 'date-fns/locale';
 import { Calendar, Clock, MessageCircle, User, Plus } from 'lucide-react';
 import React from 'react';
@@ -22,12 +31,11 @@ const parseEventDate = (dateString: string) => {
 
 // ContactScheduleItemを表示用データに変換
 const convertToDisplayData = (items: typeof contactScheduleData) => {
-  return items.map(item => ({
+  return items.map((item) => ({
     id: item.id,
     title: item.title,
     content: item.content,
-    type: item.type === 'contact' ? '連絡事項' : 
-          item.type === 'schedule' ? '予定' : '申し送り',
+    type: item.type === 'contact' ? '連絡事項' : item.type === 'schedule' ? '予定' : '申し送り',
     priority: item.priority,
     status: item.status,
     assignedTo: item.assignedTo,
@@ -83,7 +91,10 @@ const getStatusBadge = (status: string) => {
   }
 };
 
-export function ContactScheduleCalendarView({ selectedDate, viewMode }: ContactScheduleCalendarViewProps) {
+export function ContactScheduleCalendarView({
+  selectedDate,
+  viewMode,
+}: ContactScheduleCalendarViewProps) {
   if (!selectedDate) {
     return (
       <div className="flex justify-center items-center h-64">
@@ -113,9 +124,9 @@ export function ContactScheduleCalendarView({ selectedDate, viewMode }: ContactS
   // 期間内のイベントを取得
   const getEventsForDate = (date: Date) => {
     const displayData = getDisplayData();
-    return displayData.filter((event) =>
-      isSameDay(new Date(event.date), date)
-    ).sort((a, b) => a.startTime.localeCompare(b.startTime));
+    return displayData
+      .filter((event) => isSameDay(new Date(event.date), date))
+      .sort((a, b) => a.startTime.localeCompare(b.startTime));
   };
 
   // 週間表示のレンダリング
@@ -128,12 +139,11 @@ export function ContactScheduleCalendarView({ selectedDate, viewMode }: ContactS
             <div className="flex items-center gap-3">
               <Calendar className="h-5 w-5 text-carebase-blue" />
               <h2 className="text-xl font-semibold text-carebase-text-primary">
-                {format(start, 'yyyy年MM月dd日', { locale: ja })} 〜 {format(end, 'MM月dd日 (E)', { locale: ja })}
+                {format(start, 'yyyy年MM月dd日', { locale: ja })} 〜{' '}
+                {format(end, 'MM月dd日 (E)', { locale: ja })}
               </h2>
             </div>
-            <div className="text-sm text-gray-600">
-              週間表示
-            </div>
+            <div className="text-sm text-gray-600">週間表示</div>
           </div>
         </CardContent>
       </Card>
@@ -144,15 +154,22 @@ export function ContactScheduleCalendarView({ selectedDate, viewMode }: ContactS
           const dayEvents = getEventsForDate(day);
           const isToday = isSameDay(day, new Date());
           const isSelected = isSameDay(day, selectedDate);
-          
+
           return (
-            <Card key={day.toISOString()} className={`${isSelected ? 'ring-2 ring-carebase-blue' : ''} ${isToday ? 'bg-blue-50' : ''}`}>
+            <Card
+              key={day.toISOString()}
+              className={`${isSelected ? 'ring-2 ring-carebase-blue' : ''} ${isToday ? 'bg-blue-50' : ''}`}
+            >
               <CardContent className="p-4">
                 <div className="flex items-start gap-4">
                   {/* 日付表示 */}
                   <div className="flex-shrink-0 text-center">
-                    <div className={`px-3 py-2 rounded-lg ${isToday ? 'bg-carebase-blue text-white' : 'bg-gray-100'}`}>
-                      <div className="text-sm font-semibold">{format(day, 'MM/dd', { locale: ja })}</div>
+                    <div
+                      className={`px-3 py-2 rounded-lg ${isToday ? 'bg-carebase-blue text-white' : 'bg-gray-100'}`}
+                    >
+                      <div className="text-sm font-semibold">
+                        {format(day, 'MM/dd', { locale: ja })}
+                      </div>
                       <div className="text-xs">{format(day, '(E)', { locale: ja })}</div>
                     </div>
                   </div>
@@ -162,19 +179,23 @@ export function ContactScheduleCalendarView({ selectedDate, viewMode }: ContactS
                     {dayEvents.length > 0 ? (
                       <div className="space-y-2">
                         {dayEvents.map((event) => (
-                          <div 
-                            key={event.id} 
+                          <div
+                            key={event.id}
                             className="p-3 bg-white border rounded-lg hover:shadow-sm transition-shadow cursor-pointer"
-                            onClick={() => window.location.href = `/contact-schedule/${event.id}`}
+                            onClick={() => (window.location.href = `/contact-schedule/${event.id}`)}
                           >
                             <div className="flex items-start justify-between mb-2">
-                              <h4 className="font-medium text-carebase-text-primary">{event.title}</h4>
+                              <h4 className="font-medium text-carebase-text-primary">
+                                {event.title}
+                              </h4>
                               <div className="flex gap-1">
                                 {getTypeBadge(event.type)}
                                 {getPriorityBadge(event.priority)}
                               </div>
                             </div>
-                            <p className="text-sm text-gray-600 mb-2 line-clamp-2">{event.content}</p>
+                            <p className="text-sm text-gray-600 mb-2 line-clamp-2">
+                              {event.content}
+                            </p>
                             {event.relatedResidentName && (
                               <div className="text-xs text-blue-600 mb-1">
                                 対象: {event.relatedResidentName}
@@ -183,7 +204,10 @@ export function ContactScheduleCalendarView({ selectedDate, viewMode }: ContactS
                             <div className="flex items-center justify-between text-xs text-gray-500">
                               <div className="flex items-center gap-2">
                                 <Clock className="h-3 w-3" />
-                                <span>{event.startTime}{event.endTime && ` - ${event.endTime}`}</span>
+                                <span>
+                                  {event.startTime}
+                                  {event.endTime && ` - ${event.endTime}`}
+                                </span>
                               </div>
                               <div className="flex items-center gap-2">
                                 <User className="h-3 w-3" />
@@ -222,9 +246,7 @@ export function ContactScheduleCalendarView({ selectedDate, viewMode }: ContactS
                 {format(selectedDate, 'yyyy年MM月', { locale: ja })}
               </h2>
             </div>
-            <div className="text-sm text-gray-600">
-              月間表示
-            </div>
+            <div className="text-sm text-gray-600">月間表示</div>
           </div>
         </CardContent>
       </Card>
@@ -239,13 +261,13 @@ export function ContactScheduleCalendarView({ selectedDate, viewMode }: ContactS
                 {day}
               </div>
             ))}
-            
+
             {/* 日付セル */}
             {days.map((day) => {
               const dayEvents = getEventsForDate(day);
               const isToday = isSameDay(day, new Date());
               const isCurrentMonth = isSameMonth(day, selectedDate);
-              
+
               return (
                 <div
                   key={day.toISOString()}
@@ -253,7 +275,9 @@ export function ContactScheduleCalendarView({ selectedDate, viewMode }: ContactS
                     isToday ? 'bg-blue-50 border-carebase-blue' : 'border-gray-200'
                   } ${!isCurrentMonth ? 'opacity-50' : ''}`}
                 >
-                  <div className={`text-sm font-medium mb-1 ${isToday ? 'text-carebase-blue' : 'text-gray-700'}`}>
+                  <div
+                    className={`text-sm font-medium mb-1 ${isToday ? 'text-carebase-blue' : 'text-gray-700'}`}
+                  >
                     {format(day, 'd')}
                   </div>
                   <div className="space-y-1">
@@ -261,16 +285,22 @@ export function ContactScheduleCalendarView({ selectedDate, viewMode }: ContactS
                       <div
                         key={event.id}
                         className={`text-xs p-1 rounded truncate cursor-pointer hover:opacity-80 transition-opacity ${
-                          event.type === '予定' ? 'bg-blue-100 text-blue-800' :
-                          event.type === '連絡事項' ? 'bg-green-100 text-green-700' :
-                          'bg-purple-100 text-purple-800'
+                          event.type === '予定'
+                            ? 'bg-blue-100 text-blue-800'
+                            : event.type === '連絡事項'
+                              ? 'bg-green-100 text-green-700'
+                              : 'bg-purple-100 text-purple-800'
                         }`}
                         title={event.title}
-                        onClick={() => window.location.href = `/contact-schedule/${event.id}`}
+                        onClick={() => (window.location.href = `/contact-schedule/${event.id}`)}
                       >
-                        <div className="font-medium">{event.startTime} {event.title}</div>
+                        <div className="font-medium">
+                          {event.startTime} {event.title}
+                        </div>
                         {event.relatedResidentName && (
-                          <div className="text-xs opacity-75">対象: {event.relatedResidentName}</div>
+                          <div className="text-xs opacity-75">
+                            対象: {event.relatedResidentName}
+                          </div>
                         )}
                       </div>
                     ))}
@@ -289,7 +319,5 @@ export function ContactScheduleCalendarView({ selectedDate, viewMode }: ContactS
     </div>
   );
 
-  return (
-    viewMode === 'week' ? renderWeekView() : renderMonthView()
-  );
+  return viewMode === 'week' ? renderWeekView() : renderMonthView();
 }

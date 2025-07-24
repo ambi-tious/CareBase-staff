@@ -13,7 +13,10 @@ export type ContactScheduleStatus = 'pending' | 'confirmed' | 'completed';
 
 // Contact schedule form data schema
 export const contactScheduleFormSchema = z.object({
-  title: z.string().min(1, 'タイトルは必須です').max(100, 'タイトルは100文字以内で入力してください'),
+  title: z
+    .string()
+    .min(1, 'タイトルは必須です')
+    .max(100, 'タイトルは100文字以内で入力してください'),
   content: z.string().min(1, '内容は必須です').max(1000, '内容は1000文字以内で入力してください'),
   type: z.enum(['contact', 'schedule', 'handover'], {
     required_error: '種別は必須です',
@@ -33,9 +36,24 @@ export type ContactScheduleFormData = z.infer<typeof contactScheduleFormSchema>;
 
 // Type options
 export const typeOptions = [
-  { value: 'contact', label: '連絡事項', icon: 'MessageCircle', color: 'bg-green-100 text-green-700 border-green-200' },
-  { value: 'schedule', label: '予定', icon: 'Calendar', color: 'bg-blue-100 text-blue-700 border-blue-200' },
-  { value: 'handover', label: '申し送り', icon: 'MessageSquare', color: 'bg-purple-100 text-purple-700 border-purple-200' },
+  {
+    value: 'contact',
+    label: '連絡事項',
+    icon: 'MessageCircle',
+    color: 'bg-green-100 text-green-700 border-green-200',
+  },
+  {
+    value: 'schedule',
+    label: '予定',
+    icon: 'Calendar',
+    color: 'bg-blue-100 text-blue-700 border-blue-200',
+  },
+  {
+    value: 'handover',
+    label: '申し送り',
+    icon: 'MessageSquare',
+    color: 'bg-purple-100 text-purple-700 border-purple-200',
+  },
 ] as const;
 
 export const priorityOptions = [
@@ -46,7 +64,11 @@ export const priorityOptions = [
 
 export const statusOptions = [
   { value: 'pending', label: '未対応', color: 'bg-red-100 text-red-700 border-red-200' },
-  { value: 'confirmed', label: '確認済み', color: 'bg-yellow-100 text-yellow-700 border-yellow-200' },
+  {
+    value: 'confirmed',
+    label: '確認済み',
+    color: 'bg-yellow-100 text-yellow-700 border-yellow-200',
+  },
   { value: 'completed', label: '完了', color: 'bg-green-100 text-green-700 border-green-200' },
 ] as const;
 

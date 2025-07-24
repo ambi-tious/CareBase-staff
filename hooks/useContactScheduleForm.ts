@@ -35,7 +35,11 @@ const initialFormData: ContactScheduleFormData = {
   tags: '',
 };
 
-export const useContactScheduleForm = ({ onSubmit, initialData = {}, mode }: UseContactScheduleFormOptions) => {
+export const useContactScheduleForm = ({
+  onSubmit,
+  initialData = {},
+  mode,
+}: UseContactScheduleFormOptions) => {
   // Initialize form data only once with initial data
   const [formData, setFormData] = useState<ContactScheduleFormData>(() => ({
     ...initialFormData,

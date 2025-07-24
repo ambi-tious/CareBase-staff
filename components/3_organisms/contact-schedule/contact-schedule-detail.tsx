@@ -21,39 +21,87 @@ export const ContactScheduleDetail: React.FC<ContactScheduleDetailProps> = ({ it
   const getTypeBadge = (type: string) => {
     switch (type) {
       case 'schedule':
-        return <span className="bg-blue-100 text-blue-700 border-blue-200 px-2 py-1 rounded-full text-xs font-medium border">予定</span>;
+        return (
+          <span className="bg-blue-100 text-blue-700 border-blue-200 px-2 py-1 rounded-full text-xs font-medium border">
+            予定
+          </span>
+        );
       case 'contact':
-        return <span className="bg-green-100 text-green-700 border-green-200 px-2 py-1 rounded-full text-xs font-medium border">連絡事項</span>;
+        return (
+          <span className="bg-green-100 text-green-700 border-green-200 px-2 py-1 rounded-full text-xs font-medium border">
+            連絡事項
+          </span>
+        );
       case 'handover':
-        return <span className="bg-purple-100 text-purple-700 border-purple-200 px-2 py-1 rounded-full text-xs font-medium border">申し送り</span>;
+        return (
+          <span className="bg-purple-100 text-purple-700 border-purple-200 px-2 py-1 rounded-full text-xs font-medium border">
+            申し送り
+          </span>
+        );
       default:
-        return <span className="bg-gray-100 text-gray-700 border-gray-200 px-2 py-1 rounded-full text-xs font-medium border">{type}</span>;
+        return (
+          <span className="bg-gray-100 text-gray-700 border-gray-200 px-2 py-1 rounded-full text-xs font-medium border">
+            {type}
+          </span>
+        );
     }
   };
 
   const getPriorityBadge = (priority: string) => {
     switch (priority) {
       case 'high':
-        return <span className="bg-red-100 text-red-700 border-red-200 px-2 py-1 rounded-full text-xs font-medium border">高</span>;
+        return (
+          <span className="bg-red-100 text-red-700 border-red-200 px-2 py-1 rounded-full text-xs font-medium border">
+            高
+          </span>
+        );
       case 'medium':
-        return <span className="bg-yellow-100 text-yellow-700 border-yellow-200 px-2 py-1 rounded-full text-xs font-medium border">中</span>;
+        return (
+          <span className="bg-yellow-100 text-yellow-700 border-yellow-200 px-2 py-1 rounded-full text-xs font-medium border">
+            中
+          </span>
+        );
       case 'low':
-        return <span className="bg-blue-100 text-blue-700 border-blue-200 px-2 py-1 rounded-full text-xs font-medium border">低</span>;
+        return (
+          <span className="bg-blue-100 text-blue-700 border-blue-200 px-2 py-1 rounded-full text-xs font-medium border">
+            低
+          </span>
+        );
       default:
-        return <span className="bg-gray-100 text-gray-700 border-gray-200 px-2 py-1 rounded-full text-xs font-medium border">-</span>;
+        return (
+          <span className="bg-gray-100 text-gray-700 border-gray-200 px-2 py-1 rounded-full text-xs font-medium border">
+            -
+          </span>
+        );
     }
   };
 
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'pending':
-        return <span className="bg-red-100 text-red-700 border-red-200 px-2 py-1 rounded-full text-xs font-medium border">未対応</span>;
+        return (
+          <span className="bg-red-100 text-red-700 border-red-200 px-2 py-1 rounded-full text-xs font-medium border">
+            未対応
+          </span>
+        );
       case 'confirmed':
-        return <span className="bg-yellow-100 text-yellow-700 border-yellow-200 px-2 py-1 rounded-full text-xs font-medium border">確認済み</span>;
+        return (
+          <span className="bg-yellow-100 text-yellow-700 border-yellow-200 px-2 py-1 rounded-full text-xs font-medium border">
+            確認済み
+          </span>
+        );
       case 'completed':
-        return <span className="bg-green-100 text-green-700 border-green-200 px-2 py-1 rounded-full text-xs font-medium border">完了</span>;
+        return (
+          <span className="bg-green-100 text-green-700 border-green-200 px-2 py-1 rounded-full text-xs font-medium border">
+            完了
+          </span>
+        );
       default:
-        return <span className="bg-gray-100 text-gray-700 border-gray-200 px-2 py-1 rounded-full text-xs font-medium border">-</span>;
+        return (
+          <span className="bg-gray-100 text-gray-700 border-gray-200 px-2 py-1 rounded-full text-xs font-medium border">
+            -
+          </span>
+        );
     }
   };
 
@@ -80,9 +128,7 @@ export const ContactScheduleDetail: React.FC<ContactScheduleDetailProps> = ({ it
         <CardHeader>
           <div className="flex items-start justify-between">
             <div className="space-y-2">
-              <CardTitle className="text-xl text-carebase-text-primary">
-                {item.title}
-              </CardTitle>
+              <CardTitle className="text-xl text-carebase-text-primary">{item.title}</CardTitle>
               <div className="flex items-center gap-4 text-sm text-gray-600">
                 <span>ID: {item.id}</span>
                 <div className="flex items-center gap-1">
@@ -173,9 +219,7 @@ export const ContactScheduleDetail: React.FC<ContactScheduleDetailProps> = ({ it
           <div className="space-y-2">
             <h3 className="text-lg font-semibold text-carebase-text-primary">内容</h3>
             <div className="p-4 bg-white border border-gray-200 rounded-lg">
-              <p className="text-gray-700 whitespace-pre-line leading-relaxed">
-                {item.content}
-              </p>
+              <p className="text-gray-700 whitespace-pre-line leading-relaxed">{item.content}</p>
             </div>
           </div>
 
