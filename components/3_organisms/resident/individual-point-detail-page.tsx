@@ -1,13 +1,26 @@
 'use client';
 
+import { CategoryEditModal } from '@/components/3_organisms/modals/category-edit-modal';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { getLucideIcon } from '@/lib/lucide-icon-registry';
 import type { IndividualPoint, Resident } from '@/mocks/care-board-data';
-import { AlertCircle, AlertTriangle, ArrowLeft, Edit, Save, Trash2, Bold, Italic, List, ListOrdered } from 'lucide-react';
+import {
+  AlertCircle,
+  AlertTriangle,
+  ArrowLeft,
+  Bold,
+  Edit,
+  Italic,
+  List,
+  ListOrdered,
+  Save,
+  Settings,
+  Trash2,
+} from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 interface IndividualPointDetailPageProps {
   resident: Resident;
@@ -33,6 +46,7 @@ export const IndividualPointDetailPage: React.FC<IndividualPointDetailPageProps>
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [originalContent, setOriginalContent] = useState('');
   const [validationError, setValidationError] = useState<string | null>(null);
+  const [isCategoryEditModalOpen, setIsCategoryEditModalOpen] = useState(false);
   const editorRef = useRef<HTMLDivElement>(null);
 
   const Icon = getLucideIcon(individualPoint.icon);
@@ -211,6 +225,27 @@ export const IndividualPointDetailPage: React.FC<IndividualPointDetailPageProps>
     }
   };
 
+  const handleCategoryEdit = () => {
+    setIsCategoryEditModalOpen(true);
+  };
+
+  const handleCategoryEditSubmit = async (data: { category: string; icon: string }) => {
+    try {
+      // Simulate API call
+      await new Promise((resolve) => setTimeout(resolve, 800));
+
+      // In a real application, this would update the category in the database
+      // For now, we'll just close the modal and show a success message
+      setIsCategoryEditModalOpen(false);
+
+      // You could also update the URL to reflect the new category name
+      // router.push(`/residents/${resident.id}/individual-points/${encodeURIComponent(data.category)}`);
+    } catch (error) {
+      console.error('Failed to update category:', error);
+      throw error;
+    }
+  };
+
   const hasContent = content.trim().length > 0;
 
   // Rich text editor functions
@@ -261,6 +296,16 @@ export const IndividualPointDetailPage: React.FC<IndividualPointDetailPageProps>
                 >
                   <ArrowLeft className="h-4 w-4" />
                   戻る
+                </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={handleCategoryEdit}
+                  className="flex items-center gap-2 border-gray-300 text-gray-700 hover:bg-gray-50"
+                  disabled={isSaving || isDeleting}
+                >
+                  <Settings className="h-4 w-4" />
+                  カテゴリの編集
                 </Button>
               </>
             )}
@@ -459,6 +504,17 @@ export const IndividualPointDetailPage: React.FC<IndividualPointDetailPageProps>
           )}
         </CardContent>
       </Card>
+
+      <CategoryEditModal
+        isOpen={isCategoryEditModalOpen}
+        onClose={() => setIsCategoryEditModalOpen(false)}
+        onSubmit={handleCategoryEditSubmit}
+        currentCategory={category}
+        currentIcon={individualPoint.icon}
+        title="カテゴリの編集"
+        description="個別ポイントのカテゴリ名とアイコンを編集します。"
+        submitLabel="更新"
+      />
     </div>
   );
 };
