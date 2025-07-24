@@ -2,6 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
+/* 週間カレンダー専用スタイルをインポート */
+@import '../styles/weekly-calendar.css';
+
 body {
   font-family: Arial, Helvetica, sans-serif;
 }
