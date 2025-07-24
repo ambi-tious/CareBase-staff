@@ -7,9 +7,9 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { useContactScheduleForm } from '@/hooks/useContactScheduleForm';
-import type { ContactScheduleFormData } from '@/types/contact-schedule';
-import { typeOptions, priorityOptions, assignmentOptions } from '@/types/contact-schedule';
 import { careBoardData } from '@/mocks/care-board-data';
+import type { ContactScheduleFormData } from '@/types/contact-schedule';
+import { assignmentOptions, priorityOptions, typeOptions } from '@/types/contact-schedule';
 import { AlertCircle, Save, Send, User } from 'lucide-react';
 import type React from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -79,7 +79,7 @@ export const ContactScheduleForm: React.FC<ContactScheduleFormProps> = ({
 
   const residentOptions = useMemo(
     () => [
-      { value: '', label: '選択なし' },
+      { value: 'none', label: '選択なし' },
       ...careBoardData
         .filter((resident) => resident.admissionStatus === '入居中')
         .map((resident) => ({
@@ -164,7 +164,9 @@ export const ContactScheduleForm: React.FC<ContactScheduleFormProps> = ({
 
   const handleRelatedResidentChange = useCallback(
     (value: string) => {
-      updateField('relatedResidentId', value);
+      // Convert 'none' to empty string for data consistency
+      const residentId = value === 'none' ? '' : value;
+      updateField('relatedResidentId', residentId);
     },
     [updateField]
   );
@@ -312,7 +314,11 @@ export const ContactScheduleForm: React.FC<ContactScheduleFormProps> = ({
           <FormSelect
             label="関連利用者"
             id="relatedResidentId"
-            value={formData.relatedResidentId || ''}
+            value={
+              !formData.relatedResidentId || formData.relatedResidentId === ''
+                ? 'none'
+                : formData.relatedResidentId
+            }
             onChange={handleRelatedResidentChange}
             options={residentOptions}
             error={fieldErrors.relatedResidentId}
