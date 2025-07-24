@@ -17,7 +17,15 @@ import {
   subWeeks,
 } from 'date-fns';
 import { ja } from 'date-fns/locale';
-import { Calendar, Clock, MessageCircle, User, Plus, ChevronLeft, ChevronRight } from 'lucide-react';
+import {
+  Calendar,
+  Clock,
+  MessageCircle,
+  User,
+  Plus,
+  ChevronLeft,
+  ChevronRight,
+} from 'lucide-react';
 import React from 'react';
 
 interface ContactScheduleCalendarViewProps {
@@ -197,7 +205,7 @@ export function ContactScheduleCalendarView({
               {weekDays.map((day) => {
                 const dayIsToday = isToday(day);
                 const isWeekend = day.getDay() === 0 || day.getDay() === 6;
-                
+
                 return (
                   <div
                     key={day.toISOString()}
@@ -228,7 +236,7 @@ export function ContactScheduleCalendarView({
                   >
                     {/* 今日のインジケーター */}
                     {dayIsToday && <div className="today-indicator" />}
-                    
+
                     {/* イベント一覧 */}
                     <div className="day-events">
                       {dayEvents.length > 0 ? (
@@ -273,7 +281,9 @@ export function ContactScheduleCalendarView({
                         variant="ghost"
                         size="sm"
                         className="add-event-btn"
-                        onClick={() => (window.location.href = `/contact-schedule/new?date=${format(day, 'yyyy-MM-dd')}`)}
+                        onClick={() =>
+                          (window.location.href = `/contact-schedule/new?date=${format(day, 'yyyy-MM-dd')}`)
+                        }
                       >
                         <Plus className="h-4 w-4" />
                       </Button>

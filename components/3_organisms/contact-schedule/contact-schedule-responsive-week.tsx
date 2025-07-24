@@ -5,29 +5,28 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import {
+  addDays,
+  addWeeks,
+  eachDayOfInterval,
+  endOfWeek,
   format,
   isSameDay,
-  startOfWeek,
-  endOfWeek,
-  eachDayOfInterval,
   isToday,
-  addWeeks,
+  startOfWeek,
   subWeeks,
-  addDays,
 } from 'date-fns';
 import { ja } from 'date-fns/locale';
-import { 
-  Calendar, 
-  Clock, 
-  MessageCircle, 
-  User, 
-  Plus, 
-  ChevronLeft, 
-  ChevronRight,
+import {
   ArrowLeft,
-  ArrowRight 
+  ArrowRight,
+  Calendar,
+  ChevronLeft,
+  ChevronRight,
+  Clock,
+  MessageCircle,
+  Plus,
 } from 'lucide-react';
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 
 interface ResponsiveWeekViewProps {
   selectedDate: Date;
@@ -59,7 +58,7 @@ export const ContactScheduleResponsiveWeek: React.FC<ResponsiveWeekViewProps> = 
   // レスポンシブに応じた表示日数を決定
   const getDisplayDays = () => {
     if (isDesktop) return 7; // フル週表示
-    if (isTablet) return 5;  // 平日中心
+    if (isTablet) return 5; // 平日中心
     return 3; // モバイルは3日
   };
 
@@ -68,7 +67,7 @@ export const ContactScheduleResponsiveWeek: React.FC<ResponsiveWeekViewProps> = 
   // 表示する日付範囲を計算
   const getWeekDays = () => {
     const weekStart = startOfWeek(selectedDate, { weekStartsOn: 1 });
-    
+
     if (displayDays === 7) {
       return eachDayOfInterval({
         start: weekStart,
@@ -122,13 +121,15 @@ export const ContactScheduleResponsiveWeek: React.FC<ResponsiveWeekViewProps> = 
   // バッジ生成関数
   const getTypeBadge = (type: string) => {
     const typeConfig = {
-      '予定': 'bg-blue-100 text-blue-700 border-blue-200',
-      '連絡事項': 'bg-green-100 text-green-700 border-green-200',
-      '申し送り': 'bg-purple-100 text-purple-700 border-purple-200',
+      予定: 'bg-blue-100 text-blue-700 border-blue-200',
+      連絡事項: 'bg-green-100 text-green-700 border-green-200',
+      申し送り: 'bg-purple-100 text-purple-700 border-purple-200',
     };
-    
+
     return (
-      <Badge className={`text-xs ${typeConfig[type as keyof typeof typeConfig] || 'bg-gray-100 text-gray-700'}`}>
+      <Badge
+        className={`text-xs ${typeConfig[type as keyof typeof typeConfig] || 'bg-gray-100 text-gray-700'}`}
+      >
         {type}
       </Badge>
     );
@@ -136,12 +137,8 @@ export const ContactScheduleResponsiveWeek: React.FC<ResponsiveWeekViewProps> = 
 
   const getPriorityBadge = (priority: string) => {
     if (priority !== 'high') return null;
-    
-    return (
-      <Badge className="bg-red-100 text-red-700 border-red-200 text-xs">
-        高
-      </Badge>
-    );
+
+    return <Badge className="bg-red-100 text-red-700 border-red-200 text-xs">高</Badge>;
   };
 
   return (
@@ -159,7 +156,11 @@ export const ContactScheduleResponsiveWeek: React.FC<ResponsiveWeekViewProps> = 
                   className="h-8 w-8 p-0"
                   aria-label={displayDays === 3 ? '前日' : '前週'}
                 >
-                  {displayDays === 3 ? <ArrowLeft className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
+                  {displayDays === 3 ? (
+                    <ArrowLeft className="h-4 w-4" />
+                  ) : (
+                    <ChevronLeft className="h-4 w-4" />
+                  )}
                 </Button>
                 <Button
                   variant="outline"
@@ -168,16 +169,19 @@ export const ContactScheduleResponsiveWeek: React.FC<ResponsiveWeekViewProps> = 
                   className="h-8 w-8 p-0"
                   aria-label={displayDays === 3 ? '翌日' : '翌週'}
                 >
-                  {displayDays === 3 ? <ArrowRight className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+                  {displayDays === 3 ? (
+                    <ArrowRight className="h-4 w-4" />
+                  ) : (
+                    <ChevronRight className="h-4 w-4" />
+                  )}
                 </Button>
               </div>
               <div className="flex items-center gap-3">
                 <Calendar className="h-5 w-5 text-carebase-blue" />
                 <h2 className="text-lg md:text-xl font-semibold text-carebase-text-primary">
-                  {displayDays === 3 
+                  {displayDays === 3
                     ? format(selectedDate, 'yyyy年MM月dd日 (E)', { locale: ja })
-                    : `${format(weekDays[0], 'yyyy年MM月dd日', { locale: ja })} 〜 ${format(weekDays[weekDays.length - 1], 'MM月dd日', { locale: ja })}`
-                  }
+                    : `${format(weekDays[0], 'yyyy年MM月dd日', { locale: ja })} 〜 ${format(weekDays[weekDays.length - 1], 'MM月dd日', { locale: ja })}`}
                 </h2>
               </div>
             </div>
@@ -192,14 +196,14 @@ export const ContactScheduleResponsiveWeek: React.FC<ResponsiveWeekViewProps> = 
       <Card className="overflow-hidden">
         <div className="responsive-weekly-calendar">
           {/* 曜日ヘッダー */}
-          <div 
+          <div
             className="responsive-weekly-header"
             style={{ gridTemplateColumns: `repeat(${displayDays}, 1fr)` }}
           >
             {weekDays.map((day) => {
               const dayIsToday = isToday(day);
               const isWeekend = day.getDay() === 0 || day.getDay() === 6;
-              
+
               return (
                 <div
                   key={day.toISOString()}
@@ -207,7 +211,9 @@ export const ContactScheduleResponsiveWeek: React.FC<ResponsiveWeekViewProps> = 
                 >
                   <div className="day-label">
                     <div className="day-name">
-                      {isMobile ? format(day, 'E', { locale: ja }) : format(day, 'E', { locale: ja })}
+                      {isMobile
+                        ? format(day, 'E', { locale: ja })
+                        : format(day, 'E', { locale: ja })}
                     </div>
                     <div className={`day-number ${dayIsToday ? 'today-number' : ''}`}>
                       {format(day, 'd')}
@@ -219,7 +225,7 @@ export const ContactScheduleResponsiveWeek: React.FC<ResponsiveWeekViewProps> = 
           </div>
 
           {/* イベントグリッド */}
-          <div 
+          <div
             className="responsive-events-grid"
             style={{ gridTemplateColumns: `repeat(${displayDays}, 1fr)` }}
           >
@@ -235,7 +241,7 @@ export const ContactScheduleResponsiveWeek: React.FC<ResponsiveWeekViewProps> = 
                 >
                   {/* 今日のインジケーター */}
                   {dayIsToday && <div className="today-indicator" />}
-                  
+
                   {/* イベント一覧 */}
                   <div className="day-events">
                     {dayEvents.length > 0 ? (
@@ -266,16 +272,16 @@ export const ContactScheduleResponsiveWeek: React.FC<ResponsiveWeekViewProps> = 
                             </div>
                           )}
                           {event.relatedResidentName && !isMobile && (
-                            <div className="event-resident">
-                              対象: {event.relatedResidentName}
-                            </div>
+                            <div className="event-resident">対象: {event.relatedResidentName}</div>
                           )}
                         </div>
                       ))
                     ) : (
                       <div className="empty-day">
                         <div className="empty-day-content">
-                          <MessageCircle className={`${isMobile ? 'h-4 w-4' : 'h-6 w-6'} text-gray-300`} />
+                          <MessageCircle
+                            className={`${isMobile ? 'h-4 w-4' : 'h-6 w-6'} text-gray-300`}
+                          />
                           <span className="text-xs text-gray-400">予定なし</span>
                         </div>
                       </div>

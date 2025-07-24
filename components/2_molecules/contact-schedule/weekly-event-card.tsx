@@ -84,13 +84,9 @@ export const WeeklyEventCard: React.FC<WeeklyEventCardProps> = ({
             {event.endTime && ` - ${event.endTime}`}
           </span>
         </div>
-        <div className="text-sm font-medium text-gray-800 line-clamp-2 mb-1">
-          {event.title}
-        </div>
+        <div className="text-sm font-medium text-gray-800 line-clamp-2 mb-1">{event.title}</div>
         {event.relatedResidentName && (
-          <div className="text-xs text-blue-600 font-medium">
-            対象: {event.relatedResidentName}
-          </div>
+          <div className="text-xs text-blue-600 font-medium">対象: {event.relatedResidentName}</div>
         )}
       </div>
     );

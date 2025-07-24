@@ -202,8 +202,8 @@ export function ContactScheduleBoard() {
       )}
 
       {/* メインコンテンツ */}
-      <ContactScheduleCalendarView 
-        selectedDate={selectedDate} 
+      <ContactScheduleCalendarView
+        selectedDate={selectedDate}
         viewMode={calendarView}
         onDateChange={setSelectedDate}
       />
