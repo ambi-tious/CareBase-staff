@@ -229,7 +229,7 @@ export const IndividualPointDetailPage: React.FC<IndividualPointDetailPageProps>
     setIsCategoryEditModalOpen(true);
   };
 
-  const handleCategoryEditSubmit = async (data: { category: string; icon: string }) => {
+  const handleCategoryEditSubmit = async (data: { category: string }) => {
     try {
       // Simulate API call
       await new Promise((resolve) => setTimeout(resolve, 800));

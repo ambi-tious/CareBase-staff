@@ -17,7 +17,7 @@ import { useState } from 'react';
 interface CategoryEditModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (data: { category: string; icon: string }) => Promise<void>;
+  onSubmit: (data: { category: string }) => Promise<void>;
   currentCategory: string;
   currentIcon: string;
   title: string;
@@ -61,7 +61,7 @@ export const CategoryEditModal: React.FC<CategoryEditModalProps> = ({
     setError(null);
 
     try {
-      await onSubmit({ category, icon });
+      await onSubmit({ category });
       onClose();
     } catch (error) {
       console.error('Failed to update category:', error);
@@ -101,18 +101,6 @@ export const CategoryEditModal: React.FC<CategoryEditModalProps> = ({
               disabled={isSubmitting}
             />
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="category-icon">
-              アイコン名 <span className="text-red-500">*</span>
-            </Label>
-            <Input
-              id="category-icon"
-              value={icon}
-              onChange={(e) => setIcon(e.target.value)}
-              placeholder="例: Utensils, Bath, Pillなど"
-              disabled={isSubmitting}
-            />
-          </div>
           <div className="flex justify-end gap-3 pt-4">
             <Button type="button" variant="outline" onClick={onClose} disabled={isSubmitting}>
               キャンセル
@@ -122,7 +110,7 @@ export const CategoryEditModal: React.FC<CategoryEditModalProps> = ({
               disabled={isSubmitting}
               className="bg-carebase-blue hover:bg-carebase-blue-dark"
             >
-              {isSubmitting ? '更新中...' : submitLabel}
+              {isSubmitting ? '登録中...' : '登録'}
             </Button>
           </div>
         </form>
