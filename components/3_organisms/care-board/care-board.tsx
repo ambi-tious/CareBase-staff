@@ -22,10 +22,9 @@ import { toast } from 'sonner';
 import { BulkCareRecordModal } from './bulk-care-record-modal';
 import { TimeBaseView } from './care-board-time-base';
 import { UserBaseView } from './care-board-user-base';
-import { ResponsiveCareboardWeekView } from './care-board-responsive-week';
 import { rgbToString } from './care-board-utils';
 
-type ActiveTabView = 'time' | 'user' | 'week';
+type ActiveTabView = 'time' | 'user';
 
 export function CareBoard() {
   const [activeView, setActiveView] = useState<ActiveTabView>('time');
@@ -81,17 +80,6 @@ export function CareBoard() {
             >
               <Users className="h-4 w-4 mr-2" />
               ご利用者ベース
-            </Button>
-            <Button
-              onClick={() => setActiveView('week')}
-              className={`px-4 py-2.5 font-medium text-base ${
-                activeView === 'week'
-                  ? 'bg-carebase-blue hover:bg-carebase-blue-dark text-white shadow-sm'
-                  : 'bg-transparent text-gray-700 hover:bg-gray-300'
-              }`}
-            >
-              <CalendarIcon className="h-4 w-4 mr-2" />
-              週間表示
             </Button>
           </div>
           <Button
@@ -222,22 +210,7 @@ export function CareBoard() {
         </div>
       )}
 
-      {activeView === 'time' && <TimeBaseView />}
-      {activeView === 'user' && <UserBaseView />}
-      {activeView === 'week' && (
-        <ResponsiveCareboardWeekView
-          selectedDate={selectedDate || new Date()}
-          onDateChange={setSelectedDate}
-          onEventClick={(event, resident) => {
-            console.log('Event clicked:', event, resident);
-            // TODO: イベント詳細モーダルを表示
-          }}
-          onTimeSlotClick={(time, date) => {
-            console.log('Time slot clicked:', time, date);
-            // TODO: 新規イベント作成モーダルを表示
-          }}
-        />
-      )}
+      {activeView === 'time' ? <TimeBaseView /> : <UserBaseView />}
 
       {/* 一括記録モーダル */}
       <BulkCareRecordModal
