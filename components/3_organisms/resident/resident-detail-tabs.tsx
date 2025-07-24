@@ -62,10 +62,6 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
     服薬: '<h2>服薬に関する個別ポイント</h2><p>自己管理は難しいため、職員管理</p><p>薬は粉砕して提供</p><p>水分はとろみをつけて提供</p>',
     接遇: '<h2>接遇に関する個別ポイント</h2><p>耳が遠いため、大きな声でゆっくり話す</p><p>目線を合わせて話しかける</p>',
     入浴: '<h2>入浴に関する個別ポイント</h2><p>一般浴槽使用</p><p>洗身は部分介助</p><p>洗髪は全介助</p><p>浴室内は見守り</p>',
-    口腔ケア: '<h2>口腔ケアに関する個別ポイント</h2><p>歯磨きは自立</p><p>うがいは見守り</p><p>義歯の清拭は職員が実施</p>',
-    バイタル: '<h2>バイタル測定に関する個別ポイント</h2><p>血圧測定は座位で実施</p><p>体温測定は腋下で実施</p><p>測定時は安静を保つ</p>',
-    排泄: '<h2>排泄に関する個別ポイント</h2><p>トイレ誘導は2時間おき</p><p>夜間はポータブルトイレ使用</p><p>排泄パターンを記録</p>',
-    その他: '<h2>その他の個別ポイント</h2><p>特記事項や注意点</p><p>個別の配慮事項</p>',
   });
   const [showOnlyWithContent, setShowOnlyWithContent] = useState(false);
   const [contacts, setContacts] = useState<ContactPerson[]>(resident.contacts || []);
