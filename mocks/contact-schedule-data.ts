@@ -1,25 +1,5 @@
 import type { IconName } from '@/lib/lucide-icon-registry';
-import { Plus } from 'lucide-react';
-
-export interface ContactScheduleItem {
-  id: string;
-  title: string;
-  content: string;
-  type: 'contact' | 'schedule' | 'handover';
-  priority: 'high' | 'medium' | 'low';
-  status: 'pending' | 'confirmed' | 'completed';
-  assignedTo: string;
-  assignedToId: string;
-  dueDate: string;
-  startTime?: string;
-  endTime?: string;
-  createdAt: string;
-  updatedAt: string;
-  createdBy: string;
-  tags?: string[];
-  relatedResidentId?: string;
-  relatedResidentName?: string;
-}
+import type { ContactScheduleItem } from '@/types/contact-schedule';
 
 export interface ContactScheduleCategory {
   key: string;

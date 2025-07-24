@@ -11,6 +11,27 @@ export type ContactScheduleType = 'contact' | 'schedule' | 'handover';
 export type ContactSchedulePriority = 'high' | 'medium' | 'low';
 export type ContactScheduleStatus = 'pending' | 'confirmed' | 'completed';
 
+// Contact schedule entity type
+export interface ContactScheduleItem {
+  id: string;
+  title: string;
+  content: string;
+  type: ContactScheduleType;
+  priority: ContactSchedulePriority;
+  status: ContactScheduleStatus;
+  assignedTo: string;
+  assignedToId: string;
+  dueDate: string;
+  startTime?: string;
+  endTime?: string;
+  createdAt: string;
+  updatedAt: string;
+  createdBy: string;
+  tags?: string[];
+  relatedResidentId?: string;
+  relatedResidentName?: string;
+}
+
 // Contact schedule form data schema
 export const contactScheduleFormSchema = z.object({
   title: z
