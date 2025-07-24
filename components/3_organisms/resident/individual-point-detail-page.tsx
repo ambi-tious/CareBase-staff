@@ -1,6 +1,7 @@
 'use client';
 
 import { CategoryEditModal } from '@/components/3_organisms/modals/category-edit-modal';
+import { GenericDeleteModal } from '@/components/3_organisms/modals/generic-delete-modal';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
@@ -8,7 +9,6 @@ import { getLucideIcon } from '@/lib/lucide-icon-registry';
 import type { IndividualPoint, Resident } from '@/mocks/care-board-data';
 import {
   AlertCircle,
-  AlertTriangle,
   ArrowLeft,
   Bold,
   Edit,
@@ -205,7 +205,7 @@ export const IndividualPointDetailPage: React.FC<IndividualPointDetailPageProps>
     }
   };
 
-  const handleDelete = async () => {
+  const handleDelete = async (): Promise<boolean> => {
     setIsDeleting(true);
     setError(null);
     try {
@@ -217,9 +217,11 @@ export const IndividualPointDetailPage: React.FC<IndividualPointDetailPageProps>
       setOriginalContent('');
       setShowDeletedAlert(true);
       router.push(`/residents/${resident.id}`);
+      return true;
     } catch (error) {
       console.error('Failed to delete content:', error);
       setError('削除に失敗しました。もう一度お試しください。');
+      return false;
     } finally {
       setIsDeleting(false);
     }
@@ -335,33 +337,6 @@ export const IndividualPointDetailPage: React.FC<IndividualPointDetailPageProps>
             編集中の内容が保存されていません。変更を保存するか、編集をキャンセルしてください。
           </AlertDescription>
         </Alert>
-      )}
-      {/* Delete Confirmation Modal */}
-      {showDeleteConfirm && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-30">
-          <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
-            <div className="flex items-center mb-4">
-              <AlertTriangle className="h-6 w-6 text-red-600 mr-2" />
-              <span className="text-lg font-semibold text-red-700">削除の確認</span>
-            </div>
-            <div className="mb-6 text-gray-700">
-              本当にこの個別ポイント詳細情報（{category}）を削除しますか？この操作は元に戻せません。
-            </div>
-            {error && <div className="mb-4 text-red-600 text-sm">{error}</div>}
-            <div className="flex justify-end gap-2">
-              <Button
-                variant="outline"
-                onClick={() => setShowDeleteConfirm(false)}
-                disabled={isDeleting}
-              >
-                キャンセル
-              </Button>
-              <Button variant="destructive" onClick={handleDelete} disabled={isDeleting}>
-                {isDeleting ? '削除中...' : '削除'}
-              </Button>
-            </div>
-          </div>
-        </div>
       )}
       <Card className="max-w-4xl">
         <CardHeader>
@@ -514,6 +489,16 @@ export const IndividualPointDetailPage: React.FC<IndividualPointDetailPageProps>
         title="カテゴリの編集"
         description="個別ポイントのカテゴリ名とアイコンを編集します。"
         submitLabel="更新"
+      />
+
+      <GenericDeleteModal
+        isOpen={showDeleteConfirm}
+        onClose={() => setShowDeleteConfirm(false)}
+        onConfirm={handleDelete}
+        itemName={category}
+        itemType="個別ポイント詳細情報"
+        isDeleting={isDeleting}
+        error={error}
       />
     </div>
   );
