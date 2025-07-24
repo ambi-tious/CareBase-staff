@@ -3,7 +3,6 @@
 import {
   Activity,
   AlertTriangle,
-  Clock as ClockIcon,
   Bath,
   Bed,
   Book,
@@ -14,10 +13,13 @@ import {
   Clipboard,
   ClipboardList,
   Clock,
+  Clock as ClockIcon,
   Cookie,
   Droplets,
+  Dumbbell,
   DeleteIcon as ExcretionIcon,
   Eye,
+  Edit3,
   FileArchive,
   FileClock,
   FileSignature,
@@ -101,6 +103,8 @@ const iconRegistry: Record<string, LucideIcon> = {
   Bed,
   Wind,
   Activity,
+  Dumbbell,
+  Edit3,
 };
 
 // Helper function to get icon component by string name

@@ -33,7 +33,7 @@ export const GenericFormModal: React.FC<GenericFormModalProps> = ({
   description,
   residentName,
   children,
-  className = 'max-w-4xl max-h-[90vh] overflow-y-auto',
+  className = 'max-w-4xl max-h-[90vh] overflow-y-auto tablet:max-w-[95vw] tablet:max-h-[95vh] tablet-portrait:max-w-[90vw] tablet-landscape:max-w-[90vw]',
   testId,
 }) => {
   const fullDescription = description
@@ -50,7 +50,7 @@ export const GenericFormModal: React.FC<GenericFormModalProps> = ({
             {title}
           </DialogTitle>
           {fullDescription && (
-            <DialogDescription className="text-gray-600">
+            <DialogDescription className="text-gray-600 tablet:text-tablet-base tablet:mt-3">
               {residentName && `${residentName}様の`}
               {description}
               {' 必須項目（'}
@@ -60,7 +60,7 @@ export const GenericFormModal: React.FC<GenericFormModalProps> = ({
           )}
         </DialogHeader>
 
-        {children}
+        <div className="tablet:mt-6">{children}</div>
       </DialogContent>
     </Dialog>
   );

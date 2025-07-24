@@ -123,7 +123,7 @@ export function AppHeader() {
         <Link href="/" className="flex items-center gap-2">
           <Logo />
         </Link>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 tablet:gap-4">
           {selectedStaffData ? (
             <>
               <Button
@@ -131,13 +131,13 @@ export function AppHeader() {
                 onClick={handleStaffNameClick}
                 data-header-button
                 className={cn(
-                  'hidden rounded-full md:flex font-medium',
+                  'hidden rounded-full md:flex font-medium min-h-touch-target',
                   isStaffSelected
                     ? 'bg-carebase-blue text-white border-carebase-blue-dark shadow-md'
                     : 'border-carebase-blue text-carebase-blue hover:bg-carebase-blue-light'
                 )}
               >
-                <User className="mr-2 h-4 w-4" />
+                <User className="mr-2 h-4 w-4 tablet:h-5 tablet:w-5" />
                 {selectedStaffData.staff.name}
               </Button>
               <Button
@@ -145,13 +145,13 @@ export function AppHeader() {
                 onClick={handleGroupTeamClick}
                 data-header-button
                 className={cn(
-                  'hidden rounded-full md:flex font-medium',
+                  'hidden rounded-full md:flex font-medium min-h-touch-target',
                   isGroupTeamSelected
                     ? 'bg-carebase-blue text-white border-carebase-blue-dark shadow-md'
                     : 'border-carebase-blue text-carebase-blue hover:bg-carebase-blue-light'
                 )}
               >
-                <Users className="mr-2 h-4 w-4" />
+                <Users className="mr-2 h-4 w-4 tablet:h-5 tablet:w-5" />
                 {selectedStaffData.groupName} - {selectedStaffData.teamName}
               </Button>
             </>
@@ -160,17 +160,17 @@ export function AppHeader() {
               <Button
                 variant="outline"
                 onClick={handleStaffNameClickFallback}
-                className="hidden rounded-full md:flex border-carebase-blue text-carebase-blue hover:bg-carebase-blue-light font-medium"
+                className="hidden rounded-full md:flex border-carebase-blue text-carebase-blue hover:bg-carebase-blue-light font-medium min-h-touch-target"
               >
-                <User className="mr-2 h-4 w-4" />
+                <User className="mr-2 h-4 w-4 tablet:h-5 tablet:w-5" />
                 職員を選択
               </Button>
               <Button
                 variant="outline"
                 onClick={handleGroupTeamClickFallback}
-                className="hidden rounded-full md:flex border-carebase-blue text-carebase-blue hover:bg-carebase-blue-light font-medium"
+                className="hidden rounded-full md:flex border-carebase-blue text-carebase-blue hover:bg-carebase-blue-light font-medium min-h-touch-target"
               >
-                <Users className="mr-2 h-4 w-4" />
+                <Users className="mr-2 h-4 w-4 tablet:h-5 tablet:w-5" />
                 グループ・チームを選択
               </Button>
             </>
@@ -180,20 +180,27 @@ export function AppHeader() {
             <SheetTrigger
               className={cn(
                 buttonVariants({ variant: 'ghost', size: 'icon' }),
-                'hover:bg-carebase-blue-light'
+                'hover:bg-carebase-blue-light tablet:h-12 tablet:w-12 min-h-touch-target min-w-touch-target'
               )}
               aria-label="メニューを開く"
               onClick={() => setIsMenuOpen(true)}
             >
-              <Menu className="h-6 w-6 text-carebase-blue" />
+              <Menu className="h-6 w-6 text-carebase-blue tablet:h-7 tablet:w-7" />
             </SheetTrigger>
-            <SheetContent side="right" className="sm:max-w-full bg-carebase-bg p-0 overflow-y-auto">
+            <SheetContent
+              side="right"
+              className="sm:max-w-full bg-carebase-bg p-0 overflow-y-auto min-w-[90vw]"
+            >
               <SheetHeader className="flex flex-row items-center justify-between py-2 px-4 sticky top-0 bg-carebase-bg z-10 border-b">
                 <SheetTitle className="text-xl font-bold text-carebase-text-primary">
                   メニュー
                 </SheetTitle>
                 <SheetClose asChild>
-                  <Button variant="ghost" size="icon">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="min-h-touch-target min-w-touch-target"
+                  >
                     <X className="h-6 w-6" />
                     <span className="sr-only">Close menu</span>
                   </Button>

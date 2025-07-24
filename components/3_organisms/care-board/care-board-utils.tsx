@@ -51,9 +51,9 @@ export const ResidentInfoCell: React.FC<ResidentInfoCellProps> = ({ resident, cl
   return (
     <Link
       href={`/residents/${resident.id}`}
-      className={`flex items-center gap-2 group w-full ${className}`}
+      className={`flex items-center gap-2 group w-full tablet-landscape:gap-3 ${className}`}
     >
-      <div className="relative w-12 h-12 rounded-full overflow-hidden">
+      <div className="relative w-12 h-12 tablet-landscape:w-16 tablet-landscape:h-16 rounded-full overflow-hidden">
         <Image
           src={resident.avatarUrl || '/placeholder.svg'}
           alt={resident.name}
@@ -67,10 +67,12 @@ export const ResidentInfoCell: React.FC<ResidentInfoCellProps> = ({ resident, cl
         />
       </div>
       <div className="flex flex-col min-w-0">
-        <span className="text-base font-medium truncate">{resident.name}</span>
+        <span className="text-base font-medium truncate tablet-landscape:text-lg">
+          {resident.name}
+        </span>
         <Badge
           variant="outline"
-          className="mt-0.5 w-fit px-2 py-0.5 text-xs font-normal text-carebase-blue border-carebase-blue bg-carebase-blue/10"
+          className="mt-0.5 w-fit px-2 py-0.5 text-xs font-normal text-carebase-blue border-carebase-blue bg-carebase-blue/10 tablet-landscape:text-sm tablet-landscape:px-3 tablet-landscape:py-1"
         >
           {resident.careLevel}
         </Badge>
@@ -138,7 +140,7 @@ export const VitalSigns: React.FC<VitalSignsProps> = ({ events, status = 'schedu
 
   return (
     <div
-      className="flex items-center gap-1 p-1.5 rounded-md text-xs relative transition-all duration-200 w-full box-border"
+      className="flex items-center gap-1 p-1.5 rounded-md text-xs relative transition-all duration-200 w-full box-border tablet-landscape:p-2 tablet-landscape:text-sm tablet-landscape:gap-2"
       style={{
         backgroundColor: statusStyles.background,
         border: statusStyles.border,
@@ -147,14 +149,17 @@ export const VitalSigns: React.FC<VitalSignsProps> = ({ events, status = 'schedu
         maxWidth: '100%',
       }}
     >
-      <HeartPulse className="h-3 w-3 flex-shrink-0" style={{ color: baseColor }} />
+      <HeartPulse
+        className="h-3 w-3 flex-shrink-0 tablet-landscape:h-4 tablet-landscape:w-4"
+        style={{ color: baseColor }}
+      />
       <span className="font-medium flex-1 truncate">バイタル</span>
-      <span className="text-xs opacity-75 ml-auto">{displayTime}</span>
+      <span className="text-xs opacity-75 ml-auto tablet-landscape:text-sm">{displayTime}</span>
 
       {/* 実施済みの場合のみチェックマークを表示 */}
       {status === 'completed' && (
-        <div className="absolute -top-2 -right-2 bg-green-500 text-white rounded-full w-4 h-4 flex items-center justify-center">
-          <Check className="h-3 w-3" />
+        <div className="absolute -top-2 -right-2 bg-green-500 text-white rounded-full w-4 h-4 flex items-center justify-center tablet-landscape:w-5 tablet-landscape:h-5">
+          <Check className="h-3 w-3 tablet-landscape:h-4 tablet-landscape:w-4" />
         </div>
       )}
     </div>
@@ -227,7 +232,7 @@ export const CareEventStatusComponent: React.FC<CareEventStatusProps> = ({
 
   return (
     <div
-      className="flex items-center gap-1 p-1.5 rounded-md text-xs relative transition-all duration-200 w-full box-border"
+      className="flex items-center gap-1 p-1.5 rounded-md text-xs relative transition-all duration-200 w-full box-border tablet-landscape:p-2 tablet-landscape:text-sm tablet-landscape:gap-2"
       style={{
         backgroundColor: statusStyles.background,
         border: statusStyles.border,
@@ -236,14 +241,17 @@ export const CareEventStatusComponent: React.FC<CareEventStatusProps> = ({
         maxWidth: '100%',
       }}
     >
-      <Icon className="h-3.5 w-3.5 flex-shrink-0" style={{ color: baseColor }} />
+      <Icon
+        className="h-3.5 w-3.5 flex-shrink-0 tablet-landscape:h-4 tablet-landscape:w-4"
+        style={{ color: baseColor }}
+      />
       <span className="font-medium truncate flex-1">{event.label}</span>
-      <span className="text-xs opacity-75 ml-auto">{displayTime}</span>
+      <span className="text-xs opacity-75 ml-auto tablet-landscape:text-sm">{displayTime}</span>
 
       {/* 実施済みの場合のみチェックマークを表示 */}
       {actualStatus === 'completed' && (
-        <div className="absolute -top-2 -right-2 bg-green-500 text-white rounded-full w-4 h-4 flex items-center justify-center">
-          <Check className="h-3 w-3" />
+        <div className="absolute -top-2 -right-2 bg-green-500 text-white rounded-full w-4 h-4 flex items-center justify-center tablet-landscape:w-5 tablet-landscape:h-5">
+          <Check className="h-3 w-3 tablet-landscape:h-4 tablet-landscape:w-4" />
         </div>
       )}
     </div>
@@ -439,185 +447,207 @@ export const CareRecordModal: React.FC<CareRecordModalProps> = ({
 
   return (
     <Dialog open={true} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className="sm:max-w-[500px] tablet-landscape:max-w-[90vw] tablet-landscape:max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="text-xl font-bold flex items-center gap-2">
+          <DialogTitle className="text-xl font-bold flex items-center gap-2 tablet-landscape:text-2xl tablet-landscape:gap-3">
             {isNew ? 'ケア記録の新規作成' : 'ケア記録の編集'}
           </DialogTitle>
         </DialogHeader>
 
-        <div className="space-y-4">
-          <div className="flex items-center gap-2 text-sm text-gray-500 mb-2">
-            <User className="h-4 w-4" />
+        <div className="space-y-4 tablet-landscape:space-y-6">
+          <div className="flex items-center gap-2 text-sm text-gray-500 mb-2 tablet-landscape:text-base tablet-landscape:gap-3">
+            <User className="h-4 w-4 tablet-landscape:h-5 tablet-landscape:w-5" />
             <span>
               利用者: <strong>{residentName}</strong>
             </span>
           </div>
 
-          <div className="space-y-4">
-            <div className="space-y-2 border p-4 rounded-md bg-gray-50">
-              <div className="flex items-center mb-2">
-                <Clock className="h-4 w-4 mr-2" />
-                <label className="text-sm font-medium">
-                  予定時間 <span className="text-red-500">*</span>
-                </label>
-              </div>
-
-              <div className="flex gap-2">
-                <div className="flex-1">
-                  <Select value={scheduledHour} onValueChange={setScheduledHour}>
-                    <SelectTrigger className={errors.scheduledTime ? 'border-red-500' : ''}>
-                      <SelectValue placeholder="時" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {Array.from({ length: 24 }).map((_, i) => (
-                        <SelectItem key={i} value={i.toString().padStart(2, '0')}>
-                          {i.toString().padStart(2, '0')}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+          {/* 2グリッドレイアウト: タブレット横向きでは2列、それ以外では1列 */}
+          <div className="space-y-4 tablet-landscape:grid tablet-landscape:grid-cols-2 tablet-landscape:gap-6 tablet-landscape:space-y-0">
+            {/* 左列: 時間設定 */}
+            <div className="space-y-4">
+              {/* 予定時間設定 */}
+              <div className="space-y-2 border p-4 rounded-md bg-gray-50 tablet-landscape:p-6">
+                <div className="flex items-center mb-2">
+                  <Clock className="h-4 w-4 mr-2 tablet-landscape:h-5 tablet-landscape:w-5" />
+                  <label className="text-sm font-medium tablet-landscape:text-base">
+                    予定時間 <span className="text-red-500">*</span>
+                  </label>
                 </div>
-                <div className="text-sm flex items-center justify-center">:</div>
-                <div className="flex-1">
-                  <Select value={scheduledMinute} onValueChange={setScheduledMinute}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="分" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {minuteOptions.map((option) => (
-                        <SelectItem key={option.value} value={option.value}>
-                          {option.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-              {errors.scheduledTime && (
-                <p className="text-red-500 text-xs mt-1">{errors.scheduledTime}</p>
-              )}
-            </div>
 
-            <div className="border rounded-md overflow-hidden">
-              <div
-                className={`p-4 cursor-pointer transition-colors ${
-                  isActualTimeVisible
-                    ? 'bg-green-50 border-green-200'
-                    : 'bg-blue-50 hover:bg-blue-100'
-                }`}
-                onClick={toggleActualTimeVisibility}
-              >
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center">
-                    <Check className="h-4 w-4 mr-2" />
-                    <label className="text-sm font-medium cursor-pointer">実施時間</label>
+                <div className="flex gap-2">
+                  <div className="flex-1">
+                    <Select value={scheduledHour} onValueChange={setScheduledHour}>
+                      <SelectTrigger className={errors.scheduledTime ? 'border-red-500' : ''}>
+                        <SelectValue placeholder="時" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {Array.from({ length: 24 }).map((_, i) => (
+                          <SelectItem key={i} value={i.toString().padStart(2, '0')}>
+                            {i.toString().padStart(2, '0')}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
-                  <div className="flex items-center">
-                    {isActualTimeVisible && actualHour && actualMinute && (
-                      <span className="text-sm text-green-600 font-medium mr-2">
-                        {actualHour}:{actualMinute}
-                      </span>
-                    )}
-                    <div
-                      className={`transform transition-transform ${isActualTimeVisible ? 'rotate-180' : ''}`}
-                    >
-                      <svg
-                        width="16"
-                        height="16"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
+                  <div className="text-sm flex items-center justify-center tablet-landscape:text-base">
+                    :
+                  </div>
+                  <div className="flex-1">
+                    <Select value={scheduledMinute} onValueChange={setScheduledMinute}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="分" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {minuteOptions.map((option) => (
+                          <SelectItem key={option.value} value={option.value}>
+                            {option.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+                {errors.scheduledTime && (
+                  <p className="text-red-500 text-xs mt-1 tablet-landscape:text-sm">
+                    {errors.scheduledTime}
+                  </p>
+                )}
+              </div>
+
+              {/* 実施時間設定 */}
+              <div className="border rounded-md overflow-hidden">
+                <div
+                  className={`p-4 cursor-pointer transition-colors tablet-landscape:p-6 ${
+                    isActualTimeVisible
+                      ? 'bg-green-50 border-green-200'
+                      : 'bg-blue-50 hover:bg-blue-100'
+                  }`}
+                  onClick={toggleActualTimeVisibility}
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center">
+                      <Check className="h-4 w-4 mr-2 tablet-landscape:h-5 tablet-landscape:w-5" />
+                      <label className="text-sm font-medium cursor-pointer tablet-landscape:text-base">
+                        実施時間
+                      </label>
+                    </div>
+                    <div className="flex items-center">
+                      {isActualTimeVisible && actualHour && actualMinute && (
+                        <span className="text-sm text-green-600 font-medium mr-2 tablet-landscape:text-base">
+                          {actualHour}:{actualMinute}
+                        </span>
+                      )}
+                      <div
+                        className={`transform transition-transform tablet-landscape:scale-110 ${isActualTimeVisible ? 'rotate-180' : ''}`}
                       >
-                        <path
-                          d="M6 9L12 15L18 9"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                      </svg>
+                        <svg
+                          width="16"
+                          height="16"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="tablet-landscape:w-5 tablet-landscape:h-5"
+                        >
+                          <path
+                            d="M6 9L12 15L18 9"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        </svg>
+                      </div>
                     </div>
                   </div>
+                  <p className="text-xs text-gray-600 mt-1 tablet-landscape:text-sm">
+                    {isActualTimeVisible
+                      ? '実施時間が設定されています（実施済み）'
+                      : 'クリックして実施時間を入力（未実施）'}
+                  </p>
                 </div>
-                <p className="text-xs text-gray-600 mt-1">
-                  {isActualTimeVisible
-                    ? '実施時間が設定されています（実施済み）'
-                    : 'クリックして実施時間を入力（未実施）'}
-                </p>
-              </div>
 
-              {isActualTimeVisible && (
-                <div className="p-4 bg-white border-t">
-                  <div className="flex gap-2">
-                    <div className="flex-1">
-                      <Select value={actualHour} onValueChange={setActualHour}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="時" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {Array.from({ length: 24 }).map((_, i) => (
-                            <SelectItem key={i} value={i.toString().padStart(2, '0')}>
-                              {i.toString().padStart(2, '0')}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div className="text-sm flex items-center justify-center">:</div>
-                    <div className="flex-1">
-                      <Select value={actualMinute} onValueChange={setActualMinute}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="分" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {minuteOptions.map((option) => (
-                            <SelectItem key={option.value} value={option.value}>
-                              {option.label}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                {isActualTimeVisible && (
+                  <div className="p-4 bg-white border-t tablet-landscape:p-6">
+                    <div className="flex gap-2">
+                      <div className="flex-1">
+                        <Select value={actualHour} onValueChange={setActualHour}>
+                          <SelectTrigger>
+                            <SelectValue placeholder="時" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {Array.from({ length: 24 }).map((_, i) => (
+                              <SelectItem key={i} value={i.toString().padStart(2, '0')}>
+                                {i.toString().padStart(2, '0')}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div className="text-sm flex items-center justify-center tablet-landscape:text-base">
+                        :
+                      </div>
+                      <div className="flex-1">
+                        <Select value={actualMinute} onValueChange={setActualMinute}>
+                          <SelectTrigger>
+                            <SelectValue placeholder="分" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {minuteOptions.map((option) => (
+                              <SelectItem key={option.value} value={option.value}>
+                                {option.label}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
                     </div>
                   </div>
-                </div>
-              )}
+                )}
+              </div>
             </div>
 
+            {/* 右列: ケア種別設定 */}
             <div className="space-y-4">
               {/* カテゴリグループ選択 */}
               <div className="space-y-2">
-                <label className="text-sm font-medium">
-                  種別グループ <span className="text-red-500 ml-1">*</span>
-                </label>
-                <Select
-                  value={selectedGroupKey}
-                  onValueChange={(value) => setSelectedGroupKey(value as CareCategoryGroupKey)}
-                >
-                  <SelectTrigger className={errors.groupKey ? 'border-red-500' : ''}>
-                    <SelectValue placeholder="ケア種別グループを選択" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {careCategoryGroups.map((group) => (
-                      <SelectItem key={group.key} value={group.key}>
-                        <div className="flex items-center gap-2">
-                          {React.createElement(getLucideIcon(group.icon), {
-                            className: 'h-4 w-4',
-                          })}
-                          <span>{group.label}</span>
-                        </div>
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                {errors.groupKey && <p className="text-red-500 text-xs">{errors.groupKey}</p>}
+                <div className="grid grid-cols-4 gap-2">
+                  {careCategoryGroups.map((group) => {
+                    const Icon = getLucideIcon(group.icon);
+                    const isSelected = selectedGroupKey === group.key;
+                    return (
+                      <div
+                        key={group.key}
+                        onClick={() => setSelectedGroupKey(group.key)}
+                        className={`
+                          flex flex-col items-center gap-1 p-2 rounded-lg border-2 cursor-pointer transition-all duration-200
+                          
+                          ${
+                            isSelected
+                              ? 'border-carebase-blue bg-carebase-blue/10 text-carebase-blue'
+                              : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
+                          }
+                          ${errors.groupKey ? 'border-red-500' : ''}
+                        `}
+                      >
+                        <Icon className="h-6 w-6 tablet-landscape:h-8 tablet-landscape:w-8" />
+                        <span className="text-xs font-medium text-center tablet-landscape:text-sm">
+                          {group.label}
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
+                {errors.groupKey && (
+                  <p className="text-red-500 text-xs tablet-landscape:text-sm">{errors.groupKey}</p>
+                )}
               </div>
 
               {/* カテゴリ選択（グループが選択された場合のみ表示） */}
               {selectedGroupKey && (
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">
-                    詳細種別 <span className="text-red-500 ml-1">*</span>
+                  <label className="text-sm font-medium tablet-landscape:text-base">
+                    種別 <span className="text-red-500 ml-1">*</span>
                   </label>
                   <Select
                     value={updatedEvent.categoryKey}
@@ -638,7 +668,7 @@ export const CareRecordModal: React.FC<CareRecordModalProps> = ({
                         <SelectItem key={category.key} value={category.key}>
                           <div className="flex items-center gap-2">
                             {React.createElement(getLucideIcon(category.icon), {
-                              className: 'h-4 w-4',
+                              className: 'h-4 w-4 tablet-landscape:h-5 tablet-landscape:w-5',
                             })}
                             <span>{category.label}</span>
                           </div>
@@ -647,14 +677,28 @@ export const CareRecordModal: React.FC<CareRecordModalProps> = ({
                     </SelectContent>
                   </Select>
                   {errors.categoryKey && (
-                    <p className="text-red-500 text-xs">{errors.categoryKey}</p>
+                    <p className="text-red-500 text-xs tablet-landscape:text-sm">
+                      {errors.categoryKey}
+                    </p>
                   )}
                 </div>
               )}
-            </div>
 
+              {/* 担当者情報 */}
+              <div className="flex items-center gap-2 text-sm text-gray-500 p-4 bg-gray-50 rounded-md tablet-landscape:text-base tablet-landscape:gap-3 tablet-landscape:p-6">
+                <User className="h-4 w-4 tablet-landscape:h-5 tablet-landscape:w-5" />
+                <span>
+                  担当者: <strong>{staffName}</strong>
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* 下段: 内容と備考（全幅） */}
+          <div className="space-y-4 tablet-landscape:grid tablet-landscape:grid-cols-2 tablet-landscape:gap-6 tablet-landscape:space-y-0">
+            {/* 内容入力 */}
             <div className="space-y-2">
-              <label className="text-sm font-medium">
+              <label className="text-sm font-medium tablet-landscape:text-base">
                 内容 <span className="text-red-500 ml-1">*</span>
               </label>
               <Input
@@ -663,36 +707,39 @@ export const CareRecordModal: React.FC<CareRecordModalProps> = ({
                 placeholder="例: 食事摂取量8割"
                 className={errors.label ? 'border-red-500' : ''}
               />
-              {errors.label && <p className="text-red-500 text-xs">{errors.label}</p>}
+              {errors.label && (
+                <p className="text-red-500 text-xs tablet-landscape:text-sm">{errors.label}</p>
+              )}
             </div>
 
+            {/* 備考入力 */}
             <div className="space-y-2">
-              <label className="text-sm font-medium">備考</label>
+              <label className="text-sm font-medium tablet-landscape:text-base">備考</label>
               <textarea
                 value={updatedEvent.details || ''}
                 onChange={(e) => setUpdatedEvent({ ...updatedEvent, details: e.target.value })}
                 placeholder="備考があれば入力してください"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md tablet-landscape:px-4 tablet-landscape:py-3"
                 rows={3}
               />
-            </div>
-
-            <div className="flex items-center gap-2 text-sm text-gray-500">
-              <User className="h-4 w-4" />
-              <span>
-                担当者: <strong>{staffName}</strong>
-              </span>
             </div>
           </div>
         </div>
 
-        <DialogFooter className="flex justify-end gap-2">
-          <Button variant="outline" onClick={onClose}>
-            <X className="h-4 w-4 mr-2" />
+        <DialogFooter className="flex justify-end gap-2 tablet-landscape:gap-4">
+          <Button
+            variant="outline"
+            onClick={onClose}
+            className="tablet-landscape:px-6 tablet-landscape:py-3"
+          >
+            <X className="h-4 w-4 mr-2 tablet-landscape:h-5 tablet-landscape:w-5" />
             キャンセル
           </Button>
-          <Button onClick={handleSave} className="bg-carebase-blue hover:bg-carebase-blue-dark">
-            <Save className="h-4 w-4 mr-2" />
+          <Button
+            onClick={handleSave}
+            className="bg-carebase-blue hover:bg-carebase-blue-dark tablet-landscape:px-6 tablet-landscape:py-3"
+          >
+            <Save className="h-4 w-4 mr-2 tablet-landscape:h-5 tablet-landscape:w-5" />
             {isNew ? '登録' : '更新'}
           </Button>
         </DialogFooter>
