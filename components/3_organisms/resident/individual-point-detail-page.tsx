@@ -3,26 +3,11 @@
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { getLucideIcon } from '@/lib/lucide-icon-registry';
 import type { IndividualPoint, Resident } from '@/mocks/care-board-data';
-import { LexicalComposer } from '@lexical/react/LexicalComposer';
-import { ContentEditable } from '@lexical/react/LexicalContentEditable';
-import { HistoryPlugin } from '@lexical/react/LexicalHistoryPlugin';
-import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
-import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
-import { $getRoot } from 'lexical';
-import { AlertCircle, AlertTriangle, ArrowLeft, Edit, Save, Trash2 } from 'lucide-react';
+import { AlertCircle, AlertTriangle, ArrowLeft, Edit, Save, Trash2, Bold, Italic, List, ListOrdered } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 
 interface IndividualPointDetailPageProps {
   resident: Resident;
@@ -48,58 +33,7 @@ export const IndividualPointDetailPage: React.FC<IndividualPointDetailPageProps>
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [originalContent, setOriginalContent] = useState('');
   const [validationError, setValidationError] = useState<string | null>(null);
-
-  // カテゴリ編集用state
-  const [isCategoryEditing, setIsCategoryEditing] = useState(false);
-  const [editCategoryName, setEditCategoryName] = useState(individualPoint.category);
-  const [editIcon, setEditIcon] = useState(individualPoint.icon);
-  const [editError, setEditError] = useState('');
-
-  // カテゴリ編集モーダル用state
-  const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
-  const [categoryName, setCategoryName] = useState(individualPoint.category);
-  const [categoryError, setCategoryError] = useState('');
-
-  // アイコン選択肢例
-  const iconOptions = [
-    { value: 'Activity', label: '活動' },
-    { value: 'Users', label: '接遇' },
-    { value: 'Bath', label: '入浴' },
-    { value: 'Utensils', label: '食事' },
-    { value: 'Pill', label: '服薬' },
-    { value: 'Tooth', label: '口腔ケア' },
-    { value: 'Eye', label: '点眼' },
-    { value: 'GlassWater', label: '飲水' },
-    { value: 'ExcretionIcon', label: '排泄' },
-    { value: 'FileText', label: 'その他' },
-  ];
-
-  // カテゴリ保存処理
-  const handleCategorySave = async () => {
-    setEditError('');
-    if (!editCategoryName.trim()) {
-      setEditError('カテゴリ名は必須です');
-      return;
-    }
-    if (!editIcon) {
-      setEditError('アイコンを選択してください');
-      return;
-    }
-    // TODO: API連携や重複チェック
-    // await api.updateCategory({ id: individualPoint.id, category: editCategoryName, icon: editIcon });
-    setIsCategoryEditing(false);
-    // stateを更新
-    individualPoint.category = editCategoryName;
-    individualPoint.icon = editIcon;
-  };
-
-  // キャンセル処理
-  const handleCategoryCancel = () => {
-    setEditCategoryName(individualPoint.category);
-    setEditIcon(individualPoint.icon);
-    setEditError('');
-    setIsCategoryEditing(false);
-  };
+  const editorRef = useRef<HTMLDivElement>(null);
 
   const Icon = getLucideIcon(individualPoint.icon);
 
@@ -183,7 +117,7 @@ export const IndividualPointDetailPage: React.FC<IndividualPointDetailPageProps>
         return;
       }
     }
-    router.push(`/residents/${resident.id}?tab=points`);
+    router.push(`/residents/${resident.id}`);
   };
 
   const handleEdit = () => {
@@ -211,7 +145,7 @@ export const IndividualPointDetailPage: React.FC<IndividualPointDetailPageProps>
 
     if (isNewCreation) {
       // 新規作成の場合は個別ポイントタブに戻る
-      router.push(`/residents/${resident.id}?tab=points`);
+      router.push(`/residents/${resident.id}`);
     } else {
       const originalContent = mockPointContents[category] || '';
       setContent(originalContent);
@@ -257,18 +191,6 @@ export const IndividualPointDetailPage: React.FC<IndividualPointDetailPageProps>
     }
   };
 
-  const handleCancel = () => {
-    if (hasUnsavedChanges) {
-      const confirmCancel = window.confirm(
-        '入力中の内容が保存されていません。入力を破棄してもよろしいですか？'
-      );
-      if (!confirmCancel) {
-        return;
-      }
-    }
-    router.push(`/residents/${resident.id}?tab=points`);
-  };
-
   const handleDelete = async () => {
     setIsDeleting(true);
     setError(null);
@@ -280,7 +202,7 @@ export const IndividualPointDetailPage: React.FC<IndividualPointDetailPageProps>
       setHasUnsavedChanges(false);
       setOriginalContent('');
       setShowDeletedAlert(true);
-      router.push(`/residents/${resident.id}?tab=points`);
+      router.push(`/residents/${resident.id}`);
     } catch (error) {
       console.error('Failed to delete content:', error);
       setError('削除に失敗しました。もう一度お試しください。');
@@ -291,30 +213,22 @@ export const IndividualPointDetailPage: React.FC<IndividualPointDetailPageProps>
 
   const hasContent = content.trim().length > 0;
 
-  // Lexicalエディタの初期設定
-  const lexicalConfig = {
-    namespace: 'IndividualPointEditor',
-    theme: {
-      paragraph: 'mb-2',
-    },
-    onError(error: Error) {
-      console.error(error);
-    },
+  // Rich text editor functions
+  const handleFormatting = (command: string, value?: string) => {
+    document.execCommand(command, false, value);
+    if (editorRef.current) {
+      setContent(editorRef.current.innerHTML);
+      setHasUnsavedChanges(editorRef.current.innerHTML !== originalContent);
+    }
   };
 
-  // Lexicalエディタの内容をstateに反映
-  const handleLexicalChange = (editorState: any) => {
-    editorState.read(() => {
-      const html = $getRoot().getTextContent();
-      setContent(html);
-      setHasUnsavedChanges(html !== originalContent);
-    });
+  const handleContentChange = () => {
+    if (editorRef.current) {
+      const newContent = editorRef.current.innerHTML;
+      setContent(newContent);
+      setHasUnsavedChanges(newContent !== originalContent);
+    }
   };
-
-  // Lexical用のエラーバウンダリ
-  function LexicalErrorBoundary(props: any) {
-    return <div className="p-2 text-red-600 bg-red-50">エディタでエラーが発生しました</div>;
-  }
 
   return (
     <div className="p-4 md:p-6 bg-carebase-bg min-h-screen">
@@ -341,15 +255,6 @@ export const IndividualPointDetailPage: React.FC<IndividualPointDetailPageProps>
                 <Button
                   size="sm"
                   variant="outline"
-                  onClick={() => setIsCategoryEditing(true)}
-                  className="flex items-center gap-1"
-                >
-                  <Edit className="h-4 w-4 mr-1" />
-                  カテゴリの編集
-                </Button>
-                <Button
-                  size="sm"
-                  variant="outline"
                   onClick={handleBack}
                   className="flex items-center gap-2"
                   disabled={isSaving || isDeleting}
@@ -362,50 +267,7 @@ export const IndividualPointDetailPage: React.FC<IndividualPointDetailPageProps>
           </div>
         </div>
       </div>
-      <Dialog open={isCategoryEditing} onOpenChange={setIsCategoryEditing}>
-        <DialogContent className="max-w-md w-full">
-          <DialogHeader>
-            <DialogTitle>カテゴリの編集</DialogTitle>
-            <DialogDescription>カテゴリ名を編集してください。</DialogDescription>
-          </DialogHeader>
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              if (!categoryName.trim()) {
-                setCategoryError('カテゴリ名は必須です');
-                return;
-              }
-              individualPoint.category = categoryName;
-              setIsCategoryEditing(false);
-            }}
-            className="space-y-4"
-          >
-            <div>
-              <Label htmlFor="categoryName">カテゴリ名</Label>
-              <Input
-                id="categoryName"
-                value={categoryName}
-                onChange={(e) => {
-                  setCategoryName(e.target.value);
-                  setCategoryError('');
-                }}
-                required
-                aria-required="true"
-                className="w-full"
-              />
-              {categoryError && <div className="text-red-600 text-sm mt-1">{categoryError}</div>}
-            </div>
-            <div className="flex justify-end gap-2">
-              <Button type="button" variant="outline" onClick={() => setIsCategoryEditing(false)}>
-                キャンセル
-              </Button>
-              <Button type="submit" className="bg-carebase-blue text-white">
-                登録
-              </Button>
-            </div>
-          </form>
-        </DialogContent>
-      </Dialog>
+
       {/* Error Alert */}
       {error && (
         <Alert className="mb-6 border-red-200 bg-red-50">
@@ -491,28 +353,62 @@ export const IndividualPointDetailPage: React.FC<IndividualPointDetailPageProps>
         <CardContent>
           {isEditing ? (
             <div className="space-y-4">
+              {/* Formatting toolbar */}
+              <div className="flex items-center gap-2 p-2 border-b mb-4">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleFormatting('bold')}
+                  className="h-8 px-2"
+                >
+                  <Bold className="h-4 w-4" />
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleFormatting('italic')}
+                  className="h-8 px-2"
+                >
+                  <Italic className="h-4 w-4" />
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleFormatting('insertUnorderedList')}
+                  className="h-8 px-2"
+                >
+                  <List className="h-4 w-4" />
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleFormatting('insertOrderedList')}
+                  className="h-8 px-2"
+                >
+                  <ListOrdered className="h-4 w-4" />
+                </Button>
+              </div>
+
               <div>
                 <label className="text-sm font-medium text-gray-700 mb-2 block">
                   <span className="text-base font-semibold text-gray-800">
                     詳細内容 <span className="text-red-500">*</span>
                   </span>
                 </label>
-                <div className="border border-gray-300 rounded-md overflow-hidden bg-white">
-                  <LexicalComposer initialConfig={lexicalConfig}>
-                    <RichTextPlugin
-                      contentEditable={
-                        <ContentEditable className="min-h-[400px] p-4 outline-none" />
-                      }
-                      placeholder={
-                        <div className="p-4 text-gray-400 text-sm">
-                          {`${category}に関する詳細情報を入力してください`}
-                        </div>
-                      }
-                      ErrorBoundary={LexicalErrorBoundary}
-                    />
-                    <HistoryPlugin />
-                    <OnChangePlugin onChange={handleLexicalChange} />
-                  </LexicalComposer>
+                <div className="border border-gray-300 rounded-md bg-white">
+                  <div
+                    ref={editorRef}
+                    contentEditable
+                    className="min-h-[400px] p-4 outline-none focus:ring-2 focus:ring-carebase-blue"
+                    dangerouslySetInnerHTML={{ __html: content }}
+                    onInput={handleContentChange}
+                    style={{ whiteSpace: 'pre-wrap' }}
+                    data-placeholder={`${category}に関する詳細情報を入力してください`}
+                  />
                 </div>
               </div>
               <div className="flex items-center justify-between">

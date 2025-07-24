@@ -150,15 +150,9 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
     // Check if content exists for this category
     const hasContent = !!pointContents[category];
 
-    if (hasContent) {
-      // Navigate to existing detail page
-      router.push(`/residents/${resident.id}/individual-points/${encodeURIComponent(category)}`);
-    } else {
-      // Navigate to creation page
-      router.push(
-        `/residents/${resident.id}/individual-points/${encodeURIComponent(category)}?mode=create`
-      );
-    }
+    // Always navigate to detail page, let the page component handle the mode
+    const mode = hasContent ? '' : '?mode=create';
+    router.push(`/residents/${resident.id}/individual-points/${encodeURIComponent(category)}${mode}`);
   };
 
   const handlePointDetailSave = async (content: string) => {
