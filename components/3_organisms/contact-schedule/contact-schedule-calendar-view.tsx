@@ -13,69 +13,36 @@ interface ContactScheduleCalendarViewProps {
   viewMode: 'week' | 'month';
 }
 
-// モックデータ（日付別）
-const mockCalendarData = [
-  {
-    id: '1',
-    title: '月次ミーティング',
-    content: '来月の業務計画について話し合います',
-    type: '予定',
-    priority: 'high',
-    status: 'pending',
-    assignedTo: '田中 花子',
-    startTime: '14:00',
-    endTime: '15:30',
-    date: '2025-01-25',
-  },
-  {
-    id: '2',
-    title: '設備点検のお知らせ',
-    content: 'エアコンの定期点検を実施します',
-    type: '連絡事項',
-    priority: 'medium',
-    status: 'confirmed',
-    assignedTo: '佐藤 太郎',
-    startTime: '10:00',
-    endTime: '12:00',
-    date: '2025-01-25',
-  },
-  {
-    id: '3',
-    title: '利用者様の体調変化',
-    content: '山田様の血圧が高めです',
-    type: '申し送り',
-    priority: 'high',
-    status: 'pending',
-    assignedTo: '鈴木 一郎',
-    startTime: '08:00',
-    endTime: '08:30',
-    date: '2025-01-25',
-  },
-  {
-    id: '4',
-    title: '研修会',
-    content: '介護技術研修会を開催します',
-    type: '予定',
-    priority: 'medium',
-    status: 'confirmed',
-    assignedTo: '高橋 恵子',
-    startTime: '13:00',
-    endTime: '17:00',
-    date: '2025-01-27',
-  },
-  {
-    id: '5',
-    title: '新年会準備',
-    content: '利用者様との新年会の準備',
-    type: '予定',
-    priority: 'low',
-    status: 'pending',
-    assignedTo: '伊藤 健太',
-    startTime: '15:00',
-    endTime: '17:00',
-    date: '2025-01-28',
-  },
-];
+import { contactScheduleData } from '@/mocks/contact-schedule-data';
+
+// 日付文字列からDateオブジェクトに変換するヘルパー関数
+const parseEventDate = (dateString: string) => {
+  return new Date(dateString);
+};
+
+// ContactScheduleItemを表示用データに変換
+const convertToDisplayData = (items: typeof contactScheduleData) => {
+  return items.map(item => ({
+    id: item.id,
+    title: item.title,
+    content: item.content,
+    type: item.type === 'contact' ? '連絡事項' : 
+          item.type === 'schedule' ? '予定' : '申し送り',
+    priority: item.priority,
+    status: item.status,
+    assignedTo: item.assignedTo,
+    startTime: item.startTime || '',
+    endTime: item.endTime || '',
+    date: parseEventDate(item.dueDate).toISOString().split('T')[0],
+    tags: item.tags,
+    relatedResidentName: item.relatedResidentName,
+  }));
+};
+
+// 表示用データを取得
+const getDisplayData = () => {
+  return convertToDisplayData(contactScheduleData);
+};
 
 const getPriorityBadge = (priority: string) => {
   switch (priority) {
@@ -145,7 +112,8 @@ export function ContactScheduleCalendarView({ selectedDate, viewMode }: ContactS
 
   // 期間内のイベントを取得
   const getEventsForDate = (date: Date) => {
-    return mockCalendarData.filter((event) =>
+    const displayData = getDisplayData();
+    return displayData.filter((event) =>
       isSameDay(new Date(event.date), date)
     ).sort((a, b) => a.startTime.localeCompare(b.startTime));
   };
@@ -202,11 +170,16 @@ export function ContactScheduleCalendarView({ selectedDate, viewMode }: ContactS
                                 {getPriorityBadge(event.priority)}
                               </div>
                             </div>
-                            <p className="text-sm text-gray-600 mb-2">{event.content}</p>
+                            <p className="text-sm text-gray-600 mb-2 line-clamp-2">{event.content}</p>
+                            {event.relatedResidentName && (
+                              <div className="text-xs text-blue-600 mb-1">
+                                対象: {event.relatedResidentName}
+                              </div>
+                            )}
                             <div className="flex items-center justify-between text-xs text-gray-500">
                               <div className="flex items-center gap-2">
                                 <Clock className="h-3 w-3" />
-                                <span>{event.startTime} - {event.endTime}</span>
+                                <span>{event.startTime}{event.endTime && ` - ${event.endTime}`}</span>
                               </div>
                               <div className="flex items-center gap-2">
                                 <User className="h-3 w-3" />
@@ -284,13 +257,16 @@ export function ContactScheduleCalendarView({ selectedDate, viewMode }: ContactS
                       <div
                         key={event.id}
                         className={`text-xs p-1 rounded truncate ${
-                          event.type === '予定' ? 'bg-blue-100 text-blue-700' :
+                          event.type === '予定' ? 'bg-blue-100 text-blue-800' :
                           event.type === '連絡事項' ? 'bg-green-100 text-green-700' :
-                          'bg-purple-100 text-purple-700'
+                          'bg-purple-100 text-purple-800'
                         }`}
                         title={event.title}
                       >
-                        {event.startTime} {event.title}
+                        <div className="font-medium">{event.startTime} {event.title}</div>
+                        {event.relatedResidentName && (
+                          <div className="text-xs opacity-75">対象: {event.relatedResidentName}</div>
+                        )}
                       </div>
                     ))}
                     {dayEvents.length > 3 && (
