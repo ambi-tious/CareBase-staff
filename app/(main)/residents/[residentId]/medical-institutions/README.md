@@ -1,7 +1,7 @@
 # かかりつけ医療機関タブ設計書
 
-画面名: `かかりつけ医療機関タブ`
-パス: `/residents/[residentId]` (詳細情報タブ内)
+画面名: `かかりつけ医療機関タブ`  
+パス: `/residents/[residentId]` (詳細情報タブ内)  
 URL: https://carebase-staff.vercel.app/residents/1
 
 ## 概要
