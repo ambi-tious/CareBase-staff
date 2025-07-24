@@ -1,5 +1,5 @@
-import { useState, useCallback, useEffect, useMemo } from 'react';
 import type { ResidentBasicInfo } from '@/components/2_molecules/forms/resident-basic-info-form';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 interface UseResidentFormOptions {
   initialData?: Partial<ResidentBasicInfo>;
@@ -17,6 +17,9 @@ const initialFormData: ResidentBasicInfo = {
   roomInfo: '',
   address: '',
   admissionDate: '',
+  certificationDate: '',
+  certificationStartDate: '',
+  certificationEndDate: '',
 };
 
 export const useResidentForm = ({ initialData, onSubmit }: UseResidentFormOptions) => {

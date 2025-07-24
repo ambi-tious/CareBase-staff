@@ -4,7 +4,7 @@ import { DocumentBadge } from '@/components/1_atoms/documents/document-badge';
 import { Button } from '@/components/ui/button';
 import { format } from 'date-fns';
 import { ja } from 'date-fns/locale';
-import { ArrowLeft, Edit, FolderInput, Printer } from 'lucide-react';
+import { ArrowLeft, Edit, FolderInput } from 'lucide-react';
 import Link from 'next/link';
 import type React from 'react';
 
@@ -57,10 +57,6 @@ export const DocumentDetailHeader: React.FC<DocumentDetailHeaderProps> = ({
               場所移動
             </Button>
           )}
-          <Button variant="outline" size="sm" onClick={onPrint} className="flex items-center gap-1">
-            <Printer className="h-4 w-4" />
-            印刷
-          </Button>
           <Link href={`/documents/edit/${documentId}`}>
             <Button
               variant="outline"

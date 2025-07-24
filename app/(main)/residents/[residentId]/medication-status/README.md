@@ -2,12 +2,12 @@
 
 画面名: `服薬状況タブ`  
 パス: `/residents/[residentId]` (詳細情報タブ内)  
-URL: https://carebase-staff.vercel.app/residents/[residentId]
+URL: https://carebase-staff.vercel.app/residents/1
 
 ## 概要
 
-利用者詳細画面内の服薬状況タブ設計書です。  
-利用者の服薬状況記録の表示、登録、編集、削除機能を提供します。  
+利用者詳細画面内の服薬状況タブ設計書です。
+利用者の服薬状況記録の表示、登録、編集、削除機能を提供します。
 複数の服薬状況記録を管理し、登録日順でソート表示することで、服薬の経過を効率的に追跡できます。
 
 Issue: [#174 [設計] #005-6 利用者｜利用者詳細（服薬状況）](https://github.com/ambi-tious/CareBase-staff/issues/174)

@@ -1,13 +1,13 @@
 # ご家族情報タブ設計書
 
-画面名: `ご家族情報タブ`  
-パス: `/residents/[residentId]` (詳細情報タブ内)  
-URL: https://carebase-staff.vercel.app/residents/[residentId]
+画面名: `ご家族情報タブ`
+パス: `/residents/[residentId]` (詳細情報タブ内)
+URL: https://carebase-staff.vercel.app/residents/1
 
 ## 概要
 
-CareBase-staffアプリケーションの利用者詳細画面内のご家族情報タブ設計書です。  
-利用者のご家族・連絡先情報の表示、登録、編集、削除機能を提供します。  
+CareBase-staffアプリケーションの利用者詳細画面内のご家族情報タブ設計書です。
+利用者のご家族・連絡先情報の表示、登録、編集、削除機能を提供します。
 緊急連絡先と一般連絡先を区別して管理し、各連絡先の詳細情報を効率的に管理できます。
 
 ## 全体レイアウト
