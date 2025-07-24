@@ -8,7 +8,7 @@ import { addDays, format } from 'date-fns';
 import { ja } from 'date-fns/locale';
 import { CalendarIcon, ChevronLeft, ChevronRight, Filter, MessageSquare, Plus } from 'lucide-react';
 import Link from 'next/link';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ContactScheduleCalendarView } from './contact-schedule-calendar-view';
 
 export function ContactScheduleBoard() {
@@ -196,7 +196,6 @@ export function ContactScheduleBoard() {
                 </div>
               </div>
             </div>
-            onDateChange={setSelectedDate}
           </CardContent>
         </Card>
       )}
