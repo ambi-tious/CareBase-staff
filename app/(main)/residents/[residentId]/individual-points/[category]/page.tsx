@@ -1,6 +1,6 @@
-import { notFound } from 'next/navigation';
-import { getResidentById } from '@/mocks/care-board-data';
 import { IndividualPointDetailPage } from '@/components/3_organisms/resident/individual-point-detail-page';
+import { getResidentById } from '@/mocks/care-board-data';
+import { notFound } from 'next/navigation';
 
 interface IndividualPointPageProps {
   params: Promise<{
@@ -12,7 +12,10 @@ interface IndividualPointPageProps {
   }>;
 }
 
-export default async function IndividualPointPage({ params, searchParams }: IndividualPointPageProps) {
+export default async function IndividualPointPage({
+  params,
+  searchParams,
+}: IndividualPointPageProps) {
   const { residentId, category } = await params;
   const { mode } = await searchParams;
   const residentIdNum = Number.parseInt(residentId, 10);

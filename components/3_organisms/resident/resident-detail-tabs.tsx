@@ -2,12 +2,13 @@
 
 import { MedicationCard as NewMedicationCard } from '@/components/2_molecules/medication/medication-card';
 import { MedicationStatusCard } from '@/components/2_molecules/medication/medication-status-card';
-import { ContactCard } from '@/components/2_molecules/resident/contact-info-card';
+import { ContactInfoCard } from '@/components/2_molecules/resident/contact-info-card';
 import { HomeCareOfficeCard } from '@/components/2_molecules/resident/home-care-office-card';
 import { IndividualPointCard } from '@/components/2_molecules/resident/individual-point-card';
 import { MedicalHistoryCard } from '@/components/2_molecules/resident/medical-history-card';
 import { MedicalInstitutionCard } from '@/components/2_molecules/resident/medical-institution-card';
 import { MedicationCard as OldMedicationCard } from '@/components/2_molecules/resident/medication-card';
+import { CategoryCreationModal } from '@/components/3_organisms/modals/category-creation-modal';
 import { ContactEditModal } from '@/components/3_organisms/modals/contact-edit-modal';
 import { HomeCareOfficeModal } from '@/components/3_organisms/modals/home-care-office-modal';
 import { MedicalHistoryModal } from '@/components/3_organisms/modals/medical-history-modal';
@@ -100,10 +101,10 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
       { id: 'ip-9', category: '口腔ケア', icon: 'Tooth' as IconName, count: 0, isActive: true },
       { id: 'ip-10', category: 'その他', icon: 'FileText' as IconName, count: 0, isActive: true },
     ];
-    
+
     // 既存の個別ポイントがあればそれを使用、なければデフォルトを使用
-    return resident.individualPoints && resident.individualPoints.length > 0 
-      ? resident.individualPoints 
+    return resident.individualPoints && resident.individualPoints.length > 0
+      ? resident.individualPoints
       : defaultPoints;
   });
   const [activeTab, setActiveTab] = useState('family');
@@ -150,9 +151,16 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
     // Check if content exists for this category
     const hasContent = !!pointContents[category];
 
-    // Always navigate to detail page, let the page component handle the mode
-    const mode = hasContent ? '' : '?mode=create';
-    router.push(`/residents/${resident.id}/individual-points/${encodeURIComponent(category)}${mode}`);
+    // Navigate to detail page with appropriate mode
+    if (hasContent) {
+      // Content exists - navigate to view/edit mode
+      router.push(`/residents/${resident.id}/individual-points/${encodeURIComponent(category)}`);
+    } else {
+      // No content - navigate to create mode
+      router.push(
+        `/residents/${resident.id}/individual-points/${encodeURIComponent(category)}?mode=create`
+      );
+    }
   };
 
   const handlePointDetailSave = async (content: string) => {
@@ -397,7 +405,7 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
         <TabsContent value="family">
           {contacts.length > 0 ? (
             contacts.map((contact) => (
-              <ContactCard
+              <ContactInfoCard
                 key={contact.id}
                 contact={contact}
                 residentId={resident.id}
@@ -626,6 +634,15 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
         onSubmit={handleMedicationStatusSubmit}
         residentName={resident.name}
         mode="create"
+      />
+
+      <CategoryCreationModal
+        isOpen={isAddCategoryModalOpen}
+        onClose={() => setIsAddCategoryModalOpen(false)}
+        onSubmit={handleCategoryCreate}
+        title="個別ポイントカテゴリの追加"
+        description="新しい個別ポイントのカテゴリを作成します。"
+        submitLabel="作成"
       />
     </>
   );

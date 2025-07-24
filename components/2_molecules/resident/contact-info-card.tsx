@@ -18,7 +18,7 @@ interface ContactCardProps {
   onUpdate: () => void;
 }
 
-export const ContactCard: React.FC<ContactCardProps> = ({
+export const ContactInfoCard: React.FC<ContactCardProps> = ({
   contact,
   residentId,
   residentName,

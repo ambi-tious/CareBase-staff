@@ -126,6 +126,18 @@ export const careBoardData: Resident[] = [
     certValidityEnd: '2025/12/27',
     address: '兵庫県神戸市西区樫野台3-408-14',
     avatarUrl: '/elderly-japanese-man.png',
+    individualPoints: [
+      { id: 'ip-1', category: '移乗介助', icon: 'Users', count: 1, isActive: true },
+      { id: 'ip-2', category: '食事', icon: 'Utensils', count: 1, isActive: true },
+      { id: 'ip-3', category: '服薬', icon: 'Pill', count: 1, isActive: true },
+      { id: 'ip-4', category: '接遇', icon: 'Users', count: 1, isActive: true },
+      { id: 'ip-5', category: '入浴', icon: 'Bath', count: 1, isActive: true },
+      { id: 'ip-6', category: '点眼', icon: 'Eye', count: 0, isActive: true },
+      { id: 'ip-7', category: 'バイタル', icon: 'Activity', count: 0, isActive: true },
+      { id: 'ip-8', category: '排泄', icon: 'ExcretionIcon', count: 0, isActive: true },
+      { id: 'ip-9', category: '口腔ケア', icon: 'Tooth', count: 0, isActive: true },
+      { id: 'ip-10', category: 'その他', icon: 'FileText', count: 0, isActive: true },
+    ],
     events: [
       {
         scheduledTime: '07:00',
@@ -251,6 +263,18 @@ export const careBoardData: Resident[] = [
     certValidityEnd: '2026/01/14',
     address: '大阪府大阪市北区梅田1-1-1',
     avatarUrl: '/elderly-japanese-woman.png',
+    individualPoints: [
+      { id: 'ip-1', category: '移乗介助', icon: 'Users', count: 1, isActive: true },
+      { id: 'ip-2', category: '食事', icon: 'Utensils', count: 1, isActive: true },
+      { id: 'ip-3', category: '服薬', icon: 'Pill', count: 1, isActive: true },
+      { id: 'ip-4', category: '接遇', icon: 'Users', count: 1, isActive: true },
+      { id: 'ip-5', category: '入浴', icon: 'Bath', count: 1, isActive: true },
+      { id: 'ip-6', category: '点眼', icon: 'Eye', count: 0, isActive: true },
+      { id: 'ip-7', category: 'バイタル', icon: 'Activity', count: 0, isActive: true },
+      { id: 'ip-8', category: '排泄', icon: 'ExcretionIcon', count: 0, isActive: true },
+      { id: 'ip-9', category: '口腔ケア', icon: 'Tooth', count: 0, isActive: true },
+      { id: 'ip-10', category: 'その他', icon: 'FileText', count: 0, isActive: true },
+    ],
     events: [
       {
         scheduledTime: '07:15',
