@@ -47,9 +47,9 @@ export const GenericDeleteModal: React.FC<GenericDeleteModalProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-md tablet:max-w-lg tablet:p-8" data-testid="delete-modal">
+      <DialogContent className="max-w-md tablet:max-w-xl tablet:p-8" data-testid="delete-modal">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2 text-red-600 tablet:text-tablet-xl tablet:gap-3">
+          <DialogTitle className="flex items-center gap-2 text-red-600">
             <AlertTriangle className="h-5 w-5 tablet:h-6 tablet:w-6" />
             削除の確認
           </DialogTitle>
@@ -78,7 +78,7 @@ export const GenericDeleteModal: React.FC<GenericDeleteModalProps> = ({
           )}
         </div>
 
-        <DialogFooter className="flex justify-end gap-2 tablet:gap-4">
+        <DialogFooter className="flex justify-end gap-2">
           <Button
             variant="outline"
             onClick={onClose}
