@@ -80,20 +80,27 @@ module.exports = [
       prettier: prettierPlugin,
     },
     rules: {
+      // TypeScript rules
       '@typescript-eslint/no-unused-vars': 'off',
       '@typescript-eslint/no-explicit-any': 'warn',
       '@typescript-eslint/no-unused-expressions': 'error',
       '@typescript-eslint/no-var-requires': 'error',
       '@typescript-eslint/no-empty-object-type': 'error',
+      // Prettier rules
       'prettier/prettier': 'error',
+      // General rules
       'no-console': ['warn', { allow: ['warn', 'error'] }],
       'no-debugger': 'error',
       'no-alert': 'warn',
       'prefer-const': 'error',
       'no-var': 'error',
-      '@next/next/no-img-element': 'warn',
       'no-unused-vars': 'off',
       'no-useless-escape': 'off',
+      // Next.js rules
+      '@next/next/no-img-element': 'warn',
+      '@next/next/no-html-link-for-pages': 'error',
+      '@next/next/no-sync-scripts': 'error',
+      '@next/next/no-title-in-document-head': 'error',
     },
   },
   {
@@ -174,6 +181,11 @@ module.exports = [
       '*.config.js',
       '*.config.mjs',
       'jest.config.js',
+      '**/*.md',
+      '**/*.json',
+      'public/',
+      '.vscode/',
+      '.git/',
     ],
   },
 ];

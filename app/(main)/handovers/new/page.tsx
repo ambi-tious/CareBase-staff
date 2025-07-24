@@ -1,14 +1,14 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Alert, AlertDescription } from '@/components/ui/alert';
 import { HandoverForm } from '@/components/2_molecules/handover/handover-form';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import type { HandoverFormData } from '@/types/handover';
-import { ArrowLeft, MessageSquarePlus, CheckCircle } from 'lucide-react';
+import { ArrowLeft, CheckCircle, MessageSquarePlus } from 'lucide-react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 
 export default function NewHandoverPage() {
   const router = useRouter();
@@ -24,7 +24,6 @@ export default function NewHandoverPage() {
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
       // Mock API call - in production, this would call the actual API
-      console.log('Submitting handover:', { ...data, isDraft });
 
       // Simulate occasional errors for testing
       if (Math.random() < 0.1) {

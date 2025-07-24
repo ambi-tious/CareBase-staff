@@ -1,13 +1,13 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
+import { ResidentBasicInfoForm } from '@/components/2_molecules/forms/resident-basic-info-form';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ResidentBasicInfoForm } from '@/components/2_molecules/forms/resident-basic-info-form';
 import { useResidentForm } from '@/hooks/useResidentForm';
 import { residentService } from '@/services/residentService';
 import { ArrowLeft, Save, UserPlus } from 'lucide-react';
-import { Alert, AlertDescription } from '@/components/ui/alert';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 export default function NewResidentPage() {
@@ -74,7 +74,7 @@ export default function NewResidentPage() {
       )}
 
       {/* Form */}
-      <Card className="max-w-6xl">
+      <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <UserPlus className="h-5 w-5" />
