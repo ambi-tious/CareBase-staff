@@ -1,7 +1,6 @@
 import type React from 'react';
 import type { IndividualPoint } from '@/mocks/care-board-data';
 import { getLucideIcon } from '@/lib/lucide-icon-registry';
-import { Badge } from '@/components/ui/badge';
 
 interface IndividualPointCardProps {
   point: IndividualPoint;
@@ -27,13 +26,9 @@ export const IndividualPointCard: React.FC<IndividualPointCardProps> = ({
     >
       <Icon className="h-8 w-8 mx-auto mb-2" />
       <p className="text-sm font-medium">{point.category}</p>
-      {hasContent && point.count > 0 ? (
-        <Badge className="absolute -top-2 -right-2 h-6 w-6 rounded-full bg-green-500 text-white text-xs font-bold flex items-center justify-center">
-          {point.count}
-        </Badge>
-      ) : !hasContent ? (
+      {!hasContent && (
         <p className="text-xs mt-1 opacity-75">クリックして作成</p>
-      ) : null}
+      )}
     </div>
   );
 };
