@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { addDays, format } from 'date-fns';
 import { ja } from 'date-fns/locale';
-import { CalendarIcon, ChevronLeft, ChevronRight, Filter, MessageSquare, Plus } from 'lucide-react';
+import { CalendarIcon, ChevronLeft, ChevronRight, Filter, Plus } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { ContactScheduleCalendarView } from './contact-schedule-calendar-view';
@@ -25,36 +25,29 @@ export function ContactScheduleBoard() {
     <div className="p-4 md:p-6 bg-carebase-bg min-h-screen">
       {/* ヘッダー */}
       <div className="mb-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        <div className="flex items-center gap-3 flex-wrap">
-          <div className="flex items-center gap-3">
-            <MessageSquare className="h-6 w-6 text-carebase-blue" />
-            <h1 className="text-2xl font-bold text-carebase-text-primary">連絡・予定</h1>
-          </div>
-
-          <div className="flex items-center gap-1 rounded-lg bg-gray-200 p-1 shadow-sm">
-            <Button
-              onClick={() => setCalendarView('week')}
-              className={`px-4 py-2.5 font-medium text-base ${
-                calendarView === 'week'
-                  ? 'bg-carebase-blue hover:bg-carebase-blue-dark text-white shadow-sm'
-                  : 'bg-transparent text-gray-700 hover:bg-gray-300'
-              }`}
-            >
-              <CalendarIcon className="h-4 w-4 mr-2" />
-              週間表示
-            </Button>
-            <Button
-              onClick={() => setCalendarView('month')}
-              className={`px-4 py-2.5 font-medium text-base ${
-                calendarView === 'month'
-                  ? 'bg-carebase-blue hover:bg-carebase-blue-dark text-white shadow-sm'
-                  : 'bg-transparent text-gray-700 hover:bg-gray-300'
-              }`}
-            >
-              <CalendarIcon className="h-4 w-4 mr-2" />
-              月間表示
-            </Button>
-          </div>
+        <div className="flex items-center gap-1 rounded-lg bg-gray-200 p-1 shadow-sm">
+          <Button
+            onClick={() => setCalendarView('week')}
+            className={`px-4 py-2.5 font-medium text-base ${
+              calendarView === 'week'
+                ? 'bg-carebase-blue hover:bg-carebase-blue-dark text-white shadow-sm'
+                : 'bg-transparent text-gray-700 hover:bg-gray-300'
+            }`}
+          >
+            <CalendarIcon className="h-4 w-4 mr-2" />
+            週間表示
+          </Button>
+          <Button
+            onClick={() => setCalendarView('month')}
+            className={`px-4 py-2.5 font-medium text-base ${
+              calendarView === 'month'
+                ? 'bg-carebase-blue hover:bg-carebase-blue-dark text-white shadow-sm'
+                : 'bg-transparent text-gray-700 hover:bg-gray-300'
+            }`}
+          >
+            <CalendarIcon className="h-4 w-4 mr-2" />
+            月間表示
+          </Button>
         </div>
 
         <div className="flex items-center gap-2 flex-wrap">

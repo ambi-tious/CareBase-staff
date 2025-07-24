@@ -4,29 +4,20 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import {
+  addWeeks,
+  eachDayOfInterval,
+  endOfMonth,
+  endOfWeek,
   format,
   isSameDay,
-  startOfWeek,
-  endOfWeek,
-  eachDayOfInterval,
-  startOfMonth,
-  endOfMonth,
   isSameMonth,
   isToday,
-  addWeeks,
+  startOfMonth,
+  startOfWeek,
   subWeeks,
 } from 'date-fns';
 import { ja } from 'date-fns/locale';
-import {
-  Calendar,
-  Clock,
-  MessageCircle,
-  User,
-  Plus,
-  ChevronLeft,
-  ChevronRight,
-} from 'lucide-react';
-import React from 'react';
+import { Calendar, ChevronLeft, ChevronRight, MessageCircle, Plus } from 'lucide-react';
 
 interface ContactScheduleCalendarViewProps {
   selectedDate: Date | null;
