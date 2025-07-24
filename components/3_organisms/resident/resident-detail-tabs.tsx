@@ -86,7 +86,26 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
     }
     return [];
   });
-  const [individualPoints, setIndividualPoints] = useState(resident.individualPoints || []);
+  const [individualPoints, setIndividualPoints] = useState(() => {
+    // デフォルトの個別ポイントカテゴリを設定
+    const defaultPoints = [
+      { id: 'ip-1', category: '移乗介助', icon: 'Users' as IconName, count: 1, isActive: true },
+      { id: 'ip-2', category: '食事', icon: 'Utensils' as IconName, count: 1, isActive: true },
+      { id: 'ip-3', category: '服薬', icon: 'Pill' as IconName, count: 1, isActive: true },
+      { id: 'ip-4', category: '接遇', icon: 'Users' as IconName, count: 1, isActive: true },
+      { id: 'ip-5', category: '入浴', icon: 'Bath' as IconName, count: 1, isActive: true },
+      { id: 'ip-6', category: '点眼', icon: 'Eye' as IconName, count: 0, isActive: true },
+      { id: 'ip-7', category: 'バイタル', icon: 'Activity' as IconName, count: 0, isActive: true },
+      { id: 'ip-8', category: '排泄', icon: 'ExcretionIcon' as IconName, count: 0, isActive: true },
+      { id: 'ip-9', category: '口腔ケア', icon: 'Tooth' as IconName, count: 0, isActive: true },
+      { id: 'ip-10', category: 'その他', icon: 'FileText' as IconName, count: 0, isActive: true },
+    ];
+    
+    // 既存の個別ポイントがあればそれを使用、なければデフォルトを使用
+    return resident.individualPoints && resident.individualPoints.length > 0 
+      ? resident.individualPoints 
+      : defaultPoints;
+  });
   const [activeTab, setActiveTab] = useState('family');
 
   const detailTabs = [
