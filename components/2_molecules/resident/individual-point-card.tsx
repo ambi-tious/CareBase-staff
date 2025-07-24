@@ -17,11 +17,11 @@ export const IndividualPointCard: React.FC<IndividualPointCardProps> = ({
 
   return (
     <div
-      className={`relative p-4 rounded-lg text-center ${
+      className={`relative p-4 rounded-lg text-center cursor-pointer hover:shadow-md transition-all duration-200 ${
         hasContent 
           ? 'bg-carebase-blue text-white hover:bg-carebase-blue-dark' 
           : 'bg-gray-200 text-gray-500 hover:bg-gray-300'
-      } cursor-pointer hover:shadow-md transition-shadow`}
+      }`}
       onClick={onClick}
     >
       <Icon className="h-8 w-8 mx-auto mb-2" />
