@@ -26,6 +26,7 @@ import {
   MessageCircle,
   Plus,
 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import React from 'react';
 
 interface ResponsiveWeekViewProps {
@@ -54,6 +55,7 @@ export const ContactScheduleResponsiveWeek: React.FC<ResponsiveWeekViewProps> = 
   const isDesktop = useMediaQuery('(min-width: 1024px)');
   const isTablet = useMediaQuery('(min-width: 768px)');
   const isMobile = !isTablet;
+  const router = useRouter();
 
   // レスポンシブに応じた表示日数を決定
   const getDisplayDays = () => {
@@ -249,7 +251,7 @@ export const ContactScheduleResponsiveWeek: React.FC<ResponsiveWeekViewProps> = 
                         <div
                           key={event.id}
                           className={`responsive-event-item ${event.type} priority-${event.priority}`}
-                          onClick={() => (window.location.href = `/contact-schedule/${event.id}`)}
+                          onClick={() => router.push(`/contact-schedule/${event.id}`)}
                           style={{
                             animationDelay: `${index * 50}ms`,
                           }}
@@ -296,7 +298,7 @@ export const ContactScheduleResponsiveWeek: React.FC<ResponsiveWeekViewProps> = 
                       className="add-event-btn"
                       onClick={(e) => {
                         e.stopPropagation();
-                        window.location.href = `/contact-schedule/new?date=${format(day, 'yyyy-MM-dd')}`;
+                        router.push(`/contact-schedule/new?date=${format(day, 'yyyy-MM-dd')}`);
                       }}
                       aria-label={`${format(day, 'MM月dd日', { locale: ja })}の予定を追加`}
                     >

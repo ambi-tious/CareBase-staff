@@ -3,8 +3,8 @@
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Clock, User, MapPin, Edit3, Trash2 } from 'lucide-react';
-import Link from 'next/link';
+import { Clock, Edit3, MapPin, Trash2, User } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import type React from 'react';
 
 interface WeeklyEventCardProps {
@@ -60,10 +60,11 @@ export const WeeklyEventCard: React.FC<WeeklyEventCardProps> = ({
   };
 
   const handleClick = () => {
+    const router = useRouter();
     if (onClick) {
       onClick();
     } else {
-      window.location.href = `/contact-schedule/${event.id}`;
+      router.push(`/contact-schedule/${event.id}`);
     }
   };
 

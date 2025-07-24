@@ -26,6 +26,7 @@ interface ContactScheduleCalendarViewProps {
 }
 
 import { contactScheduleData } from '@/mocks/contact-schedule-data';
+import { useRouter } from 'next/navigation';
 
 // 日付文字列からDateオブジェクトに変換するヘルパー関数
 const parseEventDate = (dateString: string) => {
@@ -81,24 +82,12 @@ const getTypeBadge = (type: string) => {
   }
 };
 
-const getStatusBadge = (status: string) => {
-  switch (status) {
-    case 'pending':
-      return <Badge className="bg-red-100 text-red-700 border-red-200">未対応</Badge>;
-    case 'confirmed':
-      return <Badge className="bg-yellow-100 text-yellow-700 border-yellow-200">確認済み</Badge>;
-    case 'completed':
-      return <Badge className="bg-green-100 text-green-700 border-green-200">完了</Badge>;
-    default:
-      return <Badge className="bg-gray-100 text-gray-700 border-gray-200">-</Badge>;
-  }
-};
-
 export function ContactScheduleCalendarView({
   selectedDate,
   viewMode,
   onDateChange,
 }: ContactScheduleCalendarViewProps) {
+  const router = useRouter();
   if (!selectedDate) {
     return (
       <div className="flex justify-center items-center h-64">
@@ -235,7 +224,7 @@ export function ContactScheduleCalendarView({
                           <div
                             key={event.id}
                             className={`event-item ${event.type} priority-${event.priority}`}
-                            onClick={() => (window.location.href = `/contact-schedule/${event.id}`)}
+                            onClick={() => router.push(`/contact-schedule/${event.id}`)}
                             style={{
                               animationDelay: `${index * 50}ms`,
                             }}
@@ -273,7 +262,7 @@ export function ContactScheduleCalendarView({
                         size="sm"
                         className="add-event-btn"
                         onClick={() =>
-                          (window.location.href = `/contact-schedule/new?date=${format(day, 'yyyy-MM-dd')}`)
+                          router.push(`/contact-schedule/new?date=${format(day, 'yyyy-MM-dd')}`)
                         }
                       >
                         <Plus className="h-4 w-4" />
@@ -348,7 +337,7 @@ export function ContactScheduleCalendarView({
                               : 'bg-purple-100 text-purple-800'
                         }`}
                         title={event.title}
-                        onClick={() => (window.location.href = `/contact-schedule/${event.id}`)}
+                        onClick={() => router.push(`/contact-schedule/${event.id}`)}
                       >
                         <div className="font-medium">
                           {event.startTime} {event.title}
