@@ -108,27 +108,6 @@ export const RecordDataDailyView: React.FC<RecordDataDailyViewProps> = ({
 
   return (
     <div className="space-y-6">
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-3">
-            <Clock className="h-5 w-5 text-carebase-blue" />
-            {format(selectedDate, 'yyyy年MM月dd日 (E)', { locale: ja })}の記録データ
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex items-center gap-6 text-sm text-gray-600">
-            <div className="flex items-center gap-2">
-              <Utensils className="h-4 w-4" />
-              <span>ケア記録: {dailyCareRecords.length}件</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <MessageCircle className="h-4 w-4" />
-              <span>申し送り: {dailyHandovers.length}件</span>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
       <div className="flex items-center gap-4">
         <div className="flex items-center space-x-2">
           <Checkbox id="time-filter" checked={showTimeFilter} onCheckedChange={setShowTimeFilter} />

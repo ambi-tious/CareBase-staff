@@ -13,7 +13,7 @@ import {
   startOfMonth,
 } from 'date-fns';
 import { ja } from 'date-fns/locale';
-import { BarChart3, Calendar, TrendingUp } from 'lucide-react';
+import { Calendar } from 'lucide-react';
 import type React from 'react';
 import { useMemo } from 'react';
 
@@ -95,81 +95,6 @@ export const RecordDataMonthlyView: React.FC<RecordDataMonthlyViewProps> = ({
 
   return (
     <div className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-gray-600">総記録数</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center gap-2">
-              <BarChart3 className="h-5 w-5 text-carebase-blue" />
-              <span className="text-2xl font-bold text-carebase-blue">
-                {monthlyStats.total || 0}
-              </span>
-              <span className="text-sm text-gray-500">件</span>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-gray-600">平均記録数/日</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center gap-2">
-              <TrendingUp className="h-5 w-5 text-green-600" />
-              <span className="text-2xl font-bold text-green-600">
-                {monthlyStats.total
-                  ? Math.round((monthlyStats.total / calendarDays.length) * 10) / 10
-                  : 0}
-              </span>
-              <span className="text-sm text-gray-500">件</span>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-gray-600">記録日数</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center gap-2">
-              <Calendar className="h-5 w-5 text-purple-600" />
-              <span className="text-2xl font-bold text-purple-600">
-                {Object.keys(monthlyStats.dailyStats || {}).length}
-              </span>
-              <span className="text-sm text-gray-500">日</span>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <BarChart3 className="h-5 w-5 text-carebase-blue" />
-            カテゴリ別記録数
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          {Object.keys(monthlyStats.categoryStats || {}).length === 0 ? (
-            <div className="text-center py-8">
-              <BarChart3 className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-              <p className="text-gray-500">この月の記録はありません。</p>
-            </div>
-          ) : (
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              {Object.entries(monthlyStats.categoryStats || {}).map(([category, count]) => (
-                <div key={category} className="text-center p-4 bg-gray-50 rounded-lg">
-                  <div className="text-lg font-bold text-carebase-blue">{count}</div>
-                  <div className="text-sm text-gray-600">{getCategoryLabel(category)}</div>
-                </div>
-              ))}
-            </div>
-          )}
-        </CardContent>
-      </Card>
-
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
@@ -212,30 +137,6 @@ export const RecordDataMonthlyView: React.FC<RecordDataMonthlyViewProps> = ({
                   </div>
                 );
               })}
-            </div>
-
-            <div className="flex items-center justify-center gap-4 text-xs text-gray-600">
-              <span>記録数:</span>
-              <div className="flex items-center gap-1">
-                <div className="w-3 h-3 bg-gray-100 rounded"></div>
-                <span>0</span>
-              </div>
-              <div className="flex items-center gap-1">
-                <div className="w-3 h-3 bg-green-200 rounded"></div>
-                <span>1-2</span>
-              </div>
-              <div className="flex items-center gap-1">
-                <div className="w-3 h-3 bg-green-400 rounded"></div>
-                <span>3-5</span>
-              </div>
-              <div className="flex items-center gap-1">
-                <div className="w-3 h-3 bg-green-600 rounded"></div>
-                <span>6-10</span>
-              </div>
-              <div className="flex items-center gap-1">
-                <div className="w-3 h-3 bg-green-800 rounded"></div>
-                <span>10+</span>
-              </div>
             </div>
           </div>
         </CardContent>
