@@ -12,7 +12,11 @@ vi.mock('next/navigation', () => ({
 vi.mock('@/lib/lucide-icon-registry', () => ({
   getLucideIcon: vi.fn(() => {
     return function MockIcon({ className }: { className?: string }) {
-      return <div data-testid="mock-icon" className={className}>Icon</div>;
+      return (
+        <div data-testid="mock-icon" className={className}>
+          Icon
+        </div>
+      );
     };
   }),
 }));
@@ -184,7 +188,9 @@ describe('個別ポイント詳細ページコンポーネント', () => {
     );
 
     expect(screen.getByText('詳細情報がありません')).toBeInTheDocument();
-    expect(screen.getByText('「編集」ボタンをクリックして移乗介助に関する詳細情報を追加してください。')).toBeInTheDocument();
+    expect(
+      screen.getByText('「編集」ボタンをクリックして移乗介助に関する詳細情報を追加してください。')
+    ).toBeInTheDocument();
   });
 
   it('アイコンが正しく表示される', () => {
@@ -232,7 +238,7 @@ describe('個別ポイント詳細ページコンポーネント', () => {
 
     // 内容を変更（ReactQuillのテストは複雑なため、直接state変更をシミュレート）
     // 実際のテストでは、ReactQuillのテスト用ヘルパーを使用することを推奨
-    
+
     // キャンセルボタンをクリック
     fireEvent.click(screen.getByText('キャンセル'));
 
