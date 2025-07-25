@@ -31,8 +31,8 @@ export const StaffSelector: React.FC<StaffSelectorProps> = ({
 
   return (
     <div className={`space-y-3 ${className}`}>
-      <h3 className="text-lg font-semibold text-carebase-text-primary mb-3">スタッフを選択</h3>
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+      <h3 className="text-lg font-semibold text-carebase-text-primary mb-3">③ スタッフを選択</h3>
+      <div className="grid md:grid-cols-3 lg:grid-cols-4 gap-2">
         {activeStaff.map((staffMember) => (
           <StaffCard
             key={staffMember.id}

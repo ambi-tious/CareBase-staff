@@ -1,12 +1,12 @@
 # ログイン画面設計書
 
-画面名: `ログイン`  
-パス: `/login`  
-URL: https://carebase-staff.vercel.app/login
+- 画面名: `ログイン`
+- パス: `/login`
+- URL: https://carebase-staff.vercel.app/login
 
 ## 概要
 
-CareBase-staffアプリケーションのログイン画面設計書です。  
+ログイン画面設計書です。
 施設IDとパスワードによる認証機能を提供し、認証成功時は職員選択画面へ遷移します。
 
 認証フローは以下の通りです：

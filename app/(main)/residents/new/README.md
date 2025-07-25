@@ -1,13 +1,13 @@
 # 利用者登録画面設計書
 
-画面名: `利用者登録`  
-パス: `/residents/new`  
-URL: https://carebase-staff.vercel.app/residents/new
+- 画面名: `利用者登録`
+- パス: `/residents/new`
+- URL: https://carebase-staff.vercel.app/residents/new
 
 ## 概要
 
-CareBase-staffアプリケーションの利用者登録画面設計書です。  
-職員が新しい利用者の基本情報を入力して、施設への登録を行うためのフォーム画面です。  
+利用者登録画面設計書です。
+職員が新しい利用者の基本情報を入力して、施設への登録を行うためのフォーム画面です。
 利用者一覧画面から遷移し、登録完了後は新しく作成された利用者の詳細画面に自動遷移します。
 
 Issue: [#135 [設計] #004 利用者｜利用者登録](https://github.com/ambi-tious/CareBase-staff/issues/135)

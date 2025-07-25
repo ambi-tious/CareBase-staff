@@ -1,12 +1,12 @@
 # 利用者詳細画面（基本情報）設計書
 
-画面名: `利用者詳細（基本情報）`
-パス: `/residents/[residentId]`
-URL: https://carebase-staff.vercel.app/residents/1
+- 画面名: `利用者詳細（基本情報）`
+- パス: `/residents/[residentId]`
+- URL: https://carebase-staff.vercel.app/residents/1
 
 ## 概要
 
-CareBase-staffアプリケーションの利用者詳細画面設計書です。
+利用者詳細画面設計書です。
 利用者の基本情報を表示し、詳細情報へのタブナビゲーションを提供します。
 利用者一覧画面からの遷移、または直接URLアクセス時に使用されます。
 

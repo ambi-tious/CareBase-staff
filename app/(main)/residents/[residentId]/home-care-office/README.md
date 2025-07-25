@@ -1,8 +1,8 @@
 # 居宅介護支援事業所タブ設計書
 
-画面名: `居宅介護支援事業所タブ`  
-パス: `/residents/[residentId]` (詳細情報タブ内)  
-URL: https://carebase-staff.vercel.app/residents/1
+- 画面名: `居宅介護支援事業所タブ`
+- パス: `/residents/[residentId]` (詳細情報タブ内)
+- URL: https://carebase-staff.vercel.app/residents/1
 
 ## 概要
 

@@ -30,9 +30,9 @@ export const TeamSelector: React.FC<TeamSelectorProps> = ({
   return (
     <div className={`space-y-3 ${className}`}>
       <h3 className="text-lg font-semibold text-carebase-text-primary mb-3">
-        チーム［ユニット］を選択
+        ② チーム［ユニット］を選択
       </h3>
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+      <div className="grid md:grid-cols-3 lg:grid-cols-4 gap-2">
         {teams.map((team) => {
           const Icon = getLucideIcon(team.icon);
           const isSelected = selectedTeamId === team.id;

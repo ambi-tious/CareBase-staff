@@ -1,13 +1,13 @@
 # 連絡・予定画面設計書
 
-画面名: `連絡・予定`  
-パス: `/contact-schedule`  
-URL: https://carebase-staff.vercel.app/contact-schedule
+- 画面名: `連絡・予定`
+- パス: `/contact-schedule`
+- URL: https://carebase-staff.vercel.app/contact-schedule
 
 ## 概要
 
-CareBase-staffアプリケーションの連絡・予定画面設計書です。  
-職員間の連絡事項、予定、申し送りを効率的に管理・表示する機能を提供します。  
+連絡・予定画面設計書です。
+職員間の連絡事項、予定、申し送りを効率的に管理・表示する機能を提供します。
 週間表示と月間表示の2つのカレンダー表示方式を切り替えて使用できます。
 
 ## 全体レイアウト

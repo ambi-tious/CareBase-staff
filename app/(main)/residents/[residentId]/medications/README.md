@@ -1,8 +1,8 @@
 # お薬情報タブ設計書
 
-画面名: `お薬情報タブ`  
-パス: `/residents/[residentId]` (詳細情報タブ内)  
-URL: https://carebase-staff.vercel.app/residents/1
+- 画面名: `お薬情報タブ`
+- パス: `/residents/[residentId]` (詳細情報タブ内)
+- URL: https://carebase-staff.vercel.app/residents/1
 
 ## 概要
 
