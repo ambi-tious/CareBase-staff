@@ -5,11 +5,11 @@ import { LoginButton } from '@/components/1_atoms/auth/LoginButton';
 import { ErrorAlert } from '@/components/2_molecules/auth/ErrorAlert';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useLoginForm } from '@/hooks/useLoginForm';
-import type { LoginCredentials } from '@/types/auth';
+import type { LoginCredentials, LoginResult } from '@/types/auth';
 import type React from 'react';
 
 interface LoginFormProps {
-  onLogin: (credentials: LoginCredentials) => Promise<boolean>;
+  onLogin: (credentials: LoginCredentials) => Promise<LoginResult>;
   isLoading?: boolean;
   className?: string;
 }

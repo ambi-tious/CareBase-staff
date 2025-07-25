@@ -4,13 +4,13 @@
  * Manages login form state and validation
  */
 
-import type { LoginCredentials, LoginFormState } from '@/types/auth';
+import type { LoginCredentials, LoginFormState, LoginResult } from '@/types/auth';
 import { validateLoginFormRelaxed } from '@/validations/auth-validation';
 import { useCallback, useEffect, useState } from 'react';
 
 interface UseLoginFormOptions {
   initialValues?: Partial<LoginCredentials>;
-  onSubmit: (credentials: LoginCredentials) => Promise<boolean>;
+  onSubmit: (credentials: LoginCredentials) => Promise<LoginResult>;
   enableRealtimeValidation?: boolean;
 }
 
@@ -163,13 +163,13 @@ export const useLoginForm = ({
           password: formState.password.trim(),
         };
 
-        const success = await onSubmit(credentials);
+        const result = await onSubmit(credentials);
 
         setFormState((prev) => ({
           ...prev,
           isLoading: false,
-          success,
-          error: success ? null : prev.error,
+          success: result.success,
+          error: result.success ? null : result.error || 'ログインに失敗しました。',
         }));
       } catch (error) {
         setFormState((prev) => ({
