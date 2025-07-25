@@ -20,7 +20,7 @@ import type { CareRecord } from '@/types/care-record';
 import type { Handover } from '@/types/handover';
 import { format, isSameDay } from 'date-fns';
 import { ja } from 'date-fns/locale';
-import { Clock, Eye, MessageCircle, Plus, Trash2, Utensils } from 'lucide-react';
+import { Clock, Eye, FileText, MessageCircle, Trash2 } from 'lucide-react';
 import Link from 'next/link';
 import type React from 'react';
 import { useMemo, useState } from 'react';
@@ -140,33 +140,22 @@ export const RecordDataDailyView: React.FC<RecordDataDailyViewProps> = ({
         <CardHeader>
           <div className="flex items-center justify-between">
             <CardTitle className="flex items-center gap-2">
-              <Utensils className="h-5 w-5 text-orange-600" />
+              <FileText className="h-5 w-5 text-blue-600" />
               ケア記録
             </CardTitle>
-            <Button
-              variant="outline"
-              size="sm"
-              className="border-carebase-blue text-carebase-blue hover:bg-carebase-blue-light"
-              asChild
-            >
-              <Link href="/care-records/new">
-                <Plus className="h-4 w-4 mr-2" />
-                新規作成
-              </Link>
-            </Button>
           </div>
         </CardHeader>
         <CardContent>
           {dailyCareRecords.length === 0 ? (
             <div className="text-center py-8">
-              <Utensils className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+              <FileText className="h-12 w-12 text-gray-400 mx-auto mb-4" />
               <p className="text-gray-500">この日のケア記録はありません。</p>
             </div>
           ) : (
             <div className="overflow-x-auto">
               <Table>
                 <TableHeader>
-                  <TableRow>
+                  <TableRow className="bg-gray-50">
                     <TableHead className="w-[50px]">
                       <Checkbox
                         checked={
@@ -218,6 +207,91 @@ export const RecordDataDailyView: React.FC<RecordDataDailyViewProps> = ({
                         <Button variant="outline" size="sm" asChild>
                           <Link href={`/care-records/${record.id}`}>
                             <Eye className="h-3 w-3" />
+                            詳細
+                          </Link>
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <CardTitle className="flex items-center gap-2">
+              <FileText className="h-5 w-5 text-blue-600" />
+              介護記録
+            </CardTitle>
+          </div>
+        </CardHeader>
+        <CardContent>
+          {dailyCareRecords.length === 0 ? (
+            <div className="text-center py-8">
+              <FileText className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+              <p className="text-gray-500">この日の介護記録はありません。</p>
+            </div>
+          ) : (
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow className="bg-gray-50">
+                    <TableHead className="w-[50px]">
+                      <Checkbox
+                        checked={
+                          dailyCareRecords.length > 0 &&
+                          selectedRecords.length === dailyCareRecords.length
+                        }
+                        indeterminate={
+                          selectedRecords.length > 0 &&
+                          selectedRecords.length < dailyCareRecords.length
+                        }
+                        onCheckedChange={handleSelectAllRecords}
+                      />
+                    </TableHead>
+                    <TableHead>時間</TableHead>
+                    <TableHead>記録者</TableHead>
+                    <TableHead>利用者</TableHead>
+                    <TableHead>分類</TableHead>
+                    <TableHead>内容</TableHead>
+                    <TableHead className="w-[80px]">操作</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {dailyCareRecords.map((record) => (
+                    <TableRow key={record.id} className="hover:bg-gray-50">
+                      <TableCell>
+                        <Checkbox
+                          checked={selectedRecords.includes(record.id)}
+                          onCheckedChange={(checked) => handleRecordSelection(record.id, !!checked)}
+                        />
+                      </TableCell>
+                      <TableCell className="font-mono text-sm">
+                        <div className="flex items-center gap-1">
+                          <Clock className="h-3 w-3 text-orange-600" />
+                          {formatTime(record.recordedAt)}
+                        </div>
+                      </TableCell>
+                      <TableCell className="text-sm">{record.createdByName}</TableCell>
+                      <TableCell className="text-sm font-medium">{record.residentName}</TableCell>
+                      <TableCell>
+                        <CategoryBadge category={record.category} />
+                      </TableCell>
+                      <TableCell className="max-w-xs">
+                        <div className="space-y-1">
+                          <div className="font-medium text-sm line-clamp-1">{record.title}</div>
+                          <div className="text-xs text-gray-500 line-clamp-2">{record.summary}</div>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <Button variant="outline" size="sm" asChild>
+                          <Link href={`/care-records/${record.id}`}>
+                            <Eye className="h-3 w-3" />
+                            詳細
                           </Link>
                         </Button>
                       </TableCell>
@@ -237,17 +311,6 @@ export const RecordDataDailyView: React.FC<RecordDataDailyViewProps> = ({
               <MessageCircle className="h-5 w-5 text-blue-600" />
               申し送り
             </CardTitle>
-            <Button
-              variant="outline"
-              size="sm"
-              className="border-carebase-blue text-carebase-blue hover:bg-carebase-blue-light"
-              asChild
-            >
-              <Link href="/handovers/new">
-                <Plus className="h-4 w-4 mr-2" />
-                新規作成
-              </Link>
-            </Button>
           </div>
         </CardHeader>
         <CardContent>
@@ -260,7 +323,7 @@ export const RecordDataDailyView: React.FC<RecordDataDailyViewProps> = ({
             <div className="overflow-x-auto">
               <Table>
                 <TableHeader>
-                  <TableRow>
+                  <TableRow className="bg-gray-50">
                     <TableHead className="w-[50px]">
                       <Checkbox
                         checked={
@@ -284,12 +347,7 @@ export const RecordDataDailyView: React.FC<RecordDataDailyViewProps> = ({
                 </TableHeader>
                 <TableBody>
                   {dailyHandovers.map((handover) => (
-                    <TableRow
-                      key={handover.id}
-                      className={`hover:bg-gray-50 ${
-                        handover.status === 'unread' ? 'bg-blue-50' : ''
-                      }`}
-                    >
+                    <TableRow key={handover.id} className="hover:bg-gray-50">
                       <TableCell>
                         <Checkbox
                           checked={selectedHandovers.includes(handover.id)}
@@ -300,7 +358,7 @@ export const RecordDataDailyView: React.FC<RecordDataDailyViewProps> = ({
                       </TableCell>
                       <TableCell className="font-mono text-sm">
                         <div className="flex items-center gap-1">
-                          <Clock className="h-3 w-3 text-blue-600" />
+                          <Clock className="h-3 w-3" />
                           {handover.scheduledTime || formatDateTime(handover.createdAt)}
                         </div>
                       </TableCell>
@@ -328,6 +386,7 @@ export const RecordDataDailyView: React.FC<RecordDataDailyViewProps> = ({
                         <Button variant="outline" size="sm" asChild>
                           <Link href={`/handovers/${handover.id}`}>
                             <Eye className="h-3 w-3" />
+                            詳細
                           </Link>
                         </Button>
                       </TableCell>
