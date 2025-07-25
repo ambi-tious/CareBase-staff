@@ -8,7 +8,6 @@ import {
   eachDayOfInterval,
   endOfMonth,
   format,
-  isSameDay,
   isSameMonth,
   isToday,
   startOfMonth,
@@ -29,7 +28,6 @@ export const RecordDataMonthlyView: React.FC<RecordDataMonthlyViewProps> = ({
   selectedDate,
   careRecords,
 }) => {
-  // Calculate monthly statistics
   const monthlyStats = useMemo(() => {
     if (!selectedDate) return {};
 
@@ -41,13 +39,11 @@ export const RecordDataMonthlyView: React.FC<RecordDataMonthlyViewProps> = ({
       return recordDate >= monthStart && recordDate <= monthEnd;
     });
 
-    // Group by category
     const categoryStats: Record<string, number> = {};
     monthlyRecords.forEach((record) => {
       categoryStats[record.category] = (categoryStats[record.category] || 0) + 1;
     });
 
-    // Group by date
     const dailyStats: Record<string, number> = {};
     monthlyRecords.forEach((record) => {
       const dateKey = format(new Date(record.recordedAt), 'yyyy-MM-dd');
@@ -62,7 +58,6 @@ export const RecordDataMonthlyView: React.FC<RecordDataMonthlyViewProps> = ({
     };
   }, [careRecords, selectedDate]);
 
-  // Generate calendar days
   const calendarDays = useMemo(() => {
     if (!selectedDate) return [];
 
@@ -100,7 +95,6 @@ export const RecordDataMonthlyView: React.FC<RecordDataMonthlyViewProps> = ({
 
   return (
     <div className="space-y-6">
-      {/* Monthly Summary */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card>
           <CardHeader className="pb-2">
@@ -150,7 +144,6 @@ export const RecordDataMonthlyView: React.FC<RecordDataMonthlyViewProps> = ({
         </Card>
       </div>
 
-      {/* Category Statistics */}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
@@ -177,7 +170,6 @@ export const RecordDataMonthlyView: React.FC<RecordDataMonthlyViewProps> = ({
         </CardContent>
       </Card>
 
-      {/* Calendar Heatmap */}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
@@ -187,16 +179,13 @@ export const RecordDataMonthlyView: React.FC<RecordDataMonthlyViewProps> = ({
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            {/* Calendar Grid */}
             <div className="grid grid-cols-7 gap-1">
-              {/* Day headers */}
               {['月', '火', '水', '木', '金', '土', '日'].map((day) => (
                 <div key={day} className="p-2 text-center text-sm font-medium text-gray-500">
                   {day}
                 </div>
               ))}
 
-              {/* Calendar days */}
               {calendarDays.map((day) => {
                 const recordCount = getRecordCountForDate(day);
                 const dayIsToday = isToday(day);
@@ -225,7 +214,6 @@ export const RecordDataMonthlyView: React.FC<RecordDataMonthlyViewProps> = ({
               })}
             </div>
 
-            {/* Legend */}
             <div className="flex items-center justify-center gap-4 text-xs text-gray-600">
               <span>記録数:</span>
               <div className="flex items-center gap-1">

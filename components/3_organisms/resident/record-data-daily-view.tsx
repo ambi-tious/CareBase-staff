@@ -1,21 +1,26 @@
 'use client';
 
 import { CategoryBadge } from '@/components/1_atoms/care-record/category-badge';
-import { PriorityBadge } from '@/components/1_atoms/care-record/priority-badge';
-import { StatusBadge } from '@/components/1_atoms/care-record/status-badge';
 import { CategoryBadge as HandoverCategoryBadge } from '@/components/1_atoms/handover/category-badge';
 import { PriorityBadge as HandoverPriorityBadge } from '@/components/1_atoms/handover/priority-badge';
 import { StatusBadge as HandoverStatusBadge } from '@/components/1_atoms/handover/status-badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
 import type { Resident } from '@/mocks/care-board-data';
 import type { CareRecord } from '@/types/care-record';
 import type { Handover } from '@/types/handover';
 import { format, isSameDay } from 'date-fns';
 import { ja } from 'date-fns/locale';
-import { Clock, Eye, FileText, MessageCircle, Plus, Trash2, Utensils } from 'lucide-react';
+import { Clock, Eye, MessageCircle, Plus, Trash2, Utensils } from 'lucide-react';
 import Link from 'next/link';
 import type React from 'react';
 import { useMemo, useState } from 'react';
@@ -38,12 +43,9 @@ export const RecordDataDailyView: React.FC<RecordDataDailyViewProps> = ({
   const [showTimeFilter, setShowTimeFilter] = useState(false);
   const [showCategoryFilter, setShowCategoryFilter] = useState(false);
 
-  // Filter records for the selected date
   const dailyCareRecords = useMemo(() => {
     if (!selectedDate) return [];
-    return careRecords.filter((record) =>
-      isSameDay(new Date(record.recordedAt), selectedDate)
-    );
+    return careRecords.filter((record) => isSameDay(new Date(record.recordedAt), selectedDate));
   }, [careRecords, selectedDate]);
 
   const dailyHandovers = useMemo(() => {
@@ -106,7 +108,6 @@ export const RecordDataDailyView: React.FC<RecordDataDailyViewProps> = ({
 
   return (
     <div className="space-y-6">
-      {/* Date Header */}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-3">
@@ -128,14 +129,9 @@ export const RecordDataDailyView: React.FC<RecordDataDailyViewProps> = ({
         </CardContent>
       </Card>
 
-      {/* Filters */}
       <div className="flex items-center gap-4">
         <div className="flex items-center space-x-2">
-          <Checkbox
-            id="time-filter"
-            checked={showTimeFilter}
-            onCheckedChange={setShowTimeFilter}
-          />
+          <Checkbox id="time-filter" checked={showTimeFilter} onCheckedChange={setShowTimeFilter} />
           <label htmlFor="time-filter" className="text-sm font-medium">
             時系列
           </label>
@@ -161,7 +157,6 @@ export const RecordDataDailyView: React.FC<RecordDataDailyViewProps> = ({
         </Button>
       </div>
 
-      {/* Care Records Section */}
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
@@ -220,9 +215,7 @@ export const RecordDataDailyView: React.FC<RecordDataDailyViewProps> = ({
                       <TableCell>
                         <Checkbox
                           checked={selectedRecords.includes(record.id)}
-                          onCheckedChange={(checked) =>
-                            handleRecordSelection(record.id, !!checked)
-                          }
+                          onCheckedChange={(checked) => handleRecordSelection(record.id, !!checked)}
                         />
                       </TableCell>
                       <TableCell className="font-mono text-sm">
@@ -232,18 +225,14 @@ export const RecordDataDailyView: React.FC<RecordDataDailyViewProps> = ({
                         </div>
                       </TableCell>
                       <TableCell className="text-sm">{record.createdByName}</TableCell>
-                      <TableCell className="text-sm font-medium">
-                        {record.residentName}
-                      </TableCell>
+                      <TableCell className="text-sm font-medium">{record.residentName}</TableCell>
                       <TableCell>
                         <CategoryBadge category={record.category} />
                       </TableCell>
                       <TableCell className="max-w-xs">
                         <div className="space-y-1">
                           <div className="font-medium text-sm line-clamp-1">{record.title}</div>
-                          <div className="text-xs text-gray-500 line-clamp-2">
-                            {record.summary}
-                          </div>
+                          <div className="text-xs text-gray-500 line-clamp-2">{record.summary}</div>
                         </div>
                       </TableCell>
                       <TableCell>
@@ -262,7 +251,6 @@ export const RecordDataDailyView: React.FC<RecordDataDailyViewProps> = ({
         </CardContent>
       </Card>
 
-      {/* Handovers Section */}
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">

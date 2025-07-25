@@ -31,12 +31,10 @@ export const RecordDataView: React.FC<RecordDataViewProps> = ({ resident }) => {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [activeTab, setActiveTab] = useState<'daily' | 'monthly'>('daily');
 
-  // Set current date on client side to avoid hydration mismatch
   useEffect(() => {
     setSelectedDate(new Date());
   }, []);
 
-  // Get records for the resident
   const residentCareRecords = careRecordData.filter(
     (record) => record.residentId === resident.id.toString()
   );
@@ -47,7 +45,6 @@ export const RecordDataView: React.FC<RecordDataViewProps> = ({ resident }) => {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
       <div className="flex items-center gap-4 mb-6">
         <Button variant="outline" asChild>
           <Link href={`/residents/${resident.id}`}>
@@ -63,7 +60,6 @@ export const RecordDataView: React.FC<RecordDataViewProps> = ({ resident }) => {
         </div>
       </div>
 
-      {/* Tab Navigation and Date Controls */}
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
         <Tabs
           value={activeTab}
@@ -87,7 +83,6 @@ export const RecordDataView: React.FC<RecordDataViewProps> = ({ resident }) => {
           </TabsList>
         </Tabs>
 
-        {/* Date Navigation */}
         <div className="flex items-center gap-2">
           <Button
             variant="outline"
@@ -141,7 +136,6 @@ export const RecordDataView: React.FC<RecordDataViewProps> = ({ resident }) => {
         </div>
       </div>
 
-      {/* Tab Content */}
       <Tabs value={activeTab}>
         <TabsContent value="daily">
           <RecordDataDailyView
