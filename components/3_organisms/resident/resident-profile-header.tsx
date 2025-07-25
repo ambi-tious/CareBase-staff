@@ -4,6 +4,7 @@ import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { InfoRow } from '@/components/1_atoms/common/info-row';
+import Link from 'next/link';
 
 interface ResidentProfileHeaderProps {
   resident: Resident;
@@ -28,8 +29,10 @@ export const ResidentProfileHeader: React.FC<ResidentProfileHeaderProps> = ({ re
                 className="rounded-lg"
               />
             </div>
-            <Button className="w-full mb-3 bg-carebase-blue hover:bg-carebase-blue-dark font-semibold py-3 text-base">
-              記録データ
+            <Button className="w-full mb-3 bg-carebase-blue hover:bg-carebase-blue-dark font-semibold py-3 text-base" asChild>
+              <Link href={`/residents/${resident.id}/records`}>
+                記録データ
+              </Link>
             </Button>
             <Button
               variant="outline"
