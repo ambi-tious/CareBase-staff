@@ -420,13 +420,17 @@ components/
 
 ```css
 :root {
-  --breakpoint-sm: 640px;   /* タブレット */
-  --breakpoint-md: 768px;   /* タブレット横 */
-  --breakpoint-lg: 1024px;  /* デスクトップ */
-  --breakpoint-xl: 1280px;  /* 大画面 */
-  --breakpoint-2xl: 1536px; /* 超大画面 */
+  --breakpoint-mobile: 375px;  /* スマートフォン */
+  --breakpoint-tablet: 1024px; /* タブレット（横向き操作想定） */
+  --breakpoint-desktop: 1280px; /* デスクトップ */
+  --breakpoint-xl: 1536px;     /* 大画面 */
 }
 ```
+
+#### デバイス別設計方針
+- **スマートフォン（375px）**: 縦向き表示、シンプルなレイアウト
+- **タブレット（1024px）**: 横向き操作を基本想定、効率的な業務フロー
+- **デスクトップ（1280px以上）**: 全機能表示、管理者向け操作
 
 ### 6.5 アニメーション
 
