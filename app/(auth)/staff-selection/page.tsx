@@ -104,7 +104,13 @@ function StaffSelectionContent() {
 
 export default function StaffSelectionPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-carebase-bg">読み込み中...</div>}>
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-carebase-bg flex items-center justify-center">
+          読み込み中...
+        </div>
+      }
+    >
       <StaffSelectionContent />
     </Suspense>
   );
