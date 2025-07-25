@@ -2,13 +2,13 @@
 
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import type { Resident } from '@/mocks/care-board-data';
 import { careRecordData } from '@/mocks/care-record-data';
 import { handoverData } from '@/mocks/handover-data';
-import { addDays, format, isSameDay } from 'date-fns';
+import { addDays, format } from 'date-fns';
 import { ja } from 'date-fns/locale';
 import {
   ArrowLeft,
@@ -17,8 +17,6 @@ import {
   ChevronRight,
   Clock,
   FileText,
-  MessageCircle,
-  Utensils,
 } from 'lucide-react';
 import Link from 'next/link';
 import type React from 'react';
@@ -85,7 +83,10 @@ export const RecordDataView: React.FC<RecordDataViewProps> = ({ resident }) => {
 
       {/* Tab Navigation and Date Controls */}
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-        <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as 'daily' | 'monthly')}>
+        <Tabs
+          value={activeTab}
+          onValueChange={(value) => setActiveTab(value as 'daily' | 'monthly')}
+        >
           <TabsList className="bg-gray-200 p-1.5 rounded-xl">
             <TabsTrigger
               value="daily"
@@ -109,7 +110,10 @@ export const RecordDataView: React.FC<RecordDataViewProps> = ({ resident }) => {
           <Button
             variant="outline"
             className="bg-white border-carebase-blue text-carebase-blue hover:bg-carebase-blue-light font-medium px-3 py-2 text-sm shadow-sm"
-            onClick={() => selectedDate && setSelectedDate(addDays(selectedDate, activeTab === 'daily' ? -1 : -30))}
+            onClick={() =>
+              selectedDate &&
+              setSelectedDate(addDays(selectedDate, activeTab === 'daily' ? -1 : -30))
+            }
           >
             <ChevronLeft className="h-4 w-4 mr-1" />
             {activeTab === 'daily' ? '前日' : '前月'}
@@ -145,7 +149,9 @@ export const RecordDataView: React.FC<RecordDataViewProps> = ({ resident }) => {
           <Button
             variant="outline"
             className="bg-white border-carebase-blue text-carebase-blue hover:bg-carebase-blue-light font-medium px-3 py-2 text-sm shadow-sm"
-            onClick={() => selectedDate && setSelectedDate(addDays(selectedDate, activeTab === 'daily' ? 1 : 30))}
+            onClick={() =>
+              selectedDate && setSelectedDate(addDays(selectedDate, activeTab === 'daily' ? 1 : 30))
+            }
           >
             {activeTab === 'daily' ? '翌日' : '翌月'}
             <ChevronRight className="h-4 w-4 ml-1" />
