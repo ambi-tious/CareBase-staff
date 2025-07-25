@@ -12,6 +12,7 @@ interface StaffCardProps {
   staff: Staff;
   isSelected?: boolean;
   onClick?: () => void;
+  disabled?: boolean;
   className?: string;
 }
 
@@ -19,6 +20,7 @@ export const StaffCard: React.FC<StaffCardProps> = ({
   staff,
   isSelected = false,
   onClick,
+  disabled = false,
   className = '',
 }) => {
   const getRoleBadgeColor = (role: string) => {
@@ -39,7 +41,7 @@ export const StaffCard: React.FC<StaffCardProps> = ({
   };
 
   const handleClick = () => {
-    if (onClick) {
+    if (onClick && !disabled) {
       onClick();
     }
   };
@@ -47,10 +49,10 @@ export const StaffCard: React.FC<StaffCardProps> = ({
   return (
     <Card
       className={cn(
-        'cursor-pointer hover:shadow-md',
+        disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer hover:shadow-md',
         isSelected
           ? 'ring-2 ring-carebase-blue bg-carebase-blue text-white shadow-lg'
-          : 'hover:ring-1 hover:ring-carebase-blue-light',
+          : !disabled && 'hover:ring-1 hover:ring-carebase-blue-light',
         className
       )}
       onClick={handleClick}
@@ -72,8 +74,9 @@ export const StaffCard: React.FC<StaffCardProps> = ({
               )}
             </div>
           </div>
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 mb-1">
+          <div className="flex-1 min-w-0 space-y-1">
+            <Badge className={`text-xs ${getRoleBadgeColor(staff.role)}`}>{staff.role}</Badge>
+            <div className="flex items-center gap-2">
               <h3
                 className={cn(
                   'font-semibold truncate transition-colors',
@@ -82,23 +85,14 @@ export const StaffCard: React.FC<StaffCardProps> = ({
               >
                 {staff.name}
               </h3>
-              <Badge className={`text-xs ${getRoleBadgeColor(staff.role)}`}>{staff.role}</Badge>
             </div>
             <p
               className={cn(
-                'text-sm mb-1 transition-colors',
+                'text-sm transition-colors truncate',
                 isSelected ? 'text-blue-100' : 'text-gray-500'
               )}
             >
               {staff.furigana}
-            </p>
-            <p
-              className={cn(
-                'text-xs transition-colors',
-                isSelected ? 'text-blue-200' : 'text-gray-400'
-              )}
-            >
-              ID: {staff.employeeId}
             </p>
           </div>
         </div>

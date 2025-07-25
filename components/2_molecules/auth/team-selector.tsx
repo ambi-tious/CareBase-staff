@@ -10,6 +10,7 @@ interface TeamSelectorProps {
   teams: Team[];
   selectedTeamId?: string;
   onTeamSelect: (teamId: string) => void;
+  disabled?: boolean;
   className?: string;
 }
 
@@ -17,13 +18,11 @@ export const TeamSelector: React.FC<TeamSelectorProps> = ({
   teams,
   selectedTeamId,
   onTeamSelect,
+  disabled = false,
   className = '',
 }) => {
   const handleTeamClick = (teamId: string) => {
-    if (selectedTeamId === teamId) {
-      // Allow deselection by clicking the same team
-      onTeamSelect('');
-    } else {
+    if (!disabled) {
       onTeamSelect(teamId);
     }
   };
@@ -33,7 +32,7 @@ export const TeamSelector: React.FC<TeamSelectorProps> = ({
       <h3 className="text-lg font-semibold text-carebase-text-primary mb-3">
         チームを選択してください
       </h3>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
         {teams.map((team) => {
           const Icon = getLucideIcon(team.icon);
           const isSelected = selectedTeamId === team.id;
@@ -41,10 +40,10 @@ export const TeamSelector: React.FC<TeamSelectorProps> = ({
             <Card
               key={team.id}
               className={cn(
-                'cursor-pointer hover:shadow-md',
+                disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer hover:shadow-md',
                 isSelected
                   ? 'ring-2 ring-carebase-blue bg-carebase-blue text-white shadow-lg'
-                  : 'hover:ring-1 hover:ring-carebase-blue-light'
+                  : !disabled && 'hover:ring-1 hover:ring-carebase-blue-light'
               )}
               onClick={() => handleTeamClick(team.id)}
             >
