@@ -4,9 +4,9 @@
  * Manages medication form state and validation
  */
 
-import { useState, useCallback } from 'react';
 import type { MedicationFormData, MedicationFormState } from '@/types/medication';
 import { medicationFormSchema } from '@/types/medication';
+import { useCallback, useState } from 'react';
 
 interface UseMedicationFormOptions {
   onSubmit: (data: MedicationFormData) => Promise<boolean>;

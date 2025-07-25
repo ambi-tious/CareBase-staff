@@ -611,29 +611,33 @@ export const CareRecordModal: React.FC<CareRecordModalProps> = ({
             <div className="space-y-4">
               {/* カテゴリグループ選択 */}
               <div className="space-y-2">
-                <label className="text-sm font-medium tablet-landscape:text-base">
-                  種別グループ <span className="text-red-500 ml-1">*</span>
-                </label>
-                <Select
-                  value={selectedGroupKey}
-                  onValueChange={(value) => setSelectedGroupKey(value as CareCategoryGroupKey)}
-                >
-                  <SelectTrigger className={errors.groupKey ? 'border-red-500' : ''}>
-                    <SelectValue placeholder="ケア種別グループを選択" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {careCategoryGroups.map((group) => (
-                      <SelectItem key={group.key} value={group.key}>
-                        <div className="flex items-center gap-2">
-                          {React.createElement(getLucideIcon(group.icon), {
-                            className: 'h-4 w-4 tablet-landscape:h-5 tablet-landscape:w-5',
-                          })}
-                          <span>{group.label}</span>
-                        </div>
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <div className="grid grid-cols-4 gap-2">
+                  {careCategoryGroups.map((group) => {
+                    const Icon = getLucideIcon(group.icon);
+                    const isSelected = selectedGroupKey === group.key;
+                    return (
+                      <div
+                        key={group.key}
+                        onClick={() => setSelectedGroupKey(group.key)}
+                        className={`
+                          flex flex-col items-center gap-1 p-2 rounded-lg border-2 cursor-pointer transition-all duration-200
+                          
+                          ${
+                            isSelected
+                              ? 'border-carebase-blue bg-carebase-blue/10 text-carebase-blue'
+                              : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
+                          }
+                          ${errors.groupKey ? 'border-red-500' : ''}
+                        `}
+                      >
+                        <Icon className="h-6 w-6 tablet-landscape:h-8 tablet-landscape:w-8" />
+                        <span className="text-xs font-medium text-center tablet-landscape:text-sm">
+                          {group.label}
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
                 {errors.groupKey && (
                   <p className="text-red-500 text-xs tablet-landscape:text-sm">{errors.groupKey}</p>
                 )}
@@ -643,7 +647,7 @@ export const CareRecordModal: React.FC<CareRecordModalProps> = ({
               {selectedGroupKey && (
                 <div className="space-y-2">
                   <label className="text-sm font-medium tablet-landscape:text-base">
-                    詳細種別 <span className="text-red-500 ml-1">*</span>
+                    種別 <span className="text-red-500 ml-1">*</span>
                   </label>
                   <Select
                     value={updatedEvent.categoryKey}
@@ -715,14 +719,14 @@ export const CareRecordModal: React.FC<CareRecordModalProps> = ({
                 value={updatedEvent.details || ''}
                 onChange={(e) => setUpdatedEvent({ ...updatedEvent, details: e.target.value })}
                 placeholder="備考があれば入力してください"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md tablet-landscape:px-4 tablet-landscape:py-3 tablet-landscape:text-base"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md tablet-landscape:px-4 tablet-landscape:py-3"
                 rows={3}
               />
             </div>
           </div>
         </div>
 
-        <DialogFooter className="flex justify-end gap-2 tablet-landscape:gap-4 tablet-landscape:pt-6">
+        <DialogFooter className="flex justify-end gap-2 tablet-landscape:gap-4">
           <Button
             variant="outline"
             onClick={onClose}

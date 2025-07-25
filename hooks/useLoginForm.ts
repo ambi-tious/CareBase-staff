@@ -4,9 +4,9 @@
  * Manages login form state and validation
  */
 
-import { useState, useCallback, useEffect } from 'react';
-import type { LoginFormState, LoginCredentials } from '@/types/auth';
+import type { LoginCredentials, LoginFormState } from '@/types/auth';
 import { validateLoginFormRelaxed } from '@/validations/auth-validation';
+import { useCallback, useEffect, useState } from 'react';
 
 interface UseLoginFormOptions {
   initialValues?: Partial<LoginCredentials>;
@@ -123,7 +123,7 @@ export const useLoginForm = ({
       setFieldErrors(newFieldErrors);
       setFormState((prev) => ({
         ...prev,
-        error: validation.error.errors[0]?.message || 'バリデーションエラーが発生しました',
+        error: validation.error.errors[0]?.message || '入力内容に誤りがあります',
       }));
       return false;
     }

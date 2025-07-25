@@ -4,17 +4,10 @@
  * Manages authentication state and provides authentication functions
  */
 
-import { useState, useCallback, useEffect } from 'react';
-import type {
-  AuthState,
-  AuthUser,
-  SelectedStaff,
-  LoginCredentials,
-  AuthResponse,
-  StaffSelectionResponse,
-} from '@/types/auth';
-import { validateLoginFormRelaxed } from '@/validations/auth-validation';
 import { authService } from '@/services/auth-service';
+import type { AuthResponse, AuthState, LoginCredentials } from '@/types/auth';
+import { validateLoginFormRelaxed } from '@/validations/auth-validation';
+import { useCallback, useEffect, useState } from 'react';
 
 const initialAuthState: AuthState = {
   isAuthenticated: false,
@@ -85,7 +78,7 @@ export const useAuth = () => {
       if (!validation.success) {
         setAuthState((prev) => ({
           ...prev,
-          error: validation.error?.errors[0]?.message || 'バリデーションエラーが発生しました',
+          error: validation.error?.errors[0]?.message || '入力内容に誤りがあります',
           isLoading: false,
         }));
         return false;

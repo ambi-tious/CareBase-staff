@@ -2,6 +2,7 @@
 
 import { ContactEditModal } from '@/components/3_organisms/modals/contact-edit-modal';
 import { GenericDeleteModal } from '@/components/3_organisms/modals/generic-delete-modal';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import type { ContactPerson } from '@/mocks/care-board-data';
@@ -15,7 +16,8 @@ interface ContactCardProps {
   contact: ContactPerson;
   residentId: number;
   residentName: string;
-  onUpdate: () => void;
+  onUpdate: (contact: ContactPerson) => void;
+  onDelete: (contactId: string) => void;
 }
 
 export const ContactInfoCard: React.FC<ContactCardProps> = ({
@@ -23,6 +25,7 @@ export const ContactInfoCard: React.FC<ContactCardProps> = ({
   residentId,
   residentName,
   onUpdate,
+  onDelete,
 }) => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -41,7 +44,7 @@ export const ContactInfoCard: React.FC<ContactCardProps> = ({
     try {
       const success = await contactService.updateContact(residentId, contact.id, data);
       if (success !== undefined && success) {
-        onUpdate();
+        onUpdate({ ...contact, ...data } as ContactPerson);
         setIsEditModalOpen(false);
         return true;
       }
@@ -59,7 +62,7 @@ export const ContactInfoCard: React.FC<ContactCardProps> = ({
     try {
       const success = await contactService.deleteContact(residentId, contact.id);
       if (success !== undefined && success) {
-        onUpdate();
+        onDelete(contact.id);
         return true;
       } else {
         setDeleteError('削除に失敗しました。もう一度お試しください。');
@@ -89,75 +92,63 @@ export const ContactInfoCard: React.FC<ContactCardProps> = ({
 
   return (
     <>
-      <Card className="border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
-        <CardHeader className="pb-3">
-          <div className="flex items-center justify-between">
-            <CardTitle className="text-lg font-medium text-gray-900">{contact.name}</CardTitle>
-            <div className="flex items-center gap-2">
-              <span
-                className={`px-2 py-1 text-xs font-medium rounded-md border ${getTypeColor(
-                  contact.type
-                )}`}
-              >
-                {contact.type}
-              </span>
-              <div className="flex gap-1">
-                <Button variant="ghost" size="sm" onClick={handleEdit} className="h-8 w-8 p-0">
-                  <Edit3 className="h-4 w-4" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={handleDelete}
-                  className="h-8 w-8 p-0 text-red-600 hover:text-red-700 hover:bg-red-50"
-                >
-                  <Trash2 className="h-4 w-4" />
-                </Button>
-              </div>
-            </div>
+      <Card className="border border-gray-200 shadow-sm hover:shadow-md transition-shadow mb-4">
+        <CardHeader className="flex flex-row items-center justify-between pb-2">
+          <div className="flex items-center gap-2">
+            <Badge className={`${getTypeColor(contact.type)}`}>{contact.type}</Badge>
+            <CardTitle className="text-lg">
+              {contact.name}
+              {contact.furigana && (
+                <span className="text-sm text-gray-500">({contact.furigana})</span>
+              )}
+            </CardTitle>
           </div>
-          {contact.furigana && <p className="text-sm text-gray-500 mt-1">{contact.furigana}</p>}
+          <div className="flex items-center gap-2">
+            <Button variant="outline" size="sm" onClick={handleEdit}>
+              <Edit3 className="h-3 w-3 mr-1" />
+              編集
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleDelete}
+              className="border-red-300 text-red-600 hover:bg-red-50 hover:border-red-400"
+            >
+              <Trash2 className="h-3 w-3 mr-1" />
+              削除
+            </Button>
+          </div>
         </CardHeader>
 
         <CardContent className="pt-0">
-          <div className="space-y-3">
-            <div className="flex items-center gap-2 text-sm">
-              <span className="font-medium text-gray-700 min-w-16">続柄:</span>
-              <span className="text-gray-900">{contact.relationship}</span>
-            </div>
-
-            <div className="flex items-center gap-2 text-sm">
-              <Phone className="h-4 w-4 text-gray-400" />
-              <span className="font-medium text-gray-700 min-w-16">電話:</span>
-              <span className="text-gray-900">{contact.phone1}</span>
-            </div>
-
-            {contact.phone2 && contact.phone2 !== '-' && (
-              <div className="flex items-center gap-2 text-sm pl-6">
-                <span className="font-medium text-gray-700 min-w-16">電話2:</span>
-                <span className="text-gray-900">{contact.phone2}</span>
-              </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-1">
+            <p>
+              <strong>続柄:</strong> {contact.relationship}
+            </p>
+            <p>
+              <Phone className="inline h-4 w-4 mr-1 text-gray-500" />
+              <strong>電話番号1:</strong> {contact.phone1}
+            </p>
+            {contact.phone2 && (
+              <p>
+                <Phone className="inline h-4 w-4 mr-1 text-gray-500" />
+                <strong>電話番号2:</strong> {contact.phone2}
+              </p>
             )}
-
-            {contact.email && contact.email !== '-' && (
-              <div className="flex items-center gap-2 text-sm">
-                <Mail className="h-4 w-4 text-gray-400" />
-                <span className="font-medium text-gray-700 min-w-16">メール:</span>
-                <span className="text-gray-900 break-all">{contact.email}</span>
-              </div>
+            {contact.email && (
+              <p>
+                <Mail className="inline h-4 w-4 mr-1 text-gray-500" />
+                <strong>メール:</strong> {contact.email}
+              </p>
             )}
-
-            <div className="flex items-start gap-2 text-sm">
-              <MapPin className="h-4 w-4 text-gray-400 mt-0.5" />
-              <span className="font-medium text-gray-700 min-w-16">住所:</span>
-              <span className="text-gray-900 leading-relaxed">{contact.address}</span>
-            </div>
-
-            {contact.notes && contact.notes !== '-' && (
-              <div className="flex items-start gap-2 text-sm">
-                <span className="font-medium text-gray-700 min-w-16">備考:</span>
-                <span className="text-gray-900 leading-relaxed">{contact.notes}</span>
-              </div>
+            <p className="md:col-span-2">
+              <MapPin className="inline h-4 w-4 mr-1 text-gray-500" />
+              <strong>住所:</strong> {contact.address}
+            </p>
+            {contact.notes && (
+              <p className="md:col-span-2 pt-2 mt-2 border-t">
+                <strong>備考:</strong> {contact.notes}
+              </p>
             )}
           </div>
         </CardContent>

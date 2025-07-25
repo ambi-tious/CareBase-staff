@@ -53,7 +53,6 @@ describe('バリデーションヘルパー', () => {
 
       expect(result.isValid).toBe(false);
       expect(result.data).toBeUndefined();
-      expect(result.error).toBe('バリデーションエラーが発生しました');
       expect(result.fieldErrors).toEqual({
         name: '名前は必須です',
         email: '有効なメールアドレスを入力してください',

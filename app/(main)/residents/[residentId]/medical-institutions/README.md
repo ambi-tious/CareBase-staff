@@ -2,12 +2,12 @@
 
 画面名: `かかりつけ医療機関タブ`  
 パス: `/residents/[residentId]` (詳細情報タブ内)  
-URL: https://carebase-staff.vercel.app/residents/[residentId]
+URL: https://carebase-staff.vercel.app/residents/1
 
 ## 概要
 
-利用者詳細画面内のかかりつけ医療機関タブ設計書です。  
-利用者のかかりつけ医療機関情報の表示、登録、編集、削除機能を提供します。  
+利用者詳細画面内のかかりつけ医療機関タブ設計書です。
+利用者のかかりつけ医療機関情報の表示、登録、編集、削除機能を提供します。
 複数の医療機関を登録可能で、医療機関名、医師名、連絡先情報を効率的に管理できます。
 
 Issue: [#133 [設計] #005 利用者｜利用者詳細（基本情報）](https://github.com/ambi-tious/CareBase-staff/issues/133)

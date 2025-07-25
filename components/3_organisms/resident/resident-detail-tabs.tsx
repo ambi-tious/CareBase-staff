@@ -410,10 +410,8 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
                 contact={contact}
                 residentId={resident.id}
                 residentName={resident.name}
-                onUpdate={() => {
-                  // Refresh data logic
-                  window.location.reload();
-                }}
+                onUpdate={handleContactUpdate}
+                onDelete={handleContactDelete}
               />
             ))
           ) : (

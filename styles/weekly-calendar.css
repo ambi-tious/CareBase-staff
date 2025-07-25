@@ -1,0 +1,324 @@
+/* 週間カレンダー専用スタイル - Googleカレンダー風デザイン */
+
+.weekly-calendar-container {
+  @apply bg-white border border-gray-200 rounded-lg overflow-hidden;
+  min-height: 600px;
+}
+
+/* ヘッダー部分 */
+.weekly-header {
+  @apply grid grid-cols-7 border-b border-gray-200 bg-gray-50;
+  height: 80px;
+}
+
+.weekly-day-header {
+  @apply flex items-center justify-center p-3 border-r border-gray-200 last:border-r-0;
+  @apply transition-colors duration-200;
+}
+
+.weekly-day-header.today {
+  @apply bg-blue-50 border-blue-200;
+}
+
+.weekly-day-header.weekend {
+  @apply bg-gray-100;
+}
+
+.day-label {
+  @apply text-center;
+}
+
+.day-name {
+  @apply text-xs font-medium text-gray-600 uppercase tracking-wide mb-1;
+}
+
+.day-number {
+  @apply text-lg font-semibold text-gray-800;
+  @apply w-8 h-8 flex items-center justify-center rounded-full;
+  @apply transition-all duration-200;
+}
+
+.day-number.today-number {
+  @apply bg-carebase-blue text-white shadow-md;
+}
+
+/* イベントグリッド */
+.weekly-events-grid {
+  @apply grid grid-cols-7;
+  min-height: 520px;
+}
+
+.weekly-day-column {
+  @apply border-r border-gray-200 last:border-r-0 relative;
+  @apply transition-colors duration-200;
+  min-height: 520px;
+}
+
+.weekly-day-column.today-column {
+  @apply bg-blue-50/30;
+}
+
+.weekly-day-column.weekend-column {
+  @apply bg-gray-50/50;
+}
+
+.weekly-day-column:hover {
+  @apply bg-gray-50/80;
+}
+
+.weekly-day-column:hover .day-add-button {
+  @apply opacity-100;
+}
+
+/* 今日のインジケーター */
+.today-indicator {
+  @apply absolute top-0 left-0 w-full h-1 bg-carebase-blue z-10;
+}
+
+/* イベント表示エリア */
+.day-events {
+  @apply p-2 space-y-2 h-full;
+  min-height: 480px;
+}
+
+/* イベントアイテム */
+.event-item {
+  @apply p-3 rounded-lg border cursor-pointer;
+  @apply transition-all duration-200 ease-out;
+  @apply hover:shadow-md hover:scale-[1.02];
+  @apply animate-in fade-in slide-in-from-top-2;
+  animation-duration: 300ms;
+  animation-fill-mode: both;
+}
+
+/* イベント種別別スタイル */
+.event-item.contact {
+  @apply bg-green-50 border-green-200 hover:bg-green-100;
+}
+
+.event-item.schedule {
+  @apply bg-blue-50 border-blue-200 hover:bg-blue-100;
+}
+
+.event-item.handover {
+  @apply bg-purple-50 border-purple-200 hover:bg-purple-100;
+}
+
+/* 重要度別の左ボーダー */
+.event-item.priority-high {
+  @apply border-l-4 border-l-red-500;
+}
+
+.event-item.priority-medium {
+  @apply border-l-4 border-l-yellow-500;
+}
+
+.event-item.priority-low {
+  @apply border-l-4 border-l-blue-500;
+}
+
+/* イベント内容 */
+.event-time {
+  @apply text-xs font-medium text-gray-600 mb-1;
+  @apply flex items-center gap-1;
+}
+
+.event-title {
+  @apply text-sm font-semibold text-gray-800 mb-2 line-clamp-2;
+  @apply leading-tight;
+}
+
+.event-badges {
+  @apply flex gap-1 mb-1 flex-wrap;
+}
+
+.event-resident {
+  @apply text-xs text-blue-600 font-medium;
+}
+
+/* 空の日の表示 */
+.empty-day {
+  @apply flex items-center justify-center h-full min-h-[200px];
+}
+
+.empty-day-content {
+  @apply flex flex-col items-center gap-2 opacity-50;
+  @apply transition-opacity duration-200;
+}
+
+.weekly-day-column:hover .empty-day-content {
+  @apply opacity-70;
+}
+
+/* 新規作成ボタン */
+.day-add-button {
+  @apply absolute bottom-2 right-2 opacity-0;
+  @apply transition-opacity duration-200;
+}
+
+.add-event-btn {
+  @apply w-8 h-8 rounded-full bg-carebase-blue text-white;
+  @apply hover:bg-carebase-blue-dark shadow-lg;
+  @apply transition-all duration-200;
+}
+
+/* レスポンシブ対応 */
+@media (max-width: 1024px) {
+  .weekly-calendar-container {
+    min-height: 500px;
+  }
+  
+  .weekly-events-grid {
+    min-height: 420px;
+  }
+  
+  .weekly-day-column {
+    min-height: 420px;
+  }
+  
+  .day-events {
+    min-height: 380px;
+  }
+  
+  .event-item {
+    @apply p-2;
+  }
+  
+  .event-title {
+    @apply text-xs;
+  }
+}
+
+@media (max-width: 768px) {
+  .weekly-header {
+    height: 60px;
+  }
+  
+  .weekly-calendar-container {
+    min-height: 400px;
+  }
+  
+  .weekly-events-grid {
+    min-height: 340px;
+  }
+  
+  .weekly-day-column {
+    min-height: 340px;
+  }
+  
+  .day-events {
+    @apply p-1 space-y-1;
+    min-height: 300px;
+  }
+  
+  .event-item {
+    @apply p-2;
+  }
+  
+  .event-title {
+    @apply text-xs line-clamp-1;
+  }
+  
+  .event-badges {
+    @apply hidden;
+  }
+  
+  .event-resident {
+    @apply hidden;
+  }
+  
+  .day-number {
+    @apply text-base w-6 h-6;
+  }
+  
+  .day-name {
+    @apply text-xs;
+  }
+}
+
+/* ダークモード対応 */
+@media (prefers-color-scheme: dark) {
+  .weekly-calendar-container {
+    @apply bg-gray-800 border-gray-700;
+  }
+  
+  .weekly-header {
+    @apply bg-gray-700 border-gray-600;
+  }
+  
+  .weekly-day-header {
+    @apply border-gray-600;
+  }
+  
+  .weekly-day-column {
+    @apply border-gray-600;
+  }
+  
+  .event-item {
+    @apply text-gray-100;
+  }
+  
+  .event-item.contact {
+    @apply bg-green-900/50 border-green-700;
+  }
+  
+  .event-item.schedule {
+    @apply bg-blue-900/50 border-blue-700;
+  }
+  
+  .event-item.handover {
+    @apply bg-purple-900/50 border-purple-700;
+  }
+}
+
+/* アニメーション */
+@keyframes slideInFromTop {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.event-item {
+  animation: slideInFromTop 0.3s ease-out forwards;
+}
+
+/* フォーカス状態 */
+.event-item:focus {
+  @apply outline-none ring-2 ring-carebase-blue ring-offset-2;
+}
+
+.add-event-btn:focus {
+  @apply outline-none ring-2 ring-white ring-offset-2 ring-offset-carebase-blue;
+}
+
+/* ホバーエフェクト */
+.weekly-day-column::before {
+  content: '';
+  @apply absolute inset-0 bg-carebase-blue/5 opacity-0;
+  @apply transition-opacity duration-200;
+  pointer-events: none;
+}
+
+.weekly-day-column:hover::before {
+  @apply opacity-100;
+}
+
+/* 高コントラストモード対応 */
+@media (prefers-contrast: high) {
+  .event-item {
+    @apply border-2;
+  }
+  
+  .day-number.today-number {
+    @apply ring-2 ring-white;
+  }
+  
+  .today-indicator {
+    @apply h-2;
+  }
+}

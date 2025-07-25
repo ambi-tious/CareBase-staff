@@ -17,9 +17,9 @@ const buttonVariants = cva(
         link: 'text-primary underline-offset-4 hover:underline',
       },
       size: {
-        default: 'h-10 px-4 py-2 tablet:text-tablet-base min-h-touch-target',
-        sm: 'h-9 rounded-md px-3 tablet:text-tablet-sm min-h-touch-target',
-        lg: 'h-11 rounded-md px-8 tablet:text-tablet-lg min-h-touch-target',
+        default: 'h-10 px-4 py-2 min-h-touch-target',
+        sm: 'h-9 rounded-md px-3 min-h-touch-target',
+        lg: 'h-11 rounded-md px-8 min-h-touch-target',
         icon: 'h-10 w-10 min-h-touch-target min-w-touch-target',
       },
     },

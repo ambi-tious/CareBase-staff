@@ -131,7 +131,7 @@ export function AppHeader() {
                 onClick={handleStaffNameClick}
                 data-header-button
                 className={cn(
-                  'hidden rounded-full md:flex font-medium tablet:px-6 tablet:py-3 tablet:text-tablet-base min-h-touch-target',
+                  'hidden rounded-full md:flex font-medium min-h-touch-target',
                   isStaffSelected
                     ? 'bg-carebase-blue text-white border-carebase-blue-dark shadow-md'
                     : 'border-carebase-blue text-carebase-blue hover:bg-carebase-blue-light'
@@ -145,7 +145,7 @@ export function AppHeader() {
                 onClick={handleGroupTeamClick}
                 data-header-button
                 className={cn(
-                  'hidden rounded-full md:flex font-medium tablet:px-6 tablet:py-3 tablet:text-tablet-base min-h-touch-target',
+                  'hidden rounded-full md:flex font-medium min-h-touch-target',
                   isGroupTeamSelected
                     ? 'bg-carebase-blue text-white border-carebase-blue-dark shadow-md'
                     : 'border-carebase-blue text-carebase-blue hover:bg-carebase-blue-light'
@@ -160,7 +160,7 @@ export function AppHeader() {
               <Button
                 variant="outline"
                 onClick={handleStaffNameClickFallback}
-                className="hidden rounded-full md:flex border-carebase-blue text-carebase-blue hover:bg-carebase-blue-light font-medium tablet:px-6 tablet:py-3 tablet:text-tablet-base min-h-touch-target"
+                className="hidden rounded-full md:flex border-carebase-blue text-carebase-blue hover:bg-carebase-blue-light font-medium min-h-touch-target"
               >
                 <User className="mr-2 h-4 w-4 tablet:h-5 tablet:w-5" />
                 職員を選択
@@ -168,7 +168,7 @@ export function AppHeader() {
               <Button
                 variant="outline"
                 onClick={handleGroupTeamClickFallback}
-                className="hidden rounded-full md:flex border-carebase-blue text-carebase-blue hover:bg-carebase-blue-light font-medium tablet:px-6 tablet:py-3 tablet:text-tablet-base min-h-touch-target"
+                className="hidden rounded-full md:flex border-carebase-blue text-carebase-blue hover:bg-carebase-blue-light font-medium min-h-touch-target"
               >
                 <Users className="mr-2 h-4 w-4 tablet:h-5 tablet:w-5" />
                 グループ・チームを選択
@@ -189,19 +189,19 @@ export function AppHeader() {
             </SheetTrigger>
             <SheetContent
               side="right"
-              className="sm:max-w-full bg-carebase-bg p-0 overflow-y-auto tablet:max-w-[90vw]"
+              className="sm:max-w-full bg-carebase-bg p-0 overflow-y-auto min-w-[90vw]"
             >
-              <SheetHeader className="flex flex-row items-center justify-between py-2 px-4 tablet:py-4 tablet:px-6 sticky top-0 bg-carebase-bg z-10 border-b">
-                <SheetTitle className="text-xl font-bold text-carebase-text-primary tablet:text-tablet-2xl">
+              <SheetHeader className="flex flex-row items-center justify-between py-2 px-4 sticky top-0 bg-carebase-bg z-10 border-b">
+                <SheetTitle className="text-xl font-bold text-carebase-text-primary">
                   メニュー
                 </SheetTitle>
                 <SheetClose asChild>
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="tablet:h-12 tablet:w-12 min-h-touch-target min-w-touch-target"
+                    className="min-h-touch-target min-w-touch-target"
                   >
-                    <X className="h-6 w-6 tablet:h-7 tablet:w-7" />
+                    <X className="h-6 w-6" />
                     <span className="sr-only">Close menu</span>
                   </Button>
                 </SheetClose>
