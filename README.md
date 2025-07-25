@@ -154,27 +154,8 @@ UIコンポーネントは Atomic Design の階層に従って実装します：
 ### レスポンシブデザイン
 
 - タブレット・PC両対応
-- モバイルファーストアプローチ
-
-## 🚀 デプロイ
-
-### Vercel（推奨）
-
-```bash
-# Vercel CLIを使用
-npm i -g vercel
-vercel
-```
-
-### 手動デプロイ
-
-```bash
-# ビルド
-pnpm build
-
-# 本番サーバー起動
-pnpm start
-```
+- タブレット横向き操作を基本想定（1024px）
+- スマートフォンは補助的な役割（375px）
 
 ## 🤝 コントリビューション
 
@@ -189,7 +170,7 @@ pnpm start
 
 ## 🔗 関連リンク
 
-- **本番環境**: [https://vercel.com/hornet-ventures/carebase-staff](https://vercel.com/hornet-ventures/carebase-staff)
+- **モック環境**: [https://vercel.com/hornet-ventures/carebase-staff](https://vercel.com/hornet-ventures/carebase-staff)
 - **設計ドキュメント**: [docs/overview.md](./docs/overview.md)
 
 ---
