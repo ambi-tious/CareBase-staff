@@ -2,7 +2,6 @@
 
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
-import { Card, CardContent } from '@/components/ui/card';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import type { Resident } from '@/mocks/care-board-data';
@@ -53,7 +52,7 @@ export const RecordDataView: React.FC<RecordDataViewProps> = ({ resident }) => {
         <Button variant="outline" asChild>
           <Link href={`/residents/${resident.id}`}>
             <ArrowLeft className="h-4 w-4 mr-2" />
-            利用者詳細に戻る
+            戻る
           </Link>
         </Button>
         <div className="flex items-center gap-3">
@@ -63,23 +62,6 @@ export const RecordDataView: React.FC<RecordDataViewProps> = ({ resident }) => {
           </h1>
         </div>
       </div>
-
-      {/* Resident Info */}
-      <Card>
-        <CardContent className="p-4">
-          <div className="flex items-center gap-4">
-            <div className="text-sm text-gray-600">
-              <span className="font-medium">利用者:</span> {resident.name} ({resident.furigana})
-            </div>
-            <div className="text-sm text-gray-600">
-              <span className="font-medium">要介護度:</span> {resident.careLevel}
-            </div>
-            <div className="text-sm text-gray-600">
-              <span className="font-medium">部屋:</span> {resident.roomInfo || '未設定'}
-            </div>
-          </div>
-        </CardContent>
-      </Card>
 
       {/* Tab Navigation and Date Controls */}
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
