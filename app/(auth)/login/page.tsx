@@ -25,20 +25,7 @@ export default function LoginPage() {
         return { success: true };
       }
 
-      // Return specific error messages based on credentials
-      if (!credentials.facilityId.trim()) {
-        return { success: false, error: '施設IDを入力してください。' };
-      }
-
-      if (!credentials.password.trim()) {
-        return { success: false, error: 'パスワードを入力してください。' };
-      }
-
-      if (credentials.facilityId !== 'admin') {
-        return { success: false, error: '指定された施設IDが見つかりません。' };
-      }
-
-      return { success: false, error: 'パスワードが正しくありません。' };
+      return { success: false, error: '施設IDまたはパスワードが正しくありません' };
     } catch (error) {
       return {
         success: false,
