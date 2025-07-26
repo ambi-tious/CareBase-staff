@@ -1,8 +1,8 @@
 # 連絡・予定（連絡登録）画面設計書
 
 画面名: `連絡・予定（連絡登録）`  
-パス: `/communications/new`  
-URL: https://carebase-staff.vercel.app/communications/new
+パス: `/contact-schedule/new`  
+URL: https://carebase-staff.vercel.app/contact-schedule/new
 
 ## 概要
 
@@ -170,13 +170,13 @@ Issue: [#021 [設計] #021 連絡・予定｜連絡登録](https://github.com/am
 
 | 項目名             | 処理内容                               | 対象API                              | 遷移先画面                                    |
 | ------------------ | -------------------------------------- | ------------------------------------ | --------------------------------------------- |
-| 戻るボタン         | 連絡・予定一覧画面に戻る               | -                                    | 連絡・予定一覧 (`/communications`)           |
+| 戻るボタン         | 連絡・予定一覧画面に戻る               | -                                    | 連絡・予定一覧 (`/contact-schedule`)           |
 | 利用者選択         | 利用者選択モーダル表示                 | `/api/v1/residents`                  | 同一画面（モーダル表示）                      |
 | カテゴリ管理       | カテゴリ管理モーダル表示               | `/api/v1/communication-categories`   | 同一画面（モーダル表示）                      |
 | 通知対象選択       | 通知対象選択モーダル表示               | `/api/v1/staff`                      | 同一画面（モーダル表示）                      |
-| 下書き保存         | 下書きとして保存                       | `/api/v1/communications/drafts`      | 同一画面（保存完了メッセージ）                |
-| 登録               | 連絡・予定を正式登録                   | `/api/v1/communications`             | 連絡・予定詳細 (`/communications/{id}`)      |
-| キャンセル         | 入力内容を破棄して一覧に戻る           | -                                    | 連絡・予定一覧 (`/communications`)           |
+| 下書き保存         | 下書きとして保存                       | `/api/v1/contact-schedule/drafts`      | 同一画面（保存完了メッセージ）                |
+| 登録               | 連絡・予定を正式登録                   | `/api/v1/contact-schedule`             | 連絡・予定詳細 (`/contact-schedule/{id}`)      |
+| キャンセル         | 入力内容を破棄して一覧に戻る           | -                                    | 連絡・予定一覧 (`/contact-schedule`)           |
 
 ### 入力チェック
 
@@ -376,9 +376,9 @@ type CommunicationStatus = 'draft' | 'published' | 'archived';
 | POST     | `/api/v1/communication-categories`     | カテゴリ新規作成         |
 | PUT      | `/api/v1/communication-categories/{id}` | カテゴリ更新             |
 | DELETE   | `/api/v1/communication-categories/{id}` | カテゴリ削除             |
-| POST     | `/api/v1/communications`               | 連絡・予定新規作成       |
-| POST     | `/api/v1/communications/drafts`        | 下書き保存               |
-| GET      | `/api/v1/communications/drafts`        | 下書き一覧取得           |
+| POST     | `/api/v1/contact-schedule`               | 連絡・予定新規作成       |
+| POST     | `/api/v1/contact-schedule/drafts`        | 下書き保存               |
+| GET      | `/api/v1/contact-schedule/drafts`        | 下書き一覧取得           |
 
 ## ワイヤーフレーム（テキストベース）
 
@@ -457,18 +457,18 @@ type CommunicationStatus = 'draft' | 'published' | 'archived';
 
 | 遷移元               | 遷移先               | URL                               | パラメータ               |
 | -------------------- | -------------------- | --------------------------------- | ------------------------ |
-| 戻るボタン           | 連絡・予定一覧画面   | `/communications`                 | なし                     |
-| キャンセルボタン     | 連絡・予定一覧画面   | `/communications`                 | なし                     |
-| 下書き保存           | 同一画面             | `/communications/new`             | なし（成功メッセージ）   |
-| 登録ボタン           | 連絡・予定詳細画面   | `/communications/{id}`            | id: 作成された連絡ID     |
-| 下書き編集           | 連絡登録画面         | `/communications/new?draft={id}`  | draft: 下書きID          |
+| 戻るボタン           | 連絡・予定一覧画面   | `/contact-schedule`                 | なし                     |
+| キャンセルボタン     | 連絡・予定一覧画面   | `/contact-schedule`                 | なし                     |
+| 下書き保存           | 同一画面             | `/contact-schedule/new`             | なし（成功メッセージ）   |
+| 登録ボタン           | 連絡・予定詳細画面   | `/contact-schedule/{id}`            | id: 作成された連絡ID     |
+| 下書き編集           | 連絡登録画面         | `/contact-schedule/new?draft={id}`  | draft: 下書きID          |
 
 ### URLパラメータ仕様
 
 #### 下書き編集
 
 ```
-/communications/new?draft={draftId}
+/contact-schedule/new?draft={draftId}
 ```
 
 **パラメータ詳細:**
@@ -478,7 +478,7 @@ type CommunicationStatus = 'draft' | 'published' | 'archived';
 #### 利用者事前選択
 
 ```
-/communications/new?residents={residentIds}
+/contact-schedule/new?residents={residentIds}
 ```
 
 **パラメータ詳細:**
