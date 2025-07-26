@@ -1,12 +1,12 @@
 # 連絡・予定編集画面設計書
 
 - 画面名: `連絡・予定編集`
-- パス: `/contact-schedule/edit/[itemId]`
-- URL: https://carebase-staff.vercel.app/contact-schedule/edit/[itemId]
+- パス: `/contact-schedule/[itemId]/edit`
+- URL: https://carebase-staff.vercel.app/contact-schedule/[itemId]/edit
 
 ## 概要
 
-連絡・予定編集画面設計書です。
+CareBase-staffアプリケーションの連絡・予定編集画面設計書です。
 既存の連絡事項・予定・申し送りの内容を編集・更新する機能を提供し、介護現場での情報管理を効率的に行えます。
 下書き保存機能により、作業の中断・再開が可能で、バリデーション機能により入力ミスを防止します。
 
