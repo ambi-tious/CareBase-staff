@@ -40,8 +40,6 @@ export const RecordDataDailyView: React.FC<RecordDataDailyViewProps> = ({
 }) => {
   const [selectedRecords, setSelectedRecords] = useState<string[]>([]);
   const [selectedHandovers, setSelectedHandovers] = useState<string[]>([]);
-  const [showTimeFilter, setShowTimeFilter] = useState(false);
-  const [showCategoryFilter, setShowCategoryFilter] = useState(false);
 
   const dailyCareRecords = useMemo(() => {
     if (!selectedDate) return [];
