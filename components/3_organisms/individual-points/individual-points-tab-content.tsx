@@ -3,6 +3,7 @@
 import { IndividualPointsCompactList } from '@/components/2_molecules/individual-points/individual-points-compact-list';
 import { IndividualPointsFilters } from '@/components/2_molecules/individual-points/individual-points-filters';
 import { IndividualPointsSummary } from '@/components/2_molecules/individual-points/individual-points-summary';
+import { CategoryManagementModal } from '@/components/3_organisms/modals/category-management-modal';
 import { GenericDeleteModal } from '@/components/3_organisms/modals/generic-delete-modal';
 import { IndividualPointDetailModal } from '@/components/3_organisms/modals/individual-point-detail-modal';
 import { IndividualPointModal } from '@/components/3_organisms/modals/individual-point-modal';
@@ -10,9 +11,11 @@ import { MediaViewerModal } from '@/components/3_organisms/modals/media-viewer-m
 import { getIndividualPointsByResident } from '@/mocks/individual-points-data';
 import { individualPointService } from '@/services/individualPointService';
 import type {
+  CategoryFormData,
   IndividualPoint,
   IndividualPointFormData,
   MediaAttachment,
+  PointCategory,
 } from '@/types/individual-point';
 import type React from 'react';
 import { useEffect, useState } from 'react';
@@ -56,7 +59,7 @@ export const IndividualPointsTabContent: React.FC<IndividualPointsTabContentProp
           residentId.toString()
         );
         setPoints(residentPoints);
-        
+
         // Load categories
         const pointCategories = await individualPointService.getPointCategories();
         setCategories(pointCategories);
@@ -65,7 +68,7 @@ export const IndividualPointsTabContent: React.FC<IndividualPointsTabContentProp
         // Fallback to mock data
         const mockPoints = getIndividualPointsByResident(residentId.toString());
         setPoints(mockPoints);
-        
+
         // Load mock categories
         const { pointCategoriesData } = await import('@/mocks/individual-points-data');
         setCategories(pointCategoriesData);
@@ -127,7 +130,10 @@ export const IndividualPointsTabContent: React.FC<IndividualPointsTabContentProp
     }
   };
 
-  const handleUpdateCategory = async (categoryId: string, data: CategoryFormData): Promise<boolean> => {
+  const handleUpdateCategory = async (
+    categoryId: string,
+    data: CategoryFormData
+  ): Promise<boolean> => {
     try {
       // In a real implementation, this would call the API
       // For now, we'll update the local state

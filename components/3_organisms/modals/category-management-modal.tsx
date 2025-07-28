@@ -14,11 +14,10 @@ import {
 } from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { getLucideIcon } from '@/lib/lucide-icon-registry';
-import type { PointCategory, CategoryFormData } from '@/types/individual-point';
+import type { CategoryFormData, PointCategory } from '@/types/individual-point';
 import { categoryFormSchema } from '@/types/individual-point';
 import { AlertCircle, Edit3, FolderPlus, Palette, Plus, Settings, Trash2 } from 'lucide-react';
-import type React from 'react';
-import { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 interface CategoryManagementModalProps {
   isOpen: boolean;
@@ -140,9 +139,7 @@ export const CategoryManagementModal: React.FC<CategoryManagementModalProps> = (
         setActiveTab('list');
       } else {
         setError(
-          editingCategory
-            ? 'カテゴリの更新に失敗しました。'
-            : 'カテゴリの作成に失敗しました。'
+          editingCategory ? 'カテゴリの更新に失敗しました。' : 'カテゴリの作成に失敗しました。'
         );
       }
     } catch (error) {
@@ -171,7 +168,7 @@ export const CategoryManagementModal: React.FC<CategoryManagementModalProps> = (
         return;
       }
 
-      if (confirm(`「${category.name}」カテゴリを削除してもよろしいですか？`)) {
+      if (window.confirm(`「${category.name}」カテゴリを削除してもよろしいですか？`)) {
         setIsSubmitting(true);
         try {
           const success = await onDeleteCategory(category.id);
@@ -194,13 +191,16 @@ export const CategoryManagementModal: React.FC<CategoryManagementModalProps> = (
     setActiveTab('form');
   }, [resetForm]);
 
-  const updateField = useCallback((field: keyof CategoryFormData, value: string) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
-    // Clear field error when user starts typing
-    if (fieldErrors[field]) {
-      setFieldErrors((prev) => ({ ...prev, [field]: undefined }));
-    }
-  }, [fieldErrors]);
+  const updateField = useCallback(
+    (field: keyof CategoryFormData, value: string) => {
+      setFormData((prev) => ({ ...prev, [field]: value }));
+      // Clear field error when user starts typing
+      if (fieldErrors[field]) {
+        setFieldErrors((prev) => ({ ...prev, [field]: undefined }));
+      }
+    },
+    [fieldErrors]
+  );
 
   const customCategories = categories.filter((cat) => !cat.isSystemDefault);
   const systemCategories = categories.filter((cat) => cat.isSystemDefault);
@@ -269,10 +269,7 @@ export const CategoryManagementModal: React.FC<CategoryManagementModalProps> = (
                                   className="w-10 h-10 rounded-full flex items-center justify-center"
                                   style={{ backgroundColor: category.color + '20' }}
                                 >
-                                  <Icon
-                                    className="h-5 w-5"
-                                    style={{ color: category.color }}
-                                  />
+                                  <Icon className="h-5 w-5" style={{ color: category.color }} />
                                 </div>
                                 <div>
                                   <CardTitle className="text-base">{category.name}</CardTitle>
@@ -339,9 +336,7 @@ export const CategoryManagementModal: React.FC<CategoryManagementModalProps> = (
                                 </span>
                               </CardTitle>
                               {category.description && (
-                                <p className="text-sm text-gray-500 mt-1">
-                                  {category.description}
-                                </p>
+                                <p className="text-sm text-gray-500 mt-1">{category.description}</p>
                               )}
                             </div>
                           </div>
@@ -483,9 +478,7 @@ export const CategoryManagementModal: React.FC<CategoryManagementModalProps> = (
                           })}
                         </div>
                         <div>
-                          <p className="font-medium">
-                            {formData.name || 'カテゴリ名'}
-                          </p>
+                          <p className="font-medium">{formData.name || 'カテゴリ名'}</p>
                           {formData.description && (
                             <p className="text-sm text-gray-500">{formData.description}</p>
                           )}
