@@ -109,22 +109,6 @@ export const RecordDataDailyView: React.FC<RecordDataDailyViewProps> = ({
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-4">
-        <div className="flex items-center space-x-2">
-          <Checkbox id="time-filter" checked={showTimeFilter} onCheckedChange={setShowTimeFilter} />
-          <label htmlFor="time-filter" className="text-sm font-medium">
-            時系列
-          </label>
-        </div>
-        <div className="flex items-center space-x-2">
-          <Checkbox
-            id="category-filter"
-            checked={showCategoryFilter}
-            onCheckedChange={setShowCategoryFilter}
-          />
-          <label htmlFor="category-filter" className="text-sm font-medium">
-            項目別
-          </label>
-        </div>
         <Button
           variant="outline"
           size="sm"
