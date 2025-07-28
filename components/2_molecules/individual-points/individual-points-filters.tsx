@@ -65,34 +65,38 @@ export const IndividualPointsFilters: React.FC<IndividualPointsFiltersProps> = (
     onSearchChange('');
   };
 
-  const hasActiveFilters = selectedCategory || selectedPriority || selectedStatus || selectedTags.length > 0 || searchQuery;
+  const hasActiveFilters =
+    selectedCategory ||
+    selectedPriority ||
+    selectedStatus ||
+    selectedTags.length > 0 ||
+    searchQuery;
 
   return (
     <div className={`space-y-4 ${className}`}>
-      {/* 検索バー */}
-      <div className="relative">
-        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-        <Input
-          type="text"
-          placeholder="個別ポイントを検索..."
-          value={searchQuery}
-          onChange={(e) => onSearchChange(e.target.value)}
-          className="pl-10 pr-10"
-        />
-        {searchQuery && (
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={clearSearch}
-            className="absolute right-1 top-1/2 transform -translate-y-1/2 h-6 w-6 p-0 hover:bg-gray-100"
-          >
-            <X className="h-3 w-3" />
-          </Button>
-        )}
-      </div>
-
       {/* フィルタ展開ボタン */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between gap-2">
+        {/* 検索バー */}
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+          <Input
+            type="text"
+            placeholder="個別ポイントを検索..."
+            value={searchQuery}
+            onChange={(e) => onSearchChange(e.target.value)}
+            className="pl-10 pr-10"
+          />
+          {searchQuery && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={clearSearch}
+              className="absolute right-1 top-1/2 transform -translate-y-1/2 h-6 w-6 p-0 hover:bg-gray-100"
+            >
+              <X className="h-3 w-3" />
+            </Button>
+          )}
+        </div>
         <Button
           variant="outline"
           onClick={() => setIsExpanded(!isExpanded)}
@@ -230,21 +234,24 @@ export const IndividualPointsFilters: React.FC<IndividualPointsFiltersProps> = (
                 <div className="flex flex-wrap gap-1">
                   {selectedCategory && (
                     <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs">
-                      カテゴリ: {categoryOptions.find(c => c.value === selectedCategory)?.label}
+                      カテゴリ: {categoryOptions.find((c) => c.value === selectedCategory)?.label}
                     </span>
                   )}
                   {selectedPriority && (
                     <span className="bg-yellow-100 text-yellow-800 px-2 py-1 rounded text-xs">
-                      優先度: {priorityOptions.find(p => p.value === selectedPriority)?.label}
+                      優先度: {priorityOptions.find((p) => p.value === selectedPriority)?.label}
                     </span>
                   )}
                   {selectedStatus && (
                     <span className="bg-green-100 text-green-800 px-2 py-1 rounded text-xs">
-                      ステータス: {statusOptions.find(s => s.value === selectedStatus)?.label}
+                      ステータス: {statusOptions.find((s) => s.value === selectedStatus)?.label}
                     </span>
                   )}
                   {selectedTags.map((tag) => (
-                    <span key={tag} className="bg-purple-100 text-purple-800 px-2 py-1 rounded text-xs">
+                    <span
+                      key={tag}
+                      className="bg-purple-100 text-purple-800 px-2 py-1 rounded text-xs"
+                    >
                       タグ: {tag}
                     </span>
                   ))}

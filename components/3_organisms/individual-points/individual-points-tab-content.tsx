@@ -1,24 +1,19 @@
 'use client';
 
 import { IndividualPointsCompactList } from '@/components/2_molecules/individual-points/individual-points-compact-list';
+import { IndividualPointsFilters } from '@/components/2_molecules/individual-points/individual-points-filters';
 import { IndividualPointsSummary } from '@/components/2_molecules/individual-points/individual-points-summary';
-import { IndividualPointModal } from '@/components/3_organisms/modals/individual-point-modal';
-import { MediaViewerModal } from '@/components/3_organisms/modals/media-viewer-modal';
 import { GenericDeleteModal } from '@/components/3_organisms/modals/generic-delete-modal';
 import { IndividualPointDetailModal } from '@/components/3_organisms/modals/individual-point-detail-modal';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import {
-  getIndividualPointsByResident,
-  individualPointsData,
-} from '@/mocks/individual-points-data';
+import { IndividualPointModal } from '@/components/3_organisms/modals/individual-point-modal';
+import { MediaViewerModal } from '@/components/3_organisms/modals/media-viewer-modal';
+import { getIndividualPointsByResident } from '@/mocks/individual-points-data';
 import { individualPointService } from '@/services/individualPointService';
 import type {
   IndividualPoint,
   IndividualPointFormData,
   MediaAttachment,
 } from '@/types/individual-point';
-import { Target } from 'lucide-react';
 import type React from 'react';
 import { useEffect, useState } from 'react';
 
@@ -127,8 +122,7 @@ export const IndividualPointsTabContent: React.FC<IndividualPointsTabContentProp
 
     // タグフィルター
     const matchesTags =
-      selectedTags.length === 0 ||
-      selectedTags.every((tag) => point.tags.includes(tag));
+      selectedTags.length === 0 || selectedTags.every((tag) => point.tags.includes(tag));
 
     return matchesSearch && matchesCategory && matchesPriority && matchesStatus && matchesTags;
   });
@@ -136,7 +130,12 @@ export const IndividualPointsTabContent: React.FC<IndividualPointsTabContentProp
   // 利用可能なタグ一覧を取得
   const availableTags = Array.from(new Set(points.flatMap((point) => point.tags))).sort();
 
-  const hasActiveFilters = searchQuery || selectedCategory || selectedPriority || selectedStatus || selectedTags.length > 0;
+  const hasActiveFilters =
+    searchQuery ||
+    selectedCategory ||
+    selectedPriority ||
+    selectedStatus ||
+    selectedTags.length > 0;
 
   const handleSearchChange = (query: string) => {
     setSearchQuery(query);
@@ -276,37 +275,13 @@ export const IndividualPointsTabContent: React.FC<IndividualPointsTabContentProp
         onReset={handleResetFilters}
       />
 
-      {/* コンパクトリスト表示 */}
-      <div>
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-semibold text-carebase-text-primary">
-            個別ポイント一覧
-            {hasActiveFilters && (
-              <span className="text-sm font-normal text-gray-500 ml-2">
-                （フィルタ適用中: {filteredPoints.length}/{points.length}件）
-              </span>
-            )}
-          </h3>
-          {hasActiveFilters && (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleResetFilters}
-              className="text-gray-600"
-            >
-              すべてのフィルタを解除
-            </Button>
-          )}
-        </div>
-
-        <IndividualPointsCompactList
-          points={filteredPoints}
-          selectedCategory={selectedCategory}
-          onEdit={handleEditPoint}
-          onDelete={handleDeletePoint}
-          onViewDetails={handleViewDetails}
-        />
-      </div>
+      <IndividualPointsCompactList
+        points={filteredPoints}
+        selectedCategory={selectedCategory}
+        onEdit={handleEditPoint}
+        onDelete={handleDeletePoint}
+        onViewDetails={handleViewDetails}
+      />
 
       {/* モーダル */}
       <IndividualPointModal

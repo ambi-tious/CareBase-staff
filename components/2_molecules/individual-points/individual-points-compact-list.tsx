@@ -58,13 +58,6 @@ export const IndividualPointsCompactList: React.FC<IndividualPointsCompactListPr
     onDelete?.(point);
   };
 
-  const handleCardClick = (pointId: string) => {
-    const point = sortedPoints.find(p => p.id === pointId);
-    if (point) {
-      onViewDetails?.(point);
-    }
-  };
-
   if (sortedPoints.length === 0) {
     return (
       <Card className={`border-dashed border-2 border-gray-300 ${className}`}>

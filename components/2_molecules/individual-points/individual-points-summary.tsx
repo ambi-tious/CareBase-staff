@@ -109,11 +109,13 @@ export const IndividualPointsSummary: React.FC<IndividualPointsSummaryProps> = (
               {/* 件数バッジ（件数がある場合のみ） */}
               {hasPoints && (
                 <div className="absolute -top-2 -right-2">
-                  <Badge className={`${
-                    selectedCategory === category.value
-                      ? 'bg-white text-carebase-blue border-carebase-blue'
-                      : 'bg-red-500 text-white border-white'
-                  } border-2 h-6 w-6 rounded-full p-0 flex items-center justify-center text-xs font-bold`}>
+                  <Badge
+                    className={`${
+                      selectedCategory === category.value
+                        ? 'bg-white text-carebase-blue border-carebase-blue'
+                        : 'bg-red-500 text-white border-white'
+                    } border-2 h-6 w-6 rounded-full p-0 flex items-center justify-center text-xs font-bold`}
+                  >
                     {count}
                   </Badge>
                 </div>
