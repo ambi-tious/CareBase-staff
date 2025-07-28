@@ -36,15 +36,6 @@ export const IndividualPointsSummary: React.FC<IndividualPointsSummaryProps> = (
 
   // 統計情報を計算
   const totalActivePoints = points.filter((point) => point.status === 'active').length;
-  const highPriorityCount = points.filter(
-    (point) => point.priority === 'high' && point.status === 'active'
-  ).length;
-  const recentlyUpdatedCount = points.filter((point) => {
-    const updatedDate = new Date(point.updatedAt);
-    const weekAgo = new Date();
-    weekAgo.setDate(weekAgo.getDate() - 7);
-    return updatedDate > weekAgo && point.status === 'active';
-  }).length;
 
   const handleCategoryClick = (categoryValue: string) => {
     onCategoryClick?.(categoryValue);

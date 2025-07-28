@@ -3,13 +3,13 @@
 import { CategoryBadge } from '@/components/1_atoms/individual-points/category-badge';
 import { PriorityBadge } from '@/components/1_atoms/individual-points/priority-badge';
 import { StatusBadge } from '@/components/1_atoms/individual-points/status-badge';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import type { IndividualPoint } from '@/types/individual-point';
-import { Calendar, Edit3, Paperclip, Target, Trash2, User } from 'lucide-react';
 import { format } from 'date-fns';
 import { ja } from 'date-fns/locale';
+import { Calendar, Edit3, Paperclip, Target, Trash2, User } from 'lucide-react';
 import type React from 'react';
 
 interface IndividualPointsCompactListProps {
@@ -70,7 +70,9 @@ export const IndividualPointsCompactList: React.FC<IndividualPointsCompactListPr
         <CardContent className="text-center py-8">
           <Target className="h-12 w-12 text-gray-400 mx-auto mb-3" />
           <h3 className="text-base font-medium text-gray-900 mb-2">
-            {selectedCategory ? 'このカテゴリの個別ポイントがありません' : '個別ポイントがありません'}
+            {selectedCategory
+              ? 'このカテゴリの個別ポイントがありません'
+              : '個別ポイントがありません'}
           </h3>
           <p className="text-sm text-gray-500">
             {selectedCategory
@@ -161,7 +163,7 @@ export const IndividualPointsCompactList: React.FC<IndividualPointsCompactListPr
               </div>
 
               {/* アクションボタン */}
-              <div className="flex flex-col gap-2">
+              <div className="flex gap-2">
                 {onEdit && (
                   <Button
                     variant="outline"

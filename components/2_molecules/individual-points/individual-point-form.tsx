@@ -3,15 +3,15 @@
 import { FormField } from '@/components/1_atoms/forms/form-field';
 import { FormSelect } from '@/components/1_atoms/forms/form-select';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Badge } from '@/components/ui/badge';
 import { useIndividualPointForm } from '@/hooks/useIndividualPointForm';
 import type { IndividualPointFormData } from '@/types/individual-point';
 import { categoryOptions, priorityOptions, statusOptions } from '@/types/individual-point';
-import { AlertCircle, Plus, X, Upload, FileText, Image, Play } from 'lucide-react';
+import { AlertCircle, FileText, Image, Play, Plus, Upload, X } from 'lucide-react';
 import type React from 'react';
 import { useCallback, useMemo, useRef, useState } from 'react';
 
