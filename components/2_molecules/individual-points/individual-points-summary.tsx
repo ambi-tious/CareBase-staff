@@ -6,8 +6,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { getLucideIcon } from '@/lib/lucide-icon-registry';
 import type { IndividualPoint } from '@/types/individual-point';
 import { categoryOptions } from '@/types/individual-point';
-import { PlusCircle, Target } from 'lucide-react';
-import { Settings } from 'lucide-react';
+import { PlusCircle, Settings, Target } from 'lucide-react';
 import type React from 'react';
 
 interface IndividualPointsSummaryProps {
