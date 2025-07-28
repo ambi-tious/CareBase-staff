@@ -13,6 +13,7 @@ interface IndividualPointsSummaryProps {
   points: IndividualPoint[];
   onCreatePoint?: () => void;
   onCategoryClick?: (category: string) => void;
+  selectedCategory?: string;
   className?: string;
 }
 
@@ -20,6 +21,7 @@ export const IndividualPointsSummary: React.FC<IndividualPointsSummaryProps> = (
   points,
   onCreatePoint,
   onCategoryClick,
+  selectedCategory,
   className = '',
 }) => {
   // カテゴリ別の件数を集計
@@ -55,9 +57,11 @@ export const IndividualPointsSummary: React.FC<IndividualPointsSummaryProps> = (
               className={`
                     relative p-2 rounded-lg border-2 transition-all duration-200 cursor-pointer
                     ${
-                      hasPoints
-                        ? 'border-carebase-blue bg-carebase-blue/5 hover:bg-carebase-blue/10 hover:border-carebase-blue-dark'
-                        : 'border-gray-200 bg-gray-50 hover:bg-gray-100 hover:border-gray-300'
+                      selectedCategory === category.value
+                        ? 'border-carebase-blue-dark bg-carebase-blue text-white shadow-lg'
+                        : hasPoints
+                          ? 'border-carebase-blue bg-carebase-blue/5 hover:bg-carebase-blue/10 hover:border-carebase-blue-dark'
+                          : 'border-gray-200 bg-gray-50 hover:bg-gray-100 hover:border-gray-300'
                     }
                   `}
               onClick={() => handleCategoryClick(category.value)}
@@ -76,14 +80,26 @@ export const IndividualPointsSummary: React.FC<IndividualPointsSummaryProps> = (
                 <div
                   className={`
                         w-10 h-10 rounded-full flex items-center justify-center
-                        ${hasPoints ? 'bg-carebase-blue text-white' : 'bg-gray-300 text-gray-600'}
+                        ${
+                          selectedCategory === category.value
+                            ? 'bg-white text-carebase-blue'
+                            : hasPoints
+                              ? 'bg-carebase-blue text-white'
+                              : 'bg-gray-300 text-gray-600'
+                        }
                       `}
                 >
                   <Icon className="h-5 w-5" />
                 </div>
                 <div>
                   <p
-                    className={`text-sm font-medium ${hasPoints ? 'text-carebase-blue' : 'text-gray-600'}`}
+                    className={`text-sm font-medium ${
+                      selectedCategory === category.value
+                        ? 'text-white'
+                        : hasPoints
+                          ? 'text-carebase-blue'
+                          : 'text-gray-600'
+                    }`}
                   >
                     {category.label}
                   </p>
@@ -93,18 +109,24 @@ export const IndividualPointsSummary: React.FC<IndividualPointsSummaryProps> = (
               {/* 件数バッジ（件数がある場合のみ） */}
               {hasPoints && (
                 <div className="absolute -top-2 -right-2">
-                  <Badge className="bg-red-500 text-white border-white border-2 h-6 w-6 rounded-full p-0 flex items-center justify-center text-xs font-bold">
+                  <Badge className={`${
+                    selectedCategory === category.value
+                      ? 'bg-white text-carebase-blue border-carebase-blue'
+                      : 'bg-red-500 text-white border-white'
+                  } border-2 h-6 w-6 rounded-full p-0 flex items-center justify-center text-xs font-bold`}>
                     {count}
                   </Badge>
                 </div>
               )}
 
               {/* ホバー時のアクションヒント */}
-              <div className="absolute inset-0 bg-carebase-blue/10 opacity-0 hover:opacity-100 transition-opacity rounded-lg flex items-center justify-center">
-                <span className="text-xs text-carebase-blue font-medium bg-white px-2 py-1 rounded shadow">
-                  詳細を見る
-                </span>
-              </div>
+              {selectedCategory !== category.value && (
+                <div className="absolute inset-0 bg-carebase-blue/10 opacity-0 hover:opacity-100 transition-opacity rounded-lg flex items-center justify-center">
+                  <span className="text-xs text-carebase-blue font-medium bg-white px-2 py-1 rounded shadow">
+                    詳細を見る
+                  </span>
+                </div>
+              )}
             </div>
           );
         })}

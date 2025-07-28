@@ -35,7 +35,11 @@ export const IndividualPointsTabContent: React.FC<IndividualPointsTabContentProp
 }) => {
   const [points, setPoints] = useState<IndividualPoint[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string | undefined>();
+  const [selectedPriority, setSelectedPriority] = useState<string | undefined>();
+  const [selectedStatus, setSelectedStatus] = useState<string | undefined>();
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -91,7 +95,63 @@ export const IndividualPointsTabContent: React.FC<IndividualPointsTabContentProp
   };
 
   const handleCategoryClick = (category: string) => {
-    setSelectedCategory(selectedCategory === category ? undefined : category);
+    const newCategory = selectedCategory === category ? undefined : category;
+    setSelectedCategory(newCategory);
+  };
+
+  const handleResetFilters = () => {
+    setSearchQuery('');
+    setSelectedCategory(undefined);
+    setSelectedPriority(undefined);
+    setSelectedStatus(undefined);
+    setSelectedTags([]);
+  };
+
+  // フィルタリングされたポイントを取得
+  const filteredPoints = points.filter((point) => {
+    // 検索クエリフィルター
+    const matchesSearch =
+      searchQuery === '' ||
+      point.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      point.content.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      point.tags.some((tag) => tag.toLowerCase().includes(searchQuery.toLowerCase()));
+
+    // カテゴリフィルター
+    const matchesCategory = !selectedCategory || point.category === selectedCategory;
+
+    // 優先度フィルター
+    const matchesPriority = !selectedPriority || point.priority === selectedPriority;
+
+    // ステータスフィルター
+    const matchesStatus = !selectedStatus || point.status === selectedStatus;
+
+    // タグフィルター
+    const matchesTags =
+      selectedTags.length === 0 ||
+      selectedTags.every((tag) => point.tags.includes(tag));
+
+    return matchesSearch && matchesCategory && matchesPriority && matchesStatus && matchesTags;
+  });
+
+  // 利用可能なタグ一覧を取得
+  const availableTags = Array.from(new Set(points.flatMap((point) => point.tags))).sort();
+
+  const hasActiveFilters = searchQuery || selectedCategory || selectedPriority || selectedStatus || selectedTags.length > 0;
+
+  const handleSearchChange = (query: string) => {
+    setSearchQuery(query);
+  };
+
+  const handlePriorityChange = (priority?: string) => {
+    setSelectedPriority(priority);
+  };
+
+  const handleStatusChange = (status?: string) => {
+    setSelectedStatus(status);
+  };
+
+  const handleTagsChange = (tags: string[]) => {
+    setSelectedTags(tags);
   };
 
   const handleMediaView = (mediaId: string) => {
@@ -197,34 +257,50 @@ export const IndividualPointsTabContent: React.FC<IndividualPointsTabContentProp
         points={points}
         onCreatePoint={handleCreatePoint}
         onCategoryClick={handleCategoryClick}
+        selectedCategory={selectedCategory}
       />
 
+      {/* フィルタ機能 */}
+      <IndividualPointsFilters
+        searchQuery={searchQuery}
+        selectedCategory={selectedCategory as any}
+        selectedPriority={selectedPriority as any}
+        selectedStatus={selectedStatus as any}
+        selectedTags={selectedTags}
+        availableTags={availableTags}
+        onSearchChange={handleSearchChange}
+        onCategoryChange={(category) => setSelectedCategory(category)}
+        onPriorityChange={handlePriorityChange}
+        onStatusChange={handleStatusChange}
+        onTagsChange={handleTagsChange}
+        onReset={handleResetFilters}
+      />
 
       {/* コンパクトリスト表示 */}
       <div>
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-lg font-semibold text-carebase-text-primary">
             個別ポイント一覧
-            {selectedCategory && (
+            {hasActiveFilters && (
               <span className="text-sm font-normal text-gray-500 ml-2">
-                （カテゴリフィルタ適用中）
+                （フィルタ適用中: {filteredPoints.length}/{points.length}件）
               </span>
             )}
           </h3>
-          {selectedCategory && (
+          {hasActiveFilters && (
             <Button
               variant="outline"
               size="sm"
-              onClick={() => setSelectedCategory(undefined)}
+              onClick={handleResetFilters}
               className="text-gray-600"
             >
-              フィルタを解除
+              すべてのフィルタを解除
             </Button>
           )}
         </div>
 
         <IndividualPointsCompactList
-          points={points}
+          points={filteredPoints}
           selectedCategory={selectedCategory}
           onEdit={handleEditPoint}
           onDelete={handleDeletePoint}

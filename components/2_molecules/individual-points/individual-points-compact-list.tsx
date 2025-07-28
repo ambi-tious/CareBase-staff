@@ -29,13 +29,11 @@ export const IndividualPointsCompactList: React.FC<IndividualPointsCompactListPr
   onViewDetails,
   className = '',
 }) => {
-  // フィルタリング
-  const filteredPoints = selectedCategory
-    ? points.filter((point) => point.category === selectedCategory && point.status === 'active')
-    : points.filter((point) => point.status === 'active');
+  // アクティブなポイントのみ表示
+  const activePoints = points.filter((point) => point.status === 'active');
 
   // 優先度順、作成日順でソート
-  const sortedPoints = [...filteredPoints].sort((a, b) => {
+  const sortedPoints = [...activePoints].sort((a, b) => {
     const priorityOrder = { high: 3, medium: 2, low: 1 };
     const priorityDiff = priorityOrder[b.priority] - priorityOrder[a.priority];
 
@@ -74,12 +72,12 @@ export const IndividualPointsCompactList: React.FC<IndividualPointsCompactListPr
           <Target className="h-12 w-12 text-gray-400 mx-auto mb-3" />
           <h3 className="text-base font-medium text-gray-900 mb-2">
             {selectedCategory
-              ? 'このカテゴリの個別ポイントがありません'
+              ? 'フィルタ条件に一致する個別ポイントがありません'
               : '個別ポイントがありません'}
           </h3>
           <p className="text-sm text-gray-500">
             {selectedCategory
-              ? '新しい個別ポイントを作成してください。'
+              ? 'フィルタ条件を変更するか、新しい個別ポイントを作成してください。'
               : '利用者様の個別ケアポイントを作成してください。'}
           </p>
         </CardContent>
@@ -89,15 +87,6 @@ export const IndividualPointsCompactList: React.FC<IndividualPointsCompactListPr
 
   return (
     <div className={`space-y-3 ${className}`}>
-      {/* フィルタ表示 */}
-      {selectedCategory && (
-        <div className="flex items-center gap-2 mb-4">
-          <span className="text-sm text-gray-600">フィルタ中:</span>
-          <CategoryBadge category={selectedCategory as any} />
-          <span className="text-sm text-gray-500">({sortedPoints.length}件)</span>
-        </div>
-      )}
-
       {/* 個別ポイント一覧 */}
       {sortedPoints.map((point) => (
         <Card
