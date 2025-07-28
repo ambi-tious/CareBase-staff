@@ -124,7 +124,7 @@ export const RecordDataDailyView: React.FC<RecordDataDailyViewProps> = ({
         <CardHeader>
           <div className="flex items-center justify-between">
             <CardTitle className="flex items-center gap-2">
-              <FileText className="h-5 w-5 text-blue-600" />
+              <FileText className="h-5 w-5 text-carebase-blue" />
               ケア記録
             </CardTitle>
           </div>
@@ -153,41 +153,40 @@ export const RecordDataDailyView: React.FC<RecordDataDailyViewProps> = ({
                         onCheckedChange={handleSelectAllRecords}
                       />
                     </TableHead>
-                    <TableHead>時間</TableHead>
-                    <TableHead>記録者</TableHead>
-                    <TableHead>利用者</TableHead>
-                    <TableHead>分類</TableHead>
-                    <TableHead>内容</TableHead>
+                    <TableHead className="w-[5.5rem]">時間</TableHead>
+                    <TableHead className="w-[7rem]">記録者</TableHead>
+                    <TableHead className="w-[9.5rem]">分類</TableHead>
+                    <TableHead className="max-w-xs">内容</TableHead>
                     <TableHead className="w-[80px]">操作</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {dailyCareRecords.map((record) => (
                     <TableRow key={record.id} className="hover:bg-gray-50">
-                      <TableCell>
+                      <TableCell className="w-[50px]">
                         <Checkbox
                           checked={selectedRecords.includes(record.id)}
                           onCheckedChange={(checked) => handleRecordSelection(record.id, !!checked)}
                         />
                       </TableCell>
-                      <TableCell className="font-mono text-sm">
+                      <TableCell className="font-mono text-sm w-[5.5rem]">
                         <div className="flex items-center gap-1">
-                          <Clock className="h-3 w-3 text-orange-600" />
+                          <Clock className="h-3 w-3" />
                           {formatTime(record.recordedAt)}
                         </div>
                       </TableCell>
-                      <TableCell className="text-sm">{record.createdByName}</TableCell>
-                      <TableCell className="text-sm font-medium">{record.residentName}</TableCell>
-                      <TableCell>
-                        <CategoryBadge category={record.category} />
+                      <TableCell className="text-sm w-[7rem]">{record.createdByName}</TableCell>
+                      <TableCell className="w-[9.5rem]">
+                        <CategoryBadge
+                          category={record.category}
+                          className="w-[9.5rem] justify-start"
+                        />
                       </TableCell>
                       <TableCell className="max-w-xs">
-                        <div className="space-y-1">
-                          <div className="font-medium text-sm line-clamp-1">{record.title}</div>
-                          <div className="text-xs text-gray-500 line-clamp-2">{record.summary}</div>
-                        </div>
+                        <div className="font-medium text-sm line-clamp-1">{record.title}</div>
+                        <div className="text-xs text-gray-500 line-clamp-1">{record.summary}</div>
                       </TableCell>
-                      <TableCell>
+                      <TableCell className="w-[80px]">
                         <Button variant="outline" size="sm" asChild>
                           <Link href={`/care-records/${record.id}`}>
                             <Eye className="h-3 w-3" />
@@ -208,7 +207,7 @@ export const RecordDataDailyView: React.FC<RecordDataDailyViewProps> = ({
         <CardHeader>
           <div className="flex items-center justify-between">
             <CardTitle className="flex items-center gap-2">
-              <FileText className="h-5 w-5 text-blue-600" />
+              <FileText className="h-5 w-5 text-carebase-blue" />
               介護記録
             </CardTitle>
           </div>
@@ -237,41 +236,40 @@ export const RecordDataDailyView: React.FC<RecordDataDailyViewProps> = ({
                         onCheckedChange={handleSelectAllRecords}
                       />
                     </TableHead>
-                    <TableHead>時間</TableHead>
-                    <TableHead>記録者</TableHead>
-                    <TableHead>利用者</TableHead>
-                    <TableHead>分類</TableHead>
-                    <TableHead>内容</TableHead>
+                    <TableHead className="w-[5.5rem]">時間</TableHead>
+                    <TableHead className="w-[7rem]">記録者</TableHead>
+                    <TableHead className="w-[9.5rem]">分類</TableHead>
+                    <TableHead className="max-w-xs">内容</TableHead>
                     <TableHead className="w-[80px]">操作</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {dailyCareRecords.map((record) => (
                     <TableRow key={record.id} className="hover:bg-gray-50">
-                      <TableCell>
+                      <TableCell className="w-[50px]">
                         <Checkbox
                           checked={selectedRecords.includes(record.id)}
                           onCheckedChange={(checked) => handleRecordSelection(record.id, !!checked)}
                         />
                       </TableCell>
-                      <TableCell className="font-mono text-sm">
+                      <TableCell className="font-mono text-sm w-[5.5rem]">
                         <div className="flex items-center gap-1">
-                          <Clock className="h-3 w-3 text-orange-600" />
+                          <Clock className="h-3 w-3" />
                           {formatTime(record.recordedAt)}
                         </div>
                       </TableCell>
-                      <TableCell className="text-sm">{record.createdByName}</TableCell>
-                      <TableCell className="text-sm font-medium">{record.residentName}</TableCell>
-                      <TableCell>
-                        <CategoryBadge category={record.category} />
+                      <TableCell className="text-sm w-[7rem]">{record.createdByName}</TableCell>
+                      <TableCell className="w-[9.5rem]">
+                        <CategoryBadge
+                          category={record.category}
+                          className="w-[9.5rem] justify-start"
+                        />
                       </TableCell>
                       <TableCell className="max-w-xs">
-                        <div className="space-y-1">
-                          <div className="font-medium text-sm line-clamp-1">{record.title}</div>
-                          <div className="text-xs text-gray-500 line-clamp-2">{record.summary}</div>
-                        </div>
+                        <div className="font-medium text-sm line-clamp-1">{record.title}</div>
+                        <div className="text-xs text-gray-500 line-clamp-1">{record.summary}</div>
                       </TableCell>
-                      <TableCell>
+                      <TableCell className="w-[80px]">
                         <Button variant="outline" size="sm" asChild>
                           <Link href={`/care-records/${record.id}`}>
                             <Eye className="h-3 w-3" />
@@ -292,7 +290,7 @@ export const RecordDataDailyView: React.FC<RecordDataDailyViewProps> = ({
         <CardHeader>
           <div className="flex items-center justify-between">
             <CardTitle className="flex items-center gap-2">
-              <MessageCircle className="h-5 w-5 text-blue-600" />
+              <MessageCircle className="h-5 w-5 text-carebase-blue" />
               申し送り
             </CardTitle>
           </div>
@@ -321,18 +319,17 @@ export const RecordDataDailyView: React.FC<RecordDataDailyViewProps> = ({
                         onCheckedChange={handleSelectAllHandovers}
                       />
                     </TableHead>
-                    <TableHead>時間</TableHead>
-                    <TableHead>記録者</TableHead>
-                    <TableHead>利用者</TableHead>
-                    <TableHead>分類</TableHead>
-                    <TableHead>内容</TableHead>
+                    <TableHead className="w-[5.5rem]">時間</TableHead>
+                    <TableHead className="w-[7rem]">記録者</TableHead>
+                    <TableHead className="w-[9.5rem]">分類</TableHead>
+                    <TableHead className="max-w-xs">内容</TableHead>
                     <TableHead className="w-[80px]">操作</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {dailyHandovers.map((handover) => (
                     <TableRow key={handover.id} className="hover:bg-gray-50">
-                      <TableCell>
+                      <TableCell className="w-[50px]">
                         <Checkbox
                           checked={selectedHandovers.includes(handover.id)}
                           onCheckedChange={(checked) =>
@@ -340,33 +337,28 @@ export const RecordDataDailyView: React.FC<RecordDataDailyViewProps> = ({
                           }
                         />
                       </TableCell>
-                      <TableCell className="font-mono text-sm">
+                      <TableCell className="font-mono text-sm w-[5.5rem]">
                         <div className="flex items-center gap-1">
                           <Clock className="h-3 w-3" />
                           {handover.scheduledTime || formatDateTime(handover.createdAt)}
                         </div>
                       </TableCell>
-                      <TableCell className="text-sm">{handover.createdByName}</TableCell>
-                      <TableCell className="text-sm font-medium">
-                        {handover.residentName || resident.name}
-                      </TableCell>
-                      <TableCell>
-                        <HandoverCategoryBadge category={handover.category} />
+                      <TableCell className="text-sm w-[7rem]">{handover.createdByName}</TableCell>
+                      <TableCell className="w-[9.5rem]">
+                        <HandoverCategoryBadge
+                          category={handover.category}
+                          className="w-[9.5rem] justify-start"
+                        />
                       </TableCell>
                       <TableCell className="max-w-xs">
-                        <div className="space-y-1">
-                          <div className="font-medium text-sm line-clamp-1">{handover.title}</div>
-                          <div className="text-xs text-gray-500 line-clamp-2">
-                            {handover.content.substring(0, 100)}
-                            {handover.content.length > 100 ? '...' : ''}
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <HandoverPriorityBadge priority={handover.priority} />
-                            <HandoverStatusBadge status={handover.status} />
-                          </div>
+                        <div className="font-medium text-sm line-clamp-1">{handover.title}</div>
+                        <div className="text-xs text-gray-500 line-clamp-1">{handover.content}</div>
+                        <div className="flex items-center gap-2">
+                          <HandoverPriorityBadge priority={handover.priority} />
+                          <HandoverStatusBadge status={handover.status} />
                         </div>
                       </TableCell>
-                      <TableCell>
+                      <TableCell className="w-[80px]">
                         <Button variant="outline" size="sm" asChild>
                           <Link href={`/handovers/${handover.id}`}>
                             <Eye className="h-3 w-3" />
