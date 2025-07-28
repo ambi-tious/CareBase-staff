@@ -4,7 +4,6 @@ import { MedicationCard as NewMedicationCard } from '@/components/2_molecules/me
 import { MedicationStatusCard } from '@/components/2_molecules/medication/medication-status-card';
 import { ContactCard } from '@/components/2_molecules/resident/contact-info-card';
 import { HomeCareOfficeCard } from '@/components/2_molecules/resident/home-care-office-card';
-import { IndividualPointCard } from '@/components/2_molecules/resident/individual-point-card';
 import { MedicalHistoryCard } from '@/components/2_molecules/resident/medical-history-card';
 import { MedicalInstitutionCard } from '@/components/2_molecules/resident/medical-institution-card';
 import { MedicationCard as OldMedicationCard } from '@/components/2_molecules/resident/medication-card';
@@ -35,7 +34,8 @@ import type {
   MedicalHistoryFormData,
   MedicalInstitutionFormData,
 } from '@/types/resident-data';
-import { PlusCircle, Settings } from 'lucide-react';
+import { PlusCircle, Target } from 'lucide-react';
+import Link from 'next/link';
 import type React from 'react';
 import { useState } from 'react';
 
@@ -81,7 +81,7 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
     { value: 'history', label: '既往歴' },
     { value: 'medicationInfo', label: 'お薬情報' },
     { value: 'medicationStatus', label: '服薬状況' },
-    { value: 'points', label: '個別ポイント' },
+    { value: 'individualPoints', label: '個別ポイント' },
   ];
 
   const handleAddContact = () => {
@@ -248,7 +248,7 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
       'history',
       'medicationInfo',
       'medicationStatus',
-      'points',
+      'individualPoints',
     ].includes(activeTab);
   };
 
@@ -266,6 +266,8 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
         return handleAddMedication;
       case 'medicationStatus':
         return handleAddMedicationStatus;
+      case 'individualPoints':
+        return undefined; // Individual points have their own management page
       default:
         return undefined;
     }
@@ -429,26 +431,27 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
           )}
         </TabsContent>
 
-        <TabsContent value="points">
-          <div className="mb-4 flex gap-2">
-            <Button variant="outline" className="bg-white">
-              内容のある項目のみ表示
-            </Button>
-            <Button className="bg-carebase-blue hover:bg-carebase-blue-dark">すべて表示</Button>
-            <Button variant="outline" className="bg-white ml-auto">
-              <Settings className="h-4 w-4 mr-2" />
-              カテゴリを編集
+        <TabsContent value="individualPoints">
+          <div className="text-center py-12">
+            <div className="mb-4">
+              <Target className="h-12 w-12 text-carebase-blue mx-auto mb-4" />
+              <h3 className="text-lg font-medium text-gray-900 mb-2">個別ポイント管理</h3>
+              <p className="text-gray-500 mb-6">
+                利用者様の個別ケアポイントを詳細に管理できます。
+                <br />
+                専用画面で作成・編集・削除が可能です。
+              </p>
+            </div>
+            <Button
+              asChild
+              className="bg-carebase-blue hover:bg-carebase-blue-dark"
+            >
+              <Link href={`/residents/${resident.id}/individual-points`}>
+                <Target className="h-4 w-4 mr-2" />
+                個別ポイント管理画面へ
+              </Link>
             </Button>
           </div>
-          {resident.individualPoints && resident.individualPoints.length > 0 ? (
-            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-              {resident.individualPoints.map((point) => (
-                <IndividualPointCard key={point.id} point={point} />
-              ))}
-            </div>
-          ) : (
-            <p className="text-center text-gray-500 py-8">個別ポイントの情報はありません。</p>
-          )}
         </TabsContent>
       </Tabs>
 

@@ -40,6 +40,7 @@ import {
   Shield,
   Soup,
   Stethoscope,
+  Target,
   Thermometer,
   SmileIcon as Tooth,
   User,
@@ -105,6 +106,7 @@ const iconRegistry: Record<string, LucideIcon> = {
   Activity,
   Dumbbell,
   Edit3,
+  Target,
 };
 
 // Helper function to get icon component by string name
