@@ -1,6 +1,7 @@
 import { Button } from '@/components/ui/button';
 import type { MediaAttachment } from '@/types/individual-point';
-import { Download, Eye, FileText, Image, Play } from 'lucide-react';
+import { Download, Eye, FileText, Image as ImageIcon, Play } from 'lucide-react';
+import Image from 'next/image';
 import type React from 'react';
 
 interface MediaThumbnailProps {
@@ -32,7 +33,7 @@ export const MediaThumbnail: React.FC<MediaThumbnailProps> = ({
   const getIcon = () => {
     switch (media.fileType) {
       case 'image':
-        return Image;
+        return ImageIcon;
       case 'video':
         return Play;
       case 'document':
@@ -61,9 +62,8 @@ export const MediaThumbnail: React.FC<MediaThumbnailProps> = ({
           <Image
             src={media.thumbnailUrl}
             alt={media.fileName}
-            fill="cover"
-            style={{ objectFit: 'cover' }}
-            className="rounded-lg"
+            fill
+            className="object-cover rounded-lg"
           />
         ) : (
           <IconComponent className="h-8 w-8 text-gray-400" />

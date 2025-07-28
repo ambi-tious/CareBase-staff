@@ -37,6 +37,7 @@ const config = {
         'tablet-md': '1.5rem',
         'tablet-lg': '2rem',
         'tablet-xl': '3rem',
+        'touch-target': '44px',
       },
       // タッチ操作向けの最小サイズ
       minHeight: {
@@ -99,14 +100,6 @@ const config = {
         // Touch target sizes for tablet
         'touch-target': '44px',
       },
-      spacing: {
-        'tablet-xs': '0.25rem',
-        'tablet-sm': '0.5rem',
-        'tablet-md': '1rem',
-        'tablet-lg': '1.5rem',
-        'tablet-xl': '2rem',
-        'touch-target': '44px',
-      },
       fontSize: {
         'tablet-xs': ['0.75rem', { lineHeight: '1rem' }],
         'tablet-sm': ['0.875rem', { lineHeight: '1.25rem' }],
@@ -114,10 +107,6 @@ const config = {
         'tablet-lg': ['1.125rem', { lineHeight: '1.75rem' }],
         'tablet-xl': ['1.25rem', { lineHeight: '1.75rem' }],
         'tablet-2xl': ['1.5rem', { lineHeight: '2rem' }],
-      },
-      screens: {
-        tablet: '768px',
-        'tablet-landscape': { raw: '(min-width: 768px) and (orientation: landscape)' },
       },
       borderRadius: {
         lg: 'var(--radius)',
