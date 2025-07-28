@@ -37,6 +37,7 @@ const config = {
         'tablet-md': '1.5rem',
         'tablet-lg': '2rem',
         'tablet-xl': '3rem',
+        'touch-target': '44px',
       },
       // タッチ操作向けの最小サイズ
       minHeight: {
@@ -46,14 +47,6 @@ const config = {
         'touch-target': '44px',
       },
       colors: {
-        'carebase-bg': '#f8fafc',
-        'carebase-blue-light': '#bae6fd', // ロゴの薄い青に合わせる
-        'carebase-blue': '#0891b2', // ロゴの濃い青に合わせる
-        'carebase-blue-dark': '#0e7490', // より深い青に調整
-        'carebase-text-primary': '#1e293b',
-        'carebase-text-secondary': '#64748b',
-        'carebase-white': '#ffffff',
-        'carebase-border': '#e2e8f0',
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
         ring: 'hsl(var(--ring))',
@@ -87,20 +80,38 @@ const config = {
           DEFAULT: 'hsl(var(--card))',
           foreground: 'hsl(var(--card-foreground))',
         },
+        sidebar: {
+          DEFAULT: 'hsl(var(--sidebar-background))',
+          foreground: 'hsl(var(--sidebar-foreground))',
+          primary: 'hsl(var(--sidebar-primary))',
+          'primary-foreground': 'hsl(var(--sidebar-primary-foreground))',
+          accent: 'hsl(var(--sidebar-accent))',
+          'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
+          border: 'hsl(var(--sidebar-border))',
+          ring: 'hsl(var(--sidebar-ring))',
+        },
+        // CareBase specific colors
+        'carebase-bg': '#f8fafc',
+        'carebase-white': '#ffffff',
+        'carebase-blue': '#0891b2',
+        'carebase-blue-dark': '#0e7490',
+        'carebase-blue-light': '#e0f7fa',
+        'carebase-text-primary': '#1f2937',
+        // Touch target sizes for tablet
+        'touch-target': '44px',
+      },
+      fontSize: {
+        'tablet-xs': ['0.75rem', { lineHeight: '1rem' }],
+        'tablet-sm': ['0.875rem', { lineHeight: '1.25rem' }],
+        'tablet-base': ['1rem', { lineHeight: '1.5rem' }],
+        'tablet-lg': ['1.125rem', { lineHeight: '1.75rem' }],
+        'tablet-xl': ['1.25rem', { lineHeight: '1.75rem' }],
+        'tablet-2xl': ['1.5rem', { lineHeight: '2rem' }],
       },
       borderRadius: {
         lg: 'var(--radius)',
         md: 'calc(var(--radius) - 2px)',
         sm: 'calc(var(--radius) - 4px)',
-      },
-      // タブレット向けのフォントサイズ
-      fontSize: {
-        'tablet-xs': ['0.875rem', { lineHeight: '1.25rem' }],
-        'tablet-sm': ['1rem', { lineHeight: '1.5rem' }],
-        'tablet-base': ['1.125rem', { lineHeight: '1.75rem' }],
-        'tablet-lg': ['1.25rem', { lineHeight: '1.75rem' }],
-        'tablet-xl': ['1.5rem', { lineHeight: '2rem' }],
-        'tablet-2xl': ['1.875rem', { lineHeight: '2.25rem' }],
       },
       keyframes: {
         'accordion-down': {

@@ -4,10 +4,13 @@ import { MedicationCard as NewMedicationCard } from '@/components/2_molecules/me
 import { MedicationStatusCard } from '@/components/2_molecules/medication/medication-status-card';
 import { ContactCard } from '@/components/2_molecules/resident/contact-info-card';
 import { HomeCareOfficeCard } from '@/components/2_molecules/resident/home-care-office-card';
-import { IndividualPointCard } from '@/components/2_molecules/resident/individual-point-card';
 import { MedicalHistoryCard } from '@/components/2_molecules/resident/medical-history-card';
 import { MedicalInstitutionCard } from '@/components/2_molecules/resident/medical-institution-card';
 import { MedicationCard as OldMedicationCard } from '@/components/2_molecules/resident/medication-card';
+import {
+  IndividualPointsTabContent,
+  type IndividualPointsTabContentRef,
+} from '@/components/3_organisms/individual-points/individual-points-tab-content';
 import { ContactEditModal } from '@/components/3_organisms/modals/contact-edit-modal';
 import { HomeCareOfficeModal } from '@/components/3_organisms/modals/home-care-office-modal';
 import { MedicalHistoryModal } from '@/components/3_organisms/modals/medical-history-modal';
@@ -37,7 +40,7 @@ import type {
 } from '@/types/resident-data';
 import { PlusCircle, Settings } from 'lucide-react';
 import type React from 'react';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 
 interface ResidentDetailTabsProps {
   resident: Resident;
@@ -73,6 +76,7 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
     return [];
   });
   const [activeTab, setActiveTab] = useState('family');
+  const individualPointsTabContentRef = useRef<IndividualPointsTabContentRef>(null);
 
   const detailTabs = [
     { value: 'family', label: 'ご家族情報' },
@@ -81,7 +85,7 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
     { value: 'history', label: '既往歴' },
     { value: 'medicationInfo', label: 'お薬情報' },
     { value: 'medicationStatus', label: '服薬状況' },
-    { value: 'points', label: '個別ポイント' },
+    { value: 'individualPoints', label: '個別ポイント' },
   ];
 
   const handleAddContact = () => {
@@ -248,7 +252,7 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
       'history',
       'medicationInfo',
       'medicationStatus',
-      'points',
+      'individualPoints',
     ].includes(activeTab);
   };
 
@@ -266,6 +270,8 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
         return handleAddMedication;
       case 'medicationStatus':
         return handleAddMedicationStatus;
+      case 'individualPoints':
+        return () => individualPointsTabContentRef.current?.openCategoryModal();
       default:
         return undefined;
     }
@@ -292,8 +298,17 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
               onClick={getAddButtonHandler()}
               className="bg-white border-carebase-blue text-carebase-blue hover:bg-carebase-blue-light font-medium"
             >
-              <PlusCircle className="h-4 w-4 mr-2 text-carebase-blue" />
-              追加
+              {activeTab === 'individualPoints' ? (
+                <>
+                  <Settings className="h-4 w-4 mr-2 text-carebase-blue" />
+                  <span>カテゴリ管理</span>
+                </>
+              ) : (
+                <>
+                  <PlusCircle className="h-4 w-4 mr-2 text-carebase-blue" />
+                  追加
+                </>
+              )}
             </Button>
           )}
         </div>
@@ -429,26 +444,14 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
           )}
         </TabsContent>
 
-        <TabsContent value="points">
-          <div className="mb-4 flex gap-2">
-            <Button variant="outline" className="bg-white">
-              内容のある項目のみ表示
-            </Button>
-            <Button className="bg-carebase-blue hover:bg-carebase-blue-dark">すべて表示</Button>
-            <Button variant="outline" className="bg-white ml-auto">
-              <Settings className="h-4 w-4 mr-2" />
-              カテゴリを編集
-            </Button>
+        <TabsContent value="individualPoints">
+          <div className="space-y-4">
+            <IndividualPointsTabContent
+              ref={individualPointsTabContentRef}
+              residentId={resident.id}
+              residentName={resident.name}
+            />
           </div>
-          {resident.individualPoints && resident.individualPoints.length > 0 ? (
-            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-              {resident.individualPoints.map((point) => (
-                <IndividualPointCard key={point.id} point={point} />
-              ))}
-            </div>
-          ) : (
-            <p className="text-center text-gray-500 py-8">個別ポイントの情報はありません。</p>
-          )}
         </TabsContent>
       </Tabs>
 
