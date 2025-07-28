@@ -17,8 +17,7 @@ import type {
   IndividualPointFormData,
   MediaAttachment,
 } from '@/types/individual-point';
-import { ExternalLink, Target } from 'lucide-react';
-import Link from 'next/link';
+import { Target } from 'lucide-react';
 import type React from 'react';
 import { useEffect, useState } from 'react';
 
@@ -190,33 +189,6 @@ export const IndividualPointsTabContent: React.FC<IndividualPointsTabContentProp
         onCategoryClick={handleCategoryClick}
       />
 
-      {/* 詳細管理へのリンク */}
-      <Card className="bg-gradient-to-r from-purple-50 to-blue-50 border-purple-200">
-        <CardHeader className="pb-3">
-          <CardTitle className="flex items-center gap-2 text-purple-700">
-            <Target className="h-5 w-5" />
-            詳細管理
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-purple-600 mb-1">
-                より詳細な個別ポイント管理を行う場合は、専用画面をご利用ください。
-              </p>
-              <p className="text-xs text-purple-500">
-                高度な検索・フィルタリング、メディア管理、一括操作が可能です。
-              </p>
-            </div>
-            <Button asChild className="bg-purple-600 hover:bg-purple-700 text-white">
-              <Link href={`/residents/${residentId}/individual-points`}>
-                <ExternalLink className="h-4 w-4 mr-2" />
-                詳細管理画面へ
-              </Link>
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
 
       {/* コンパクトリスト表示 */}
       <div>
