@@ -46,12 +46,10 @@ export const IndividualPointDetailModal: React.FC<IndividualPointDetailModalProp
 
   const handleEdit = () => {
     onEdit?.(point);
-    onClose();
   };
 
   const handleDelete = () => {
     onDelete?.(point);
-    onClose();
   };
 
   const handleMediaView = (mediaId: string) => {

@@ -74,11 +74,13 @@ export const IndividualPointsTabContent: React.FC<IndividualPointsTabContentProp
 
   const handleEditPoint = (point: IndividualPoint) => {
     setSelectedPoint(point);
+    setIsDetailModalOpen(false); // 詳細モーダルを閉じる
     setIsEditModalOpen(true);
   };
 
   const handleDeletePoint = (point: IndividualPoint) => {
     setSelectedPoint(point);
+    setIsDetailModalOpen(false); // 詳細モーダルを閉じる
     setDeleteError(null);
     setIsDeleteModalOpen(true);
   };
