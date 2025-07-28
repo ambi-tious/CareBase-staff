@@ -3,17 +3,15 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import type { Resident } from '@/mocks/care-board-data';
 import type { CareRecord } from '@/types/care-record';
-import { categoryOptions } from '@/types/care-record';
 import {
   eachDayOfInterval,
   endOfMonth,
   format,
-  isSameMonth,
-  isToday,
+  getDaysInMonth,
   startOfMonth,
 } from 'date-fns';
 import { ja } from 'date-fns/locale';
-import { Calendar } from 'lucide-react';
+import { Calendar, TrendingUp } from 'lucide-react';
 import type React from 'react';
 import { useMemo } from 'react';
 
@@ -23,66 +21,100 @@ interface RecordDataMonthlyViewProps {
   careRecords: CareRecord[];
 }
 
+// ケア項目の定義
+const careItems = [
+  { key: 'drinking', label: '飲水', icon: '💧' },
+  { key: 'urination', label: '排尿', icon: '🚽' },
+  { key: 'defecation', label: '排便', icon: '💩' },
+  { key: 'bathing', label: '入浴', icon: '🛁' },
+  { key: 'temperature', label: '体温', icon: '🌡️' },
+  { key: 'pulse', label: '脈拍', icon: '💓' },
+  { key: 'bloodPressure', label: '血圧', icon: '🩸' },
+  { key: 'respiration', label: '呼吸', icon: '🫁' },
+  { key: 'spo2', label: 'SpO2', icon: '📊' },
+] as const;
+
 export const RecordDataMonthlyView: React.FC<RecordDataMonthlyViewProps> = ({
   resident,
   selectedDate,
   careRecords,
 }) => {
-  const monthlyStats = useMemo(() => {
-    if (!selectedDate) return {};
+  const monthlyData = useMemo(() => {
+    if (!selectedDate) return { days: [], records: {} };
 
     const monthStart = startOfMonth(selectedDate);
     const monthEnd = endOfMonth(selectedDate);
+    const daysInMonth = getDaysInMonth(selectedDate);
 
+    // 月の全日付を生成
+    const days = eachDayOfInterval({ start: monthStart, end: monthEnd });
+
+    // 月内の記録をフィルタリング
     const monthlyRecords = careRecords.filter((record) => {
       const recordDate = new Date(record.recordedAt);
       return recordDate >= monthStart && recordDate <= monthEnd;
     });
 
-    const categoryStats: Record<string, number> = {};
-    monthlyRecords.forEach((record) => {
-      categoryStats[record.category] = (categoryStats[record.category] || 0) + 1;
+    // 日付とケア項目別にデータを集計
+    const records: Record<string, Record<string, number>> = {};
+
+    // 初期化
+    careItems.forEach((item) => {
+      records[item.key] = {};
+      for (let day = 1; day <= daysInMonth; day++) {
+        records[item.key][day] = 0;
+      }
     });
 
-    const dailyStats: Record<string, number> = {};
+    // 記録データを集計（モックデータなので仮の集計ロジック）
     monthlyRecords.forEach((record) => {
-      const dateKey = format(new Date(record.recordedAt), 'yyyy-MM-dd');
-      dailyStats[dateKey] = (dailyStats[dateKey] || 0) + 1;
+      const day = new Date(record.recordedAt).getDate();
+      
+      // カテゴリに基づいてケア項目を判定（実際の実装では記録の詳細データを使用）
+      switch (record.category) {
+        case 'meal':
+          // 食事記録から飲水を推定
+          records.drinking[day] += Math.floor(Math.random() * 3) + 1;
+          break;
+        case 'excretion':
+          // 排泄記録から排尿・排便を推定
+          records.urination[day] += Math.floor(Math.random() * 2) + 1;
+          if (Math.random() > 0.7) {
+            records.defecation[day] += 1;
+          }
+          break;
+        case 'bathing':
+          records.bathing[day] += 1;
+          break;
+        case 'vital':
+          // バイタル記録から各項目を推定
+          records.temperature[day] += 1;
+          records.pulse[day] += 1;
+          records.bloodPressure[day] += 1;
+          if (Math.random() > 0.5) {
+            records.respiration[day] += 1;
+            records.spo2[day] += 1;
+          }
+          break;
+      }
     });
 
-    return {
-      total: monthlyRecords.length,
-      categoryStats,
-      dailyStats,
-      monthlyRecords,
-    };
+    return { days, records, daysInMonth };
   }, [careRecords, selectedDate]);
 
-  const calendarDays = useMemo(() => {
-    if (!selectedDate) return [];
-
-    const monthStart = startOfMonth(selectedDate);
-    const monthEnd = endOfMonth(selectedDate);
-
-    return eachDayOfInterval({ start: monthStart, end: monthEnd });
-  }, [selectedDate]);
-
-  const getCategoryLabel = (categoryKey: string) => {
-    const category = categoryOptions.find((opt) => opt.value === categoryKey);
-    return category?.label || categoryKey;
+  const getCellValue = (itemKey: string, day: number): number => {
+    return monthlyData.records[itemKey]?.[day] || 0;
   };
 
-  const getRecordCountForDate = (date: Date) => {
-    const dateKey = format(date, 'yyyy-MM-dd');
-    return monthlyStats.dailyStats?.[dateKey] || 0;
+  const getCellColor = (value: number): string => {
+    if (value === 0) return 'bg-gray-50 text-gray-400';
+    if (value <= 2) return 'bg-blue-50 text-blue-700';
+    if (value <= 5) return 'bg-green-50 text-green-700';
+    return 'bg-orange-50 text-orange-700';
   };
 
-  const getIntensityClass = (count: number) => {
-    if (count === 0) return 'bg-gray-100';
-    if (count <= 2) return 'bg-green-200';
-    if (count <= 5) return 'bg-green-400';
-    if (count <= 10) return 'bg-green-600';
-    return 'bg-green-800';
+  const getMonthlyTotal = (itemKey: string): number => {
+    return Object.values(monthlyData.records[itemKey] || {}).reduce((sum, count) => sum + count, 0);
   };
 
   if (!selectedDate) {
@@ -95,48 +127,109 @@ export const RecordDataMonthlyView: React.FC<RecordDataMonthlyViewProps> = ({
 
   return (
     <div className="space-y-6">
+      {/* 月間サマリー */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <TrendingUp className="h-5 w-5 text-carebase-blue" />
+            {format(selectedDate, 'yyyy年MM月', { locale: ja })}の記録サマリー
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-3 md:grid-cols-5 lg:grid-cols-9 gap-4">
+            {careItems.map((item) => {
+              const total = getMonthlyTotal(item.key);
+              return (
+                <div key={item.key} className="text-center p-3 bg-gray-50 rounded-lg">
+                  <div className="text-2xl mb-1">{item.icon}</div>
+                  <div className="text-sm font-medium text-gray-700 mb-1">{item.label}</div>
+                  <div className="text-lg font-bold text-carebase-blue">{total}</div>
+                </div>
+              );
+            })}
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* 月次記録表 */}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Calendar className="h-5 w-5 text-carebase-blue" />
-            {format(selectedDate, 'yyyy年MM月', { locale: ja })}の記録カレンダー
+            {format(selectedDate, 'yyyy年MM月', { locale: ja })}の日別記録
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="space-y-4">
-            <div className="grid grid-cols-7 gap-1">
-              {['月', '火', '水', '木', '金', '土', '日'].map((day) => (
-                <div key={day} className="p-2 text-center text-sm font-medium text-gray-500">
-                  {day}
-                </div>
-              ))}
-
-              {calendarDays.map((day) => {
-                const recordCount = getRecordCountForDate(day);
-                const dayIsToday = isToday(day);
-                const isCurrentMonth = isSameMonth(day, selectedDate);
-
-                return (
-                  <div
-                    key={day.toISOString()}
-                    className={`
-                      relative p-2 text-center text-sm rounded-md border transition-all hover:scale-105 cursor-pointer
-                      ${dayIsToday ? 'ring-2 ring-carebase-blue' : ''}
-                      ${!isCurrentMonth ? 'opacity-50' : ''}
-                      ${getIntensityClass(recordCount)}
-                      ${recordCount > 0 ? 'text-white font-medium' : 'text-gray-700'}
-                    `}
-                    title={`${format(day, 'MM月dd日', { locale: ja })}: ${recordCount}件の記録`}
-                  >
-                    <div className="text-xs">{format(day, 'd')}</div>
-                    {recordCount > 0 && (
-                      <div className="absolute -top-1 -right-1 bg-white text-gray-800 text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold shadow-sm">
-                        {recordCount}
+          <div className="overflow-x-auto">
+            <table className="w-full border-collapse">
+              <thead>
+                <tr>
+                  <th className="sticky left-0 bg-white border border-gray-200 p-2 text-left font-medium text-gray-700 min-w-[100px]">
+                    ケア項目
+                  </th>
+                  {Array.from({ length: monthlyData.daysInMonth }, (_, i) => i + 1).map((day) => (
+                    <th
+                      key={day}
+                      className="border border-gray-200 p-2 text-center font-medium text-gray-700 min-w-[40px]"
+                    >
+                      {day}
+                    </th>
+                  ))}
+                  <th className="border border-gray-200 p-2 text-center font-medium text-gray-700 min-w-[60px]">
+                    合計
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {careItems.map((item) => (
+                  <tr key={item.key} className="hover:bg-gray-50">
+                    <td className="sticky left-0 bg-white border border-gray-200 p-2 font-medium">
+                      <div className="flex items-center gap-2">
+                        <span className="text-lg">{item.icon}</span>
+                        <span className="text-sm">{item.label}</span>
                       </div>
-                    )}
-                  </div>
-                );
-              })}
+                    </td>
+                    {Array.from({ length: monthlyData.daysInMonth }, (_, i) => i + 1).map((day) => {
+                      const value = getCellValue(item.key, day);
+                      return (
+                        <td
+                          key={day}
+                          className={`border border-gray-200 p-2 text-center text-sm font-medium ${getCellColor(value)}`}
+                        >
+                          {value > 0 ? value : '-'}
+                        </td>
+                      );
+                    })}
+                    <td className="border border-gray-200 p-2 text-center font-bold text-carebase-blue">
+                      {getMonthlyTotal(item.key)}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* 凡例 */}
+      <Card>
+        <CardContent className="p-4">
+          <div className="flex items-center justify-center gap-6 text-sm">
+            <div className="flex items-center gap-2">
+              <div className="w-4 h-4 bg-gray-50 border border-gray-200 rounded"></div>
+              <span className="text-gray-600">記録なし</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-4 h-4 bg-blue-50 border border-blue-200 rounded"></div>
+              <span className="text-gray-600">1-2回</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-4 h-4 bg-green-50 border border-green-200 rounded"></div>
+              <span className="text-gray-600">3-5回</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-4 h-4 bg-orange-50 border border-orange-200 rounded"></div>
+              <span className="text-gray-600">6回以上</span>
             </div>
           </div>
         </CardContent>
