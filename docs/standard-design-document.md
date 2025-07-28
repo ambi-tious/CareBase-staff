@@ -52,18 +52,18 @@
 
 ### 2.1 技術スタック
 
-| 分類 | 技術 | バージョン | 用途 |
-|------|------|------------|------|
-| **フレームワーク** | Next.js | 15 | App Router使用 |
-| **言語** | TypeScript | 最新 | 型安全性確保 |
-| **UI** | React | 19 | コンポーネントベース開発 |
-| **スタイリング** | Tailwind CSS | 最新 | ユーティリティファースト |
-| **UIコンポーネント** | shadcn/ui | 最新 | 統一されたデザインシステム |
-| **状態管理** | React Hooks | - | useState, useEffect |
-| **デザインパターン** | Atomic Design | - | コンポーネント階層化 |
-| **開発ツール** | ESLint, Prettier | 最新 | コード品質管理 |
-| **テスト** | Jest, React Testing Library | 最新 | 単体・統合テスト |
-| **デプロイ** | Vercel | - | 本番環境 |
+| 分類                 | 技術                        | バージョン | 用途                       |
+| -------------------- | --------------------------- | ---------- | -------------------------- |
+| **フレームワーク**   | Next.js                     | 15         | App Router使用             |
+| **言語**             | TypeScript                  | 最新       | 型安全性確保               |
+| **UI**               | React                       | 19         | コンポーネントベース開発   |
+| **スタイリング**     | Tailwind CSS                | 最新       | ユーティリティファースト   |
+| **UIコンポーネント** | shadcn/ui                   | 最新       | 統一されたデザインシステム |
+| **状態管理**         | React Hooks                 | -          | useState, useEffect        |
+| **デザインパターン** | Atomic Design               | -          | コンポーネント階層化       |
+| **開発ツール**       | ESLint, Prettier            | 最新       | コード品質管理             |
+| **テスト**           | Jest, React Testing Library | 最新       | 単体・統合テスト           |
+| **デプロイ**         | Vercel                      | -          | 本番環境                   |
 
 ### 2.2 ディレクトリ構造
 
@@ -142,85 +142,102 @@
 - URL: https://carebase-staff.vercel.app/[path]
 
 ## 概要
+
 [画面の目的と主要機能の説明]
 
 ## 全体レイアウト
 
 ### 画面構成
+
 [画面の構成要素の説明]
 
 ### 画面項目
+
 | 項目名 | コンポーネント | 必須 | 表示条件 | 初期値 | 備考 |
-|--------|----------------|------|----------|--------|------|
+| ------ | -------------- | ---- | -------- | ------ | ---- |
 
 ## 機能仕様
 
 ### アクション
+
 | 項目名 | 処理内容 | 対象API | 遷移先画面 |
-|--------|----------|---------|------------|
+| ------ | -------- | ------- | ---------- |
 
 ### 入力チェック
+
 | 項目名 | イベント | チェック内容 | エラーメッセージ |
-|--------|----------|--------------|------------------|
+| ------ | -------- | ------------ | ---------------- |
 
 ### バリデーション仕様
+
 [詳細なバリデーションロジック]
 
 ## UI/UX仕様
 
 ### レスポンシブデザイン
+
 [画面サイズ別の表示仕様]
 
 ### カラーテーマ
+
 [使用する色の定義]
 
 ### アニメーション
+
 [アニメーション効果の定義]
 
 ### アクセシビリティ
+
 [アクセシビリティ対応]
 
 ## 技術仕様
 
 ### 使用コンポーネント
+
 [使用するコンポーネントの一覧]
 
 ### データ型定義
+
 [TypeScript型定義]
 
 ### API仕様
+
 [使用するAPIエンドポイント]
 
 ## 参考資料
+
 [関連ドキュメントへのリンク]
 ```
 
 ### 4.2 画面カテゴリ
 
-| カテゴリ | 説明 | 主要画面 |
-|----------|------|----------|
-| **認証関連** | ログイン・スタッフ選択 | ログイン画面、スタッフ選択画面 |
-| **利用者管理** | 利用者情報の管理 | 利用者一覧、利用者詳細、利用者登録 |
-| **ケアボード** | ケア記録の表示・管理 | 時間ベース表示、利用者ベース表示 |
-| **介護記録** | 介護記録の作成・管理 | 記録一覧、記録作成、記録編集 |
-| **連絡・予定** | 連絡事項・予定の管理 | カレンダー表示、ボード表示 |
-| **申し送り** | スタッフ間の情報共有 | 申し送り一覧、申し送り作成 |
-| **書類管理** | 各種書類の管理 | 書類一覧、書類アップロード |
+| カテゴリ       | 説明                   | 主要画面                           |
+| -------------- | ---------------------- | ---------------------------------- |
+| **認証関連**   | ログイン・スタッフ選択 | ログイン画面、スタッフ選択画面     |
+| **利用者管理** | 利用者情報の管理       | 利用者一覧、利用者詳細、利用者登録 |
+| **ケアボード** | ケア記録の表示・管理   | 時間ベース表示、利用者ベース表示   |
+| **介護記録**   | 介護記録の作成・管理   | 記録一覧、記録作成、記録編集       |
+| **連絡・予定** | 連絡事項・予定の管理   | カレンダー表示、ボード表示         |
+| **申し送り**   | スタッフ間の情報共有   | 申し送り一覧、申し送り作成         |
+| **書類管理**   | 各種書類の管理         | 書類一覧、書類アップロード         |
 
 ### 4.3 共通レイアウト要素
 
 #### ヘッダー
+
 - ロゴ・アプリ名
 - 現在のスタッフ情報
 - グループ・チーム情報
 - ログアウトボタン
 
 #### ナビゲーション
+
 - メインメニュー
 - パンくずリスト
 - 戻るボタン
 
 #### フッター
+
 - バージョン情報
 - サポート情報
 
@@ -231,9 +248,11 @@
 ### 5.1 Atomic Design階層
 
 #### 1_atoms（原子）
+
 最小単位のコンポーネント。それ以上分割できない要素。
 
 **例:**
+
 - `Button`: 基本ボタン
 - `Input`: 入力フィールド
 - `Badge`: バッジ表示
@@ -241,34 +260,41 @@
 - `PriorityBadge`: 重要度表示
 
 **命名規則:**
+
 - PascalCase
 - 機能を表す名前
 - 汎用的な名前を使用
 
 #### 2_molecules（分子）
+
 複数のAtomで構成される機能単位。
 
 **例:**
+
 - `SearchBar`: 検索バー
 - `UserCard`: ユーザーカード
 - `FormField`: フォームフィールド
 - `TableRow`: テーブル行
 
 **命名規則:**
+
 - PascalCase
 - 機能 + 種類の組み合わせ
 - 例: `ResidentCard`, `CareRecordForm`
 
 #### 3_organisms（有機体）
+
 複数のMoleculeやAtomで構成される自立したUIセクション。
 
 **例:**
+
 - `Header`: ヘッダー
 - `ResidentList`: 利用者一覧
 - `CareRecordForm`: 介護記録フォーム
 - `ContactScheduleBoard`: 連絡・予定ボード
 
 **命名規則:**
+
 - PascalCase
 - 機能領域 + 種類の組み合わせ
 - 例: `ResidentDetailTabs`, `CareRecordList`
@@ -276,32 +302,35 @@
 ### 5.2 コンポーネント設計ガイドライン
 
 #### Props設計
+
 ```typescript
 interface ComponentProps {
   // 必須プロパティ
   id: string;
   title: string;
-  
+
   // オプショナルプロパティ
   className?: string;
   disabled?: boolean;
-  
+
   // イベントハンドラー
   onClick?: () => void;
   onSubmit?: (data: FormData) => void;
-  
+
   // 子要素
   children?: React.ReactNode;
 }
 ```
 
 #### 型定義規則
+
 - すべてのPropsにinterface定義
 - 必須・オプショナルの明確な区別
 - 適切なジェネリクス使用
 - Union型での選択肢制限
 
 #### ファイル構成
+
 ```
 components/
 ├── 1_atoms/
@@ -321,62 +350,66 @@ components/
 ### 6.1 カラーパレット
 
 #### プライマリカラー
+
 ```css
 :root {
-  --carebase-blue: #3B82F6;
-  --carebase-blue-light: #60A5FA;
-  --carebase-blue-dark: #1D4ED8;
+  --carebase-blue: #3b82f6;
+  --carebase-blue-light: #60a5fa;
+  --carebase-blue-dark: #1d4ed8;
 }
 ```
 
 #### セマンティックカラー
+
 ```css
 :root {
   /* ステータス */
-  --success: #10B981;
-  --warning: #F59E0B;
-  --error: #EF4444;
-  --info: #3B82F6;
-  
+  --success: #10b981;
+  --warning: #f59e0b;
+  --error: #ef4444;
+  --info: #3b82f6;
+
   /* グレースケール */
-  --gray-50: #F9FAFB;
-  --gray-100: #F3F4F6;
-  --gray-200: #E5E7EB;
-  --gray-300: #D1D5DB;
-  --gray-400: #9CA3AF;
-  --gray-500: #6B7280;
-  --gray-600: #4B5563;
+  --gray-50: #f9fafb;
+  --gray-100: #f3f4f6;
+  --gray-200: #e5e7eb;
+  --gray-300: #d1d5db;
+  --gray-400: #9ca3af;
+  --gray-500: #6b7280;
+  --gray-600: #4b5563;
   --gray-700: #374151;
-  --gray-800: #1F2937;
+  --gray-800: #1f2937;
   --gray-900: #111827;
 }
 ```
 
 #### 機能別カラー
+
 ```css
 /* 記録種別 */
---meal: #F97316;      /* 食事 */
---bath: #3B82F6;      /* 入浴 */
---medication: #8B5CF6; /* 服薬 */
---excretion: #A3A3A3; /* 排泄 */
---vital: #EF4444;     /* バイタル */
---exercise: #10B981;  /* 運動 */
---communication: #6366F1; /* コミュニケーション */
+--meal: #f97316; /* 食事 */
+--bath: #3b82f6; /* 入浴 */
+--medication: #8b5cf6; /* 服薬 */
+--excretion: #a3a3a3; /* 排泄 */
+--vital: #ef4444; /* バイタル */
+--exercise: #10b981; /* 運動 */
+--communication: #6366f1; /* コミュニケーション */
 
 /* 重要度 */
---priority-high: #EF4444;
---priority-medium: #F59E0B;
---priority-low: #3B82F6;
+--priority-high: #ef4444;
+--priority-medium: #f59e0b;
+--priority-low: #3b82f6;
 
 /* ステータス */
---status-draft: #6B7280;
---status-completed: #10B981;
---status-confirmed: #3B82F6;
+--status-draft: #6b7280;
+--status-completed: #10b981;
+--status-confirmed: #3b82f6;
 ```
 
 ### 6.2 タイポグラフィ
 
 #### フォントファミリー
+
 ```css
 :root {
   --font-sans: 'Noto Sans JP', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
@@ -385,34 +418,36 @@ components/
 ```
 
 #### フォントサイズ
+
 ```css
 :root {
-  --text-xs: 0.75rem;    /* 12px */
-  --text-sm: 0.875rem;   /* 14px */
-  --text-base: 1rem;     /* 16px */
-  --text-lg: 1.125rem;   /* 18px */
-  --text-xl: 1.25rem;    /* 20px */
-  --text-2xl: 1.5rem;    /* 24px */
-  --text-3xl: 1.875rem;  /* 30px */
-  --text-4xl: 2.25rem;   /* 36px */
+  --text-xs: 0.75rem; /* 12px */
+  --text-sm: 0.875rem; /* 14px */
+  --text-base: 1rem; /* 16px */
+  --text-lg: 1.125rem; /* 18px */
+  --text-xl: 1.25rem; /* 20px */
+  --text-2xl: 1.5rem; /* 24px */
+  --text-3xl: 1.875rem; /* 30px */
+  --text-4xl: 2.25rem; /* 36px */
 }
 ```
 
 ### 6.3 スペーシング
 
 #### 基本スペーシング
+
 ```css
 :root {
-  --space-1: 0.25rem;   /* 4px */
-  --space-2: 0.5rem;    /* 8px */
-  --space-3: 0.75rem;   /* 12px */
-  --space-4: 1rem;      /* 16px */
-  --space-5: 1.25rem;   /* 20px */
-  --space-6: 1.5rem;    /* 24px */
-  --space-8: 2rem;      /* 32px */
-  --space-10: 2.5rem;   /* 40px */
-  --space-12: 3rem;     /* 48px */
-  --space-16: 4rem;     /* 64px */
+  --space-1: 0.25rem; /* 4px */
+  --space-2: 0.5rem; /* 8px */
+  --space-3: 0.75rem; /* 12px */
+  --space-4: 1rem; /* 16px */
+  --space-5: 1.25rem; /* 20px */
+  --space-6: 1.5rem; /* 24px */
+  --space-8: 2rem; /* 32px */
+  --space-10: 2.5rem; /* 40px */
+  --space-12: 3rem; /* 48px */
+  --space-16: 4rem; /* 64px */
 }
 ```
 
@@ -420,14 +455,15 @@ components/
 
 ```css
 :root {
-  --breakpoint-mobile: 375px;  /* スマートフォン */
+  --breakpoint-mobile: 375px; /* スマートフォン */
   --breakpoint-tablet: 1024px; /* タブレット（横向き操作想定） */
   --breakpoint-desktop: 1280px; /* デスクトップ */
-  --breakpoint-xl: 1536px;     /* 大画面 */
+  --breakpoint-xl: 1536px; /* 大画面 */
 }
 ```
 
 #### デバイス別設計方針
+
 - **スマートフォン（375px）**: 縦向き表示、シンプルなレイアウト
 - **タブレット（1024px）**: 横向き操作を基本想定、効率的な業務フロー
 - **デスクトップ（1280px以上）**: 全機能表示、管理者向け操作
@@ -435,6 +471,7 @@ components/
 ### 6.5 アニメーション
 
 #### トランジション
+
 ```css
 :root {
   --transition-fast: 150ms ease-in-out;
@@ -444,6 +481,7 @@ components/
 ```
 
 #### 共通アニメーション
+
 - **ホバー効果**: `hover:shadow-md transition-shadow`
 - **フェードイン**: `animate-fade-in`
 - **スライドイン**: `animate-slide-in`
@@ -452,12 +490,14 @@ components/
 ### 6.6 アクセシビリティ
 
 #### 必須対応項目
+
 - **キーボードナビゲーション**: Tab キーでの操作対応
 - **スクリーンリーダー**: 適切な aria-label 設定
 - **コントラスト比**: WCAG 2.1 AA レベル準拠（4.5:1以上）
 - **フォーカス表示**: 明確なフォーカスインジケーター
 
 #### 実装例
+
 ```tsx
 <button
   aria-label="利用者を削除"
@@ -475,6 +515,7 @@ components/
 ### 7.1 共通データ型
 
 #### 基本型
+
 ```typescript
 // 共通ID型
 type ID = string;
@@ -490,6 +531,7 @@ type Priority = 'high' | 'medium' | 'low';
 ```
 
 #### ユーザー関連
+
 ```typescript
 interface User {
   id: ID;
@@ -504,15 +546,16 @@ interface User {
   updatedAt: DateTime;
 }
 
-type UserRole = 
-  | 'facility_manager'    // 施設長
-  | 'chief_care_worker'   // 主任介護職員
-  | 'nurse'               // 看護師
-  | 'care_worker'         // 介護職員
-  | 'office_staff';       // 事務職員
+type UserRole =
+  | 'facility_manager' // 施設長
+  | 'chief_care_worker' // 主任介護職員
+  | 'nurse' // 看護師
+  | 'care_worker' // 介護職員
+  | 'office_staff'; // 事務職員
 ```
 
 #### 利用者関連
+
 ```typescript
 interface Resident {
   id: ID;
@@ -532,12 +575,11 @@ interface Resident {
   updatedAt: DateTime;
 }
 
-type CareLevel = 
-  | 'support_1' | 'support_2'
-  | 'care_1' | 'care_2' | 'care_3' | 'care_4' | 'care_5';
+type CareLevel = 'support_1' | 'support_2' | 'care_1' | 'care_2' | 'care_3' | 'care_4' | 'care_5';
 ```
 
 #### 介護記録関連
+
 ```typescript
 interface CareRecord {
   id: ID;
@@ -554,15 +596,15 @@ interface CareRecord {
   updatedAt: DateTime;
 }
 
-type CareRecordCategory = 
-  | 'meal'           // 食事
-  | 'bath'           // 入浴
-  | 'medication'     // 服薬
-  | 'excretion'      // 排泄
-  | 'vital'          // バイタル
-  | 'exercise'       // 運動
-  | 'communication'  // コミュニケーション
-  | 'other';         // その他
+type CareRecordCategory =
+  | 'meal' // 食事
+  | 'bath' // 入浴
+  | 'medication' // 服薬
+  | 'excretion' // 排泄
+  | 'vital' // バイタル
+  | 'exercise' // 運動
+  | 'communication' // コミュニケーション
+  | 'other'; // その他
 
 type CareRecordStatus = 'draft' | 'completed' | 'confirmed';
 ```
@@ -570,6 +612,7 @@ type CareRecordStatus = 'draft' | 'completed' | 'confirmed';
 ### 7.2 API レスポンス型
 
 #### 共通レスポンス
+
 ```typescript
 interface ApiResponse<T> {
   success: boolean;
@@ -591,6 +634,7 @@ interface PaginatedResponse<T> {
 ```
 
 #### エラーレスポンス
+
 ```typescript
 interface ApiError {
   success: false;
@@ -607,6 +651,7 @@ interface ApiError {
 ### 8.1 エンドポイント命名規則
 
 #### RESTful API設計
+
 ```
 GET    /api/v1/residents           # 利用者一覧取得
 GET    /api/v1/residents/{id}      # 利用者詳細取得
@@ -623,6 +668,7 @@ DELETE /api/v1/care-records/{id}   # 介護記録削除
 ### 8.2 リクエスト・レスポンス仕様
 
 #### 共通ヘッダー
+
 ```
 Content-Type: application/json
 Authorization: Bearer {token}
@@ -630,29 +676,32 @@ Accept: application/json
 ```
 
 #### ページネーション
+
 ```typescript
 interface PaginationParams {
-  page?: number;      // デフォルト: 1
-  limit?: number;     // デフォルト: 20
-  sort?: string;      // ソートフィールド
+  page?: number; // デフォルト: 1
+  limit?: number; // デフォルト: 20
+  sort?: string; // ソートフィールド
   order?: 'asc' | 'desc'; // ソート順
 }
 ```
 
 #### 検索・フィルター
+
 ```typescript
 interface SearchParams {
-  q?: string;         // 検索キーワード
-  category?: string;  // カテゴリフィルター
-  status?: string;    // ステータスフィルター
-  dateFrom?: string;  // 開始日
-  dateTo?: string;    // 終了日
+  q?: string; // 検索キーワード
+  category?: string; // カテゴリフィルター
+  status?: string; // ステータスフィルター
+  dateFrom?: string; // 開始日
+  dateTo?: string; // 終了日
 }
 ```
 
 ### 8.3 エラーハンドリング
 
 #### HTTPステータスコード
+
 - `200`: 成功
 - `201`: 作成成功
 - `400`: リクエストエラー
@@ -663,14 +712,12 @@ interface SearchParams {
 - `500`: サーバーエラー
 
 #### エラーレスポンス例
+
 ```json
 {
   "success": false,
   "message": "バリデーションエラーが発生しました",
-  "errors": [
-    "名前は必須です",
-    "メールアドレスの形式が正しくありません"
-  ],
+  "errors": ["名前は必須です", "メールアドレスの形式が正しくありません"],
   "code": "VALIDATION_ERROR"
 }
 ```
@@ -682,6 +729,7 @@ interface SearchParams {
 ### 9.1 テスト戦略
 
 #### テストピラミッド
+
 1. **単体テスト（Unit Tests）**: 70%
    - コンポーネントの個別機能
    - ユーティリティ関数
@@ -698,16 +746,17 @@ interface SearchParams {
 
 ### 9.2 テストカバレッジ目標
 
-| 項目 | 目標値 |
-|------|--------|
-| **Branches** | 70%以上 |
-| **Functions** | 70%以上 |
-| **Lines** | 70%以上 |
+| 項目           | 目標値  |
+| -------------- | ------- |
+| **Branches**   | 70%以上 |
+| **Functions**  | 70%以上 |
+| **Lines**      | 70%以上 |
 | **Statements** | 70%以上 |
 
 ### 9.3 テスト実装例
 
 #### コンポーネントテスト
+
 ```typescript
 import { render, screen, fireEvent } from '@testing-library/react';
 import { Button } from '@/components/1_atoms/button';
@@ -721,7 +770,7 @@ describe('Button', () => {
   it('クリックイベントが発火する', () => {
     const handleClick = jest.fn();
     render(<Button onClick={handleClick}>クリック</Button>);
-    
+
     fireEvent.click(screen.getByRole('button'));
     expect(handleClick).toHaveBeenCalledTimes(1);
   });
@@ -729,7 +778,7 @@ describe('Button', () => {
   it('disabled状態で正しく動作する', () => {
     const handleClick = jest.fn();
     render(<Button disabled onClick={handleClick}>無効ボタン</Button>);
-    
+
     fireEvent.click(screen.getByRole('button'));
     expect(handleClick).not.toHaveBeenCalled();
   });
@@ -737,28 +786,25 @@ describe('Button', () => {
 ```
 
 #### カスタムフックテスト
+
 ```typescript
 import { renderHook, act } from '@testing-library/react';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
 
 describe('useLocalStorage', () => {
   it('初期値が正しく設定される', () => {
-    const { result } = renderHook(() => 
-      useLocalStorage('test-key', 'initial-value')
-    );
-    
+    const { result } = renderHook(() => useLocalStorage('test-key', 'initial-value'));
+
     expect(result.current[0]).toBe('initial-value');
   });
 
   it('値の更新が正しく動作する', () => {
-    const { result } = renderHook(() => 
-      useLocalStorage('test-key', 'initial')
-    );
-    
+    const { result } = renderHook(() => useLocalStorage('test-key', 'initial'));
+
     act(() => {
       result.current[1]('updated');
     });
-    
+
     expect(result.current[0]).toBe('updated');
   });
 });
@@ -771,18 +817,21 @@ describe('useLocalStorage', () => {
 ### 10.1 コーディング規約
 
 #### TypeScript
+
 - 厳密な型定義を使用
 - `any`型の使用を禁止
 - 適切なジェネリクス使用
 - Union型での選択肢制限
 
 #### React
+
 - 関数コンポーネントを使用
 - カスタムフックでロジック分離
 - useCallbackとuseMemoの適切な使用
 - 適切なkey属性の設定
 
 #### CSS/Tailwind
+
 - ユーティリティクラス優先
 - カスタムCSSは最小限
 - レスポンシブデザイン対応
@@ -791,23 +840,27 @@ describe('useLocalStorage', () => {
 ### 10.2 ファイル命名規則
 
 #### コンポーネント
+
 - PascalCase: `UserCard.tsx`
 - ディレクトリ名: kebab-case: `user-card/`
 - テストファイル: `UserCard.test.tsx`
 - Storybookファイル: `UserCard.stories.tsx`
 
 #### ページ
+
 - Next.js規約に従う: `page.tsx`, `layout.tsx`
 - 動的ルート: `[id]/page.tsx`
 - グループルート: `(auth)/layout.tsx`
 
 #### ユーティリティ
+
 - camelCase: `formatDate.ts`
 - 定数: UPPER_SNAKE_CASE: `API_ENDPOINTS.ts`
 
 ### 10.3 Git運用
 
 #### ブランチ戦略
+
 - `main`: 本番環境
 - `local`: 開発環境（最新実装）
 - `feature/*`: 機能開発
@@ -815,6 +868,7 @@ describe('useLocalStorage', () => {
 - `docs/*`: ドキュメント更新
 
 #### コミットメッセージ
+
 ```
 feat: 新機能追加
 fix: バグ修正
@@ -826,6 +880,7 @@ chore: その他の変更
 ```
 
 #### プルリクエスト
+
 - 機能単位での作成
 - レビュー必須
 - CI/CDパス必須
@@ -834,18 +889,21 @@ chore: その他の変更
 ### 10.4 パフォーマンス最適化
 
 #### 画像最適化
+
 - Next.js Image コンポーネント使用
 - WebP形式の使用
 - 適切なサイズ指定
 - lazy loading対応
 
 #### バンドル最適化
+
 - 動的インポート使用
 - Tree shaking対応
 - 不要なライブラリ削除
 - コード分割
 
 #### レンダリング最適化
+
 - React.memo使用
 - useCallback/useMemo適切な使用
 - 仮想化（大量データ）
@@ -854,12 +912,14 @@ chore: その他の変更
 ### 10.5 セキュリティ
 
 #### 認証・認可
+
 - JWT トークン使用
 - 適切な権限チェック
 - セッション管理
 - CSRF対策
 
 #### データ保護
+
 - 入力値サニタイズ
 - XSS対策
 - 機密情報の適切な管理
@@ -871,16 +931,16 @@ chore: その他の変更
 
 ### A. 用語集
 
-| 用語 | 説明 |
-|------|------|
-| **RSC** | React Server Components |
-| **SSR** | Server-Side Rendering |
-| **SSG** | Static Site Generation |
-| **ISR** | Incremental Static Regeneration |
-| **CRUD** | Create, Read, Update, Delete |
-| **API** | Application Programming Interface |
-| **UI** | User Interface |
-| **UX** | User Experience |
+| 用語     | 説明                              |
+| -------- | --------------------------------- |
+| **RSC**  | React Server Components           |
+| **SSR**  | Server-Side Rendering             |
+| **SSG**  | Static Site Generation            |
+| **ISR**  | Incremental Static Regeneration   |
+| **CRUD** | Create, Read, Update, Delete      |
+| **API**  | Application Programming Interface |
+| **UI**   | User Interface                    |
+| **UX**   | User Experience                   |
 
 ### B. 参考資料
 
@@ -893,9 +953,9 @@ chore: その他の変更
 
 ### C. 更新履歴
 
-| 日付 | バージョン | 更新内容 | 更新者 |
-|------|------------|----------|--------|
-| 2025-01-25 | 1.0.0 | 初版作成 | Devin AI |
+| 日付       | バージョン | 更新内容 | 更新者   |
+| ---------- | ---------- | -------- | -------- |
+| 2025-01-25 | 1.0.0      | 初版作成 | Devin AI |
 
 ---
 

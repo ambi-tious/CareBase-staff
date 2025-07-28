@@ -50,7 +50,8 @@ export const individualPointsData: IndividualPoint[] = [
     id: 'point-003',
     residentId: '1',
     title: '入浴時の座位保持に注意',
-    content: 'バランス感覚が低下しているため、入浴時は必ず介助者が付き添い、座位保持に注意してください。',
+    content:
+      'バランス感覚が低下しているため、入浴時は必ず介助者が付き添い、座位保持に注意してください。',
     category: 'bathing',
     priority: 'medium',
     status: 'active',
@@ -95,7 +96,8 @@ export const individualPointsData: IndividualPoint[] = [
     id: 'point-005',
     residentId: '3',
     title: '車椅子移乗時の注意点',
-    content: '左半身麻痺があるため、車椅子移乗時は右側からアプローチし、十分な時間をかけて行ってください。',
+    content:
+      '左半身麻痺があるため、車椅子移乗時は右側からアプローチし、十分な時間をかけて行ってください。',
     category: 'exercise',
     priority: 'high',
     status: 'active',

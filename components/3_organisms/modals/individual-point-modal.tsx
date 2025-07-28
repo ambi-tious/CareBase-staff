@@ -42,7 +42,7 @@ export const IndividualPointModal: React.FC<IndividualPointModalProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent 
+      <DialogContent
         className="max-w-4xl max-h-[90vh] overflow-y-auto tablet:max-w-[95vw] tablet:max-h-[95vh]"
         data-testid="individual-point-modal"
       >

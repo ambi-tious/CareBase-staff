@@ -83,29 +83,35 @@ export const IndividualPointForm: React.FC<IndividualPointFormProps> = ({
     }
   }, [newTag, addTag]);
 
-  const handleTagKeyPress = useCallback((e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      handleAddTag();
-    }
-  }, [handleAddTag]);
-
-  const handleFileUpload = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(e.target.files || []);
-    files.forEach(file => {
-      // File size limit: 10MB
-      if (file.size > 10 * 1024 * 1024) {
-        alert(`${file.name} のファイルサイズが大きすぎます（10MB以下にしてください）`);
-        return;
+  const handleTagKeyPress = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        handleAddTag();
       }
-      addMediaFile(file);
-    });
-    
-    // Reset input
-    if (fileInputRef.current) {
-      fileInputRef.current.value = '';
-    }
-  }, [addMediaFile]);
+    },
+    [handleAddTag]
+  );
+
+  const handleFileUpload = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const files = Array.from(e.target.files || []);
+      files.forEach((file) => {
+        // File size limit: 10MB
+        if (file.size > 10 * 1024 * 1024) {
+          alert(`${file.name} のファイルサイズが大きすぎます（10MB以下にしてください）`);
+          return;
+        }
+        addMediaFile(file);
+      });
+
+      // Reset input
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    },
+    [addMediaFile]
+  );
 
   const getFileIcon = (file: File) => {
     if (file.type.startsWith('image/')) return Image;
@@ -210,7 +216,7 @@ export const IndividualPointForm: React.FC<IndividualPointFormProps> = ({
           {/* Tags */}
           <div className="space-y-2">
             <Label className="text-sm font-medium text-gray-700">タグ</Label>
-            
+
             {/* Existing tags */}
             {formData.tags.length > 0 && (
               <div className="flex flex-wrap gap-2 mb-2">
@@ -259,7 +265,7 @@ export const IndividualPointForm: React.FC<IndividualPointFormProps> = ({
           {/* Media Upload */}
           <div className="space-y-2">
             <Label className="text-sm font-medium text-gray-700">メディアファイル</Label>
-            
+
             {/* Upload button */}
             <div className="flex items-center gap-2">
               <Button
@@ -272,9 +278,7 @@ export const IndividualPointForm: React.FC<IndividualPointFormProps> = ({
                 <Upload className="h-4 w-4" />
                 ファイルを追加
               </Button>
-              <span className="text-xs text-gray-500">
-                画像・動画・文書ファイル（最大10MB）
-              </span>
+              <span className="text-xs text-gray-500">画像・動画・文書ファイル（最大10MB）</span>
             </div>
 
             <input
@@ -300,12 +304,8 @@ export const IndividualPointForm: React.FC<IndividualPointFormProps> = ({
                       <div className="flex items-start gap-2">
                         <FileIcon className="h-5 w-5 text-gray-500 mt-0.5" />
                         <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium text-gray-900 truncate">
-                            {file.name}
-                          </p>
-                          <p className="text-xs text-gray-500">
-                            {formatFileSize(file.size)}
-                          </p>
+                          <p className="text-sm font-medium text-gray-900 truncate">{file.name}</p>
+                          <p className="text-xs text-gray-500">{formatFileSize(file.size)}</p>
                         </div>
                         <Button
                           type="button"
@@ -382,12 +382,7 @@ export const IndividualPointForm: React.FC<IndividualPointFormProps> = ({
 
       {/* Action Buttons */}
       <div className="flex flex-col sm:flex-row justify-end gap-3 pt-6 border-t">
-        <Button
-          type="button"
-          variant="outline"
-          onClick={onCancel}
-          disabled={isSubmitting}
-        >
+        <Button type="button" variant="outline" onClick={onCancel} disabled={isSubmitting}>
           キャンセル
         </Button>
 

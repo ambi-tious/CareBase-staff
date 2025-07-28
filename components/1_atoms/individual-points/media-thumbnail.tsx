@@ -1,8 +1,7 @@
-import type React from 'react';
-import type { MediaAttachment } from '@/types/individual-point';
 import { Button } from '@/components/ui/button';
-import { FileText, Image, Play, Download, Eye } from 'lucide-react';
-import Image from 'next/image';
+import type { MediaAttachment } from '@/types/individual-point';
+import { Download, Eye, FileText, Image, Play } from 'lucide-react';
+import type React from 'react';
 
 interface MediaThumbnailProps {
   media: MediaAttachment;
@@ -55,19 +54,21 @@ export const MediaThumbnail: React.FC<MediaThumbnailProps> = ({
 
   return (
     <div className={`relative group ${className}`}>
-      <div className={`${getSizeClasses()} rounded-lg border border-gray-200 overflow-hidden bg-gray-50 flex items-center justify-center`}>
+      <div
+        className={`${getSizeClasses()} rounded-lg border border-gray-200 overflow-hidden bg-gray-50 flex items-center justify-center`}
+      >
         {media.fileType === 'image' && media.thumbnailUrl ? (
           <Image
             src={media.thumbnailUrl}
             alt={media.fileName}
-            fill
+            fill="cover"
             style={{ objectFit: 'cover' }}
             className="rounded-lg"
           />
         ) : (
           <IconComponent className="h-8 w-8 text-gray-400" />
         )}
-        
+
         {/* Video play overlay */}
         {media.fileType === 'video' && (
           <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-30 rounded-lg">

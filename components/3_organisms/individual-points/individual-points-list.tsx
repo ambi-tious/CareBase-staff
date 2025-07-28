@@ -41,45 +41,47 @@ export const IndividualPointsList: React.FC<IndividualPointsListProps> = ({
 
   // Extract all available tags from points
   const availableTags = useMemo(() => {
-    const allTags = points.flatMap(point => point.tags);
+    const allTags = points.flatMap((point) => point.tags);
     return Array.from(new Set(allTags)).sort();
   }, [points]);
 
   // Filter points based on search and filters
   const filteredPoints = useMemo(() => {
-    return points.filter((point) => {
-      // Search filter
-      const matchesSearch =
-        searchQuery === '' ||
-        point.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        point.content.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        point.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()));
+    return points
+      .filter((point) => {
+        // Search filter
+        const matchesSearch =
+          searchQuery === '' ||
+          point.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          point.content.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          point.tags.some((tag) => tag.toLowerCase().includes(searchQuery.toLowerCase()));
 
-      // Category filter
-      const matchesCategory = !selectedCategory || point.category === selectedCategory;
+        // Category filter
+        const matchesCategory = !selectedCategory || point.category === selectedCategory;
 
-      // Priority filter
-      const matchesPriority = !selectedPriority || point.priority === selectedPriority;
+        // Priority filter
+        const matchesPriority = !selectedPriority || point.priority === selectedPriority;
 
-      // Status filter
-      const matchesStatus = !selectedStatus || point.status === selectedStatus;
+        // Status filter
+        const matchesStatus = !selectedStatus || point.status === selectedStatus;
 
-      // Tags filter
-      const matchesTags = selectedTags.length === 0 || 
-        selectedTags.some(tag => point.tags.includes(tag));
+        // Tags filter
+        const matchesTags =
+          selectedTags.length === 0 || selectedTags.some((tag) => point.tags.includes(tag));
 
-      return matchesSearch && matchesCategory && matchesPriority && matchesStatus && matchesTags;
-    }).sort((a, b) => {
-      // Sort by priority (high -> medium -> low), then by creation date (newest first)
-      const priorityOrder = { high: 3, medium: 2, low: 1 };
-      const priorityDiff = priorityOrder[b.priority] - priorityOrder[a.priority];
-      
-      if (priorityDiff !== 0) {
-        return priorityDiff;
-      }
-      
-      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-    });
+        return matchesSearch && matchesCategory && matchesPriority && matchesStatus && matchesTags;
+      })
+      .sort((a, b) => {
+        // Sort by priority (high -> medium -> low), then by creation date (newest first)
+        const priorityOrder = { high: 3, medium: 2, low: 1 };
+        const priorityDiff = priorityOrder[b.priority] - priorityOrder[a.priority];
+
+        if (priorityDiff !== 0) {
+          return priorityDiff;
+        }
+
+        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+      });
   }, [points, searchQuery, selectedCategory, selectedPriority, selectedStatus, selectedTags]);
 
   const handleResetFilters = () => {
@@ -92,15 +94,15 @@ export const IndividualPointsList: React.FC<IndividualPointsListProps> = ({
 
   const handleTagAdd = (tag: string) => {
     if (!selectedTags.includes(tag)) {
-      setSelectedTags(prev => [...prev, tag]);
+      setSelectedTags((prev) => [...prev, tag]);
     }
   };
 
   const handleTagRemove = (tag: string) => {
-    setSelectedTags(prev => prev.filter(t => t !== tag));
+    setSelectedTags((prev) => prev.filter((t) => t !== tag));
   };
 
-  const activeCount = points.filter(p => p.status === 'active').length;
+  const activeCount = points.filter((p) => p.status === 'active').length;
   const totalCount = points.length;
 
   return (

@@ -4,7 +4,12 @@
  * Service layer for individual point API calls
  */
 
-import type { IndividualPoint, IndividualPointFormData, PointCategory, CategoryFormData } from '@/types/individual-point';
+import type {
+  IndividualPoint,
+  IndividualPointFormData,
+  PointCategory,
+  CategoryFormData,
+} from '@/types/individual-point';
 
 class IndividualPointService {
   private baseUrl = process.env.NEXT_PUBLIC_API_URL || '';
@@ -46,17 +51,20 @@ class IndividualPointService {
 
       const formData = new FormData();
       formData.append('data', JSON.stringify(data));
-      
+
       if (mediaFiles) {
         mediaFiles.forEach((file, index) => {
           formData.append(`media_${index}`, file);
         });
       }
 
-      const response = await fetch(`${this.baseUrl}/api/residents/${residentId}/individual-points`, {
-        method: 'POST',
-        body: formData,
-      });
+      const response = await fetch(
+        `${this.baseUrl}/api/residents/${residentId}/individual-points`,
+        {
+          method: 'POST',
+          body: formData,
+        }
+      );
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -86,17 +94,20 @@ class IndividualPointService {
 
       const formData = new FormData();
       formData.append('data', JSON.stringify(data));
-      
+
       if (mediaFiles) {
         mediaFiles.forEach((file, index) => {
           formData.append(`media_${index}`, file);
         });
       }
 
-      const response = await fetch(`${this.baseUrl}/api/residents/${residentId}/individual-points/${pointId}`, {
-        method: 'PUT',
-        body: formData,
-      });
+      const response = await fetch(
+        `${this.baseUrl}/api/residents/${residentId}/individual-points/${pointId}`,
+        {
+          method: 'PUT',
+          body: formData,
+        }
+      );
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -119,9 +130,12 @@ class IndividualPointService {
         return this.mockDeleteIndividualPoint(residentId, pointId);
       }
 
-      const response = await fetch(`${this.baseUrl}/api/residents/${residentId}/individual-points/${pointId}`, {
-        method: 'DELETE',
-      });
+      const response = await fetch(
+        `${this.baseUrl}/api/residents/${residentId}/individual-points/${pointId}`,
+        {
+          method: 'DELETE',
+        }
+      );
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -187,8 +201,8 @@ class IndividualPointService {
    * Mock implementations for development
    */
   private async mockGetIndividualPoints(residentId: string): Promise<IndividualPoint[]> {
-    await new Promise(resolve => setTimeout(resolve, 500));
-    
+    await new Promise((resolve) => setTimeout(resolve, 500));
+
     const { getIndividualPointsByResident } = await import('@/mocks/individual-points-data');
     return getIndividualPointsByResident(residentId);
   }
@@ -198,7 +212,7 @@ class IndividualPointService {
     data: IndividualPointFormData,
     mediaFiles?: File[]
   ): Promise<IndividualPoint> {
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    await new Promise((resolve) => setTimeout(resolve, 1000));
 
     if (Math.random() < 0.1) {
       throw new Error('ネットワークエラーが発生しました。');
@@ -219,17 +233,21 @@ class IndividualPointService {
     }
 
     // Mock media attachments
-    const mediaAttachments = mediaFiles?.map((file, index) => ({
-      id: `media-${Date.now()}-${index}`,
-      fileName: file.name,
-      fileType: file.type.startsWith('image/') ? 'image' as const : 
-                file.type.startsWith('video/') ? 'video' as const : 'document' as const,
-      fileSize: file.size,
-      url: URL.createObjectURL(file),
-      thumbnailUrl: file.type.startsWith('image/') ? URL.createObjectURL(file) : undefined,
-      uploadedAt: new Date().toISOString(),
-      uploadedBy: staffId,
-    })) || [];
+    const mediaAttachments =
+      mediaFiles?.map((file, index) => ({
+        id: `media-${Date.now()}-${index}`,
+        fileName: file.name,
+        fileType: file.type.startsWith('image/')
+          ? ('image' as const)
+          : file.type.startsWith('video/')
+            ? ('video' as const)
+            : ('document' as const),
+        fileSize: file.size,
+        url: URL.createObjectURL(file),
+        thumbnailUrl: file.type.startsWith('image/') ? URL.createObjectURL(file) : undefined,
+        uploadedAt: new Date().toISOString(),
+        uploadedBy: staffId,
+      })) || [];
 
     const newPoint: IndividualPoint = {
       id: `point-${Date.now()}`,
@@ -259,7 +277,7 @@ class IndividualPointService {
     data: IndividualPointFormData,
     mediaFiles?: File[]
   ): Promise<IndividualPoint> {
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    await new Promise((resolve) => setTimeout(resolve, 1000));
 
     if (Math.random() < 0.05) {
       throw new Error('ネットワークエラーが発生しました。');
@@ -280,17 +298,21 @@ class IndividualPointService {
     }
 
     // Mock media attachments for new files
-    const newMediaAttachments = mediaFiles?.map((file, index) => ({
-      id: `media-${Date.now()}-${index}`,
-      fileName: file.name,
-      fileType: file.type.startsWith('image/') ? 'image' as const : 
-                file.type.startsWith('video/') ? 'video' as const : 'document' as const,
-      fileSize: file.size,
-      url: URL.createObjectURL(file),
-      thumbnailUrl: file.type.startsWith('image/') ? URL.createObjectURL(file) : undefined,
-      uploadedAt: new Date().toISOString(),
-      uploadedBy: staffId,
-    })) || [];
+    const newMediaAttachments =
+      mediaFiles?.map((file, index) => ({
+        id: `media-${Date.now()}-${index}`,
+        fileName: file.name,
+        fileType: file.type.startsWith('image/')
+          ? ('image' as const)
+          : file.type.startsWith('video/')
+            ? ('video' as const)
+            : ('document' as const),
+        fileSize: file.size,
+        url: URL.createObjectURL(file),
+        thumbnailUrl: file.type.startsWith('image/') ? URL.createObjectURL(file) : undefined,
+        uploadedAt: new Date().toISOString(),
+        uploadedBy: staffId,
+      })) || [];
 
     const updatedPoint: IndividualPoint = {
       id: pointId,
@@ -315,7 +337,7 @@ class IndividualPointService {
   }
 
   private async mockDeleteIndividualPoint(residentId: string, pointId: string): Promise<void> {
-    await new Promise(resolve => setTimeout(resolve, 800));
+    await new Promise((resolve) => setTimeout(resolve, 800));
 
     if (Math.random() < 0.05) {
       throw new Error('ネットワークエラーが発生しました。');
@@ -325,14 +347,14 @@ class IndividualPointService {
   }
 
   private async mockGetPointCategories(): Promise<PointCategory[]> {
-    await new Promise(resolve => setTimeout(resolve, 300));
-    
+    await new Promise((resolve) => setTimeout(resolve, 300));
+
     const { pointCategoriesData } = await import('@/mocks/individual-points-data');
     return pointCategoriesData;
   }
 
   private async mockCreatePointCategory(data: CategoryFormData): Promise<PointCategory> {
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    await new Promise((resolve) => setTimeout(resolve, 1000));
 
     if (Math.random() < 0.1) {
       throw new Error('ネットワークエラーが発生しました。');

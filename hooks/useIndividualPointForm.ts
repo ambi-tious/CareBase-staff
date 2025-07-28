@@ -61,24 +61,33 @@ export const useIndividualPointForm = ({
     }));
   }, []);
 
-  const addTag = useCallback((tag: string) => {
-    if (tag.trim() && !formData.tags.includes(tag.trim())) {
-      updateField('tags', [...formData.tags, tag.trim()]);
-    }
-  }, [formData.tags, updateField]);
+  const addTag = useCallback(
+    (tag: string) => {
+      if (tag.trim() && !formData.tags.includes(tag.trim())) {
+        updateField('tags', [...formData.tags, tag.trim()]);
+      }
+    },
+    [formData.tags, updateField]
+  );
 
-  const removeTag = useCallback((tagToRemove: string) => {
-    updateField('tags', formData.tags.filter(tag => tag !== tagToRemove));
-  }, [formData.tags, updateField]);
+  const removeTag = useCallback(
+    (tagToRemove: string) => {
+      updateField(
+        'tags',
+        formData.tags.filter((tag) => tag !== tagToRemove)
+      );
+    },
+    [formData.tags, updateField]
+  );
 
   const addMediaFile = useCallback((file: File) => {
-    setMediaFiles(prev => [...prev, file]);
-    setFormState(prev => ({ ...prev, hasUnsavedChanges: true }));
+    setMediaFiles((prev) => [...prev, file]);
+    setFormState((prev) => ({ ...prev, hasUnsavedChanges: true }));
   }, []);
 
   const removeMediaFile = useCallback((index: number) => {
-    setMediaFiles(prev => prev.filter((_, i) => i !== index));
-    setFormState(prev => ({ ...prev, hasUnsavedChanges: true }));
+    setMediaFiles((prev) => prev.filter((_, i) => i !== index));
+    setFormState((prev) => ({ ...prev, hasUnsavedChanges: true }));
   }, []);
 
   const validateForm = useCallback(() => {

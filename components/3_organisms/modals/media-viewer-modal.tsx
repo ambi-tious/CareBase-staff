@@ -1,12 +1,7 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import type { MediaAttachment } from '@/types/individual-point';
 import { Download, X, ZoomIn, ZoomOut } from 'lucide-react';
 import Image from 'next/image';
@@ -19,11 +14,7 @@ interface MediaViewerModalProps {
   media: MediaAttachment | null;
 }
 
-export const MediaViewerModal: React.FC<MediaViewerModalProps> = ({
-  isOpen,
-  onClose,
-  media,
-}) => {
+export const MediaViewerModal: React.FC<MediaViewerModalProps> = ({ isOpen, onClose, media }) => {
   const [zoom, setZoom] = useState(1);
 
   if (!media) return null;
@@ -38,11 +29,11 @@ export const MediaViewerModal: React.FC<MediaViewerModalProps> = ({
   };
 
   const handleZoomIn = () => {
-    setZoom(prev => Math.min(prev + 0.25, 3));
+    setZoom((prev) => Math.min(prev + 0.25, 3));
   };
 
   const handleZoomOut = () => {
-    setZoom(prev => Math.max(prev - 0.25, 0.5));
+    setZoom((prev) => Math.max(prev - 0.25, 0.5));
   };
 
   const resetZoom = () => {
@@ -67,9 +58,7 @@ export const MediaViewerModal: React.FC<MediaViewerModalProps> = ({
         <DialogHeader className="p-6 pb-0">
           <div className="flex items-center justify-between">
             <div>
-              <DialogTitle className="text-lg font-semibold">
-                {media.fileName}
-              </DialogTitle>
+              <DialogTitle className="text-lg font-semibold">{media.fileName}</DialogTitle>
               <div className="flex items-center gap-4 text-sm text-gray-500 mt-1">
                 <span>{formatFileSize(media.fileSize)}</span>
                 <span>アップロード日時: {formatDate(media.uploadedAt)}</span>
@@ -86,38 +75,19 @@ export const MediaViewerModal: React.FC<MediaViewerModalProps> = ({
                   >
                     <ZoomOut className="h-4 w-4" />
                   </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={resetZoom}
-                    className="px-3"
-                  >
+                  <Button variant="outline" size="sm" onClick={resetZoom} className="px-3">
                     {Math.round(zoom * 100)}%
                   </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={handleZoomIn}
-                    disabled={zoom >= 3}
-                  >
+                  <Button variant="outline" size="sm" onClick={handleZoomIn} disabled={zoom >= 3}>
                     <ZoomIn className="h-4 w-4" />
                   </Button>
                 </>
               )}
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleDownload}
-              >
+              <Button variant="outline" size="sm" onClick={handleDownload}>
                 <Download className="h-4 w-4 mr-2" />
                 ダウンロード
               </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={onClose}
-                className="h-8 w-8 p-0"
-              >
+              <Button variant="ghost" size="sm" onClick={onClose} className="h-8 w-8 p-0">
                 <X className="h-4 w-4" />
               </Button>
             </div>
@@ -170,13 +140,12 @@ export const MediaViewerModal: React.FC<MediaViewerModalProps> = ({
                     />
                   </svg>
                 </div>
-                <h3 className="text-lg font-medium text-gray-900 mb-2">
-                  {media.fileName}
-                </h3>
-                <p className="text-gray-500 mb-4">
-                  このファイル形式はプレビューできません。
-                </p>
-                <Button onClick={handleDownload} className="bg-carebase-blue hover:bg-carebase-blue-dark">
+                <h3 className="text-lg font-medium text-gray-900 mb-2">{media.fileName}</h3>
+                <p className="text-gray-500 mb-4">このファイル形式はプレビューできません。</p>
+                <Button
+                  onClick={handleDownload}
+                  className="bg-carebase-blue hover:bg-carebase-blue-dark"
+                >
                   <Download className="h-4 w-4 mr-2" />
                   ダウンロードして開く
                 </Button>

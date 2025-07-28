@@ -442,10 +442,7 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
                 専用画面で作成・編集・削除が可能です。
               </p>
             </div>
-            <Button
-              asChild
-              className="bg-carebase-blue hover:bg-carebase-blue-dark"
-            >
+            <Button asChild className="bg-carebase-blue hover:bg-carebase-blue-dark">
               <Link href={`/residents/${resident.id}/individual-points`}>
                 <Target className="h-4 w-4 mr-2" />
                 個別ポイント管理画面へ

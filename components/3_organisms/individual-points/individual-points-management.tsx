@@ -7,9 +7,16 @@ import { GenericDeleteModal } from '@/components/3_organisms/modals/generic-dele
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import type { Resident } from '@/mocks/care-board-data';
-import { getIndividualPointsByResident, individualPointsData } from '@/mocks/individual-points-data';
+import {
+  getIndividualPointsByResident,
+  individualPointsData,
+} from '@/mocks/individual-points-data';
 import { individualPointService } from '@/services/individualPointService';
-import type { IndividualPoint, IndividualPointFormData, MediaAttachment } from '@/types/individual-point';
+import type {
+  IndividualPoint,
+  IndividualPointFormData,
+  MediaAttachment,
+} from '@/types/individual-point';
 import { ArrowLeft, Target, User } from 'lucide-react';
 import Link from 'next/link';
 import type React from 'react';
@@ -38,7 +45,9 @@ export const IndividualPointsManagement: React.FC<IndividualPointsManagementProp
     const loadPoints = async () => {
       try {
         setIsLoading(true);
-        const residentPoints = await individualPointService.getIndividualPoints(resident.id.toString());
+        const residentPoints = await individualPointService.getIndividualPoints(
+          resident.id.toString()
+        );
         setPoints(residentPoints);
       } catch (error) {
         console.error('Failed to load individual points:', error);
@@ -71,7 +80,7 @@ export const IndividualPointsManagement: React.FC<IndividualPointsManagementProp
   const handleMediaView = (mediaId: string) => {
     // Find media in all points
     for (const point of points) {
-      const media = point.mediaAttachments.find(m => m.id === mediaId);
+      const media = point.mediaAttachments.find((m) => m.id === mediaId);
       if (media) {
         setSelectedMedia(media);
         setIsMediaViewerOpen(true);
@@ -80,14 +89,17 @@ export const IndividualPointsManagement: React.FC<IndividualPointsManagementProp
     }
   };
 
-  const handleCreateSubmit = async (data: IndividualPointFormData, mediaFiles?: File[]): Promise<boolean> => {
+  const handleCreateSubmit = async (
+    data: IndividualPointFormData,
+    mediaFiles?: File[]
+  ): Promise<boolean> => {
     try {
       const newPoint = await individualPointService.createIndividualPoint(
         resident.id.toString(),
         data,
         mediaFiles
       );
-      setPoints(prev => [newPoint, ...prev]);
+      setPoints((prev) => [newPoint, ...prev]);
       setIsCreateModalOpen(false);
       return true;
     } catch (error) {
@@ -96,7 +108,10 @@ export const IndividualPointsManagement: React.FC<IndividualPointsManagementProp
     }
   };
 
-  const handleEditSubmit = async (data: IndividualPointFormData, mediaFiles?: File[]): Promise<boolean> => {
+  const handleEditSubmit = async (
+    data: IndividualPointFormData,
+    mediaFiles?: File[]
+  ): Promise<boolean> => {
     if (!selectedPoint) return false;
 
     try {
@@ -106,7 +121,7 @@ export const IndividualPointsManagement: React.FC<IndividualPointsManagementProp
         data,
         mediaFiles
       );
-      setPoints(prev => prev.map(p => p.id === selectedPoint.id ? updatedPoint : p));
+      setPoints((prev) => prev.map((p) => (p.id === selectedPoint.id ? updatedPoint : p)));
       setIsEditModalOpen(false);
       setSelectedPoint(null);
       return true;
@@ -123,11 +138,8 @@ export const IndividualPointsManagement: React.FC<IndividualPointsManagementProp
     setDeleteError(null);
 
     try {
-      await individualPointService.deleteIndividualPoint(
-        resident.id.toString(),
-        selectedPoint.id
-      );
-      setPoints(prev => prev.filter(p => p.id !== selectedPoint.id));
+      await individualPointService.deleteIndividualPoint(resident.id.toString(), selectedPoint.id);
+      setPoints((prev) => prev.filter((p) => p.id !== selectedPoint.id));
       setSelectedPoint(null);
       return true;
     } catch (error) {
@@ -186,9 +198,7 @@ export const IndividualPointsManagement: React.FC<IndividualPointsManagementProp
         <CardContent>
           <div className="flex items-center gap-4">
             <div className="flex-1">
-              <h3 className="text-lg font-semibold text-carebase-text-primary">
-                {resident.name}
-              </h3>
+              <h3 className="text-lg font-semibold text-carebase-text-primary">{resident.name}</h3>
               <div className="text-sm text-gray-600 space-x-4">
                 <span>年齢: {resident.age}歳</span>
                 <span>性別: {resident.sex}</span>

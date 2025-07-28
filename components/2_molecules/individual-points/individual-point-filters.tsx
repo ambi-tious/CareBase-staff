@@ -11,7 +11,11 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import type { IndividualPointCategory, IndividualPointPriority, IndividualPointStatus } from '@/types/individual-point';
+import type {
+  IndividualPointCategory,
+  IndividualPointPriority,
+  IndividualPointStatus,
+} from '@/types/individual-point';
 import { categoryOptions, priorityOptions, statusOptions } from '@/types/individual-point';
 import { Filter, RotateCcw, Search, X } from 'lucide-react';
 
@@ -48,7 +52,8 @@ export const IndividualPointFilters: React.FC<IndividualPointFiltersProps> = ({
   onReset,
   className = '',
 }) => {
-  const hasActiveFilters = selectedCategory || selectedPriority || selectedStatus || selectedTags.length > 0;
+  const hasActiveFilters =
+    selectedCategory || selectedPriority || selectedStatus || selectedTags.length > 0;
 
   return (
     <div className={`space-y-4 ${className}`}>
@@ -171,7 +176,7 @@ export const IndividualPointFilters: React.FC<IndividualPointFiltersProps> = ({
           <span className="text-sm font-medium text-gray-700">利用可能なタグ:</span>
           <div className="flex flex-wrap gap-2">
             {availableTags
-              .filter(tag => !selectedTags.includes(tag))
+              .filter((tag) => !selectedTags.includes(tag))
               .slice(0, 10) // Show only first 10 tags
               .map((tag) => (
                 <Button

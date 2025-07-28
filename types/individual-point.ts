@@ -40,11 +40,17 @@ export interface MediaAttachment {
 
 // Individual point form data schema
 export const individualPointFormSchema = z.object({
-  title: z.string().min(1, 'タイトルは必須です').max(100, 'タイトルは100文字以内で入力してください'),
+  title: z
+    .string()
+    .min(1, 'タイトルは必須です')
+    .max(100, 'タイトルは100文字以内で入力してください'),
   content: z.string().min(1, '内容は必須です').max(1000, '内容は1000文字以内で入力してください'),
-  category: z.enum(['meal', 'bathing', 'medication', 'excretion', 'vital', 'exercise', 'communication', 'other'], {
-    required_error: 'カテゴリは必須です',
-  }),
+  category: z.enum(
+    ['meal', 'bathing', 'medication', 'excretion', 'vital', 'exercise', 'communication', 'other'],
+    {
+      required_error: 'カテゴリは必須です',
+    }
+  ),
   priority: z.enum(['high', 'medium', 'low'], {
     required_error: '優先度は必須です',
   }),
@@ -88,7 +94,10 @@ export interface PointCategory {
 }
 
 export const categoryFormSchema = z.object({
-  name: z.string().min(1, 'カテゴリ名は必須です').max(50, 'カテゴリ名は50文字以内で入力してください'),
+  name: z
+    .string()
+    .min(1, 'カテゴリ名は必須です')
+    .max(50, 'カテゴリ名は50文字以内で入力してください'),
   description: z.string().max(200, '説明は200文字以内で入力してください').optional(),
   icon: z.string().min(1, 'アイコンは必須です'),
   color: z.string().min(1, '色は必須です'),
@@ -184,5 +193,9 @@ export const priorityOptions = [
 export const statusOptions = [
   { value: 'active', label: '有効', color: 'bg-green-100 text-green-700 border-green-200' },
   { value: 'inactive', label: '無効', color: 'bg-gray-100 text-gray-700 border-gray-200' },
-  { value: 'archived', label: 'アーカイブ', color: 'bg-yellow-100 text-yellow-700 border-yellow-200' },
+  {
+    value: 'archived',
+    label: 'アーカイブ',
+    color: 'bg-yellow-100 text-yellow-700 border-yellow-200',
+  },
 ] as const;

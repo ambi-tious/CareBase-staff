@@ -116,8 +116,8 @@ const config = {
         'tablet-2xl': ['1.5rem', { lineHeight: '2rem' }],
       },
       screens: {
-        'tablet': '768px',
-        'tablet-landscape': { 'raw': '(min-width: 768px) and (orientation: landscape)' },
+        tablet: '768px',
+        'tablet-landscape': { raw: '(min-width: 768px) and (orientation: landscape)' },
       },
       borderRadius: {
         lg: 'var(--radius)',

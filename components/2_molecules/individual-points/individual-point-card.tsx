@@ -103,7 +103,9 @@ export const IndividualPointCard: React.FC<IndividualPointCardProps> = ({
       <CardContent className="pt-0">
         {/* Content */}
         <div className="mb-4">
-          <p className={`text-gray-700 leading-relaxed ${!isExpanded && shouldShowExpandButton ? 'line-clamp-3' : ''}`}>
+          <p
+            className={`text-gray-700 leading-relaxed ${!isExpanded && shouldShowExpandButton ? 'line-clamp-3' : ''}`}
+          >
             {point.content}
           </p>
           {shouldShowExpandButton && (
