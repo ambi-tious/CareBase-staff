@@ -48,6 +48,9 @@ import {
   Users,
   Utensils,
   Wind,
+  Settings,
+  FolderPlus,
+  Palette,
   type LucideIcon,
 } from 'lucide-react';
 
@@ -107,6 +110,9 @@ const iconRegistry: Record<string, LucideIcon> = {
   Dumbbell,
   Edit3,
   Target,
+  Settings,
+  FolderPlus,
+  Palette,
 };
 
 // Helper function to get icon component by string name

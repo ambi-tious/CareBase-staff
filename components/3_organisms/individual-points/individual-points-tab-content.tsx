@@ -40,10 +40,12 @@ export const IndividualPointsTabContent: React.FC<IndividualPointsTabContentProp
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
   const [isMediaViewerOpen, setIsMediaViewerOpen] = useState(false);
+  const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
   const [selectedPoint, setSelectedPoint] = useState<IndividualPoint | null>(null);
   const [selectedMedia, setSelectedMedia] = useState<MediaAttachment | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [categories, setCategories] = useState<PointCategory[]>([]);
 
   // Load individual points
   useEffect(() => {
@@ -54,11 +56,19 @@ export const IndividualPointsTabContent: React.FC<IndividualPointsTabContentProp
           residentId.toString()
         );
         setPoints(residentPoints);
+        
+        // Load categories
+        const pointCategories = await individualPointService.getPointCategories();
+        setCategories(pointCategories);
       } catch (error) {
         console.error('Failed to load individual points:', error);
         // Fallback to mock data
         const mockPoints = getIndividualPointsByResident(residentId.toString());
         setPoints(mockPoints);
+        
+        // Load mock categories
+        const { pointCategoriesData } = await import('@/mocks/individual-points-data');
+        setCategories(pointCategoriesData);
       } finally {
         setIsLoading(false);
       }
@@ -69,6 +79,10 @@ export const IndividualPointsTabContent: React.FC<IndividualPointsTabContentProp
 
   const handleCreatePoint = () => {
     setIsCreateModalOpen(true);
+  };
+
+  const handleCategoryManagement = () => {
+    setIsCategoryModalOpen(true);
   };
 
   const handleEditPoint = (point: IndividualPoint) => {
@@ -100,6 +114,54 @@ export const IndividualPointsTabContent: React.FC<IndividualPointsTabContentProp
     setSelectedPriority(undefined);
     setSelectedStatus(undefined);
     setSelectedTags([]);
+  };
+
+  const handleCreateCategory = async (data: CategoryFormData): Promise<boolean> => {
+    try {
+      const newCategory = await individualPointService.createPointCategory(data);
+      setCategories((prev) => [...prev, newCategory]);
+      return true;
+    } catch (error) {
+      console.error('Failed to create category:', error);
+      return false;
+    }
+  };
+
+  const handleUpdateCategory = async (categoryId: string, data: CategoryFormData): Promise<boolean> => {
+    try {
+      // In a real implementation, this would call the API
+      // For now, we'll update the local state
+      setCategories((prev) =>
+        prev.map((cat) =>
+          cat.id === categoryId
+            ? {
+                ...cat,
+                name: data.name,
+                description: data.description || '',
+                icon: data.icon,
+                color: data.color,
+                updatedAt: new Date().toISOString(),
+              }
+            : cat
+        )
+      );
+      return true;
+    } catch (error) {
+      console.error('Failed to update category:', error);
+      return false;
+    }
+  };
+
+  const handleDeleteCategory = async (categoryId: string): Promise<boolean> => {
+    try {
+      // In a real implementation, this would call the API
+      // For now, we'll update the local state
+      setCategories((prev) => prev.filter((cat) => cat.id !== categoryId));
+      return true;
+    } catch (error) {
+      console.error('Failed to delete category:', error);
+      return false;
+    }
   };
 
   // フィルタリングされたポイントを取得
@@ -233,6 +295,7 @@ export const IndividualPointsTabContent: React.FC<IndividualPointsTabContentProp
     setIsDeleteModalOpen(false);
     setIsDetailModalOpen(false);
     setIsMediaViewerOpen(false);
+    setIsCategoryModalOpen(false);
     setSelectedPoint(null);
     setSelectedMedia(null);
     setDeleteError(null);
@@ -257,6 +320,7 @@ export const IndividualPointsTabContent: React.FC<IndividualPointsTabContentProp
         onCreatePoint={handleCreatePoint}
         onCategoryClick={handleCategoryClick}
         selectedCategory={selectedCategory}
+        onCategoryManagement={handleCategoryManagement}
       />
 
       {/* フィルタ機能 */}
@@ -325,6 +389,15 @@ export const IndividualPointsTabContent: React.FC<IndividualPointsTabContentProp
         onDelete={handleDeletePoint}
         onMediaView={handleMediaView}
         residentName={residentName}
+      />
+
+      <CategoryManagementModal
+        isOpen={isCategoryModalOpen}
+        onClose={handleCloseModals}
+        categories={categories}
+        onCreateCategory={handleCreateCategory}
+        onUpdateCategory={handleUpdateCategory}
+        onDeleteCategory={handleDeleteCategory}
       />
     </div>
   );

@@ -432,10 +432,12 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
         </TabsContent>
 
         <TabsContent value="individualPoints">
-          <IndividualPointsTabContent
-            residentId={resident.id}
-            residentName={resident.name}
-          />
+          <div className="space-y-4">
+            <IndividualPointsTabContent
+              residentId={resident.id}
+              residentName={resident.name}
+            />
+          </div>
         </TabsContent>
       </Tabs>
 

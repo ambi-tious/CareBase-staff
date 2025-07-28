@@ -7,6 +7,7 @@ import { getLucideIcon } from '@/lib/lucide-icon-registry';
 import type { IndividualPoint } from '@/types/individual-point';
 import { categoryOptions } from '@/types/individual-point';
 import { PlusCircle, Target } from 'lucide-react';
+import { Settings } from 'lucide-react';
 import type React from 'react';
 
 interface IndividualPointsSummaryProps {
@@ -14,6 +15,7 @@ interface IndividualPointsSummaryProps {
   onCreatePoint?: () => void;
   onCategoryClick?: (category: string) => void;
   selectedCategory?: string;
+  onCategoryManagement?: () => void;
   className?: string;
 }
 
@@ -22,6 +24,7 @@ export const IndividualPointsSummary: React.FC<IndividualPointsSummaryProps> = (
   onCreatePoint,
   onCategoryClick,
   selectedCategory,
+  onCategoryManagement,
   className = '',
 }) => {
   // カテゴリ別の件数を集計
@@ -45,6 +48,32 @@ export const IndividualPointsSummary: React.FC<IndividualPointsSummaryProps> = (
 
   return (
     <div className={`space-y-6 ${className}`}>
+      {/* Header with actions */}
+      <div className="flex items-center justify-between">
+        <h2 className="text-xl font-bold text-carebase-text-primary">個別ポイント管理</h2>
+        <div className="flex items-center gap-2">
+          {onCreatePoint && (
+            <Button
+              onClick={onCreatePoint}
+              className="bg-carebase-blue hover:bg-carebase-blue-dark"
+            >
+              <PlusCircle className="h-4 w-4 mr-2" />
+              新規作成
+            </Button>
+          )}
+          {onCategoryManagement && (
+            <Button
+              variant="outline"
+              onClick={onCategoryManagement}
+              className="border-carebase-blue text-carebase-blue hover:bg-carebase-blue-light"
+            >
+              <Settings className="h-4 w-4 mr-2" />
+              カテゴリ管理
+            </Button>
+          )}
+        </div>
+      </div>
+
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         {categoryOptions.map((category) => {
           const count = categoryCounts[category.value];
