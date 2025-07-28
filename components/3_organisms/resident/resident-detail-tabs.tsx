@@ -13,6 +13,7 @@ import { MedicalHistoryModal } from '@/components/3_organisms/modals/medical-his
 import { MedicalInstitutionModal } from '@/components/3_organisms/modals/medical-institution-modal';
 import { MedicationModal } from '@/components/3_organisms/modals/medication-modal';
 import { MedicationStatusModal } from '@/components/3_organisms/modals/medication-status-modal';
+import { IndividualPointsTabContent } from '@/components/3_organisms/individual-points/individual-points-tab-content';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import type {
@@ -35,7 +36,6 @@ import type {
   MedicalInstitutionFormData,
 } from '@/types/resident-data';
 import { PlusCircle, Target } from 'lucide-react';
-import Link from 'next/link';
 import type React from 'react';
 import { useState } from 'react';
 
@@ -432,23 +432,10 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
         </TabsContent>
 
         <TabsContent value="individualPoints">
-          <div className="text-center py-12">
-            <div className="mb-4">
-              <Target className="h-12 w-12 text-carebase-blue mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">個別ポイント管理</h3>
-              <p className="text-gray-500 mb-6">
-                利用者様の個別ケアポイントを詳細に管理できます。
-                <br />
-                専用画面で作成・編集・削除が可能です。
-              </p>
-            </div>
-            <Button asChild className="bg-carebase-blue hover:bg-carebase-blue-dark">
-              <Link href={`/residents/${resident.id}/individual-points`}>
-                <Target className="h-4 w-4 mr-2" />
-                個別ポイント管理画面へ
-              </Link>
-            </Button>
-          </div>
+          <IndividualPointsTabContent
+            residentId={resident.id}
+            residentName={resident.name}
+          />
         </TabsContent>
       </Tabs>
 
