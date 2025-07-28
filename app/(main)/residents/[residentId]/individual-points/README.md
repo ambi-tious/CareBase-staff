@@ -16,7 +16,7 @@ Issue: [#131 [設計] #006 利用者｜利用者詳細（個別ポイント）](
 
 ### 画面構成
 
-![個別ポイント画面](https://github.com/user-attachments/assets/803a1524-6de5-45e3-a610-147af282b8a3)
+<img width="932" height="778" alt="image" src="https://github.com/user-attachments/assets/705af1a3-b58e-46b2-923c-d6f7dee4baa8" />
 
 タブ内で完結する個別ポイント管理インターフェース：
 
