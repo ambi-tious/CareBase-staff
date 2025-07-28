@@ -5,6 +5,7 @@ import { IndividualPointsSummary } from '@/components/2_molecules/individual-poi
 import { IndividualPointModal } from '@/components/3_organisms/modals/individual-point-modal';
 import { MediaViewerModal } from '@/components/3_organisms/modals/media-viewer-modal';
 import { GenericDeleteModal } from '@/components/3_organisms/modals/generic-delete-modal';
+import { IndividualPointDetailModal } from '@/components/3_organisms/modals/individual-point-detail-modal';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
@@ -38,6 +39,7 @@ export const IndividualPointsTabContent: React.FC<IndividualPointsTabContentProp
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
   const [isMediaViewerOpen, setIsMediaViewerOpen] = useState(false);
   const [selectedPoint, setSelectedPoint] = useState<IndividualPoint | null>(null);
   const [selectedMedia, setSelectedMedia] = useState<MediaAttachment | null>(null);
@@ -72,13 +74,20 @@ export const IndividualPointsTabContent: React.FC<IndividualPointsTabContentProp
 
   const handleEditPoint = (point: IndividualPoint) => {
     setSelectedPoint(point);
+    setIsDetailModalOpen(false); // 詳細モーダルを閉じる
     setIsEditModalOpen(true);
   };
 
   const handleDeletePoint = (point: IndividualPoint) => {
     setSelectedPoint(point);
+    setIsDetailModalOpen(false); // 詳細モーダルを閉じる
     setDeleteError(null);
     setIsDeleteModalOpen(true);
+  };
+
+  const handleViewDetails = (point: IndividualPoint) => {
+    setSelectedPoint(point);
+    setIsDetailModalOpen(true);
   };
 
   const handleCategoryClick = (category: string) => {
@@ -163,6 +172,7 @@ export const IndividualPointsTabContent: React.FC<IndividualPointsTabContentProp
     setIsCreateModalOpen(false);
     setIsEditModalOpen(false);
     setIsDeleteModalOpen(false);
+    setIsDetailModalOpen(false);
     setIsMediaViewerOpen(false);
     setSelectedPoint(null);
     setSelectedMedia(null);
@@ -218,6 +228,7 @@ export const IndividualPointsTabContent: React.FC<IndividualPointsTabContentProp
           selectedCategory={selectedCategory}
           onEdit={handleEditPoint}
           onDelete={handleDeletePoint}
+          onViewDetails={handleViewDetails}
         />
       </div>
 
@@ -253,6 +264,16 @@ export const IndividualPointsTabContent: React.FC<IndividualPointsTabContentProp
         isOpen={isMediaViewerOpen}
         onClose={handleCloseModals}
         media={selectedMedia}
+      />
+
+      <IndividualPointDetailModal
+        isOpen={isDetailModalOpen}
+        onClose={handleCloseModals}
+        point={selectedPoint}
+        onEdit={handleEditPoint}
+        onDelete={handleDeletePoint}
+        onMediaView={handleMediaView}
+        residentName={residentName}
       />
     </div>
   );

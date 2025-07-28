@@ -17,7 +17,7 @@ interface IndividualPointsCompactListProps {
   selectedCategory?: string;
   onEdit?: (point: IndividualPoint) => void;
   onDelete?: (point: IndividualPoint) => void;
-  onViewDetails?: (pointId: string) => void;
+  onViewDetails?: (point: IndividualPoint) => void;
   className?: string;
 }
 
@@ -61,7 +61,10 @@ export const IndividualPointsCompactList: React.FC<IndividualPointsCompactListPr
   };
 
   const handleCardClick = (pointId: string) => {
-    onViewDetails?.(pointId);
+    const point = sortedPoints.find(p => p.id === pointId);
+    if (point) {
+      onViewDetails?.(point);
+    }
   };
 
   if (sortedPoints.length === 0) {
@@ -100,7 +103,7 @@ export const IndividualPointsCompactList: React.FC<IndividualPointsCompactListPr
         <Card
           key={point.id}
           className="hover:shadow-md transition-all duration-200 cursor-pointer border-l-4 border-l-carebase-blue"
-          onClick={() => handleCardClick(point.id)}
+          onClick={() => onViewDetails?.(point)}
         >
           <CardContent className="p-4">
             <div className="flex items-start justify-between">
