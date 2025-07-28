@@ -17,8 +17,7 @@ import type {
   MediaAttachment,
   PointCategory,
 } from '@/types/individual-point';
-import type React from 'react';
-import { useEffect, useState } from 'react';
+import { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
 
 interface IndividualPointsTabContentProps {
   residentId: number;
@@ -26,11 +25,15 @@ interface IndividualPointsTabContentProps {
   className?: string;
 }
 
-export const IndividualPointsTabContent: React.FC<IndividualPointsTabContentProps> = ({
-  residentId,
-  residentName,
-  className = '',
-}) => {
+export interface IndividualPointsTabContentRef {
+  openCreateModal: () => void;
+  openCategoryModal: () => void;
+}
+
+export const IndividualPointsTabContent = forwardRef<
+  IndividualPointsTabContentRef,
+  IndividualPointsTabContentProps
+>(({ residentId, residentName, className = '' }, ref) => {
   const [points, setPoints] = useState<IndividualPoint[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
@@ -79,6 +82,12 @@ export const IndividualPointsTabContent: React.FC<IndividualPointsTabContentProp
 
     loadPoints();
   }, [residentId]);
+
+  // Expose functions to parent component
+  useImperativeHandle(ref, () => ({
+    openCreateModal: handleCreatePoint,
+    openCategoryModal: handleCategoryManagement,
+  }));
 
   const handleCreatePoint = () => {
     setIsCreateModalOpen(true);
@@ -197,13 +206,6 @@ export const IndividualPointsTabContent: React.FC<IndividualPointsTabContentProp
 
   // 利用可能なタグ一覧を取得
   const availableTags = Array.from(new Set(points.flatMap((point) => point.tags))).sort();
-
-  const hasActiveFilters =
-    searchQuery ||
-    selectedCategory ||
-    selectedPriority ||
-    selectedStatus ||
-    selectedTags.length > 0;
 
   const handleSearchChange = (query: string) => {
     setSearchQuery(query);
@@ -337,6 +339,7 @@ export const IndividualPointsTabContent: React.FC<IndividualPointsTabContentProp
         selectedStatus={selectedStatus as any}
         selectedTags={selectedTags}
         availableTags={availableTags}
+        onCreatePoint={handleCreatePoint}
         onSearchChange={handleSearchChange}
         onCategoryChange={(category) => setSelectedCategory(category)}
         onPriorityChange={handlePriorityChange}
@@ -407,4 +410,4 @@ export const IndividualPointsTabContent: React.FC<IndividualPointsTabContentProp
       />
     </div>
   );
-};
+});

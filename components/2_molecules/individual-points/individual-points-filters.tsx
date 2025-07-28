@@ -16,7 +16,7 @@ import type {
   IndividualPointStatus,
 } from '@/types/individual-point';
 import { categoryOptions, priorityOptions, statusOptions } from '@/types/individual-point';
-import { Filter, RotateCcw, Search, X } from 'lucide-react';
+import { Filter, PlusCircle, RotateCcw, Search, X } from 'lucide-react';
 import type React from 'react';
 import { useState } from 'react';
 
@@ -27,6 +27,7 @@ interface IndividualPointsFiltersProps {
   selectedStatus?: IndividualPointStatus;
   selectedTags: string[];
   availableTags: string[];
+  onCreatePoint?: () => void;
   onSearchChange: (query: string) => void;
   onCategoryChange: (category?: IndividualPointCategory) => void;
   onPriorityChange: (priority?: IndividualPointPriority) => void;
@@ -43,6 +44,7 @@ export const IndividualPointsFilters: React.FC<IndividualPointsFiltersProps> = (
   selectedStatus,
   selectedTags,
   availableTags,
+  onCreatePoint,
   onSearchChange,
   onCategoryChange,
   onPriorityChange,
@@ -103,7 +105,7 @@ export const IndividualPointsFilters: React.FC<IndividualPointsFiltersProps> = (
           className="flex items-center gap-2"
         >
           <Filter className="h-4 w-4" />
-          詳細フィルタ
+          フィルタ
           {hasActiveFilters && (
             <span className="bg-carebase-blue text-white text-xs px-1.5 py-0.5 rounded-full">
               ON
@@ -117,9 +119,14 @@ export const IndividualPointsFilters: React.FC<IndividualPointsFiltersProps> = (
             リセット
           </Button>
         )}
+        {onCreatePoint && (
+          <Button onClick={onCreatePoint} className="bg-carebase-blue hover:bg-carebase-blue-dark">
+            <PlusCircle className="h-4 w-4 mr-2" />
+            新規作成
+          </Button>
+        )}
       </div>
 
-      {/* 詳細フィルタ */}
       {isExpanded && (
         <div className="p-4 border border-gray-200 rounded-lg bg-gray-50 space-y-4">
           <div className="flex items-center gap-2 mb-4">

@@ -7,13 +7,16 @@ import { HomeCareOfficeCard } from '@/components/2_molecules/resident/home-care-
 import { MedicalHistoryCard } from '@/components/2_molecules/resident/medical-history-card';
 import { MedicalInstitutionCard } from '@/components/2_molecules/resident/medical-institution-card';
 import { MedicationCard as OldMedicationCard } from '@/components/2_molecules/resident/medication-card';
+import {
+  IndividualPointsTabContent,
+  type IndividualPointsTabContentRef,
+} from '@/components/3_organisms/individual-points/individual-points-tab-content';
 import { ContactEditModal } from '@/components/3_organisms/modals/contact-edit-modal';
 import { HomeCareOfficeModal } from '@/components/3_organisms/modals/home-care-office-modal';
 import { MedicalHistoryModal } from '@/components/3_organisms/modals/medical-history-modal';
 import { MedicalInstitutionModal } from '@/components/3_organisms/modals/medical-institution-modal';
 import { MedicationModal } from '@/components/3_organisms/modals/medication-modal';
 import { MedicationStatusModal } from '@/components/3_organisms/modals/medication-status-modal';
-import { IndividualPointsTabContent } from '@/components/3_organisms/individual-points/individual-points-tab-content';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import type {
@@ -35,9 +38,9 @@ import type {
   MedicalHistoryFormData,
   MedicalInstitutionFormData,
 } from '@/types/resident-data';
-import { PlusCircle, Target } from 'lucide-react';
+import { PlusCircle, Settings } from 'lucide-react';
 import type React from 'react';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 
 interface ResidentDetailTabsProps {
   resident: Resident;
@@ -73,6 +76,7 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
     return [];
   });
   const [activeTab, setActiveTab] = useState('family');
+  const individualPointsTabContentRef = useRef<IndividualPointsTabContentRef>(null);
 
   const detailTabs = [
     { value: 'family', label: 'ご家族情報' },
@@ -267,7 +271,7 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
       case 'medicationStatus':
         return handleAddMedicationStatus;
       case 'individualPoints':
-        return undefined; // Individual points have their own management page
+        return () => individualPointsTabContentRef.current?.openCategoryModal();
       default:
         return undefined;
     }
@@ -294,8 +298,17 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
               onClick={getAddButtonHandler()}
               className="bg-white border-carebase-blue text-carebase-blue hover:bg-carebase-blue-light font-medium"
             >
-              <PlusCircle className="h-4 w-4 mr-2 text-carebase-blue" />
-              追加
+              {activeTab === 'individualPoints' ? (
+                <>
+                  <Settings className="h-4 w-4 mr-2 text-carebase-blue" />
+                  <span>カテゴリ管理</span>
+                </>
+              ) : (
+                <>
+                  <PlusCircle className="h-4 w-4 mr-2 text-carebase-blue" />
+                  追加
+                </>
+              )}
             </Button>
           )}
         </div>
@@ -434,6 +447,7 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
         <TabsContent value="individualPoints">
           <div className="space-y-4">
             <IndividualPointsTabContent
+              ref={individualPointsTabContentRef}
               residentId={resident.id}
               residentName={resident.name}
             />

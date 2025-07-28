@@ -1,7 +1,6 @@
 'use client';
 
 import { FormField } from '@/components/1_atoms/forms/form-field';
-import { FormSelect } from '@/components/1_atoms/forms/form-select';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -251,93 +250,79 @@ export const CategoryManagementModal: React.FC<CategoryManagementModalProps> = (
             )}
 
             <TabsContent value="list" className="space-y-6">
+              {/* System Categories */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {systemCategories.map((category) => {
+                  const Icon = getLucideIcon(category.icon);
+                  return (
+                    <Card key={category.id} className="border border-gray-200 bg-gray-50">
+                      <CardHeader className="py-3">
+                        <div className="flex items-center gap-3">
+                          <div
+                            className="w-10 h-10 rounded-full flex items-center justify-center"
+                            style={{ backgroundColor: category.color + '20' }}
+                          >
+                            <Icon className="h-5 w-5" style={{ color: category.color }} />
+                          </div>
+                          <div>
+                            <CardTitle className="text-base flex items-center gap-2">
+                              {category.name}
+                            </CardTitle>
+                            {category.description && (
+                              <p className="text-sm text-gray-500 mt-1">{category.description}</p>
+                            )}
+                          </div>
+                        </div>
+                      </CardHeader>
+                    </Card>
+                  );
+                })}
+              </div>
               {/* Custom Categories */}
               {customCategories.length > 0 && (
-                <div>
-                  <h3 className="text-lg font-semibold text-carebase-text-primary mb-4">
-                    カスタムカテゴリ
-                  </h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {customCategories.map((category) => {
-                      const Icon = getLucideIcon(category.icon);
-                      return (
-                        <Card key={category.id} className="border border-gray-200">
-                          <CardHeader className="pb-3">
-                            <div className="flex items-center justify-between">
-                              <div className="flex items-center gap-3">
-                                <div
-                                  className="w-10 h-10 rounded-full flex items-center justify-center"
-                                  style={{ backgroundColor: category.color + '20' }}
-                                >
-                                  <Icon className="h-5 w-5" style={{ color: category.color }} />
-                                </div>
-                                <div>
-                                  <CardTitle className="text-base">{category.name}</CardTitle>
-                                  {category.description && (
-                                    <p className="text-sm text-gray-500 mt-1">
-                                      {category.description}
-                                    </p>
-                                  )}
-                                </div>
-                              </div>
-                              <div className="flex items-center gap-2">
-                                <Button
-                                  variant="outline"
-                                  size="sm"
-                                  onClick={() => handleEdit(category)}
-                                  disabled={isSubmitting}
-                                >
-                                  <Edit3 className="h-3 w-3 mr-1" />
-                                  編集
-                                </Button>
-                                <Button
-                                  variant="outline"
-                                  size="sm"
-                                  onClick={() => handleDelete(category)}
-                                  disabled={isSubmitting}
-                                  className="border-red-300 text-red-600 hover:bg-red-50"
-                                >
-                                  <Trash2 className="h-3 w-3 mr-1" />
-                                  削除
-                                </Button>
-                              </div>
-                            </div>
-                          </CardHeader>
-                        </Card>
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
-
-              {/* System Categories */}
-              <div>
-                <h3 className="text-lg font-semibold text-carebase-text-primary mb-4">
-                  システム標準カテゴリ
-                </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {systemCategories.map((category) => {
+                  {customCategories.map((category) => {
                     const Icon = getLucideIcon(category.icon);
                     return (
-                      <Card key={category.id} className="border border-gray-200 bg-gray-50">
-                        <CardHeader className="pb-3">
-                          <div className="flex items-center gap-3">
-                            <div
-                              className="w-10 h-10 rounded-full flex items-center justify-center"
-                              style={{ backgroundColor: category.color + '20' }}
-                            >
-                              <Icon className="h-5 w-5" style={{ color: category.color }} />
+                      <Card key={category.id} className="border border-gray-200">
+                        <CardHeader className="py-3">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                              <div
+                                className="w-10 h-10 rounded-full flex items-center justify-center"
+                                style={{ backgroundColor: category.color + '20' }}
+                              >
+                                <Icon className="h-5 w-5" style={{ color: category.color }} />
+                              </div>
+                              <div>
+                                <CardTitle className="text-base">{category.name}</CardTitle>
+                                {category.description && (
+                                  <p className="text-sm text-gray-500 mt-1">
+                                    {category.description}
+                                  </p>
+                                )}
+                              </div>
                             </div>
-                            <div>
-                              <CardTitle className="text-base flex items-center gap-2">
-                                {category.name}
-                                <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded">
-                                  システム標準
-                                </span>
-                              </CardTitle>
-                              {category.description && (
-                                <p className="text-sm text-gray-500 mt-1">{category.description}</p>
-                              )}
+                            <div className="flex items-center gap-2">
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => handleEdit(category)}
+                                disabled={isSubmitting}
+                              >
+                                <Edit3 className="h-3 w-3 mr-1" />
+                                編集
+                              </Button>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => handleDelete(category)}
+                                disabled={isSubmitting}
+                                className="border-red-300 text-red-600 hover:bg-red-50"
+                              >
+                                <Trash2 className="h-3 w-3 mr-1" />
+                                削除
+                              </Button>
                             </div>
                           </div>
                         </CardHeader>
@@ -345,7 +330,7 @@ export const CategoryManagementModal: React.FC<CategoryManagementModalProps> = (
                     );
                   })}
                 </div>
-              </div>
+              )}
 
               {customCategories.length === 0 && (
                 <Card className="border-dashed border-2 border-gray-300">
@@ -415,16 +400,40 @@ export const CategoryManagementModal: React.FC<CategoryManagementModalProps> = (
                     表示設定
                   </h3>
 
-                  <FormSelect
-                    label="アイコン"
-                    id="icon"
-                    value={formData.icon}
-                    onChange={(value) => updateField('icon', value)}
-                    options={iconOptions}
-                    required
-                    error={fieldErrors.icon}
-                    disabled={isSubmitting}
-                  />
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-gray-700">
+                      アイコン <span className="text-red-500 ml-1">*</span>
+                    </label>
+                    <div className="grid grid-cols-5 gap-2">
+                      {iconOptions.map((option) => {
+                        const Icon = getLucideIcon(option.value);
+                        return (
+                          <button
+                            key={option.value}
+                            type="button"
+                            onClick={() => updateField('icon', option.value)}
+                            disabled={isSubmitting}
+                            className={`
+                              h-12 rounded-lg border-2 transition-all duration-200 flex items-center justify-center
+                              ${
+                                formData.icon === option.value
+                                  ? 'border-carebase-blue-dark bg-carebase-blue/10 shadow-lg scale-105'
+                                  : 'border-gray-300 hover:border-gray-400 hover:bg-gray-50'
+                              }
+                            `}
+                            title={option.label}
+                          >
+                            <Icon className="h-5 w-5 text-gray-700" />
+                          </button>
+                        );
+                      })}
+                    </div>
+                    {fieldErrors.icon && (
+                      <p className="text-sm text-red-600" role="alert">
+                        {fieldErrors.icon}
+                      </p>
+                    )}
+                  </div>
 
                   <div className="space-y-2">
                     <label className="text-sm font-medium text-gray-700">
