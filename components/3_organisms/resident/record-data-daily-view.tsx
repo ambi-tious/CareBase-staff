@@ -38,7 +38,8 @@ export const RecordDataDailyView: React.FC<RecordDataDailyViewProps> = ({
   careRecords,
   handovers,
 }) => {
-  const [selectedRecords, setSelectedRecords] = useState<string[]>([]);
+  const [selectedCareRecords, setSelectedCareRecords] = useState<string[]>([]);
+  const [selectedNursingRecords, setSelectedNursingRecords] = useState<string[]>([]);
   const [selectedHandovers, setSelectedHandovers] = useState<string[]>([]);
 
   const dailyCareRecords = useMemo(() => {
@@ -64,11 +65,35 @@ export const RecordDataDailyView: React.FC<RecordDataDailyViewProps> = ({
     return format(new Date(dateString), 'HH:mm', { locale: ja });
   };
 
-  const handleRecordSelection = (recordId: string, isSelected: boolean) => {
+  const handleCareRecordSelection = (recordId: string, isSelected: boolean) => {
     if (isSelected) {
-      setSelectedRecords((prev) => [...prev, recordId]);
+      setSelectedCareRecords((prev) => [...prev, recordId]);
     } else {
-      setSelectedRecords((prev) => prev.filter((id) => id !== recordId));
+      setSelectedCareRecords((prev) => prev.filter((id) => id !== recordId));
+    }
+  };
+
+  const handleNursingRecordSelection = (recordId: string, isSelected: boolean) => {
+    if (isSelected) {
+      setSelectedNursingRecords((prev) => [...prev, recordId]);
+    } else {
+      setSelectedNursingRecords((prev) => prev.filter((id) => id !== recordId));
+    }
+  };
+
+  const handleSelectAllCareRecords = (isSelected: boolean) => {
+    if (isSelected) {
+      setSelectedCareRecords(dailyCareRecords.map((record) => record.id));
+    } else {
+      setSelectedCareRecords([]);
+    }
+  };
+
+  const handleSelectAllNursingRecords = (isSelected: boolean) => {
+    if (isSelected) {
+      setSelectedNursingRecords(dailyCareRecords.map((record) => record.id));
+    } else {
+      setSelectedNursingRecords([]);
     }
   };
 
@@ -77,14 +102,6 @@ export const RecordDataDailyView: React.FC<RecordDataDailyViewProps> = ({
       setSelectedHandovers((prev) => [...prev, handoverId]);
     } else {
       setSelectedHandovers((prev) => prev.filter((id) => id !== handoverId));
-    }
-  };
-
-  const handleSelectAllRecords = (isSelected: boolean) => {
-    if (isSelected) {
-      setSelectedRecords(dailyCareRecords.map((record) => record.id));
-    } else {
-      setSelectedRecords([]);
     }
   };
 
@@ -111,7 +128,7 @@ export const RecordDataDailyView: React.FC<RecordDataDailyViewProps> = ({
           variant="outline"
           size="sm"
           className="ml-auto border-red-300 text-red-600 hover:bg-red-50"
-          disabled={selectedRecords.length === 0 && selectedHandovers.length === 0}
+          disabled={selectedCareRecords.length === 0 && selectedHandovers.length === 0}
         >
           <Trash2 className="h-4 w-4 mr-2" />
           選択削除
@@ -142,13 +159,13 @@ export const RecordDataDailyView: React.FC<RecordDataDailyViewProps> = ({
                       <Checkbox
                         checked={
                           dailyCareRecords.length > 0 &&
-                          selectedRecords.length === dailyCareRecords.length
+                          selectedCareRecords.length === dailyCareRecords.length
                         }
                         indeterminate={
-                          selectedRecords.length > 0 &&
-                          selectedRecords.length < dailyCareRecords.length
+                          selectedCareRecords.length > 0 &&
+                          selectedCareRecords.length < dailyCareRecords.length
                         }
-                        onCheckedChange={handleSelectAllRecords}
+                        onCheckedChange={handleSelectAllCareRecords}
                       />
                     </TableHead>
                     <TableHead className="w-[5.5rem]">時間</TableHead>
@@ -163,8 +180,10 @@ export const RecordDataDailyView: React.FC<RecordDataDailyViewProps> = ({
                     <TableRow key={record.id} className="hover:bg-gray-50">
                       <TableCell className="w-[50px]">
                         <Checkbox
-                          checked={selectedRecords.includes(record.id)}
-                          onCheckedChange={(checked) => handleRecordSelection(record.id, !!checked)}
+                          checked={selectedCareRecords.includes(record.id)}
+                          onCheckedChange={(checked) =>
+                            handleCareRecordSelection(record.id, !!checked)
+                          }
                         />
                       </TableCell>
                       <TableCell className="font-mono text-sm w-[5.5rem]">
@@ -225,13 +244,13 @@ export const RecordDataDailyView: React.FC<RecordDataDailyViewProps> = ({
                       <Checkbox
                         checked={
                           dailyCareRecords.length > 0 &&
-                          selectedRecords.length === dailyCareRecords.length
+                          selectedNursingRecords.length === dailyCareRecords.length
                         }
                         indeterminate={
-                          selectedRecords.length > 0 &&
-                          selectedRecords.length < dailyCareRecords.length
+                          selectedNursingRecords.length > 0 &&
+                          selectedNursingRecords.length < dailyCareRecords.length
                         }
-                        onCheckedChange={handleSelectAllRecords}
+                        onCheckedChange={handleSelectAllNursingRecords}
                       />
                     </TableHead>
                     <TableHead className="w-[5.5rem]">時間</TableHead>
@@ -246,8 +265,10 @@ export const RecordDataDailyView: React.FC<RecordDataDailyViewProps> = ({
                     <TableRow key={record.id} className="hover:bg-gray-50">
                       <TableCell className="w-[50px]">
                         <Checkbox
-                          checked={selectedRecords.includes(record.id)}
-                          onCheckedChange={(checked) => handleRecordSelection(record.id, !!checked)}
+                          checked={selectedNursingRecords.includes(record.id)}
+                          onCheckedChange={(checked) =>
+                            handleNursingRecordSelection(record.id, !!checked)
+                          }
                         />
                       </TableCell>
                       <TableCell className="font-mono text-sm w-[5.5rem]">
