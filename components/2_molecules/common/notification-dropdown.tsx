@@ -11,7 +11,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import type { Handover } from '@/types/handover';
+import type { Notification } from '@/types/notification';
 import { format } from 'date-fns';
 import { ja } from 'date-fns/locale';
 import { Bell, MessageCircle, User } from 'lucide-react';
@@ -19,9 +19,9 @@ import Link from 'next/link';
 import type React from 'react';
 
 interface NotificationDropdownProps {
-  notifications: Handover[];
+  notifications: Notification[];
   unreadCount: number;
-  onMarkAsRead?: (handoverId: string) => void;
+  onMarkAsRead?: (notificationId: string) => void;
   className?: string;
 }
 
@@ -48,9 +48,9 @@ export const NotificationDropdown: React.FC<NotificationDropdownProps> = ({
     }
   };
 
-  const handleNotificationClick = (handover: Handover) => {
-    if (handover.status === 'unread' && onMarkAsRead) {
-      onMarkAsRead(handover.id);
+  const handleNotificationClick = (notification: Notification) => {
+    if (notification.status === 'unread' && onMarkAsRead) {
+      onMarkAsRead(notification.id);
     }
   };
 
@@ -98,7 +98,7 @@ export const NotificationDropdown: React.FC<NotificationDropdownProps> = ({
             {recentNotifications.map((notification) => (
               <DropdownMenuItem key={notification.id} className="p-0">
                 <Link
-                  href={`/handovers/${notification.id}`}
+                  href={notification.navigationUrl}
                   className="w-full p-3 block hover:bg-gray-50 transition-colors"
                   onClick={() => handleNotificationClick(notification)}
                 >
@@ -147,8 +147,8 @@ export const NotificationDropdown: React.FC<NotificationDropdownProps> = ({
                         <User className="h-3 w-3" />
                         <span>{notification.createdByName}</span>
                       </div>
-                      {notification.residentName && (
-                        <span>対象: {notification.residentName}</span>
+                      {notification.relatedResidentName && (
+                        <span>対象: {notification.relatedResidentName}</span>
                       )}
                     </div>
                   </div>
@@ -161,7 +161,7 @@ export const NotificationDropdown: React.FC<NotificationDropdownProps> = ({
         <DropdownMenuSeparator />
         <DropdownMenuItem className="p-0">
           <Link
-            href="/handovers"
+            href="/notifications"
             className="w-full p-3 text-center text-sm text-carebase-blue hover:bg-carebase-blue-light transition-colors"
           >
             すべてのお知らせを見る
