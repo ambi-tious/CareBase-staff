@@ -48,7 +48,6 @@ export const ResidentBasicInfoForm: React.FC<ResidentBasicInfoFormProps> = ({
   errors,
   disabled = false,
 }) => {
-  const [selectedStaffData, setSelectedStaffData] = useState<SelectedStaffData | null>(null);
   const hasInitialized = useRef(false);
   const [imagePreview, setImagePreview] = useState<string>('');
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -60,7 +59,6 @@ export const ResidentBasicInfoForm: React.FC<ResidentBasicInfoFormProps> = ({
         const staffData = localStorage.getItem('carebase_selected_staff_data');
         if (staffData) {
           const parsedData: SelectedStaffData = JSON.parse(staffData);
-          setSelectedStaffData(parsedData);
 
           // Auto-set the group and team fields based on current user only if not already initialized
           // or if the values are different (e.g., user switched staff)

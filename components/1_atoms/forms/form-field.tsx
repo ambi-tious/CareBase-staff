@@ -1,7 +1,8 @@
-import type React from 'react';
-import { Label } from '@/components/ui/label';
+import { DatePicker } from '@/components/ui/date-picker';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
+import type React from 'react';
 
 interface FormFieldProps {
   label: string;
@@ -14,6 +15,7 @@ interface FormFieldProps {
   error?: string;
   className?: string;
   disabled?: boolean;
+  captionLayout?: 'label' | 'dropdown' | 'dropdown-months' | 'dropdown-years';
 }
 
 export const FormField: React.FC<FormFieldProps> = ({
@@ -27,6 +29,7 @@ export const FormField: React.FC<FormFieldProps> = ({
   error,
   className = '',
   disabled = false,
+  captionLayout,
 }) => {
   return (
     <div className={cn('space-y-2', className)}>
@@ -34,15 +37,48 @@ export const FormField: React.FC<FormFieldProps> = ({
         {label}
         {required && <span className="text-red-500 ml-1">*</span>}
       </Label>
-      <Input
-        id={id}
-        type={type}
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        placeholder={placeholder}
-        disabled={disabled}
-        className={cn('w-full', error && 'border-red-300 focus:border-red-500 focus:ring-red-500')}
-      />
+      {type === 'date' ? (
+        <DatePicker
+          id={id}
+          value={value}
+          onChange={onChange}
+          placeholder={placeholder}
+          disabled={disabled}
+          className={cn(
+            'w-full',
+            error && 'border-red-300 focus:border-red-500 focus:ring-red-500'
+          )}
+          mode="date"
+          captionLayout={captionLayout}
+        />
+      ) : type === 'month' ? (
+        <DatePicker
+          id={id}
+          value={value}
+          onChange={onChange}
+          placeholder={placeholder}
+          disabled={disabled}
+          className={cn(
+            'w-full',
+            error && 'border-red-300 focus:border-red-500 focus:ring-red-500'
+          )}
+          mode="month"
+          captionLayout={captionLayout}
+        />
+      ) : (
+        <Input
+          id={id}
+          type={type}
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          placeholder={placeholder}
+          disabled={disabled}
+          className={cn(
+            'w-full',
+            error && 'border-red-300 focus:border-red-500 focus:ring-red-500'
+          )}
+        />
+      )}
       {error && (
         <p className="text-sm text-red-600" role="alert">
           {error}
