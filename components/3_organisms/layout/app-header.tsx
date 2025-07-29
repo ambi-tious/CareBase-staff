@@ -1,6 +1,7 @@
 'use client';
 
 import { Logo } from '@/components/1_atoms/common/logo';
+import { NotificationDropdown } from '@/components/2_molecules/common/notification-dropdown';
 import { StaffDashboard } from '@/components/3_organisms/dashboard/staff-dashboard';
 import { Button, buttonVariants } from '@/components/ui/button'; // Import buttonVariants
 import {
@@ -13,6 +14,7 @@ import {
 } from '@/components/ui/sheet';
 import { cn } from '@/lib/utils'; // Import cn
 import type { Staff } from '@/mocks/staff-data';
+import { useNotifications } from '@/hooks/useNotifications';
 import { Menu, User, Users, X } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -30,6 +32,7 @@ export function AppHeader() {
   const [isStaffSelected, setIsStaffSelected] = useState(false);
   const [isGroupTeamSelected, setIsGroupTeamSelected] = useState(false);
   const router = useRouter();
+  const { notifications, unreadCount, markAsRead } = useNotifications();
 
   // Load selected staff data from localStorage
   useEffect(() => {
@@ -175,6 +178,12 @@ export function AppHeader() {
               </Button>
             </>
           )}
+
+          <NotificationDropdown
+            notifications={notifications}
+            unreadCount={unreadCount}
+            onMarkAsRead={markAsRead}
+          />
 
           <Sheet open={isMenuOpen} onOpenChange={setIsMenuOpen}>
             <SheetTrigger

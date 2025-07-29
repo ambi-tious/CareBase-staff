@@ -51,6 +51,7 @@ import {
   Settings,
   FolderPlus,
   Palette,
+  Bell,
   type LucideIcon,
 } from 'lucide-react';
 
@@ -82,6 +83,7 @@ const iconRegistry: Record<string, LucideIcon> = {
   Notebook,
   MessageCircle,
   FileClock,
+  Bell,
 
   // Staff data icons
   UserCheck,
