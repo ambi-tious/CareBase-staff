@@ -38,17 +38,6 @@ const sexOptions = [
   { value: 'その他', label: 'その他' },
 ];
 
-const careLevelOptions = [
-  { value: '自立', label: '自立' },
-  { value: '要支援1', label: '要支援1' },
-  { value: '要支援2', label: '要支援2' },
-  { value: '要介護1', label: '要介護1' },
-  { value: '要介護2', label: '要介護2' },
-  { value: '要介護3', label: '要介護3' },
-  { value: '要介護4', label: '要介護4' },
-  { value: '要介護5', label: '要介護5' },
-];
-
 // Get options from staff-utils.ts
 const floorGroupOptions = getAllGroupOptions();
 const unitTeamOptions = getAllTeamOptions();
@@ -218,7 +207,7 @@ export const ResidentBasicInfoForm: React.FC<ResidentBasicInfoFormProps> = ({
               </p>
             )}
           </div>
-          <div className="flex-1 flex flex-col gap-3">
+          <div className="flex-1 flex flex-col gap-4">
             <FormField
               label="氏名"
               id="name"
@@ -261,16 +250,6 @@ export const ResidentBasicInfoForm: React.FC<ResidentBasicInfoFormProps> = ({
           options={sexOptions}
           required
           error={errors.sex}
-          disabled={disabled}
-        />
-
-        <FormSelect
-          label="要介護度"
-          id="careLevel"
-          value={data.careLevel}
-          onChange={(value) => updateField('careLevel', value)}
-          options={careLevelOptions}
-          error={errors.careLevel}
           disabled={disabled}
         />
       </div>
@@ -329,36 +308,6 @@ export const ResidentBasicInfoForm: React.FC<ResidentBasicInfoFormProps> = ({
           onChange={(value) => updateField('address', value)}
           placeholder="東京都渋谷区..."
           error={errors.address}
-          disabled={disabled}
-        />
-
-        <FormField
-          label="認定日"
-          id="certificationDate"
-          type="date"
-          value={data.certificationDate}
-          onChange={(value) => updateField('certificationDate', value)}
-          error={errors.certificationDate}
-          disabled={disabled}
-        />
-
-        <FormField
-          label="認定有効期間開始日"
-          id="certificationStartDate"
-          type="date"
-          value={data.certificationStartDate}
-          onChange={(value) => updateField('certificationStartDate', value)}
-          error={errors.certificationStartDate}
-          disabled={disabled}
-        />
-
-        <FormField
-          label="認定有効期間終了日"
-          id="certificationEndDate"
-          type="date"
-          value={data.certificationEndDate}
-          onChange={(value) => updateField('certificationEndDate', value)}
-          error={errors.certificationEndDate}
           disabled={disabled}
         />
       </div>
