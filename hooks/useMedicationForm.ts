@@ -4,8 +4,9 @@
  * Manages medication form state and validation
  */
 
-import type { MedicationFormData, MedicationFormState } from '@/types/medication';
-import { medicationFormSchema } from '@/types/medication';
+import type { MedicationFormState } from '@/types/medication';
+import type { MedicationFormData } from '@/validations/medication-validation';
+import { medicationFormSchema } from '@/validations/medication-validation';
 import { useCallback, useState } from 'react';
 
 interface UseMedicationFormOptions {

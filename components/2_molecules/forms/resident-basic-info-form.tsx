@@ -6,26 +6,10 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { getAllGroupOptions, getAllTeamOptions } from '@/utils/staff-utils';
+import type { ResidentBasicInfo } from '@/validations/resident-validation';
 import { Upload, X } from 'lucide-react';
 import type React from 'react';
 import { useCallback, useEffect, useRef, useState } from 'react';
-
-export interface ResidentBasicInfo {
-  name: string;
-  furigana: string;
-  dob: string;
-  sex: '男' | '女' | 'その他' | '';
-  careLevel: string;
-  floorGroup: string;
-  unitTeam: string;
-  roomInfo: string;
-  address: string;
-  admissionDate: string;
-  profileImage?: string;
-  certificationDate: string;
-  certificationStartDate: string;
-  certificationEndDate: string;
-}
 
 interface ResidentBasicInfoFormProps {
   data: ResidentBasicInfo;
@@ -181,73 +165,76 @@ export const ResidentBasicInfoForm: React.FC<ResidentBasicInfoFormProps> = ({
       <div className="space-y-4">
         <h3 className="text-lg font-semibold text-carebase-text-primary border-b pb-2">基本情報</h3>
 
-        {/* 利用者画像 */}
-        <div className="space-y-2">
-          <Label className="text-sm font-medium text-gray-700">利用者画像</Label>
+        <div className="flex gap-3">
+          {/* 利用者画像 */}
+          <div className="space-y-2">
+            <Label className="text-sm font-medium text-gray-700">利用者画像</Label>
 
-          {imagePreview ? (
-            <div className="relative">
-              <div className="w-32 h-32 border-2 border-gray-300 rounded-lg overflow-hidden">
-                <img src={imagePreview} alt="利用者画像" className="w-full h-full object-cover" />
+            {imagePreview ? (
+              <div className="relative">
+                <div className="w-32 h-32 border-2 border-gray-300 rounded-lg overflow-hidden">
+                  <img src={imagePreview} alt="利用者画像" className="w-full h-full object-cover" />
+                </div>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={handleImageRemove}
+                  disabled={disabled}
+                  className="mt-2 text-red-600 hover:text-red-700"
+                >
+                  <X className="h-4 w-4 mr-1" />
+                  画像を削除
+                </Button>
               </div>
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={handleImageRemove}
-                disabled={disabled}
-                className="mt-2 text-red-600 hover:text-red-700"
-              >
-                <X className="h-4 w-4 mr-1" />
-                画像を削除
-              </Button>
-            </div>
-          ) : (
-            <div className="space-y-2">
-              <div
-                className="w-32 h-32 border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center cursor-pointer hover:bg-gray-50 transition-colors"
-                onClick={() => fileInputRef.current?.click()}
-              >
-                <Upload className="h-8 w-8 text-gray-400 mb-2" />
-                <span className="text-sm text-gray-500">画像を選択</span>
+            ) : (
+              <div className="space-y-2">
+                <div
+                  className="w-32 h-32 border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center cursor-pointer hover:bg-gray-50 transition-colors"
+                  onClick={() => fileInputRef.current?.click()}
+                >
+                  <Upload className="h-8 w-8 text-gray-400 mb-2" />
+                  <span className="text-sm text-gray-500">画像を選択</span>
+                </div>
+                <Input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                  disabled={disabled}
+                  className="hidden"
+                />
               </div>
-              <Input
-                ref={fileInputRef}
-                type="file"
-                accept="image/*"
-                onChange={handleImageUpload}
-                disabled={disabled}
-                className="hidden"
-              />
-            </div>
-          )}
-          {errors.profileImage && (
-            <p className="text-sm text-red-600" role="alert">
-              {errors.profileImage}
-            </p>
-          )}
+            )}
+            {errors.profileImage && (
+              <p className="text-sm text-red-600" role="alert">
+                {errors.profileImage}
+              </p>
+            )}
+          </div>
+          <div className="flex-1 flex flex-col gap-3">
+            <FormField
+              label="氏名"
+              id="name"
+              value={data.name}
+              onChange={(value) => updateField('name', value)}
+              placeholder="山田 太郎"
+              required
+              error={errors.name}
+              disabled={disabled}
+            />
+
+            <FormField
+              label="フリガナ"
+              id="furigana"
+              value={data.furigana || ''}
+              onChange={(value) => updateField('furigana', value)}
+              placeholder="ヤマダ タロウ"
+              error={errors.furigana}
+              disabled={disabled}
+            />
+          </div>
         </div>
-
-        <FormField
-          label="氏名"
-          id="name"
-          value={data.name}
-          onChange={(value) => updateField('name', value)}
-          placeholder="山田 太郎"
-          required
-          error={errors.name}
-          disabled={disabled}
-        />
-
-        <FormField
-          label="フリガナ"
-          id="furigana"
-          value={data.furigana}
-          onChange={(value) => updateField('furigana', value)}
-          placeholder="ヤマダ タロウ"
-          error={errors.furigana}
-          disabled={disabled}
-        />
 
         <FormField
           label="生年月日"

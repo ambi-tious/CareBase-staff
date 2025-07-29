@@ -1,7 +1,7 @@
 'use client';
 
-import type { DocumentFormData } from '@/components/2_molecules/documents/document-form-fields';
 import { DocumentFormEditor } from '@/components/3_organisms/documents/document-form-editor';
+import type { DocumentFormData } from '@/validations/document-validation';
 import { useSearchParams } from 'next/navigation';
 import React from 'react';
 

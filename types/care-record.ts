@@ -4,8 +4,6 @@
  * Types for care record management
  */
 
-import { z } from 'zod';
-
 // Care record categories
 export type CareRecordCategory =
   | 'meal'
@@ -22,29 +20,6 @@ export type CareRecordStatus = 'draft' | 'completed' | 'reviewed';
 
 // Care record priority
 export type CareRecordPriority = 'high' | 'medium' | 'low';
-
-// Care record form data schema
-export const careRecordFormSchema = z.object({
-  residentId: z.string().min(1, '利用者を選択してください'),
-  category: z.enum(
-    ['meal', 'bathing', 'medication', 'excretion', 'vital', 'exercise', 'communication', 'other'],
-    {
-      required_error: '記録種別は必須です',
-    }
-  ),
-  title: z
-    .string()
-    .min(1, 'タイトルは必須です')
-    .max(100, 'タイトルは100文字以内で入力してください'),
-  content: z.string().min(1, '内容は必須です').max(1000, '内容は1000文字以内で入力してください'),
-  recordedAt: z.string().min(1, '記録日時は必須です'),
-  priority: z.enum(['high', 'medium', 'low'], {
-    required_error: '重要度は必須です',
-  }),
-  status: z.enum(['draft', 'completed', 'reviewed']).default('completed'),
-});
-
-export type CareRecordFormData = z.infer<typeof careRecordFormSchema>;
 
 // Care record entity type
 export interface CareRecord {

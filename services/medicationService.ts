@@ -1,10 +1,11 @@
 /**
  * Medication Service
  *
- * Service layer for medication information API calls
+ * API service for medication data operations
  */
 
-import type { MedicationFormData, Medication } from '@/types/medication';
+import type { Medication } from '@/types/medication';
+import type { MedicationFormData } from '@/validations/medication-validation';
 
 class MedicationService {
   private baseUrl = process.env.NEXT_PUBLIC_API_URL || '';

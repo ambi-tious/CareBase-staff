@@ -17,7 +17,7 @@ import type {
   MedicalInstitutionFormData,
   MedicationInfoFormData,
   MedicationStatusFormData,
-} from '@/types/resident-data';
+} from '@/validations/resident-data-validation';
 
 class ResidentDataService {
   private baseUrl = process.env.NEXT_PUBLIC_API_URL || '';

@@ -1,10 +1,11 @@
 /**
  * Care Record Service
  *
- * Service layer for care record API calls
+ * API service for care record operations
  */
 
-import type { CareRecord, CareRecordFormData } from '@/types/care-record';
+import type { CareRecord } from '@/types/care-record';
+import type { CareRecordFormData } from '@/validations/care-record-validation';
 
 class CareRecordService {
   private baseUrl = process.env.NEXT_PUBLIC_API_URL || '';

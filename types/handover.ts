@@ -4,8 +4,6 @@
  * Types for handover (申し送り) functionality
  */
 
-import { z } from 'zod';
-
 // Handover priority levels
 export type HandoverPriority = 'high' | 'medium' | 'low';
 
@@ -73,24 +71,6 @@ export const isHandoverRead = (handover: Handover): boolean => {
 export const isHandoverCompleted = (handover: Handover): boolean => {
   return handover.status === 'completed' && !!handover.completedAt;
 };
-
-// Handover form data schema
-export const handoverFormSchema = z.object({
-  title: z.string().min(1, '件名は必須です').max(100, '件名は100文字以内で入力してください'),
-  content: z.string().min(1, '内容は必須です').max(1000, '内容は1000文字以内で入力してください'),
-  category: z.enum(['medical', 'care', 'communication', 'emergency', 'family', 'other'], {
-    required_error: 'カテゴリは必須です',
-  }),
-  priority: z.enum(['high', 'medium', 'low'], {
-    required_error: '重要度は必須です',
-  }),
-  targetStaffIds: z.array(z.string()).min(1, '申し送り先を選択してください'),
-  residentId: z.string().optional(),
-  scheduledDate: z.string().optional(),
-  scheduledTime: z.string().optional(),
-});
-
-export type HandoverFormData = z.infer<typeof handoverFormSchema>;
 
 // Handover entity type
 export interface Handover {

@@ -5,21 +5,21 @@
  * Now using the generic form hook for consistency
  */
 
+import type { FormOptions } from '@/types/resident-data';
 import type {
-  FormOptions,
   HomeCareOfficeFormData,
   MedicalHistoryFormData as MedicalHistoryFormDataType,
   MedicalInstitutionFormData,
   MedicationInfoFormData,
   MedicationStatusFormData,
-} from '@/types/resident-data';
+} from '@/validations/resident-data-validation';
 import {
   homeCareOfficeFormSchema,
   medicalHistoryFormSchema as medicalHistoryFormSchemaImport,
   medicalInstitutionFormSchema,
   medicationInfoFormSchema,
   medicationStatusFormSchema,
-} from '@/types/resident-data';
+} from '@/validations/resident-data-validation';
 import { useGenericForm } from './useGenericForm';
 
 // Initial form data for each form type

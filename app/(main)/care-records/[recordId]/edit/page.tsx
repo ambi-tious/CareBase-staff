@@ -1,16 +1,16 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Alert, AlertDescription } from '@/components/ui/alert';
 import { CareRecordForm } from '@/components/2_molecules/care-record/care-record-form';
-import type { CareRecordFormData, CareRecord } from '@/types/care-record';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { careRecordService } from '@/services/careRecordService';
-import { ArrowLeft, Edit3, CheckCircle, Trash2 } from 'lucide-react';
+import type { CareRecord } from '@/types/care-record';
+import type { CareRecordFormData } from '@/validations/care-record-validation';
+import { ArrowLeft, CheckCircle, Edit3, Trash2 } from 'lucide-react';
 import Link from 'next/link';
-import React from 'react';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 interface EditCareRecordPageProps {
   params: Promise<{ recordId: string }>;

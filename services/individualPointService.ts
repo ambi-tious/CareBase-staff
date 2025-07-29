@@ -4,12 +4,11 @@
  * Service layer for individual point API calls
  */
 
+import type { IndividualPoint, PointCategory } from '@/types/individual-point';
 import type {
-  IndividualPoint,
-  IndividualPointFormData,
-  PointCategory,
   CategoryFormData,
-} from '@/types/individual-point';
+  IndividualPointFormData,
+} from '@/validations/individual-point-validation';
 
 class IndividualPointService {
   private baseUrl = process.env.NEXT_PUBLIC_API_URL || '';

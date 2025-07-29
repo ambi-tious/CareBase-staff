@@ -4,7 +4,7 @@
  * Manages document form state and validation
  */
 
-import type { DocumentFormData } from '@/components/2_molecules/documents/document-form-fields';
+import { documentFormSchema, type DocumentFormData } from '@/validations/document-validation';
 import { useCallback, useState } from 'react';
 
 interface UseDocumentFormOptions {
@@ -48,36 +48,38 @@ export const useDocumentForm = ({ onSubmit, initialData = {} }: UseDocumentFormO
   );
 
   const validateForm = useCallback(() => {
-    const errors: Partial<Record<keyof DocumentFormData, string>> = {};
+    const result = documentFormSchema.safeParse(formData);
 
-    // Required fields
-    if (!formData.title.trim()) {
-      errors.title = '書類タイトルは必須です';
+    if (!result.success) {
+      const fieldErrors: Partial<Record<keyof DocumentFormData, string>> = {};
+
+      for (const error of result.error.errors) {
+        if (error.path.length > 0) {
+          const field = error.path[0] as keyof DocumentFormData;
+          fieldErrors[field] = error.message;
+        }
+      }
+
+      setFormState((prev) => ({
+        ...prev,
+        fieldErrors,
+        error: '入力内容に不備があります。必須項目を確認してください。',
+      }));
+
+      return false;
     }
 
-    if (!formData.category) {
-      errors.category = 'カテゴリは必須です';
-    }
-
-    if (!formData.status) {
-      errors.status = 'ステータスは必須です';
-    }
-
-    // Set errors and return validation result
     setFormState((prev) => ({
       ...prev,
-      fieldErrors: errors,
+      fieldErrors: {},
+      error: null,
     }));
 
-    return Object.keys(errors).length === 0;
+    return true;
   }, [formData]);
 
   const handleSubmit = useCallback(async () => {
     if (!validateForm()) {
-      setFormState((prev) => ({
-        ...prev,
-        error: '入力内容に不備があります。必須項目を確認してください。',
-      }));
       return false;
     }
 
@@ -90,15 +92,23 @@ export const useDocumentForm = ({ onSubmit, initialData = {} }: UseDocumentFormO
     try {
       const success = await onSubmit(formData);
 
-      if (!success) {
+      if (success) {
+        // Reset form on success
+        setFormData({ ...initialFormData, ...initialData });
+        setFormState({
+          isSubmitting: false,
+          error: null,
+          fieldErrors: {},
+        });
+        return true;
+      } else {
         setFormState((prev) => ({
           ...prev,
           isSubmitting: false,
           error: '保存に失敗しました。もう一度お試しください。',
         }));
+        return false;
       }
-
-      return success;
     } catch (error) {
       console.error('Document form submission error:', error);
       setFormState((prev) => ({
@@ -107,13 +117,8 @@ export const useDocumentForm = ({ onSubmit, initialData = {} }: UseDocumentFormO
         error: 'ネットワークエラーが発生しました。接続を確認してもう一度お試しください。',
       }));
       return false;
-    } finally {
-      setFormState((prev) => ({
-        ...prev,
-        isSubmitting: false,
-      }));
     }
-  }, [formData, validateForm, onSubmit]);
+  }, [formData, validateForm, onSubmit, initialData]);
 
   const reset = useCallback(() => {
     setFormData({ ...initialFormData, ...initialData });

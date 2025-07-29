@@ -4,9 +4,9 @@
  * Manages individual point form state and validation for create/edit operations
  */
 
-import type { IndividualPointFormData } from '@/types/individual-point';
-import { individualPointFormSchema } from '@/types/individual-point';
-import { useCallback, useEffect, useState } from 'react';
+import type { IndividualPointFormData } from '@/validations/individual-point-validation';
+import { individualPointFormSchema } from '@/validations/individual-point-validation';
+import { useCallback, useState } from 'react';
 
 interface UseIndividualPointFormOptions {
   onSubmit: (data: IndividualPointFormData, mediaFiles?: File[]) => Promise<boolean>;

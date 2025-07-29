@@ -4,8 +4,8 @@
  * Manages handover form state and validation for create/edit operations
  */
 
-import type { HandoverFormData } from '@/types/handover';
-import { handoverFormSchema } from '@/types/handover';
+import type { HandoverFormData } from '@/validations/handover-validation';
+import { handoverFormSchema } from '@/validations/handover-validation';
 import { useCallback, useEffect, useState } from 'react';
 
 interface UseHandoverFormOptions {

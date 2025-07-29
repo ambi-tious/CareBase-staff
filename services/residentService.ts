@@ -1,5 +1,5 @@
-import type { ResidentBasicInfo } from '@/components/2_molecules/forms/resident-basic-info-form';
 import type { Resident } from '@/mocks/care-board-data';
+import type { ResidentBasicInfo } from '@/validations/resident-validation';
 
 // Helper function to calculate certification validity end date
 const calculateCertValidityEnd = (admissionDate: string): string => {

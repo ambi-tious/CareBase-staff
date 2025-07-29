@@ -4,17 +4,9 @@ import { FormField } from '@/components/1_atoms/forms/form-field';
 import { FormSelect } from '@/components/1_atoms/forms/form-select';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { getFolderPath } from '@/mocks/hierarchical-documents';
+import type { DocumentFormData } from '@/validations/document-validation';
 import { Folder } from 'lucide-react';
 import type React from 'react';
-
-export interface DocumentFormData {
-  title: string;
-  category: string;
-  description: string;
-  status: 'draft' | 'published' | 'archived';
-  tags: string;
-  folderId?: string; // フォルダIDを追加
-}
 
 interface DocumentFormFieldsProps {
   formData: DocumentFormData;

@@ -4,8 +4,8 @@
  * Manages contact schedule form state and validation for create/edit operations
  */
 
-import type { ContactScheduleFormData } from '@/types/contact-schedule';
-import { contactScheduleFormSchema } from '@/types/contact-schedule';
+import type { ContactScheduleFormData } from '@/validations/contact-schedule-validation';
+import { contactScheduleFormSchema } from '@/validations/contact-schedule-validation';
 import { useCallback, useEffect, useState } from 'react';
 
 interface UseContactScheduleFormOptions {
