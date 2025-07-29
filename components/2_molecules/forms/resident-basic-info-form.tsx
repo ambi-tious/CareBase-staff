@@ -245,7 +245,6 @@ export const ResidentBasicInfoForm: React.FC<ResidentBasicInfoFormProps> = ({
           value={data.furigana}
           onChange={(value) => updateField('furigana', value)}
           placeholder="ヤマダ タロウ"
-          required
           error={errors.furigana}
           disabled={disabled}
         />
@@ -278,7 +277,6 @@ export const ResidentBasicInfoForm: React.FC<ResidentBasicInfoFormProps> = ({
           value={data.careLevel}
           onChange={(value) => updateField('careLevel', value)}
           options={careLevelOptions}
-          required
           error={errors.careLevel}
           disabled={disabled}
         />
@@ -298,7 +296,6 @@ export const ResidentBasicInfoForm: React.FC<ResidentBasicInfoFormProps> = ({
           options={floorGroupOptions}
           required
           error={errors.floorGroup}
-          disabled={true} // Always disabled - set by current user's group
         />
 
         <FormSelect
@@ -309,7 +306,6 @@ export const ResidentBasicInfoForm: React.FC<ResidentBasicInfoFormProps> = ({
           options={unitTeamOptions}
           required
           error={errors.unitTeam}
-          disabled={true} // Always disabled - set by current user's team
         />
 
         <FormField
@@ -317,7 +313,7 @@ export const ResidentBasicInfoForm: React.FC<ResidentBasicInfoFormProps> = ({
           id="roomInfo"
           value={data.roomInfo}
           onChange={(value) => updateField('roomInfo', value)}
-          placeholder="もみじ101号室"
+          placeholder="101号室"
           error={errors.roomInfo}
           disabled={disabled}
         />
@@ -339,7 +335,6 @@ export const ResidentBasicInfoForm: React.FC<ResidentBasicInfoFormProps> = ({
           value={data.address}
           onChange={(value) => updateField('address', value)}
           placeholder="東京都渋谷区..."
-          required
           error={errors.address}
           disabled={disabled}
         />
@@ -350,7 +345,6 @@ export const ResidentBasicInfoForm: React.FC<ResidentBasicInfoFormProps> = ({
           type="date"
           value={data.certificationDate}
           onChange={(value) => updateField('certificationDate', value)}
-          required
           error={errors.certificationDate}
           disabled={disabled}
         />
@@ -361,7 +355,6 @@ export const ResidentBasicInfoForm: React.FC<ResidentBasicInfoFormProps> = ({
           type="date"
           value={data.certificationStartDate}
           onChange={(value) => updateField('certificationStartDate', value)}
-          required
           error={errors.certificationStartDate}
           disabled={disabled}
         />
@@ -372,7 +365,6 @@ export const ResidentBasicInfoForm: React.FC<ResidentBasicInfoFormProps> = ({
           type="date"
           value={data.certificationEndDate}
           onChange={(value) => updateField('certificationEndDate', value)}
-          required
           error={errors.certificationEndDate}
           disabled={disabled}
         />

@@ -44,8 +44,8 @@ export default function NewResidentPage() {
   return (
     <div className="p-4 md:p-6 bg-carebase-bg min-h-screen">
       {/* Header */}
-      <div className="mb-6">
-        <div className="flex items-center gap-4 mb-4">
+      <div className="mb-4">
+        <div className="flex items-center gap-4 mb-2">
           <Button
             variant="outline"
             onClick={handleCancel}
@@ -60,7 +60,7 @@ export default function NewResidentPage() {
             <h1 className="text-2xl font-bold text-carebase-text-primary">新規利用者登録</h1>
           </div>
         </div>
-        <p className="text-gray-600">
+        <p className="text-gray-600 text-sm">
           新しい利用者の基本情報を入力してください。必須項目（
           <span className="text-red-500">*</span>）は必ず入力してください。
         </p>

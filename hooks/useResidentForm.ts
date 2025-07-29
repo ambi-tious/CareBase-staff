@@ -40,10 +40,6 @@ export const useResidentForm = ({ initialData, onSubmit }: UseResidentFormOption
         newErrors.name = '氏名は必須です';
       }
 
-      if (!data.furigana.trim()) {
-        newErrors.furigana = 'フリガナは必須です';
-      }
-
       if (!data.dob) {
         newErrors.dob = '生年月日は必須です';
       }
@@ -52,16 +48,16 @@ export const useResidentForm = ({ initialData, onSubmit }: UseResidentFormOption
         newErrors.sex = '性別は必須です';
       }
 
-      if (!data.careLevel) {
-        newErrors.careLevel = '要介護度は必須です';
+      if (!data.floorGroup) {
+        newErrors.floorGroup = '所属フロア・グループは必須です';
+      }
+
+      if (!data.unitTeam) {
+        newErrors.unitTeam = '所属ユニット・チームは必須です';
       }
 
       if (!data.admissionDate) {
         newErrors.admissionDate = '入所日は必須です';
-      }
-
-      if (!data.address.trim()) {
-        newErrors.address = '住所は必須です';
       }
 
       // Format validation
