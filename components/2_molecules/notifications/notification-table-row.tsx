@@ -1,16 +1,16 @@
 'use client';
 
-import type React from 'react';
-import { TableCell, TableRow } from '@/components/ui/table';
-import { Button } from '@/components/ui/button';
-import { NotificationTypeBadge } from '@/components/1_atoms/notifications/notification-type-badge';
 import { NotificationPriorityBadge } from '@/components/1_atoms/notifications/notification-priority-badge';
 import { NotificationStatusBadge } from '@/components/1_atoms/notifications/notification-status-badge';
+import { NotificationTypeBadge } from '@/components/1_atoms/notifications/notification-type-badge';
+import { Button } from '@/components/ui/button';
+import { TableCell, TableRow } from '@/components/ui/table';
 import type { Notification } from '@/types/notification';
-import { Eye, User, Calendar } from 'lucide-react';
-import Link from 'next/link';
 import { format } from 'date-fns';
 import { ja } from 'date-fns/locale';
+import { Calendar, Eye, User } from 'lucide-react';
+import Link from 'next/link';
+import type React from 'react';
 
 interface NotificationTableRowProps {
   notification: Notification;

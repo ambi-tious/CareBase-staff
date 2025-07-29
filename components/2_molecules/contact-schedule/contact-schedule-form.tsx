@@ -104,7 +104,7 @@ export const ContactScheduleForm: React.FC<ContactScheduleFormProps> = ({
   const handleSaveDraft = useCallback(async () => {
     const success = await saveDraft();
     if (success) {
-      console.log('Draft saved successfully');
+      // console.log('Draft saved successfully');
     }
   }, [saveDraft]);
 

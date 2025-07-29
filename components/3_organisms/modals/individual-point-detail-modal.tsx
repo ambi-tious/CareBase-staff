@@ -1,11 +1,11 @@
 'use client';
 
 import { CategoryBadge } from '@/components/1_atoms/individual-points/category-badge';
+import { MediaThumbnail } from '@/components/1_atoms/individual-points/media-thumbnail';
 import { PriorityBadge } from '@/components/1_atoms/individual-points/priority-badge';
 import { StatusBadge } from '@/components/1_atoms/individual-points/status-badge';
-import { MediaThumbnail } from '@/components/1_atoms/individual-points/media-thumbnail';
-import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
@@ -16,7 +16,7 @@ import {
 import type { IndividualPoint } from '@/types/individual-point';
 import { format } from 'date-fns';
 import { ja } from 'date-fns/locale';
-import { Calendar, Edit3, Paperclip, Target, Trash2, User, X } from 'lucide-react';
+import { Calendar, Edit3, Paperclip, Trash2, User, X } from 'lucide-react';
 import type React from 'react';
 
 interface IndividualPointDetailModalProps {

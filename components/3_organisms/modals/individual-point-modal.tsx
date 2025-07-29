@@ -8,7 +8,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import type { IndividualPoint, IndividualPointFormData } from '@/types/individual-point';
+import type { IndividualPoint } from '@/types/individual-point';
+import type { IndividualPointFormData } from '@/validations/individual-point-validation';
 import type React from 'react';
 
 interface IndividualPointModalProps {

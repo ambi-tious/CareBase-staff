@@ -2,8 +2,8 @@
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
 import { ArrowLeft, Bell, Save, Settings } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
@@ -25,7 +25,7 @@ export default function NotificationSettingsPage() {
 
   const handleSave = () => {
     // 実際のアプリケーションではAPIに設定を保存
-    console.log('Saving notification settings:', settings);
+    // console.log('Saving notification settings:', settings);
     // TODO: API呼び出しの実装
   };
 

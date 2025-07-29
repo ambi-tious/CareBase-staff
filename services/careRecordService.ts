@@ -164,7 +164,7 @@ class CareRecordService {
       status: data.status,
     };
 
-    console.log('Mock created care record:', newRecord);
+    // console.log('Mock created care record:', newRecord);
     return newRecord;
   }
 
@@ -218,7 +218,7 @@ class CareRecordService {
       status: data.status,
     };
 
-    console.log('Mock updated care record:', updatedRecord);
+    // console.log('Mock updated care record:', updatedRecord);
     return updatedRecord;
   }
 
@@ -234,7 +234,7 @@ class CareRecordService {
       throw new Error('ネットワークエラーが発生しました。');
     }
 
-    console.log('Mock deleted care record:', recordId);
+    // console.log('Mock deleted care record:', recordId);
   }
 
   /**

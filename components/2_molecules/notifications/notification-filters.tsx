@@ -1,6 +1,6 @@
 'use client';
 
-import type React from 'react';
+import { Button } from '@/components/ui/button';
 import {
   Select,
   SelectContent,
@@ -8,18 +8,18 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Button } from '@/components/ui/button';
 import type {
-  NotificationType,
   NotificationPriority,
   NotificationStatus,
+  NotificationType,
 } from '@/types/notification';
 import {
-  notificationTypeOptions,
   notificationPriorityOptions,
   notificationStatusOptions,
+  notificationTypeOptions,
 } from '@/types/notification';
 import { Filter, RotateCcw } from 'lucide-react';
+import type React from 'react';
 
 interface NotificationFiltersProps {
   selectedType?: NotificationType;

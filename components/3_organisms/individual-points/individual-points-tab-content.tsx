@@ -10,13 +10,11 @@ import { IndividualPointModal } from '@/components/3_organisms/modals/individual
 import { MediaViewerModal } from '@/components/3_organisms/modals/media-viewer-modal';
 import { getIndividualPointsByResident } from '@/mocks/individual-points-data';
 import { individualPointService } from '@/services/individualPointService';
+import type { IndividualPoint, MediaAttachment, PointCategory } from '@/types/individual-point';
 import type {
   CategoryFormData,
-  IndividualPoint,
   IndividualPointFormData,
-  MediaAttachment,
-  PointCategory,
-} from '@/types/individual-point';
+} from '@/validations/individual-point-validation';
 import { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
 
 interface IndividualPointsTabContentProps {

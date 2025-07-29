@@ -1,15 +1,15 @@
 'use client';
 
-import type React from 'react';
-import { useState } from 'react';
-import type { HomeCareOffice } from '@/mocks/care-board-data';
+import { GenericDeleteModal } from '@/components/3_organisms/modals/generic-delete-modal';
+import { HomeCareOfficeModal } from '@/components/3_organisms/modals/home-care-office-modal';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import { Edit3, Phone, MapPin, Trash2 } from 'lucide-react';
-import { HomeCareOfficeModal } from '@/components/3_organisms/modals/home-care-office-modal';
-import { GenericDeleteModal } from '@/components/3_organisms/modals/generic-delete-modal';
+import type { HomeCareOffice } from '@/mocks/care-board-data';
 import { residentDataService } from '@/services/residentDataService';
-import type { HomeCareOfficeFormData } from '@/types/resident-data';
+import type { HomeCareOfficeFormData } from '@/validations/resident-data-validation';
+import { Edit3, MapPin, Phone, Trash2 } from 'lucide-react';
+import type React from 'react';
+import { useState } from 'react';
 
 interface HomeCareOfficeCardProps {
   office: HomeCareOffice;

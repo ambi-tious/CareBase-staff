@@ -13,8 +13,9 @@ import {
 } from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { getLucideIcon } from '@/lib/lucide-icon-registry';
-import type { CategoryFormData, PointCategory } from '@/types/individual-point';
-import { categoryFormSchema } from '@/types/individual-point';
+import type { PointCategory } from '@/types/individual-point';
+import type { CategoryFormData } from '@/validations/individual-point-validation';
+import { categoryFormSchema } from '@/validations/individual-point-validation';
 import { AlertCircle, Edit3, FolderPlus, Palette, Plus, Settings, Trash2 } from 'lucide-react';
 import React, { useCallback, useEffect, useState } from 'react';
 

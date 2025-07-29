@@ -69,7 +69,7 @@ class ContactService {
       notes: contactData.notes || undefined,
     };
 
-    console.log('Mock created contact:', newContact);
+    // console.log('Mock created contact:', newContact);
     return newContact;
   }
 
@@ -140,7 +140,7 @@ class ContactService {
       notes: contactData.notes || undefined,
     };
 
-    console.log('Mock updated contact:', updatedContact);
+    // console.log('Mock updated contact:', updatedContact);
     return updatedContact;
   }
 
@@ -182,7 +182,7 @@ class ContactService {
       throw new Error('ネットワークエラーが発生しました。');
     }
 
-    console.log('Mock deleted contact:', { residentId, contactId });
+    // console.log('Mock deleted contact:', { residentId, contactId });
   }
 }
 

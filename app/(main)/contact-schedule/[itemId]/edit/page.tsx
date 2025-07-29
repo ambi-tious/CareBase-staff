@@ -46,7 +46,7 @@ export default function EditContactSchedulePage({ params }: EditContactScheduleP
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
       // Mock API call - in production, this would call the actual API
-      console.log('Updating contact schedule:', { ...data, isDraft, itemId: item.id });
+      // console.log('Updating contact schedule:', { ...data, isDraft, itemId: item.id });
 
       // Simulate occasional errors for testing
       if (Math.random() < 0.1) {

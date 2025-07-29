@@ -5,7 +5,7 @@ import { FormSelect } from '@/components/1_atoms/forms/form-select';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { useMedicalHistoryForm } from '@/hooks/useResidentDataForm';
-import type { MedicalHistoryFormData } from '@/types/resident-data';
+import type { MedicalHistoryFormData } from '@/validations/resident-data-validation';
 import { AlertCircle, RefreshCw } from 'lucide-react';
 import type React from 'react';
 

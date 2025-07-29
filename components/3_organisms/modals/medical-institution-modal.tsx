@@ -1,16 +1,16 @@
 'use client';
 
-import type React from 'react';
+import { MedicalInstitutionForm } from '@/components/2_molecules/forms/medical-institution-form';
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogDescription,
 } from '@/components/ui/dialog';
-import { MedicalInstitutionForm } from '@/components/2_molecules/forms/medical-institution-form';
-import type { MedicalInstitutionFormData } from '@/types/resident-data';
 import type { MedicalInstitution } from '@/mocks/care-board-data';
+import type { MedicalInstitutionFormData } from '@/validations/resident-data-validation';
+import type React from 'react';
 
 interface MedicalInstitutionModalProps {
   isOpen: boolean;

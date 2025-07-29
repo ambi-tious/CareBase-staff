@@ -134,7 +134,7 @@ class MedicationService {
       updatedAt: new Date().toISOString(),
     };
 
-    console.log('Mock created medication:', newMedication);
+    // console.log('Mock created medication:', newMedication);
     return newMedication;
   }
 
@@ -167,7 +167,7 @@ class MedicationService {
       updatedAt: new Date().toISOString(),
     };
 
-    console.log('Mock updated medication:', updatedMedication);
+    // console.log('Mock updated medication:', updatedMedication);
     return updatedMedication;
   }
 
@@ -183,7 +183,7 @@ class MedicationService {
       throw new Error('ネットワークエラーが発生しました。');
     }
 
-    console.log('Mock deleted medication:', { residentId, medicationId });
+    // console.log('Mock deleted medication:', { residentId, medicationId });
   }
 }
 

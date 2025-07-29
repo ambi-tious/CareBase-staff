@@ -8,6 +8,7 @@ import { Label } from '@/components/ui/label';
 import { getAllGroupOptions, getAllTeamOptions } from '@/utils/staff-utils';
 import type { ResidentBasicInfo } from '@/validations/resident-validation';
 import { Upload, X } from 'lucide-react';
+import Image from 'next/image';
 import type React from 'react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
@@ -173,7 +174,12 @@ export const ResidentBasicInfoForm: React.FC<ResidentBasicInfoFormProps> = ({
             {imagePreview ? (
               <div className="relative">
                 <div className="w-32 h-32 border-2 border-gray-300 rounded-lg overflow-hidden">
-                  <img src={imagePreview} alt="利用者画像" className="w-full h-full object-cover" />
+                  <Image
+                    src={imagePreview}
+                    alt="利用者画像"
+                    className="w-full h-full object-cover"
+                    fill
+                  />
                 </div>
                 <Button
                   type="button"

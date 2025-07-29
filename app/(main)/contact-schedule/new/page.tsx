@@ -24,7 +24,7 @@ export default function NewContactSchedulePage() {
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
       // Mock API call - in production, this would call the actual API
-      console.log('Submitting contact schedule:', { ...data, isDraft });
+      // console.log('Submitting contact schedule:', { ...data, isDraft });
 
       // Simulate occasional errors for testing
       if (Math.random() < 0.1) {

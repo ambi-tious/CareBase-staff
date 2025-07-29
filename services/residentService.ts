@@ -60,7 +60,7 @@ export const residentService = {
     };
 
     // In production, this would make an API call to create the resident
-    console.log('Creating resident:', newResident);
+    // console.log('Creating resident:', newResident);
 
     const { careBoardData } = await import('@/mocks/care-board-data');
     careBoardData.push(newResident);
@@ -72,7 +72,7 @@ export const residentService = {
     await new Promise((resolve) => setTimeout(resolve, 1000));
 
     // In production, this would make an API call to update the resident
-    console.log('Updating resident:', id, data);
+    // console.log('Updating resident:', id, data);
 
     // For now, return a mock updated resident
     const { careBoardData } = await import('@/mocks/care-board-data');

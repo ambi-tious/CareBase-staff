@@ -266,7 +266,7 @@ class IndividualPointService {
       isSystemDefault: false,
     };
 
-    console.log('Mock created individual point:', newPoint);
+    // console.log('Mock created individual point:', newPoint);
     return newPoint;
   }
 
@@ -331,7 +331,7 @@ class IndividualPointService {
       isSystemDefault: false,
     };
 
-    console.log('Mock updated individual point:', updatedPoint);
+    // console.log('Mock updated individual point:', updatedPoint);
     return updatedPoint;
   }
 
@@ -342,7 +342,7 @@ class IndividualPointService {
       throw new Error('ネットワークエラーが発生しました。');
     }
 
-    console.log('Mock deleted individual point:', { residentId, pointId });
+    // console.log('Mock deleted individual point:', { residentId, pointId });
   }
 
   private async mockGetPointCategories(): Promise<PointCategory[]> {
@@ -371,7 +371,7 @@ class IndividualPointService {
       updatedAt: new Date().toISOString(),
     };
 
-    console.log('Mock created point category:', newCategory);
+    // console.log('Mock created point category:', newCategory);
     return newCategory;
   }
 }

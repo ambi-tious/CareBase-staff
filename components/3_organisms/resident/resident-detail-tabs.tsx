@@ -30,14 +30,16 @@ import { contactService } from '@/services/contactService';
 import { medicationService } from '@/services/medicationService';
 import { medicationStatusService } from '@/services/medicationStatusService';
 import { residentDataService } from '@/services/residentDataService';
-import type { ContactFormData } from '@/types/contact';
-import type { Medication, MedicationFormData } from '@/types/medication';
-import type { MedicationStatus, MedicationStatusFormData } from '@/types/medication-status';
+import type { Medication } from '@/types/medication';
+import type { MedicationStatus } from '@/types/medication-status';
+import type { ContactFormData } from '@/validations/contact-validation';
+import type { MedicationStatusFormData } from '@/validations/medication-status-validation';
+import type { MedicationFormData } from '@/validations/medication-validation';
 import type {
   HomeCareOfficeFormData,
   MedicalHistoryFormData,
   MedicalInstitutionFormData,
-} from '@/types/resident-data';
+} from '@/validations/resident-data-validation';
 import { PlusCircle, Settings } from 'lucide-react';
 import type React from 'react';
 import { useRef, useState } from 'react';
