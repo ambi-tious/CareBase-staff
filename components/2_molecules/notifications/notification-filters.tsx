@@ -9,8 +9,16 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
-import type { NotificationType, NotificationPriority, NotificationStatus } from '@/types/notification';
-import { notificationTypeOptions, notificationPriorityOptions, notificationStatusOptions } from '@/types/notification';
+import type {
+  NotificationType,
+  NotificationPriority,
+  NotificationStatus,
+} from '@/types/notification';
+import {
+  notificationTypeOptions,
+  notificationPriorityOptions,
+  notificationStatusOptions,
+} from '@/types/notification';
 import { Filter, RotateCcw } from 'lucide-react';
 
 interface NotificationFiltersProps {

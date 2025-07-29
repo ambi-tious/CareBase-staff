@@ -81,9 +81,7 @@ export const NotificationDropdown: React.FC<NotificationDropdownProps> = ({
             お知らせ
           </div>
           {unreadCount > 0 && (
-            <Badge className="bg-red-100 text-red-700 border-red-200">
-              {unreadCount}件未読
-            </Badge>
+            <Badge className="bg-red-100 text-red-700 border-red-200">{unreadCount}件未読</Badge>
           )}
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
@@ -128,18 +126,14 @@ export const NotificationDropdown: React.FC<NotificationDropdownProps> = ({
                     {/* タイトル */}
                     <h4
                       className={`text-sm font-medium line-clamp-2 ${
-                        notification.status === 'unread'
-                          ? 'text-gray-900'
-                          : 'text-gray-600'
+                        notification.status === 'unread' ? 'text-gray-900' : 'text-gray-600'
                       }`}
                     >
                       {notification.title}
                     </h4>
 
                     {/* 内容プレビュー */}
-                    <p className="text-xs text-gray-500 line-clamp-2">
-                      {notification.content}
-                    </p>
+                    <p className="text-xs text-gray-500 line-clamp-2">{notification.content}</p>
 
                     {/* 作成者・対象者 */}
                     <div className="flex items-center justify-between text-xs text-gray-400">

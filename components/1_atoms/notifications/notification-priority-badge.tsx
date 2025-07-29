@@ -8,7 +8,10 @@ interface NotificationPriorityBadgeProps {
   className?: string;
 }
 
-export const NotificationPriorityBadge: React.FC<NotificationPriorityBadgeProps> = ({ priority, className = '' }) => {
+export const NotificationPriorityBadge: React.FC<NotificationPriorityBadgeProps> = ({
+  priority,
+  className = '',
+}) => {
   const priorityConfig = notificationPriorityOptions.find((option) => option.value === priority);
 
   if (!priorityConfig) {

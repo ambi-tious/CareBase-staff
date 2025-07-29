@@ -8,7 +8,10 @@ interface NotificationStatusBadgeProps {
   className?: string;
 }
 
-export const NotificationStatusBadge: React.FC<NotificationStatusBadgeProps> = ({ status, className = '' }) => {
+export const NotificationStatusBadge: React.FC<NotificationStatusBadgeProps> = ({
+  status,
+  className = '',
+}) => {
   const statusConfig = notificationStatusOptions.find((option) => option.value === status);
 
   if (!statusConfig) {

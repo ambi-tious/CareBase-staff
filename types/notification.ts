@@ -88,9 +88,24 @@ export interface NotificationListResponse {
 
 // Type options for UI
 export const notificationTypeOptions = [
-  { value: 'handover', label: '申し送り', icon: 'MessageSquare', color: 'bg-purple-100 text-purple-700 border-purple-200' },
-  { value: 'contact_schedule', label: '連絡・予定', icon: 'Calendar', color: 'bg-blue-100 text-blue-700 border-blue-200' },
-  { value: 'system', label: 'システム', icon: 'Settings', color: 'bg-gray-100 text-gray-700 border-gray-200' },
+  {
+    value: 'handover',
+    label: '申し送り',
+    icon: 'MessageSquare',
+    color: 'bg-purple-100 text-purple-700 border-purple-200',
+  },
+  {
+    value: 'contact_schedule',
+    label: '連絡・予定',
+    icon: 'Calendar',
+    color: 'bg-blue-100 text-blue-700 border-blue-200',
+  },
+  {
+    value: 'system',
+    label: 'システム',
+    icon: 'Settings',
+    color: 'bg-gray-100 text-gray-700 border-gray-200',
+  },
 ] as const;
 
 export const notificationPriorityOptions = [

@@ -75,19 +75,25 @@ export default function NotificationSettingsPage() {
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
                 <Label htmlFor="contact-schedule-notifications">連絡・予定通知</Label>
-                <p className="text-sm text-gray-500">新しい連絡事項や予定が作成された時に通知します</p>
+                <p className="text-sm text-gray-500">
+                  新しい連絡事項や予定が作成された時に通知します
+                </p>
               </div>
               <Switch
                 id="contact-schedule-notifications"
                 checked={settings.contactScheduleNotifications}
-                onCheckedChange={(checked) => handleSettingChange('contactScheduleNotifications', checked)}
+                onCheckedChange={(checked) =>
+                  handleSettingChange('contactScheduleNotifications', checked)
+                }
               />
             </div>
 
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
                 <Label htmlFor="system-notifications">システム通知</Label>
-                <p className="text-sm text-gray-500">システムメンテナンスやアップデート情報を通知します</p>
+                <p className="text-sm text-gray-500">
+                  システムメンテナンスやアップデート情報を通知します
+                </p>
               </div>
               <Switch
                 id="system-notifications"

@@ -5,7 +5,12 @@ import { NotificationSearchBar } from '@/components/2_molecules/notifications/no
 import { NotificationTableRow } from '@/components/2_molecules/notifications/notification-table-row';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import type { Notification, NotificationType, NotificationPriority, NotificationStatus } from '@/types/notification';
+import type {
+  Notification,
+  NotificationType,
+  NotificationPriority,
+  NotificationStatus,
+} from '@/types/notification';
 import { Bell, Settings } from 'lucide-react';
 import Link from 'next/link';
 import type React from 'react';
@@ -16,9 +21,9 @@ interface NotificationListProps {
   onStatusUpdate?: (notificationId: string, status: 'read' | 'completed') => void;
 }
 
-export const NotificationList: React.FC<NotificationListProps> = ({ 
-  notifications, 
-  onStatusUpdate 
+export const NotificationList: React.FC<NotificationListProps> = ({
+  notifications,
+  onStatusUpdate,
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedType, setSelectedType] = useState<NotificationType | undefined>();

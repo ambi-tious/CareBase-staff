@@ -15,7 +15,8 @@ export default function NotificationsPage() {
               ...notification,
               status,
               readAt: status === 'read' ? new Date().toISOString() : notification.readAt,
-              completedAt: status === 'completed' ? new Date().toISOString() : notification.completedAt,
+              completedAt:
+                status === 'completed' ? new Date().toISOString() : notification.completedAt,
               updatedAt: new Date().toISOString(),
             }
           : notification

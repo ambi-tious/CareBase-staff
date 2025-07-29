@@ -79,6 +79,7 @@ Issue: [#131 [設計] #006 利用者｜利用者詳細（個別ポイント）](
 ### モーダル仕様
 
 #### 個別ポイント登録モーダル
+
 <img width="945" height="827" alt="image" src="https://github.com/user-attachments/assets/e8986e10-18ef-4f6c-bc58-1179187beed0" />
 
 | 項目名           | コンポーネント    | 必須 | 初期値                                       | 備考                                                |
@@ -97,6 +98,7 @@ Issue: [#131 [設計] #006 利用者｜利用者詳細（個別ポイント）](
 | 登録ボタン       | Button            | -    | 登録                                         | 青色、送信時は「登録中...」                         |
 
 #### 個別ポイント編集モーダル
+
 <img width="944" height="823" alt="image" src="https://github.com/user-attachments/assets/b464125f-712f-4c05-988f-114b916ffe4a" />
 
 登録モーダルと同様の構成で、以下の違いがあります：
@@ -108,6 +110,7 @@ Issue: [#131 [設計] #006 利用者｜利用者詳細（個別ポイント）](
 | 登録ボタンラベル | 更新                             |
 
 #### 個別ポイント詳細モーダル
+
 <img width="942" height="902" alt="image" src="https://github.com/user-attachments/assets/bc7837f7-6e2a-41a6-9b9a-7cfcecac5cc9" />
 
 | 項目名           | コンポーネント | 必須 | 初期値           | 備考                               |
@@ -128,6 +131,7 @@ Issue: [#131 [設計] #006 利用者｜利用者詳細（個別ポイント）](
 | 閉じるボタン     | Button         | -    | 閉じる           | アウトライン                       |
 
 #### 削除確認モーダル
+
 <img width="542" height="345" alt="image" src="https://github.com/user-attachments/assets/8196f30c-2139-441f-ad24-84b51b441149" />
 
 | 項目名           | コンポーネント | 必須 | 初期値                                                | 備考                     |
@@ -140,6 +144,7 @@ Issue: [#131 [設計] #006 利用者｜利用者詳細（個別ポイント）](
 | 削除ボタン       | Button         | -    | 削除する                                              | 赤色、ゴミ箱アイコン付き |
 
 #### カテゴリ管理モーダル
+
 <img width="945" height="457" alt="image" src="https://github.com/user-attachments/assets/8d5c6f19-7441-4655-8c4a-fefd34cb2f95" />
 <img width="940" height="699" alt="image" src="https://github.com/user-attachments/assets/9df204c4-abe9-47fe-b3c7-313475d15eb5" />
 
@@ -157,6 +162,7 @@ Issue: [#131 [設計] #006 利用者｜利用者詳細（個別ポイント）](
 | キャンセルボタン | Button         | -    | キャンセル           | アウトライン                     |
 
 #### メディアビューアーモーダル
+
 <img width="828" height="704" alt="image" src="https://github.com/user-attachments/assets/f890a28c-25db-42e4-a13e-9a7c0d3207ac" />
 
 | 項目名             | コンポーネント | 必須 | 初期値       | 備考                     |
@@ -201,7 +207,7 @@ Issue: [#131 [設計] #006 利用者｜利用者詳細（個別ポイント）](
 
 #### 表示制御
 
-- 必須項目には赤いアスタリスク（*）を表示
+- 必須項目には赤いアスタリスク（\*）を表示
 - エラー時は該当フィールドを赤枠で強調
 - 送信中はフォーム全体を無効化
 - ネットワークエラー時はリトライボタンを表示
@@ -240,11 +246,13 @@ Issue: [#131 [設計] #006 利用者｜利用者詳細（個別ポイント）](
 ### カラーテーマ
 
 #### 優先度バッジ
+
 - **高**: `bg-red-100 text-red-700 border-red-200`
 - **中**: `bg-yellow-100 text-yellow-700 border-yellow-200`
 - **低**: `bg-blue-100 text-blue-700 border-blue-200`
 
 #### カテゴリタグ
+
 - **食事**: `bg-orange-100 text-orange-700 border-orange-200`
 - **入浴**: `bg-blue-100 text-blue-700 border-blue-200`
 - **服薬**: `bg-purple-100 text-purple-700 border-purple-200`
@@ -255,6 +263,7 @@ Issue: [#131 [設計] #006 利用者｜利用者詳細（個別ポイント）](
 - **その他**: `bg-gray-100 text-gray-700 border-gray-200`
 
 #### ボタン・操作要素
+
 - **追加ボタン**: `bg-carebase-blue hover:bg-carebase-blue-dark text-white`
 - **編集ボタン**: `border-carebase-blue text-carebase-blue hover:bg-carebase-blue-light`
 - **削除ボタン**: `border-red-300 text-red-600 hover:bg-red-50`

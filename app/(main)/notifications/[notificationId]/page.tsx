@@ -133,8 +133,11 @@ export default function NotificationDetailPage({
               <span className="text-sm font-medium text-yellow-800">実施予定: </span>
               <span className="text-sm text-yellow-700">
                 {(() => {
-                  const schedule = notification as import('@/types/notification').ContactScheduleNotification;
-                  const dueDate = format(new Date(schedule.dueDate), 'yyyy年MM月dd日', { locale: ja });
+                  const schedule =
+                    notification as import('@/types/notification').ContactScheduleNotification;
+                  const dueDate = format(new Date(schedule.dueDate), 'yyyy年MM月dd日', {
+                    locale: ja,
+                  });
                   if (schedule.startTime) {
                     return `${dueDate} ${schedule.startTime}${schedule.endTime ? ` - ${schedule.endTime}` : ''}`;
                   }
@@ -145,21 +148,24 @@ export default function NotificationDetailPage({
           )}
 
           {/* Schedule Info for handover type */}
-          {notification.type === 'handover' && (() => {
-            const handover = notification as import('@/types/notification').HandoverNotification;
-            return (handover.scheduledDate || handover.scheduledTime) && (
-              <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
-                <span className="text-sm font-medium text-yellow-800">実施予定: </span>
-                <span className="text-sm text-yellow-700">
-                  {handover.scheduledDate &&
-                    format(new Date(handover.scheduledDate), 'yyyy年MM月dd日', {
-                      locale: ja,
-                    })}
-                  {handover.scheduledTime && ` ${handover.scheduledTime}`}
-                </span>
-              </div>
-            );
-          })()}
+          {notification.type === 'handover' &&
+            (() => {
+              const handover = notification as import('@/types/notification').HandoverNotification;
+              return (
+                (handover.scheduledDate || handover.scheduledTime) && (
+                  <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+                    <span className="text-sm font-medium text-yellow-800">実施予定: </span>
+                    <span className="text-sm text-yellow-700">
+                      {handover.scheduledDate &&
+                        format(new Date(handover.scheduledDate), 'yyyy年MM月dd日', {
+                          locale: ja,
+                        })}
+                      {handover.scheduledTime && ` ${handover.scheduledTime}`}
+                    </span>
+                  </div>
+                )
+              );
+            })()}
 
           {/* Content */}
           <div className="space-y-2">
@@ -172,24 +178,29 @@ export default function NotificationDetailPage({
           </div>
 
           {/* Tags for contact_schedule type */}
-          {notification.type === 'contact_schedule' && (() => {
-            const schedule = notification as import('@/types/notification').ContactScheduleNotification;
-            return schedule.tags && schedule.tags.length > 0 && (
-              <div className="space-y-2">
-                <h3 className="text-lg font-semibold text-carebase-text-primary">タグ</h3>
-                <div className="flex flex-wrap gap-2">
-                  {schedule.tags.map((tag) => (
-                    <span
-                      key={tag}
-                      className="bg-gray-100 text-gray-700 px-2 py-1 rounded text-sm"
-                    >
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            );
-          })()}
+          {notification.type === 'contact_schedule' &&
+            (() => {
+              const schedule =
+                notification as import('@/types/notification').ContactScheduleNotification;
+              return (
+                schedule.tags &&
+                schedule.tags.length > 0 && (
+                  <div className="space-y-2">
+                    <h3 className="text-lg font-semibold text-carebase-text-primary">タグ</h3>
+                    <div className="flex flex-wrap gap-2">
+                      {schedule.tags.map((tag) => (
+                        <span
+                          key={tag}
+                          className="bg-gray-100 text-gray-700 px-2 py-1 rounded text-sm"
+                        >
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )
+              );
+            })()}
 
           {/* Timestamps */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 border-t">

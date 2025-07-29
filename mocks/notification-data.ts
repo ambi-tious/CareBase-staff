@@ -1,4 +1,8 @@
-import type { Notification, HandoverNotification, ContactScheduleNotification } from '@/types/notification';
+import type {
+  Notification,
+  HandoverNotification,
+  ContactScheduleNotification,
+} from '@/types/notification';
 import { handoverData } from './handover-data';
 import { contactScheduleData } from './contact-schedule-data';
 
@@ -26,27 +30,30 @@ const handoverNotifications: HandoverNotification[] = handoverData.map((handover
 }));
 
 // Convert contact schedule data to notifications
-const contactScheduleNotifications: ContactScheduleNotification[] = contactScheduleData.map((item) => ({
-  id: `contact-schedule-${item.id}`,
-  type: 'contact_schedule' as const,
-  title: item.title,
-  content: item.content,
-  priority: item.priority,
-  status: item.status === 'pending' ? 'unread' : item.status === 'confirmed' ? 'read' : 'completed',
-  createdAt: item.createdAt,
-  updatedAt: item.updatedAt,
-  createdBy: item.createdBy || 'system',
-  createdByName: '事務 花子', // Default creator name
-  relatedResidentId: item.relatedResidentId,
-  relatedResidentName: item.relatedResidentName,
-  navigationUrl: `/contact-schedule/${item.id}`,
-  scheduleType: item.type,
-  assignedTo: item.assignedTo,
-  dueDate: item.dueDate,
-  startTime: item.startTime,
-  endTime: item.endTime,
-  tags: item.tags,
-}));
+const contactScheduleNotifications: ContactScheduleNotification[] = contactScheduleData.map(
+  (item) => ({
+    id: `contact-schedule-${item.id}`,
+    type: 'contact_schedule' as const,
+    title: item.title,
+    content: item.content,
+    priority: item.priority,
+    status:
+      item.status === 'pending' ? 'unread' : item.status === 'confirmed' ? 'read' : 'completed',
+    createdAt: item.createdAt,
+    updatedAt: item.updatedAt,
+    createdBy: item.createdBy || 'system',
+    createdByName: '事務 花子', // Default creator name
+    relatedResidentId: item.relatedResidentId,
+    relatedResidentName: item.relatedResidentName,
+    navigationUrl: `/contact-schedule/${item.id}`,
+    scheduleType: item.type,
+    assignedTo: item.assignedTo,
+    dueDate: item.dueDate,
+    startTime: item.startTime,
+    endTime: item.endTime,
+    tags: item.tags,
+  })
+);
 
 // Combine all notifications
 export const notificationData: Notification[] = [

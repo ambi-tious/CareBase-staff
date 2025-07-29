@@ -17,9 +17,9 @@ interface NotificationTableRowProps {
   onStatusUpdate?: (notificationId: string, status: 'read' | 'completed') => void;
 }
 
-export const NotificationTableRow: React.FC<NotificationTableRowProps> = ({ 
-  notification, 
-  onStatusUpdate 
+export const NotificationTableRow: React.FC<NotificationTableRowProps> = ({
+  notification,
+  onStatusUpdate,
 }) => {
   const formatDate = (dateString: string) => {
     return format(new Date(dateString), 'MM/dd HH:mm', { locale: ja });

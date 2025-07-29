@@ -9,7 +9,10 @@ interface NotificationTypeBadgeProps {
   className?: string;
 }
 
-export const NotificationTypeBadge: React.FC<NotificationTypeBadgeProps> = ({ type, className = '' }) => {
+export const NotificationTypeBadge: React.FC<NotificationTypeBadgeProps> = ({
+  type,
+  className = '',
+}) => {
   const typeConfig = notificationTypeOptions.find((option) => option.value === type);
 
   if (!typeConfig) {
@@ -19,10 +22,7 @@ export const NotificationTypeBadge: React.FC<NotificationTypeBadgeProps> = ({ ty
   const Icon = getLucideIcon(typeConfig.icon);
 
   return (
-    <Badge
-      className={`${typeConfig.color} ${className} flex items-center gap-1`}
-      variant="outline"
-    >
+    <Badge className={`${typeConfig.color} ${className} flex items-center gap-1`} variant="outline">
       <Icon className="h-3 w-3" />
       {typeConfig.label}
     </Badge>
