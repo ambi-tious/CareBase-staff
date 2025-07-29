@@ -40,6 +40,7 @@
 ### 表示モード
 
 #### 週間表示
+<img width="1881" height="800" alt="image" src="https://github.com/user-attachments/assets/6512ffa3-bc7e-49d5-83ab-17f55a192150" />
 
 - 選択した週の7日間を縦に並べて表示
 - 各日の予定・連絡事項を時系列で表示
@@ -47,6 +48,7 @@
 - 選択した日付をリング表示で強調
 
 #### 月間表示
+<img width="1882" height="888" alt="image" src="https://github.com/user-attachments/assets/7c04efa2-5c22-4b9e-b169-332161a8496e" />
 
 - 選択した月のカレンダーグリッド表示
 - 各日付セルに最大3件の予定を表示
