@@ -62,11 +62,7 @@ export const ResidentBasicInfoForm: React.FC<ResidentBasicInfoFormProps> = ({
 
           // Auto-set the group and team fields based on current user only if not already initialized
           // or if the values are different (e.g., user switched staff)
-          if (
-            !hasInitialized.current ||
-            data.floorGroup !== parsedData.groupName ||
-            data.unitTeam !== parsedData.teamName
-          ) {
+          if (!hasInitialized.current || data.floorGroup == '' || data.unitTeam == '') {
             onChange({
               ...data,
               floorGroup: parsedData.groupName,
