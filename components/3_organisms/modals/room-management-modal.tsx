@@ -296,9 +296,13 @@ export const RoomManagementModal: React.FC<RoomManagementModalProps> = ({
                         <CardTitle className="text-lg flex items-center gap-2">
                           <Building className="h-5 w-5 text-carebase-blue" />
                           {getGroupName(group.groupId)} - {getTeamName(group.teamId)}
-                          <span className="text-sm font-normal text-gray-500">
-                            ({group.rooms.length}部屋)
-                          </span>
+                          <div className="flex items-center gap-2 text-sm font-normal text-gray-500">
+                            <span>({group.rooms.length}部屋)</span>
+                            <span className="text-xs">
+                              入居: {group.rooms.reduce((sum, room) => sum + (room.currentOccupancy || 0), 0)}/
+                              {group.rooms.reduce((sum, room) => sum + room.capacity, 0)}名
+                            </span>
+                          </div>
                         </CardTitle>
                       </CardHeader>
                       <CardContent>

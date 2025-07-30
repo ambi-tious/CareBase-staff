@@ -5,7 +5,12 @@
  */
 
 import type { Room } from '@/types/room';
-import { getRoomsByGroupAndTeam, getAllActiveRooms, getRoomsByGroup } from '@/mocks/room-data';
+import { 
+  getRoomsByGroupAndTeam, 
+  getAllActiveRooms, 
+  getRoomsByGroup,
+  getRoomsWithOccupancy 
+} from '@/mocks/room-data';
 
 class RoomService {
   private baseUrl = process.env.NEXT_PUBLIC_API_URL || '';
