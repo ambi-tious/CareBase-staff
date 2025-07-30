@@ -38,9 +38,62 @@ const sexOptions = [
   { value: 'その他', label: 'その他' },
 ];
 
+// 年齢のオプション（0歳から120歳まで）
+const ageOptions = Array.from({ length: 121 }, (_, i) => ({
+  value: i.toString(),
+  label: `${i}歳`,
+}));
+
 // Get options from staff-utils.ts
 const floorGroupOptions = getAllGroupOptions();
 const unitTeamOptions = getAllTeamOptions();
+
+// 年齢と生年月日の相互変換ヘルパー関数
+const calculateAgeFromBirthdate = (dob: string): string => {
+  if (!dob) return '';
+
+  const birthDate = new Date(dob);
+  const today = new Date();
+  let age = today.getFullYear() - birthDate.getFullYear();
+  const monthDiff = today.getMonth() - birthDate.getMonth();
+
+  if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+    age--;
+  }
+
+  return age.toString();
+};
+
+const calculateBirthdateFromAge = (ageStr: string, currentDob?: string): string => {
+  if (!ageStr || isNaN(Number(ageStr))) return '';
+
+  const age = Number(ageStr);
+
+  // JST時間で現在の日付を取得
+  const today = new Date();
+  const jstToday = new Date(today.toLocaleString('en-US', { timeZone: 'Asia/Tokyo' }));
+
+  const birthYear = jstToday.getFullYear() - age;
+
+  let month: number;
+  let day: number;
+
+  // 現在の生年月日が存在する場合は、その月と日を使用
+  if (currentDob) {
+    const currentDate = new Date(currentDob);
+    month = currentDate.getMonth();
+    day = currentDate.getDate();
+  } else {
+    // フォールバック：現在の日付を使用
+    month = jstToday.getMonth();
+    day = jstToday.getDate();
+  }
+
+  // フォームで選択されている日付を基準とした生年月日を生成
+  const birthDate = new Date(birthYear, month, day);
+
+  return birthDate.toISOString().split('T')[0];
+};
 
 export const ResidentBasicInfoForm: React.FC<ResidentBasicInfoFormProps> = ({
   data,
@@ -136,9 +189,55 @@ export const ResidentBasicInfoForm: React.FC<ResidentBasicInfoFormProps> = ({
     }
   }, [data.profileImage, imagePreview]);
 
+  // 生年月日が存在するが年齢が空の場合、年齢を自動計算
+  useEffect(() => {
+    if (data.dob && !data.age) {
+      const calculatedAge = calculateAgeFromBirthdate(data.dob);
+      if (calculatedAge) {
+        onChange({ ...data, age: calculatedAge });
+      }
+    }
+  }, [data.dob, data.age, onChange]);
+
   const updateField = useCallback(
     (field: keyof ResidentBasicInfo, value: string) => {
       onChange({ ...data, [field]: value });
+    },
+    [data, onChange]
+  );
+
+  // 年齢変更時の処理
+  const handleAgeChange = useCallback(
+    (ageValue: string) => {
+      const newData = { ...data, age: ageValue };
+
+      // 年齢から生年月日を自動計算（現在の生年月日を基準に）
+      if (ageValue && !isNaN(Number(ageValue))) {
+        const calculatedDob = calculateBirthdateFromAge(ageValue, data.dob);
+        if (calculatedDob) {
+          newData.dob = calculatedDob;
+        }
+      }
+
+      onChange(newData);
+    },
+    [data, onChange]
+  );
+
+  // 生年月日変更時の処理
+  const handleDobChange = useCallback(
+    (dobValue: string) => {
+      const newData = { ...data, dob: dobValue };
+
+      // 生年月日から年齢を自動計算
+      if (dobValue) {
+        const calculatedAge = calculateAgeFromBirthdate(dobValue);
+        if (calculatedAge) {
+          newData.age = calculatedAge;
+        }
+      }
+
+      onChange(newData);
     },
     [data, onChange]
   );
@@ -225,16 +324,29 @@ export const ResidentBasicInfoForm: React.FC<ResidentBasicInfoFormProps> = ({
           </div>
         </div>
 
-        <FormField
-          label="生年月日"
-          id="dob"
-          type="date"
-          value={data.dob}
-          onChange={(value) => updateField('dob', value)}
-          required
-          error={errors.dob}
-          disabled={disabled}
-        />
+        <div className="flex gap-3">
+          <FormField
+            label="生年月日"
+            id="dob"
+            type="date"
+            value={data.dob}
+            onChange={handleDobChange}
+            required
+            error={errors.dob}
+            disabled={disabled}
+            className="flex-1"
+          />
+          <FormSelect
+            label="年齢"
+            id="age"
+            value={data.age || ''}
+            onChange={handleAgeChange}
+            options={ageOptions}
+            error={errors.age}
+            disabled={disabled}
+            className="w-32"
+          />
+        </div>
 
         <FormSelect
           label="性別"
