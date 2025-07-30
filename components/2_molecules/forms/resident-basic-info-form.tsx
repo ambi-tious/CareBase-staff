@@ -636,41 +636,6 @@ export const ResidentBasicInfoForm: React.FC<ResidentBasicInfoFormProps> = ({
             </Button>
           </div>
         </div>
-                        {option.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              ) : data.floorGroup && data.unitTeam ? (
-                <div className="p-3 border border-yellow-300 rounded-md bg-yellow-50">
-                  <p className="text-sm text-yellow-700">
-                    選択されたグループ・チームに利用可能な部屋がありません。
-                  </p>
-                </div>
-              ) : (
-                <div className="p-3 border border-gray-300 rounded-md bg-gray-50">
-                  <p className="text-sm text-gray-500">
-                    グループとチームを選択すると、利用可能な部屋が表示されます。
-                  </p>
-                </div>
-              )}
-              {errors.roomInfo && (
-                <p className="text-sm text-red-600" role="alert">
-                  {errors.roomInfo}
-                </p>
-              )}
-            </div>
-            <Button
-              variant="outline"
-              onClick={handleRoomManagement}
-              className="flex items-center gap-2 border-purple-300 text-purple-600 hover:bg-purple-50"
-              disabled={isSubmitting}
-            >
-              <Settings className="h-4 w-4" />
-              部屋管理
-            </Button>
-          </div>
-        </div>
 
         <FormField
           label="入所日"
