@@ -4,6 +4,7 @@ import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { InfoRow } from '@/components/1_atoms/common/info-row';
+import Link from 'next/link';
 
 interface ResidentProfileHeaderProps {
   resident: Resident;
@@ -34,8 +35,11 @@ export const ResidentProfileHeader: React.FC<ResidentProfileHeaderProps> = ({ re
             <Button
               variant="outline"
               className="w-full border-carebase-blue text-carebase-blue hover:bg-carebase-blue-light font-semibold py-3 text-base"
+              asChild
             >
-              ケアプラン
+              <Link href={`/residents/${resident.id}/care-plans`}>
+                ケアプラン
+              </Link>
             </Button>
           </div>
 
