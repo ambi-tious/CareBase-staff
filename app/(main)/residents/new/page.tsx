@@ -174,7 +174,6 @@ export default function NewResidentPage() {
             errors={errors}
             disabled={isSubmitting}
             handleRoomManagement={handleRoomManagement}
-            isSubmitting={isSubmitting}
           />
 
           {/* Action Buttons */}

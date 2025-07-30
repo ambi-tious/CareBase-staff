@@ -5,11 +5,11 @@
  */
 
 import type { Room } from '@/types/room';
-import { 
-  getRoomsByGroupAndTeam, 
-  getAllActiveRooms, 
+import {
+  getRoomsByGroupAndTeam,
+  getAllActiveRooms,
   getRoomsByGroup,
-  getRoomsWithOccupancy 
+  getRoomsWithOccupancy,
 } from '@/mocks/room-data';
 
 class RoomService {

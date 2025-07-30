@@ -299,8 +299,12 @@ export const RoomManagementModal: React.FC<RoomManagementModalProps> = ({
                           <div className="flex items-center gap-2 text-sm font-normal text-gray-500">
                             <span>({group.rooms.length}部屋)</span>
                             <span className="text-xs">
-                              入居: {group.rooms.reduce((sum, room) => sum + (room.currentOccupancy || 0), 0)}/
-                              {group.rooms.reduce((sum, room) => sum + room.capacity, 0)}名
+                              入居:{' '}
+                              {group.rooms.reduce(
+                                (sum, room) => sum + (room.currentOccupancy || 0),
+                                0
+                              )}
+                              /{group.rooms.reduce((sum, room) => sum + room.capacity, 0)}名
                             </span>
                           </div>
                         </CardTitle>
@@ -339,23 +343,29 @@ export const RoomManagementModal: React.FC<RoomManagementModalProps> = ({
                                 <div className="text-sm text-gray-600">
                                   <div className="flex items-center justify-between">
                                     <span>定員: {room.capacity}名</span>
-                                    <span className={`text-xs px-2 py-1 rounded-full ${
-                                      (room.currentOccupancy || 0) >= room.capacity
-                                        ? 'bg-red-100 text-red-700'
-                                        : (room.currentOccupancy || 0) > 0
-                                          ? 'bg-yellow-100 text-yellow-700'
-                                          : 'bg-green-100 text-green-700'
-                                    }`}>
+                                    <span
+                                      className={`text-xs px-2 py-1 rounded-full ${
+                                        (room.currentOccupancy || 0) >= room.capacity
+                                          ? 'bg-red-100 text-red-700'
+                                          : (room.currentOccupancy || 0) > 0
+                                            ? 'bg-yellow-100 text-yellow-700'
+                                            : 'bg-green-100 text-green-700'
+                                      }`}
+                                    >
                                       {room.currentOccupancy || 0}/{room.capacity}
                                     </span>
                                   </div>
                                   <div className="mt-1">
-                                    <span className={`text-xs font-medium ${
-                                      (room.currentOccupancy || 0) >= room.capacity
-                                        ? 'text-red-600'
-                                        : 'text-green-600'
-                                    }`}>
-                                      {(room.currentOccupancy || 0) >= room.capacity ? '満室' : '空きあり'}
+                                    <span
+                                      className={`text-xs font-medium ${
+                                        (room.currentOccupancy || 0) >= room.capacity
+                                          ? 'text-red-600'
+                                          : 'text-green-600'
+                                      }`}
+                                    >
+                                      {(room.currentOccupancy || 0) >= room.capacity
+                                        ? '満室'
+                                        : '空きあり'}
                                     </span>
                                   </div>
                                   <p className="text-xs mt-1">

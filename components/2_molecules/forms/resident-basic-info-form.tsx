@@ -34,7 +34,6 @@ interface ResidentBasicInfoFormProps {
   errors: Partial<Record<keyof ResidentBasicInfo, string>>;
   disabled?: boolean;
   handleRoomManagement: () => void;
-  isSubmitting: boolean;
 }
 
 // Interface for selected staff data from localStorage
@@ -132,7 +131,6 @@ export const ResidentBasicInfoForm: React.FC<ResidentBasicInfoFormProps> = ({
   errors,
   disabled = false,
   handleRoomManagement,
-  isSubmitting,
 }) => {
   const hasInitialized = useRef(false);
   const [imagePreview, setImagePreview] = useState<string>('');
@@ -362,7 +360,7 @@ export const ResidentBasicInfoForm: React.FC<ResidentBasicInfoFormProps> = ({
     const isFull = occupancy >= room.capacity;
     const occupancyText = `${occupancy}/${room.capacity}名`;
     const statusText = isFull ? '満室' : '空きあり';
-    
+
     return {
       value: room.name,
       label: `${room.name} (${occupancyText} - ${statusText})`,
@@ -371,7 +369,7 @@ export const ResidentBasicInfoForm: React.FC<ResidentBasicInfoFormProps> = ({
   });
 
   // 空きのある部屋のみを表示するオプション
-  const availableRoomOptions = roomOptions.filter(option => !option.disabled);
+  const availableRoomOptions = roomOptions.filter((option) => !option.disabled);
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -567,10 +565,10 @@ export const ResidentBasicInfoForm: React.FC<ResidentBasicInfoFormProps> = ({
                               満室の部屋
                             </div>
                             {roomOptions
-                              .filter(option => option.disabled)
+                              .filter((option) => option.disabled)
                               .map((option) => (
-                                <SelectItem 
-                                  key={option.value} 
+                                <SelectItem
+                                  key={option.value}
                                   value={option.value}
                                   disabled
                                   className="text-gray-400"
@@ -601,7 +599,7 @@ export const ResidentBasicInfoForm: React.FC<ResidentBasicInfoFormProps> = ({
                   </p>
                 </div>
               )}
-              
+
               {/* 部屋の空き状況サマリー */}
               {availableRooms.length > 0 && (
                 <div className="text-xs text-gray-600 mt-2">
@@ -629,7 +627,6 @@ export const ResidentBasicInfoForm: React.FC<ResidentBasicInfoFormProps> = ({
               variant="outline"
               onClick={handleRoomManagement}
               className="flex items-center gap-2 border-purple-300 text-purple-600 hover:bg-purple-50"
-              disabled={isSubmitting}
             >
               <Settings className="h-4 w-4" />
               部屋管理

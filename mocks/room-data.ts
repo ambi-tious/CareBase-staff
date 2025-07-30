@@ -176,17 +176,15 @@ export const roomData: Room[] = [
 // 入居者データから部屋の入居状況を計算する関数
 export const calculateRoomOccupancy = (roomName: string): number => {
   return careBoardData.filter(
-    (resident) => 
-      resident.roomInfo === roomName && 
-      resident.admissionStatus === '入居中'
+    (resident) => resident.roomInfo === roomName && resident.admissionStatus === '入居中'
   ).length;
 };
 
 // 部屋データに入居状況を追加して返す関数
 export const getRoomsWithOccupancy = (rooms: Room[]): Room[] => {
-  return rooms.map(room => ({
+  return rooms.map((room) => ({
     ...room,
-    currentOccupancy: calculateRoomOccupancy(room.name)
+    currentOccupancy: calculateRoomOccupancy(room.name),
   }));
 };
 
@@ -203,7 +201,7 @@ export const getRoomById = (roomId: string): Room | undefined => {
   if (room) {
     return {
       ...room,
-      currentOccupancy: calculateRoomOccupancy(room.name)
+      currentOccupancy: calculateRoomOccupancy(room.name),
     };
   }
   return undefined;
