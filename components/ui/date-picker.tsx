@@ -19,6 +19,7 @@ interface DatePickerProps {
   id?: string;
   mode?: 'date' | 'month';
   captionLayout?: 'label' | 'dropdown' | 'dropdown-months' | 'dropdown-years';
+  referenceDate?: string; // 基準日（初期表示月の設定に使用）
 }
 
 export function DatePicker({
@@ -30,11 +31,16 @@ export function DatePicker({
   id,
   mode = 'date',
   captionLayout,
+  referenceDate,
 }: DatePickerProps) {
   const [isOpen, setIsOpen] = React.useState(false);
   const [currentMonth, setCurrentMonth] = React.useState(() => {
     if (value) {
       return new Date(value);
+    }
+    // 基準日が提供されている場合はそれを使用、そうでなければ今日の日付
+    if (referenceDate) {
+      return new Date(referenceDate);
     }
     return new Date();
   });

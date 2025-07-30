@@ -293,6 +293,7 @@ export const ResidentBasicInfoForm: React.FC<ResidentBasicInfoFormProps> = ({
           required
           error={errors.admissionDate}
           disabled={disabled}
+          referenceDate={data.dob}
         />
 
         <FormField

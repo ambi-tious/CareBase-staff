@@ -16,6 +16,7 @@ interface FormFieldProps {
   className?: string;
   disabled?: boolean;
   captionLayout?: 'label' | 'dropdown' | 'dropdown-months' | 'dropdown-years';
+  referenceDate?: string; // 基準日（初期表示月の設定に使用）
 }
 
 export const FormField: React.FC<FormFieldProps> = ({
@@ -30,6 +31,7 @@ export const FormField: React.FC<FormFieldProps> = ({
   className = '',
   disabled = false,
   captionLayout,
+  referenceDate,
 }) => {
   return (
     <div className={cn('space-y-2', className)}>
@@ -50,6 +52,7 @@ export const FormField: React.FC<FormFieldProps> = ({
           )}
           mode="date"
           captionLayout={captionLayout}
+          referenceDate={referenceDate}
         />
       ) : type === 'month' ? (
         <DatePicker
@@ -64,6 +67,7 @@ export const FormField: React.FC<FormFieldProps> = ({
           )}
           mode="month"
           captionLayout={captionLayout}
+          referenceDate={referenceDate}
         />
       ) : (
         <Input
