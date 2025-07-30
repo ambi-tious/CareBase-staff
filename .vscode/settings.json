@@ -33,5 +33,6 @@
   },
   "terminal.integrated.env.windows": {
     "ESLINT_USE_FLAT_CONFIG": "true"
-  }
+  },
+  "cSpell.words": ["carebase"]
 }

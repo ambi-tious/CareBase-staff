@@ -11,7 +11,7 @@ const mockResident: Resident = {
   age: 85,
   floorGroup: 'サンプルグループ101',
   unitTeam: 'テストチーム3',
-  roomInfo: 'もみじ404号室',
+  roomInfo: '404号室',
   registrationDate: '2025/04/15',
   lastUpdateDate: '2025/05/20',
   admissionDate: '2025/04/15',
@@ -40,7 +40,7 @@ describe('ResidentProfileHeader', () => {
 
     expect(screen.getByText('サンプルグループ101')).toBeInTheDocument();
     expect(screen.getByText('テストチーム3')).toBeInTheDocument();
-    expect(screen.getByText('もみじ404号室')).toBeInTheDocument();
+    expect(screen.getByText('404号室')).toBeInTheDocument();
   });
 
   it('renders care information correctly', () => {

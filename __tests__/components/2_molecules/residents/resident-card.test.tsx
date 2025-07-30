@@ -51,7 +51,7 @@ describe('ResidentCard', () => {
     age: 85,
     floorGroup: 'サンプルグループ101',
     unitTeam: 'テストチーム3',
-    roomInfo: 'もみじ404号室',
+    roomInfo: '404号室',
     registrationDate: '2025/04/15',
     lastUpdateDate: '2025/05/20',
     admissionDate: '2025/04/15',
@@ -72,7 +72,7 @@ describe('ResidentCard', () => {
     expect(screen.getByText('テストリヨウシャ')).toBeInTheDocument();
     expect(screen.getByText('85歳 (男)')).toBeInTheDocument();
     expect(screen.getByText('要介護度: 要介護1')).toBeInTheDocument();
-    expect(screen.getByText('もみじ404号室')).toBeInTheDocument();
+    expect(screen.getByText('404号室')).toBeInTheDocument();
     expect(screen.getByText('チーム: テストチーム3')).toBeInTheDocument();
   });
 
@@ -131,7 +131,7 @@ describe('ResidentCard', () => {
     const residentWithoutRoom = { ...mockResident, roomInfo: undefined };
     render(<ResidentCard resident={residentWithoutRoom} />);
 
-    expect(screen.queryByText('もみじ404号室')).not.toBeInTheDocument();
+    expect(screen.queryByText('404号室')).not.toBeInTheDocument();
   });
 
   it('does not render unit team when not provided', () => {
@@ -195,7 +195,7 @@ describe('ResidentCard 分岐網羅', () => {
   it('roomInfoがない場合は表示されない', () => {
     const resident = { ...baseResident, roomInfo: undefined };
     render(<ResidentCard resident={resident} />);
-    expect(screen.queryByText('もみじ404号室')).not.toBeInTheDocument();
+    expect(screen.queryByText('404号室')).not.toBeInTheDocument();
   });
 
   it('unitTeamがない場合は表示されない', () => {
