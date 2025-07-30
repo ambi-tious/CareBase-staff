@@ -9,6 +9,7 @@ export interface ImageCompressionOptions {
   maxHeight?: number;
   quality?: number;
   maxSizeKB?: number;
+  forceSquare?: boolean;
 }
 
 /**
@@ -21,7 +22,7 @@ export const compressImage = async (
   file: File,
   options: ImageCompressionOptions = {}
 ): Promise<string> => {
-  const { maxWidth = 800, maxHeight = 600, quality = 0.8, maxSizeKB = 500 } = options;
+  const { maxWidth = 400, maxHeight = 400, quality = 0.8, maxSizeKB = 500, forceSquare = false } = options;
 
   return new Promise((resolve, reject) => {
     const canvas = document.createElement('canvas');
@@ -33,19 +34,25 @@ export const compressImage = async (
         // 元の画像サイズ
         const { width: originalWidth, height: originalHeight } = img;
 
-        // アスペクト比を保持しながらリサイズ
-        let { width, height } = calculateResizeSize(
-          originalWidth,
-          originalHeight,
-          maxWidth,
-          maxHeight
-        );
+        // 正方形リサイズまたは通常のリサイズ
+        let { width, height } = forceSquare
+          ? calculateSquareResizeSize(originalWidth, originalHeight, Math.min(maxWidth, maxHeight))
+          : calculateResizeSize(originalWidth, originalHeight, maxWidth, maxHeight);
 
         canvas.width = width;
         canvas.height = height;
 
-        // 画像を描画
-        ctx?.drawImage(img, 0, 0, width, height);
+        if (forceSquare) {
+          // 正方形の場合は中央クロップして描画
+          const size = Math.min(originalWidth, originalHeight);
+          const offsetX = (originalWidth - size) / 2;
+          const offsetY = (originalHeight - size) / 2;
+          
+          ctx?.drawImage(img, offsetX, offsetY, size, size, 0, 0, width, height);
+        } else {
+          // 通常のリサイズ
+          ctx?.drawImage(img, 0, 0, width, height);
+        }
 
         // 品質を調整しながら圧縮
         let currentQuality = quality;
@@ -78,6 +85,19 @@ export const compressImage = async (
 
     img.src = URL.createObjectURL(file);
   });
+};
+
+/**
+ * 正方形リサイズサイズを計算する関数
+ */
+const calculateSquareResizeSize = (
+  originalWidth: number,
+  originalHeight: number,
+  maxSize: number
+): { width: number; height: number } => {
+  // 正方形なので幅と高さは同じ
+  const size = Math.min(maxSize, Math.max(originalWidth, originalHeight));
+  return { width: size, height: size };
 };
 
 /**

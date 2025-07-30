@@ -232,10 +232,11 @@ export const ResidentBasicInfoForm: React.FC<ResidentBasicInfoFormProps> = ({
       try {
         // 画像を自動圧縮
         const compressedImage = await compressImage(file, {
-          maxWidth: 800,
-          maxHeight: 600,
+          maxWidth: 400,
+          maxHeight: 400,
           quality: 0.8,
           maxSizeKB: 500,
+          forceSquare: true,
         });
 
         setImagePreview(compressedImage);
@@ -254,6 +255,11 @@ export const ResidentBasicInfoForm: React.FC<ResidentBasicInfoFormProps> = ({
     },
     [data, onChange]
   );
+
+  // 画像変更処理
+  const handleImageChange = useCallback(() => {
+    fileInputRef.current?.click();
+  }, []);
 
   // 画像削除処理
   const handleImageRemove = useCallback(() => {
@@ -384,25 +390,37 @@ export const ResidentBasicInfoForm: React.FC<ResidentBasicInfoFormProps> = ({
 
             {imagePreview ? (
               <div className="relative">
-                <div className="w-32 h-32 border-2 border-gray-300 rounded-lg overflow-hidden">
+                <div className="w-32 h-32 border-2 border-gray-300 rounded-lg overflow-hidden bg-gray-50">
                   <Image
                     src={imagePreview}
                     alt="利用者画像"
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover rounded-lg"
                     fill
                   />
                 </div>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={handleImageRemove}
-                  disabled={disabled}
-                  className="mt-2 text-red-600 hover:text-red-700"
-                >
-                  <X className="h-4 w-4 mr-1" />
-                  画像を削除
-                </Button>
+                <div className="flex gap-2 mt-2">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={handleImageChange}
+                    disabled={disabled || imageCompressing}
+                    className="flex-1"
+                  >
+                    <Upload className="h-4 w-4 mr-1" />
+                    画像を変更
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={handleImageRemove}
+                    disabled={disabled}
+                    className="text-red-600 hover:text-red-700"
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                </div>
               </div>
             ) : (
               <div className="space-y-2">
@@ -419,7 +437,11 @@ export const ResidentBasicInfoForm: React.FC<ResidentBasicInfoFormProps> = ({
                   ) : (
                     <>
                       <Upload className="h-8 w-8 text-gray-400 mb-2" />
-                      <span className="text-sm text-gray-500">画像を選択</span>
+                      <span className="text-sm text-gray-500 text-center">
+                        画像を選択
+                        <br />
+                        <span className="text-xs">(正方形に調整)</span>
+                      </span>
                     </>
                   )}
                 </div>
@@ -433,6 +455,9 @@ export const ResidentBasicInfoForm: React.FC<ResidentBasicInfoFormProps> = ({
                 />
               </div>
             )}
+            <p className="text-xs text-gray-500 mt-1">
+              推奨: 正方形の画像、最大サイズ制限なし（自動圧縮）
+            </p>
             {errors.profileImage && (
               <p className="text-sm text-red-600" role="alert">
                 {errors.profileImage}
