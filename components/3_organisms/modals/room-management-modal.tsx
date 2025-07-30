@@ -273,7 +273,9 @@ export const RoomManagementModal: React.FC<RoomManagementModalProps> = ({
                 <Card className="border-dashed border-2 border-gray-300">
                   <CardContent className="text-center py-12">
                     <Home className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-                    <h3 className="text-lg font-medium text-gray-900 mb-2">部屋が登録されていません</h3>
+                    <h3 className="text-lg font-medium text-gray-900 mb-2">
+                      部屋が登録されていません
+                    </h3>
                     <p className="text-gray-500 mb-6">
                       最初の部屋を作成して、利用者の部屋管理を始めましょう。
                     </p>
@@ -394,8 +396,12 @@ export const RoomManagementModal: React.FC<RoomManagementModalProps> = ({
                       updateField('teamId', ''); // Reset team when group changes
                     }}
                     options={groupOptions.map((option) => ({
-                      value: option.value === '介護フロア A' ? 'group-1' : 
-                             option.value === '介護フロア B' ? 'group-2' : 'group-3',
+                      value:
+                        option.value === '介護フロア A'
+                          ? 'group-1'
+                          : option.value === '介護フロア B'
+                            ? 'group-2'
+                            : 'group-3',
                       label: option.label,
                     }))}
                     required
@@ -408,35 +414,41 @@ export const RoomManagementModal: React.FC<RoomManagementModalProps> = ({
                     id="teamId"
                     value={formData.teamId}
                     onChange={(value) => updateField('teamId', value)}
-                    options={teamOptions.map((option) => {
-                      // Map team names to IDs based on selected group
-                      let teamId = '';
-                      if (formData.groupId === 'group-1') {
-                        const teamMapping: Record<string, string> = {
-                          '朝番チーム': 'team-a1',
-                          '日勤チーム': 'team-a2',
-                          '夜勤チーム': 'team-a3',
+                    options={teamOptions
+                      .map((option) => {
+                        // Map team names to IDs based on selected group
+                        let teamId = '';
+                        if (formData.groupId === 'group-1') {
+                          const teamMapping: Record<string, string> = {
+                            朝番チーム: 'team-a1',
+                            日勤チーム: 'team-a2',
+                            夜勤チーム: 'team-a3',
+                          };
+                          teamId = teamMapping[option.value] || '';
+                        } else if (formData.groupId === 'group-2') {
+                          const teamMapping: Record<string, string> = {
+                            朝番チーム: 'team-b1',
+                            日勤チーム: 'team-b2',
+                          };
+                          teamId = teamMapping[option.value] || '';
+                        } else if (formData.groupId === 'group-3') {
+                          teamId = option.value === '管理チーム' ? 'team-m1' : '';
+                        }
+
+                        return {
+                          value: teamId,
+                          label: option.label,
                         };
-                        teamId = teamMapping[option.value] || '';
-                      } else if (formData.groupId === 'group-2') {
-                        const teamMapping: Record<string, string> = {
-                          '朝番チーム': 'team-b1',
-                          '日勤チーム': 'team-b2',
-                        };
-                        teamId = teamMapping[option.value] || '';
-                      } else if (formData.groupId === 'group-3') {
-                        teamId = option.value === '管理チーム' ? 'team-m1' : '';
-                      }
-                      
-                      return {
-                        value: teamId,
-                        label: option.label,
-                      };
-                    }).filter((option) => option.value !== '')}
+                      })
+                      .filter((option) => option.value !== '')}
                     required
                     error={fieldErrors.teamId}
                     disabled={isSubmitting || !formData.groupId}
-                    placeholder={!formData.groupId ? 'まずグループを選択してください' : 'チームを選択してください'}
+                    placeholder={
+                      !formData.groupId
+                        ? 'まずグループを選択してください'
+                        : 'チームを選択してください'
+                    }
                   />
                 </div>
               </div>
@@ -458,11 +470,7 @@ export const RoomManagementModal: React.FC<RoomManagementModalProps> = ({
                   className="bg-carebase-blue hover:bg-carebase-blue-dark"
                 >
                   <Home className="h-4 w-4 mr-2" />
-                  {isSubmitting
-                    ? '保存中...'
-                    : editingRoom
-                      ? '部屋を更新'
-                      : '部屋を作成'}
+                  {isSubmitting ? '保存中...' : editingRoom ? '部屋を更新' : '部屋を作成'}
                 </Button>
               </div>
             </TabsContent>

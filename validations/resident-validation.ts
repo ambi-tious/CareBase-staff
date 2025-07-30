@@ -23,7 +23,6 @@ export const residentBasicInfoSchema = z
     careLevel: z.string(),
     floorGroup: z.string().min(1, '所属フロア・グループは必須です'),
     unitTeam: z.string().min(1, '所属ユニット・チームは必須です'),
-    roomInfo: z.string(),
     roomInfo: z.string().min(1, '部屋情報は必須です'),
     address: z.string(),
     admissionDate: z.string().min(1, '入所日は必須です'),

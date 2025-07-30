@@ -69,7 +69,7 @@ export default function NewResidentPage() {
       // In production, this would call the API
       // For now, simulate room creation
       await new Promise((resolve) => setTimeout(resolve, 1000));
-      
+
       const newRoom: Room = {
         id: `room-${Date.now()}`,
         name: data.name,
@@ -80,7 +80,7 @@ export default function NewResidentPage() {
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       };
-      
+
       setRooms((prev) => [...prev, newRoom]);
       return true;
     } catch (error) {
@@ -93,7 +93,7 @@ export default function NewResidentPage() {
     try {
       // In production, this would call the API
       await new Promise((resolve) => setTimeout(resolve, 1000));
-      
+
       setRooms((prev) =>
         prev.map((room) =>
           room.id === roomId
@@ -119,7 +119,7 @@ export default function NewResidentPage() {
     try {
       // In production, this would call the API
       await new Promise((resolve) => setTimeout(resolve, 800));
-      
+
       setRooms((prev) => prev.filter((room) => room.id !== roomId));
       return true;
     } catch (error) {
@@ -187,15 +187,15 @@ export default function NewResidentPage() {
             >
               <Save className="h-4 w-4 mr-2" />
               {isSubmitting ? '登録中...' : '登録'}
-            <Button
-              variant="outline"
-              onClick={handleRoomManagement}
-              className="flex items-center gap-2 border-purple-300 text-purple-600 hover:bg-purple-50"
-              disabled={isSubmitting}
-            >
-              <Settings className="h-4 w-4" />
-              部屋管理
-            </Button>
+              <Button
+                variant="outline"
+                onClick={handleRoomManagement}
+                className="flex items-center gap-2 border-purple-300 text-purple-600 hover:bg-purple-50"
+                disabled={isSubmitting}
+              >
+                <Settings className="h-4 w-4" />
+                部屋管理
+              </Button>
             </Button>
           </div>
         </CardContent>

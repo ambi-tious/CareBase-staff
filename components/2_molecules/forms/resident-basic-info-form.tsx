@@ -5,11 +5,23 @@ import { FormSelect } from '@/components/1_atoms/forms/form-select';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { getAllGroupOptions, getAllTeamOptions } from '@/utils/staff-utils';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { roomService } from '@/services/roomService';
 import type { Room } from '@/types/room';
-import { compressImage, formatFileSize, getBase64Size, isImageFile, isSupportedImageFormat } from '@/utils/image-utils';
+import {
+  compressImage,
+  formatFileSize,
+  getBase64Size,
+  isImageFile,
+  isSupportedImageFormat,
+} from '@/utils/image-utils';
+import { getAllGroupOptions, getAllTeamOptions } from '@/utils/staff-utils';
 import type { ResidentBasicInfo } from '@/validations/resident-validation';
 import { Upload, X } from 'lucide-react';
 import Image from 'next/image';
@@ -196,7 +208,7 @@ export const ResidentBasicInfoForm: React.FC<ResidentBasicInfoFormProps> = ({
 
   // 画像アップロード処理
   const handleImageUpload = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) => {
+    async (event: React.ChangeEvent<HTMLInputElement>) => {
       const file = event.target.files?.[0];
       if (!file) return;
 
@@ -208,7 +220,9 @@ export const ResidentBasicInfoForm: React.FC<ResidentBasicInfoFormProps> = ({
 
       // サポートされている画像形式かチェック
       if (!isSupportedImageFormat(file)) {
-        alert('サポートされていない画像形式です。JPEG、PNG、GIF、WebP、BMPファイルを選択してください');
+        alert(
+          'サポートされていない画像形式です。JPEG、PNG、GIF、WebP、BMPファイルを選択してください'
+        );
         return;
       }
 
@@ -313,28 +327,28 @@ export const ResidentBasicInfoForm: React.FC<ResidentBasicInfoFormProps> = ({
     const groupMapping: Record<string, string> = {
       '介護フロア A': 'group-1',
       '介護フロア B': 'group-2',
-      '管理部門': 'group-3',
+      管理部門: 'group-3',
     };
     return groupMapping[groupName] || null;
   };
 
   const getTeamIdByName = (teamName: string): string | null => {
     const teamMapping: Record<string, string> = {
-      '朝番チーム': 'team-a1',
-      '日勤チーム': 'team-a2',
-      '夜勤チーム': 'team-a3',
-      '管理チーム': 'team-m1',
+      朝番チーム: 'team-a1',
+      日勤チーム: 'team-a2',
+      夜勤チーム: 'team-a3',
+      管理チーム: 'team-m1',
     };
-    
+
     // For group-2, adjust team IDs
     if (data.floorGroup === '介護フロア B') {
       const group2Mapping: Record<string, string> = {
-        '朝番チーム': 'team-b1',
-        '日勤チーム': 'team-b2',
+        朝番チーム: 'team-b1',
+        日勤チーム: 'team-b2',
       };
       return group2Mapping[teamName] || null;
     }
-    
+
     return teamMapping[teamName] || null;
   };
 
@@ -498,7 +512,6 @@ export const ResidentBasicInfoForm: React.FC<ResidentBasicInfoFormProps> = ({
           error={errors.unitTeam}
         />
 
-        
         <div className="space-y-2">
           <Label className="text-sm font-medium text-gray-700">
             部屋情報 <span className="text-red-500">*</span>
@@ -514,7 +527,11 @@ export const ResidentBasicInfoForm: React.FC<ResidentBasicInfoFormProps> = ({
               onValueChange={(value) => updateField('roomInfo', value)}
               disabled={disabled}
             >
-              <SelectTrigger className={errors.roomInfo ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : ''}>
+              <SelectTrigger
+                className={
+                  errors.roomInfo ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : ''
+                }
+              >
                 <SelectValue placeholder="部屋を選択してください" />
               </SelectTrigger>
               <SelectContent>

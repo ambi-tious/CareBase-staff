@@ -21,12 +21,7 @@ export const compressImage = async (
   file: File,
   options: ImageCompressionOptions = {}
 ): Promise<string> => {
-  const {
-    maxWidth = 800,
-    maxHeight = 600,
-    quality = 0.8,
-    maxSizeKB = 500,
-  } = options;
+  const { maxWidth = 800, maxHeight = 600, quality = 0.8, maxSizeKB = 500 } = options;
 
   return new Promise((resolve, reject) => {
     const canvas = document.createElement('canvas');
@@ -58,7 +53,7 @@ export const compressImage = async (
 
         const compress = () => {
           compressedDataUrl = canvas.toDataURL('image/jpeg', currentQuality);
-          
+
           // Base64文字列のサイズを計算（KB）
           const sizeKB = (compressedDataUrl.length * 3) / 4 / 1024;
 
@@ -131,7 +126,7 @@ export const formatFileSize = (bytes: number): string => {
 export const getBase64Size = (base64String: string): number => {
   // Base64のヘッダー部分を除去
   const base64Data = base64String.split(',')[1] || base64String;
-  
+
   // Base64文字列の長さから実際のバイト数を計算
   return (base64Data.length * 3) / 4;
 };
@@ -155,6 +150,6 @@ export const isSupportedImageFormat = (file: File): boolean => {
     'image/webp',
     'image/bmp',
   ];
-  
+
   return supportedTypes.includes(file.type);
 };

@@ -20,9 +20,7 @@ class RoomService {
         return this.mockGetRoomsByGroupAndTeam(groupId, teamId);
       }
 
-      const response = await fetch(
-        `${this.baseUrl}/api/rooms?groupId=${groupId}&teamId=${teamId}`
-      );
+      const response = await fetch(`${this.baseUrl}/api/rooms?groupId=${groupId}&teamId=${teamId}`);
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
