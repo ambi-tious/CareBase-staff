@@ -42,6 +42,31 @@ const sexOptions = [
 const floorGroupOptions = getAllGroupOptions();
 const unitTeamOptions = getAllTeamOptions();
 
+const calculateBirthdateFromAge = (ageStr: string, existingDob?: string): string => {
+  if (!ageStr || isNaN(Number(ageStr))) return '';
+
+  const age = Number(ageStr);
+
+  // 既存の生年月日がある場合はその月日を使用、ない場合は今日の日付を使用
+  let referenceDate: Date;
+  if (existingDob) {
+    referenceDate = new Date(existingDob);
+  } else {
+    // JST時間で現在の日付を取得
+    const today = new Date();
+    referenceDate = new Date(today.toLocaleString('en-US', { timeZone: 'Asia/Tokyo' }));
+  }
+
+  // 基準日において指定年齢になるための生年を計算
+  const referenceYear = referenceDate.getFullYear();
+  const birthYear = referenceYear - age;
+
+  // 既存の生年月日の月日を保持して、計算した生年で生年月日を生成
+  const birthDate = new Date(birthYear, referenceDate.getMonth(), referenceDate.getDate());
+
+  return birthDate.toISOString().split('T')[0];
+};
+
 export const ResidentBasicInfoForm: React.FC<ResidentBasicInfoFormProps> = ({
   data,
   onChange,
