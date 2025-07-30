@@ -23,7 +23,7 @@ import {
 } from '@/utils/image-utils';
 import { getAllGroupOptions, getAllTeamOptions } from '@/utils/staff-utils';
 import type { ResidentBasicInfo } from '@/validations/resident-validation';
-import { Upload, X } from 'lucide-react';
+import { Settings, Upload, X } from 'lucide-react';
 import Image from 'next/image';
 import type React from 'react';
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -33,6 +33,8 @@ interface ResidentBasicInfoFormProps {
   onChange: (data: ResidentBasicInfo) => void;
   errors: Partial<Record<keyof ResidentBasicInfo, string>>;
   disabled?: boolean;
+  handleRoomManagement: () => void;
+  isSubmitting: boolean;
 }
 
 // Interface for selected staff data from localStorage
@@ -129,6 +131,8 @@ export const ResidentBasicInfoForm: React.FC<ResidentBasicInfoFormProps> = ({
   onChange,
   errors,
   disabled = false,
+  handleRoomManagement,
+  isSubmitting,
 }) => {
   const hasInitialized = useRef(false);
   const [imagePreview, setImagePreview] = useState<string>('');
@@ -516,50 +520,65 @@ export const ResidentBasicInfoForm: React.FC<ResidentBasicInfoFormProps> = ({
           <Label className="text-sm font-medium text-gray-700">
             部屋情報 <span className="text-red-500">*</span>
           </Label>
-          {isLoadingRooms ? (
-            <div className="flex items-center gap-2 p-3 border border-gray-300 rounded-md bg-gray-50">
-              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-carebase-blue"></div>
-              <span className="text-sm text-gray-500">部屋情報を読み込み中...</span>
+          <div className="flex gap-3">
+            <div className="flex-1 flex flex-col gap-2">
+              {isLoadingRooms ? (
+                <div className="flex items-center gap-2 p-3 border border-gray-300 rounded-md bg-gray-50">
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-carebase-blue"></div>
+                  <span className="text-sm text-gray-500">部屋情報を読み込み中...</span>
+                </div>
+              ) : availableRooms.length > 0 ? (
+                <Select
+                  value={data.roomInfo}
+                  onValueChange={(value) => updateField('roomInfo', value)}
+                  disabled={disabled}
+                >
+                  <SelectTrigger
+                    className={
+                      errors.roomInfo
+                        ? 'border-red-300 focus:border-red-500 focus:ring-red-500'
+                        : ''
+                    }
+                  >
+                    <SelectValue placeholder="部屋を選択してください" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {roomOptions.map((option) => (
+                      <SelectItem key={option.value} value={option.value}>
+                        {option.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              ) : data.floorGroup && data.unitTeam ? (
+                <div className="p-3 border border-yellow-300 rounded-md bg-yellow-50">
+                  <p className="text-sm text-yellow-700">
+                    選択されたグループ・チームに利用可能な部屋がありません。
+                  </p>
+                </div>
+              ) : (
+                <div className="p-3 border border-gray-300 rounded-md bg-gray-50">
+                  <p className="text-sm text-gray-500">
+                    グループとチームを選択すると、利用可能な部屋が表示されます。
+                  </p>
+                </div>
+              )}
+              {errors.roomInfo && (
+                <p className="text-sm text-red-600" role="alert">
+                  {errors.roomInfo}
+                </p>
+              )}
             </div>
-          ) : availableRooms.length > 0 ? (
-            <Select
-              value={data.roomInfo}
-              onValueChange={(value) => updateField('roomInfo', value)}
-              disabled={disabled}
+            <Button
+              variant="outline"
+              onClick={handleRoomManagement}
+              className="flex items-center gap-2 border-purple-300 text-purple-600 hover:bg-purple-50"
+              disabled={isSubmitting}
             >
-              <SelectTrigger
-                className={
-                  errors.roomInfo ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : ''
-                }
-              >
-                <SelectValue placeholder="部屋を選択してください" />
-              </SelectTrigger>
-              <SelectContent>
-                {roomOptions.map((option) => (
-                  <SelectItem key={option.value} value={option.value}>
-                    {option.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          ) : data.floorGroup && data.unitTeam ? (
-            <div className="p-3 border border-yellow-300 rounded-md bg-yellow-50">
-              <p className="text-sm text-yellow-700">
-                選択されたグループ・チームに利用可能な部屋がありません。
-              </p>
-            </div>
-          ) : (
-            <div className="p-3 border border-gray-300 rounded-md bg-gray-50">
-              <p className="text-sm text-gray-500">
-                グループとチームを選択すると、利用可能な部屋が表示されます。
-              </p>
-            </div>
-          )}
-          {errors.roomInfo && (
-            <p className="text-sm text-red-600" role="alert">
-              {errors.roomInfo}
-            </p>
-          )}
+              <Settings className="h-4 w-4" />
+              部屋管理
+            </Button>
+          </div>
         </div>
 
         <FormField

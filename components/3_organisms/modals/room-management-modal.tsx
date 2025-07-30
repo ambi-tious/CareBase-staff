@@ -13,8 +13,8 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { getAllGroupOptions, getAllTeamOptions } from '@/utils/staff-utils';
 import type { Room, RoomFormData } from '@/types/room';
+import { getAllGroupOptions, getAllTeamOptions } from '@/utils/staff-utils';
 import { AlertCircle, Building, Edit3, Home, Plus, Trash2 } from 'lucide-react';
 import React, { useCallback, useEffect, useState } from 'react';
 
@@ -362,7 +362,7 @@ export const RoomManagementModal: React.FC<RoomManagementModalProps> = ({
                     id="name"
                     value={formData.name}
                     onChange={(value) => updateField('name', value)}
-                    placeholder="例：もみじ101号室"
+                    placeholder="101号室"
                     required
                     error={fieldErrors.name}
                     disabled={isSubmitting}

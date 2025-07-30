@@ -1,15 +1,15 @@
 'use client';
 
 import { ResidentBasicInfoForm } from '@/components/2_molecules/forms/resident-basic-info-form';
+import { RoomManagementModal } from '@/components/3_organisms/modals/room-management-modal';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { RoomManagementModal } from '@/components/3_organisms/modals/room-management-modal';
 import { useResidentForm } from '@/hooks/useResidentForm';
-import { roomService } from '@/services/roomService';
 import { residentService } from '@/services/residentService';
+import { roomService } from '@/services/roomService';
 import type { Room, RoomFormData } from '@/types/room';
-import { ArrowLeft, Save, Settings, UserPlus } from 'lucide-react';
+import { ArrowLeft, Save, UserPlus } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
@@ -173,6 +173,8 @@ export default function NewResidentPage() {
             onChange={setFormData}
             errors={errors}
             disabled={isSubmitting}
+            handleRoomManagement={handleRoomManagement}
+            isSubmitting={isSubmitting}
           />
 
           {/* Action Buttons */}
@@ -187,15 +189,6 @@ export default function NewResidentPage() {
             >
               <Save className="h-4 w-4 mr-2" />
               {isSubmitting ? '登録中...' : '登録'}
-              <Button
-                variant="outline"
-                onClick={handleRoomManagement}
-                className="flex items-center gap-2 border-purple-300 text-purple-600 hover:bg-purple-50"
-                disabled={isSubmitting}
-              >
-                <Settings className="h-4 w-4" />
-                部屋管理
-              </Button>
             </Button>
           </div>
         </CardContent>

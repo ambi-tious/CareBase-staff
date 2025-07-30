@@ -4,7 +4,7 @@ export const roomData: Room[] = [
   // 介護フロア A (group-1)
   {
     id: 'room-001',
-    name: 'もみじ101号室',
+    name: '101号室',
     capacity: 1,
     groupId: 'group-1',
     teamId: 'team-a1',
@@ -14,7 +14,7 @@ export const roomData: Room[] = [
   },
   {
     id: 'room-002',
-    name: 'もみじ102号室',
+    name: '102号室',
     capacity: 1,
     groupId: 'group-1',
     teamId: 'team-a1',
@@ -24,7 +24,7 @@ export const roomData: Room[] = [
   },
   {
     id: 'room-003',
-    name: 'もみじ103号室',
+    name: '103号室',
     capacity: 2,
     groupId: 'group-1',
     teamId: 'team-a1',
@@ -34,7 +34,7 @@ export const roomData: Room[] = [
   },
   {
     id: 'room-004',
-    name: 'さくら201号室',
+    name: '201号室',
     capacity: 1,
     groupId: 'group-1',
     teamId: 'team-a2',
@@ -44,7 +44,7 @@ export const roomData: Room[] = [
   },
   {
     id: 'room-005',
-    name: 'さくら202号室',
+    name: '202号室',
     capacity: 1,
     groupId: 'group-1',
     teamId: 'team-a2',
@@ -54,7 +54,7 @@ export const roomData: Room[] = [
   },
   {
     id: 'room-006',
-    name: 'さくら203号室',
+    name: '203号室',
     capacity: 2,
     groupId: 'group-1',
     teamId: 'team-a2',
@@ -64,7 +64,7 @@ export const roomData: Room[] = [
   },
   {
     id: 'room-007',
-    name: 'つばき301号室',
+    name: '301号室',
     capacity: 1,
     groupId: 'group-1',
     teamId: 'team-a3',
@@ -74,7 +74,7 @@ export const roomData: Room[] = [
   },
   {
     id: 'room-008',
-    name: 'つばき302号室',
+    name: '302号室',
     capacity: 1,
     groupId: 'group-1',
     teamId: 'team-a3',
@@ -86,7 +86,7 @@ export const roomData: Room[] = [
   // 介護フロア B (group-2)
   {
     id: 'room-009',
-    name: 'あじさい401号室',
+    name: '401号室',
     capacity: 1,
     groupId: 'group-2',
     teamId: 'team-b1',
@@ -96,7 +96,7 @@ export const roomData: Room[] = [
   },
   {
     id: 'room-010',
-    name: 'あじさい402号室',
+    name: '402号室',
     capacity: 1,
     groupId: 'group-2',
     teamId: 'team-b1',
@@ -106,7 +106,7 @@ export const roomData: Room[] = [
   },
   {
     id: 'room-011',
-    name: 'あじさい403号室',
+    name: '403号室',
     capacity: 2,
     groupId: 'group-2',
     teamId: 'team-b1',
@@ -116,7 +116,7 @@ export const roomData: Room[] = [
   },
   {
     id: 'room-012',
-    name: 'ひまわり501号室',
+    name: '501号室',
     capacity: 1,
     groupId: 'group-2',
     teamId: 'team-b2',
@@ -126,7 +126,7 @@ export const roomData: Room[] = [
   },
   {
     id: 'room-013',
-    name: 'ひまわり502号室',
+    name: '502号室',
     capacity: 1,
     groupId: 'group-2',
     teamId: 'team-b2',
