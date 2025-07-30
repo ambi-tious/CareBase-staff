@@ -5,7 +5,11 @@ import { FormSelect } from '@/components/1_atoms/forms/form-select';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { getAllGroupOptions, getAllTeamOptions } from '@/utils/staff-utils';
+import { roomService } from '@/services/roomService';
+import type { Room } from '@/types/room';
+import { compressImage, formatFileSize, getBase64Size, isImageFile, isSupportedImageFormat } from '@/utils/image-utils';
 import type { ResidentBasicInfo } from '@/validations/resident-validation';
 import { Upload, X } from 'lucide-react';
 import Image from 'next/image';
@@ -117,6 +121,9 @@ export const ResidentBasicInfoForm: React.FC<ResidentBasicInfoFormProps> = ({
   const hasInitialized = useRef(false);
   const [imagePreview, setImagePreview] = useState<string>('');
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [availableRooms, setAvailableRooms] = useState<Room[]>([]);
+  const [isLoadingRooms, setIsLoadingRooms] = useState(false);
+  const [imageCompressing, setImageCompressing] = useState(false);
 
   // Load current logged-in user's group and team information
   useEffect(() => {
@@ -156,32 +163,78 @@ export const ResidentBasicInfoForm: React.FC<ResidentBasicInfoFormProps> = ({
     return () => window.removeEventListener('storage', handleStorageChange);
   }, [data, onChange]); // Added back dependencies but with proper logic to prevent infinite loop
 
+  // Load rooms when group and team change
+  useEffect(() => {
+    const loadRooms = async () => {
+      if (!data.floorGroup || !data.unitTeam) {
+        setAvailableRooms([]);
+        return;
+      }
+
+      setIsLoadingRooms(true);
+      try {
+        // Get group and team IDs from names
+        const groupId = getGroupIdByName(data.floorGroup);
+        const teamId = getTeamIdByName(data.unitTeam);
+
+        if (groupId && teamId) {
+          const rooms = await roomService.getRoomsByGroupAndTeam(groupId, teamId);
+          setAvailableRooms(rooms);
+        } else {
+          setAvailableRooms([]);
+        }
+      } catch (error) {
+        console.error('Failed to load rooms:', error);
+        setAvailableRooms([]);
+      } finally {
+        setIsLoadingRooms(false);
+      }
+    };
+
+    loadRooms();
+  }, [data.floorGroup, data.unitTeam]);
+
   // 画像アップロード処理
   const handleImageUpload = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
       const file = event.target.files?.[0];
       if (!file) return;
 
-      // ファイルサイズ制限（5MB）
-      if (file.size > 5 * 1024 * 1024) {
-        alert('ファイルサイズは5MB以下にしてください');
-        return;
-      }
-
       // 画像ファイルかチェック
-      if (!file.type.startsWith('image/')) {
+      if (!isImageFile(file)) {
         alert('画像ファイルを選択してください');
         return;
       }
 
-      // FileReaderでプレビューを生成
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const result = e.target?.result as string;
-        setImagePreview(result);
-        onChange({ ...data, profileImage: result });
-      };
-      reader.readAsDataURL(file);
+      // サポートされている画像形式かチェック
+      if (!isSupportedImageFormat(file)) {
+        alert('サポートされていない画像形式です。JPEG、PNG、GIF、WebP、BMPファイルを選択してください');
+        return;
+      }
+
+      setImageCompressing(true);
+      try {
+        // 画像を自動圧縮
+        const compressedImage = await compressImage(file, {
+          maxWidth: 800,
+          maxHeight: 600,
+          quality: 0.8,
+          maxSizeKB: 500,
+        });
+
+        setImagePreview(compressedImage);
+        onChange({ ...data, profileImage: compressedImage });
+
+        // 圧縮結果を表示
+        const originalSize = formatFileSize(file.size);
+        const compressedSize = formatFileSize(getBase64Size(compressedImage));
+        console.log(`画像を圧縮しました: ${originalSize} → ${compressedSize}`);
+      } catch (error) {
+        console.error('Image compression failed:', error);
+        alert('画像の圧縮に失敗しました。別の画像を選択してください。');
+      } finally {
+        setImageCompressing(false);
+      }
     },
     [data, onChange]
   );
@@ -255,6 +308,42 @@ export const ResidentBasicInfoForm: React.FC<ResidentBasicInfoFormProps> = ({
     [data, onChange]
   );
 
+  // Helper functions to get IDs from names
+  const getGroupIdByName = (groupName: string): string | null => {
+    const groupMapping: Record<string, string> = {
+      '介護フロア A': 'group-1',
+      '介護フロア B': 'group-2',
+      '管理部門': 'group-3',
+    };
+    return groupMapping[groupName] || null;
+  };
+
+  const getTeamIdByName = (teamName: string): string | null => {
+    const teamMapping: Record<string, string> = {
+      '朝番チーム': 'team-a1',
+      '日勤チーム': 'team-a2',
+      '夜勤チーム': 'team-a3',
+      '管理チーム': 'team-m1',
+    };
+    
+    // For group-2, adjust team IDs
+    if (data.floorGroup === '介護フロア B') {
+      const group2Mapping: Record<string, string> = {
+        '朝番チーム': 'team-b1',
+        '日勤チーム': 'team-b2',
+      };
+      return group2Mapping[teamName] || null;
+    }
+    
+    return teamMapping[teamName] || null;
+  };
+
+  // Generate room options
+  const roomOptions = availableRooms.map((room) => ({
+    value: room.name,
+    label: `${room.name} (定員${room.capacity}名)`,
+  }));
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
       {/* 基本情報 */}
@@ -293,16 +382,26 @@ export const ResidentBasicInfoForm: React.FC<ResidentBasicInfoFormProps> = ({
                 <div
                   className="w-32 h-32 border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center cursor-pointer hover:bg-gray-50 transition-colors"
                   onClick={() => fileInputRef.current?.click()}
+                  style={{ opacity: imageCompressing ? 0.6 : 1 }}
                 >
-                  <Upload className="h-8 w-8 text-gray-400 mb-2" />
-                  <span className="text-sm text-gray-500">画像を選択</span>
+                  {imageCompressing ? (
+                    <>
+                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-carebase-blue mb-2"></div>
+                      <span className="text-sm text-gray-500">圧縮中...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Upload className="h-8 w-8 text-gray-400 mb-2" />
+                      <span className="text-sm text-gray-500">画像を選択</span>
+                    </>
+                  )}
                 </div>
                 <Input
                   ref={fileInputRef}
                   type="file"
                   accept="image/*"
                   onChange={handleImageUpload}
-                  disabled={disabled}
+                  disabled={disabled || imageCompressing}
                   className="hidden"
                 />
               </div>
@@ -399,15 +498,52 @@ export const ResidentBasicInfoForm: React.FC<ResidentBasicInfoFormProps> = ({
           error={errors.unitTeam}
         />
 
-        <FormField
-          label="部屋情報"
-          id="roomInfo"
-          value={data.roomInfo}
-          onChange={(value) => updateField('roomInfo', value)}
-          placeholder="101号室"
-          error={errors.roomInfo}
-          disabled={disabled}
-        />
+        
+        <div className="space-y-2">
+          <Label className="text-sm font-medium text-gray-700">
+            部屋情報 <span className="text-red-500">*</span>
+          </Label>
+          {isLoadingRooms ? (
+            <div className="flex items-center gap-2 p-3 border border-gray-300 rounded-md bg-gray-50">
+              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-carebase-blue"></div>
+              <span className="text-sm text-gray-500">部屋情報を読み込み中...</span>
+            </div>
+          ) : availableRooms.length > 0 ? (
+            <Select
+              value={data.roomInfo}
+              onValueChange={(value) => updateField('roomInfo', value)}
+              disabled={disabled}
+            >
+              <SelectTrigger className={errors.roomInfo ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : ''}>
+                <SelectValue placeholder="部屋を選択してください" />
+              </SelectTrigger>
+              <SelectContent>
+                {roomOptions.map((option) => (
+                  <SelectItem key={option.value} value={option.value}>
+                    {option.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          ) : data.floorGroup && data.unitTeam ? (
+            <div className="p-3 border border-yellow-300 rounded-md bg-yellow-50">
+              <p className="text-sm text-yellow-700">
+                選択されたグループ・チームに利用可能な部屋がありません。
+              </p>
+            </div>
+          ) : (
+            <div className="p-3 border border-gray-300 rounded-md bg-gray-50">
+              <p className="text-sm text-gray-500">
+                グループとチームを選択すると、利用可能な部屋が表示されます。
+              </p>
+            </div>
+          )}
+          {errors.roomInfo && (
+            <p className="text-sm text-red-600" role="alert">
+              {errors.roomInfo}
+            </p>
+          )}
+        </div>
 
         <FormField
           label="入所日"
