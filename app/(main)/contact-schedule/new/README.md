@@ -82,6 +82,8 @@ Issue: [#021 [設計] #021 連絡・予定｜連絡登録](https://github.com/am
 ### 連絡・予定作成フォーム
 
 #### Googleカレンダー風デザイン
+<img width="1470" height="799" alt="スクリーンショット 2025-07-30 9 54 37" src="https://github.com/user-attachments/assets/a0ce8967-2384-4290-bd20-51b8b5876c96" />
+
 
 - **日時選択**: カレンダーポップオーバーと時刻ドロップダウン
 - **デフォルト設定**:
