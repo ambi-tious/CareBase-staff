@@ -333,7 +333,27 @@ export const RoomManagementModal: React.FC<RoomManagementModalProps> = ({
                                   </div>
                                 </div>
                                 <div className="text-sm text-gray-600">
-                                  <p>定員: {room.capacity}名</p>
+                                  <div className="flex items-center justify-between">
+                                    <span>定員: {room.capacity}名</span>
+                                    <span className={`text-xs px-2 py-1 rounded-full ${
+                                      (room.currentOccupancy || 0) >= room.capacity
+                                        ? 'bg-red-100 text-red-700'
+                                        : (room.currentOccupancy || 0) > 0
+                                          ? 'bg-yellow-100 text-yellow-700'
+                                          : 'bg-green-100 text-green-700'
+                                    }`}>
+                                      {room.currentOccupancy || 0}/{room.capacity}
+                                    </span>
+                                  </div>
+                                  <div className="mt-1">
+                                    <span className={`text-xs font-medium ${
+                                      (room.currentOccupancy || 0) >= room.capacity
+                                        ? 'text-red-600'
+                                        : 'text-green-600'
+                                    }`}>
+                                      {(room.currentOccupancy || 0) >= room.capacity ? '満室' : '空きあり'}
+                                    </span>
+                                  </div>
                                   <p className="text-xs mt-1">
                                     作成日: {new Date(room.createdAt).toLocaleDateString('ja-JP')}
                                   </p>

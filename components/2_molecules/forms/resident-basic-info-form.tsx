@@ -357,10 +357,21 @@ export const ResidentBasicInfoForm: React.FC<ResidentBasicInfoFormProps> = ({
   };
 
   // Generate room options
-  const roomOptions = availableRooms.map((room) => ({
-    value: room.name,
-    label: `${room.name} (定員${room.capacity}名)`,
-  }));
+  const roomOptions = availableRooms.map((room) => {
+    const occupancy = room.currentOccupancy || 0;
+    const isFull = occupancy >= room.capacity;
+    const occupancyText = `${occupancy}/${room.capacity}名`;
+    const statusText = isFull ? '満室' : '空きあり';
+    
+    return {
+      value: room.name,
+      label: `${room.name} (${occupancyText} - ${statusText})`,
+      disabled: isFull,
+    };
+  });
+
+  // 空きのある部屋のみを表示するオプション
+  const availableRoomOptions = roomOptions.filter(option => !option.disabled);
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -543,8 +554,88 @@ export const ResidentBasicInfoForm: React.FC<ResidentBasicInfoFormProps> = ({
                     <SelectValue placeholder="部屋を選択してください" />
                   </SelectTrigger>
                   <SelectContent>
-                    {roomOptions.map((option) => (
-                      <SelectItem key={option.value} value={option.value}>
+                    {availableRoomOptions.length > 0 ? (
+                      <>
+                        {availableRoomOptions.map((option) => (
+                          <SelectItem key={option.value} value={option.value}>
+                            {option.label}
+                          </SelectItem>
+                        ))}
+                        {roomOptions.length > availableRoomOptions.length && (
+                          <>
+                            <div className="px-2 py-1.5 text-xs text-gray-500 border-t">
+                              満室の部屋
+                            </div>
+                            {roomOptions
+                              .filter(option => option.disabled)
+                              .map((option) => (
+                                <SelectItem 
+                                  key={option.value} 
+                                  value={option.value}
+                                  disabled
+                                  className="text-gray-400"
+                                >
+                                  {option.label}
+                                </SelectItem>
+                              ))}
+                          </>
+                        )}
+                      </>
+                    ) : (
+                      <div className="px-2 py-1.5 text-sm text-gray-500">
+                        利用可能な部屋がありません
+                      </div>
+                    )}
+                  </SelectContent>
+                </Select>
+              ) : data.floorGroup && data.unitTeam ? (
+                <div className="p-3 border border-yellow-300 rounded-md bg-yellow-50">
+                  <p className="text-sm text-yellow-700">
+                    選択されたグループ・チームに利用可能な部屋がありません。
+                  </p>
+                </div>
+              ) : (
+                <div className="p-3 border border-gray-300 rounded-md bg-gray-50">
+                  <p className="text-sm text-gray-500">
+                    グループとチームを選択すると、利用可能な部屋が表示されます。
+                  </p>
+                </div>
+              )}
+              
+              {/* 部屋の空き状況サマリー */}
+              {availableRooms.length > 0 && (
+                <div className="text-xs text-gray-600 mt-2">
+                  <div className="flex items-center gap-4">
+                    <span className="flex items-center gap-1">
+                      <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                      空きあり: {availableRoomOptions.length}部屋
+                    </span>
+                    {roomOptions.length > availableRoomOptions.length && (
+                      <span className="flex items-center gap-1">
+                        <div className="w-2 h-2 bg-red-500 rounded-full"></div>
+                        満室: {roomOptions.length - availableRoomOptions.length}部屋
+                      </span>
+                    )}
+                  </div>
+                </div>
+              )}
+              {errors.roomInfo && (
+                <p className="text-sm text-red-600" role="alert">
+                  {errors.roomInfo}
+                </p>
+              )}
+            </div>
+            <Button
+              variant="outline"
+              onClick={handleRoomManagement}
+              className="flex items-center gap-2 border-purple-300 text-purple-600 hover:bg-purple-50"
+              disabled={isSubmitting}
+            >
+              <Settings className="h-4 w-4" />
+              部屋管理
+            </Button>
+          </div>
+        </div>
                         {option.label}
                       </SelectItem>
                     ))}

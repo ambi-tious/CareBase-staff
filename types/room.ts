@@ -8,6 +8,7 @@ export interface Room {
   id: string;
   name: string;
   capacity: number;
+  currentOccupancy?: number;
   groupId: string;
   teamId: string;
   isActive: boolean;
