@@ -85,6 +85,7 @@ export const residentService = {
     const updatedResident = {
       ...existingResident,
       ...data,
+      age: existingResident.age, // Keep existing age as number
       sex:
         data.sex === '男' || data.sex === '女' || data.sex === 'その他'
           ? data.sex

@@ -47,6 +47,7 @@ CareBase-staffアプリケーションの連絡・予定編集画面設計書で
 | 更新ボタン       | Button         | -    | 常時         | 更新               | 青色スタイル、Send アイコン                              |
 
 ## 機能仕様
+
 <img width="1470" height="796" alt="スクリーンショット 2025-07-30 10 01 30" src="https://github.com/user-attachments/assets/53bb286a-42ee-4d68-a04b-b470dae44507" />
 
 ### アクション

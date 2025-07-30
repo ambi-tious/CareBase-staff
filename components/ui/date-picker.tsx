@@ -39,6 +39,13 @@ export function DatePicker({
     return new Date();
   });
 
+  // valueが変更されたらcurrentMonthも更新
+  React.useEffect(() => {
+    if (value) {
+      setCurrentMonth(new Date(value));
+    }
+  }, [value]);
+
   // デフォルトのプレースホルダーを設定
   const defaultPlaceholder = mode === 'month' ? '年月を選択してください' : '日付を選択してください';
   const finalPlaceholder = placeholder || defaultPlaceholder;
@@ -94,6 +101,7 @@ export function DatePicker({
         {mode === 'month' ? (
           <Calendar
             mode="single"
+            selected={dateValue}
             month={currentMonth}
             onMonthChange={handleMonthChange}
             captionLayout={captionLayout || 'dropdown'}
@@ -106,7 +114,8 @@ export function DatePicker({
             selected={dateValue}
             onSelect={handleDateSelect}
             captionLayout={captionLayout || 'dropdown'}
-            initialFocus
+            onMonthChange={handleMonthChange}
+            month={currentMonth}
             locale={ja}
           />
         )}

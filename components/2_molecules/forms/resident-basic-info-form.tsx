@@ -38,9 +38,75 @@ const sexOptions = [
   { value: 'その他', label: 'その他' },
 ];
 
+// 年齢のオプション（0歳から120歳まで）
+const ageOptions = Array.from({ length: 121 }, (_, i) => ({
+  value: i.toString(),
+  label: `${i}歳`,
+}));
+
 // Get options from staff-utils.ts
 const floorGroupOptions = getAllGroupOptions();
 const unitTeamOptions = getAllTeamOptions();
+
+// 年齢と生年月日の相互変換ヘルパー関数
+const calculateAgeFromBirthdate = (dob: string): string => {
+  if (!dob) return '';
+
+  const birthDate = new Date(dob);
+
+  // JST時間で現在の日付を取得
+  const today = new Date();
+  const currentDate = new Date(today.toLocaleString('ja-JP', { timeZone: 'Asia/Tokyo' }));
+
+  let age = currentDate.getFullYear() - birthDate.getFullYear();
+
+  // 今年の誕生日を計算
+  const thisYearBirthday = new Date(
+    currentDate.getFullYear(),
+    birthDate.getMonth(),
+    birthDate.getDate()
+  );
+
+  // 今年の誕生日がまだ来ていない場合は年齢を1減らす
+  if (currentDate < thisYearBirthday) {
+    age--;
+  }
+
+  return age.toString();
+};
+
+const calculateBirthdateFromAge = (ageStr: string, existingDob?: string): string => {
+  if (!ageStr || isNaN(Number(ageStr))) return '';
+
+  const age = Number(ageStr);
+
+  // 既存の生年月日がある場合はその月日を使用、ない場合は今日の日付を使用
+  let referenceDate: Date;
+  if (existingDob) {
+    referenceDate = new Date(existingDob);
+  } else {
+    // JST時間で現在の日付を取得
+    const today = new Date();
+    referenceDate = new Date(today.toLocaleString('ja-JP', { timeZone: 'Asia/Tokyo' }));
+  }
+
+  const currentYear = new Date().getFullYear();
+  const currentDate = new Date();
+
+  // 基準となる誕生日（今年の月日）
+  const thisYearBirthday = new Date(currentYear, referenceDate.getMonth(), referenceDate.getDate());
+
+  // 今年の誕生日がまだ来ていない場合は、年齢に1を足して計算
+  let birthYear = currentYear - age;
+  if (currentDate < thisYearBirthday) {
+    birthYear = currentYear - age - 1;
+  }
+
+  // 既存の生年月日の月日を保持して年だけを変更
+  const birthDate = new Date(birthYear, referenceDate.getMonth(), referenceDate.getDate());
+
+  return birthDate.toLocaleString('ja-JP', { timeZone: 'Asia/Tokyo' }).split('T')[0];
+};
 
 export const ResidentBasicInfoForm: React.FC<ResidentBasicInfoFormProps> = ({
   data,
@@ -136,9 +202,55 @@ export const ResidentBasicInfoForm: React.FC<ResidentBasicInfoFormProps> = ({
     }
   }, [data.profileImage, imagePreview]);
 
+  // 生年月日が存在するが年齢が空の場合、年齢を自動計算
+  useEffect(() => {
+    if (data.dob && !data.age) {
+      const calculatedAge = calculateAgeFromBirthdate(data.dob);
+      if (calculatedAge) {
+        onChange({ ...data, age: calculatedAge });
+      }
+    }
+  }, [data.dob, data.age, onChange]);
+
   const updateField = useCallback(
     (field: keyof ResidentBasicInfo, value: string) => {
       onChange({ ...data, [field]: value });
+    },
+    [data, onChange]
+  );
+
+  // 年齢変更時の処理
+  const handleAgeChange = useCallback(
+    (ageValue: string) => {
+      const newData = { ...data, age: ageValue };
+
+      // 年齢から生年月日を自動計算（既存の生年月日を基準にする）
+      if (ageValue && !isNaN(Number(ageValue))) {
+        const calculatedDob = calculateBirthdateFromAge(ageValue, data.dob);
+        if (calculatedDob) {
+          newData.dob = calculatedDob;
+        }
+      }
+
+      onChange(newData);
+    },
+    [data, onChange]
+  );
+
+  // 生年月日変更時の処理
+  const handleDobChange = useCallback(
+    (dobValue: string) => {
+      const newData = { ...data, dob: dobValue };
+
+      // 生年月日から年齢を自動計算
+      if (dobValue) {
+        const calculatedAge = calculateAgeFromBirthdate(dobValue);
+        if (calculatedAge) {
+          newData.age = calculatedAge;
+        }
+      }
+
+      onChange(newData);
     },
     [data, onChange]
   );
@@ -225,16 +337,29 @@ export const ResidentBasicInfoForm: React.FC<ResidentBasicInfoFormProps> = ({
           </div>
         </div>
 
-        <FormField
-          label="生年月日"
-          id="dob"
-          type="date"
-          value={data.dob}
-          onChange={(value) => updateField('dob', value)}
-          required
-          error={errors.dob}
-          disabled={disabled}
-        />
+        <div className="flex gap-3">
+          <FormField
+            label="生年月日"
+            id="dob"
+            type="date"
+            value={data.dob}
+            onChange={handleDobChange}
+            required
+            error={errors.dob}
+            disabled={disabled}
+            className="w-1/2"
+          />
+          <FormSelect
+            label="年齢"
+            id="age"
+            value={data.age || ''}
+            onChange={handleAgeChange}
+            options={ageOptions}
+            error={errors.age}
+            disabled={disabled}
+            className="w-1/2"
+          />
+        </div>
 
         <FormSelect
           label="性別"

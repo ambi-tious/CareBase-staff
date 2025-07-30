@@ -14,6 +14,7 @@ export const residentBasicInfoSchema = z
       .string()
       .refine((val) => !val || /^[ァ-ヶー\s]*$/.test(val), 'フリガナはカタカナで入力してください'),
     dob: z.string().min(1, '生年月日は必須です'),
+    age: z.string().optional(),
     sex: z
       .union([z.enum(['男', '女', 'その他']), z.literal('')], {
         errorMap: () => ({ message: '性別は必須です' }),

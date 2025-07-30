@@ -174,4 +174,3 @@ UIコンポーネントは Atomic Design の階層に従って実装します：
 - **設計ドキュメント**: [docs/overview.md](./docs/overview.md)
 
 ---
-
