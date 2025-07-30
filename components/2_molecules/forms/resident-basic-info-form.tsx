@@ -256,11 +256,6 @@ export const ResidentBasicInfoForm: React.FC<ResidentBasicInfoFormProps> = ({
     [data, onChange]
   );
 
-  // 画像変更処理
-  const handleImageChange = useCallback(() => {
-    fileInputRef.current?.click();
-  }, []);
-
   // 画像削除処理
   const handleImageRemove = useCallback(() => {
     setImagePreview('');
@@ -394,18 +389,18 @@ export const ResidentBasicInfoForm: React.FC<ResidentBasicInfoFormProps> = ({
                   <Image
                     src={imagePreview}
                     alt="利用者画像"
-                    className="w-full h-full object-cover rounded-lg"
-                    fill
+                    className="w-32 h-32 object-cover rounded-lg"
+                    width={32}
+                    height={32}
                   />
                 </div>
-                <div className="flex gap-2 mt-2">
+                <div className="flex flex-col gap-2 mt-2">
                   <Button
                     type="button"
                     variant="outline"
                     size="sm"
-                    onClick={handleImageChange}
+                    onClick={() => fileInputRef.current?.click()}
                     disabled={disabled || imageCompressing}
-                    className="flex-1"
                   >
                     <Upload className="h-4 w-4 mr-1" />
                     画像を変更
@@ -419,6 +414,7 @@ export const ResidentBasicInfoForm: React.FC<ResidentBasicInfoFormProps> = ({
                     className="text-red-600 hover:text-red-700"
                   >
                     <X className="h-4 w-4" />
+                    画像を削除
                   </Button>
                 </div>
               </div>
@@ -437,27 +433,20 @@ export const ResidentBasicInfoForm: React.FC<ResidentBasicInfoFormProps> = ({
                   ) : (
                     <>
                       <Upload className="h-8 w-8 text-gray-400 mb-2" />
-                      <span className="text-sm text-gray-500 text-center">
-                        画像を選択
-                        <br />
-                        <span className="text-xs">(正方形に調整)</span>
-                      </span>
+                      <span className="text-sm text-gray-500 text-center">画像を選択</span>
                     </>
                   )}
                 </div>
-                <Input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageUpload}
-                  disabled={disabled || imageCompressing}
-                  className="hidden"
-                />
               </div>
             )}
-            <p className="text-xs text-gray-500 mt-1">
-              推奨: 正方形の画像、最大サイズ制限なし（自動圧縮）
-            </p>
+            <Input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              onChange={handleImageUpload}
+              disabled={disabled || imageCompressing}
+              className="hidden"
+            />
             {errors.profileImage && (
               <p className="text-sm text-red-600" role="alert">
                 {errors.profileImage}

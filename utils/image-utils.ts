@@ -22,7 +22,13 @@ export const compressImage = async (
   file: File,
   options: ImageCompressionOptions = {}
 ): Promise<string> => {
-  const { maxWidth = 400, maxHeight = 400, quality = 0.8, maxSizeKB = 500, forceSquare = false } = options;
+  const {
+    maxWidth = 400,
+    maxHeight = 400,
+    quality = 0.8,
+    maxSizeKB = 500,
+    forceSquare = false,
+  } = options;
 
   return new Promise((resolve, reject) => {
     const canvas = document.createElement('canvas');
@@ -47,7 +53,7 @@ export const compressImage = async (
           const size = Math.min(originalWidth, originalHeight);
           const offsetX = (originalWidth - size) / 2;
           const offsetY = (originalHeight - size) / 2;
-          
+
           ctx?.drawImage(img, offsetX, offsetY, size, size, 0, 0, width, height);
         } else {
           // 通常のリサイズ
