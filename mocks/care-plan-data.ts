@@ -65,7 +65,7 @@ export const carePlanData: CarePlan[] = [
     certificationStatus: 'certified',
     careManager: '山田太郎',
     careManagerOffice: 'こうべケアプランセンター',
-    status: 'expired',
+    status: 'draft',
     isReferral: false,
     residentIntention: '自宅での生活を継続したい。',
     familyIntention: '本人の意向を尊重したい。',

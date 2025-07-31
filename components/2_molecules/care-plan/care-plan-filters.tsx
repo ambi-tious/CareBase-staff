@@ -23,8 +23,6 @@ interface CarePlanFiltersProps {
 }
 
 const careLevelOptions = [
-  { value: '要支援1', label: '要支援1' },
-  { value: '要支援2', label: '要支援2' },
   { value: '要介護1', label: '要介護1' },
   { value: '要介護2', label: '要介護2' },
   { value: '要介護3', label: '要介護3' },

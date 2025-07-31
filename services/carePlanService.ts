@@ -253,7 +253,8 @@ class CarePlanService {
       goals: data.goals.filter((goal) => goal.trim() !== ''),
       services: data.services.map((service) => ({
         ...service,
-        id: (service as any).id || `service-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+        id:
+          (service as any).id || `service-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
       })),
       notes: data.notes || undefined,
       createdAt: '2025-01-01T00:00:00.000Z', // Mock creation date

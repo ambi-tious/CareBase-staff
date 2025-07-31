@@ -5,7 +5,7 @@
  */
 
 // Care plan status
-export type CarePlanStatus = 'active' | 'expired' | 'draft' | 'archived';
+export type CarePlanStatus = 'active' | 'draft' | 'archived';
 
 // Care plan type
 export type CarePlanType = 'initial' | 'continuation';

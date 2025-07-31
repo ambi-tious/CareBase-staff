@@ -9,7 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { useCarePlanForm } from '@/hooks/useCarePlanForm';
-import { serviceTypeOptions, planTypeOptions, certificationStatusOptions } from '@/types/care-plan';
+import { certificationStatusOptions, planTypeOptions, serviceTypeOptions } from '@/types/care-plan';
 import type { CarePlanFormData, CarePlanServiceFormData } from '@/validations/care-plan-validation';
 import { AlertCircle, Plus, RefreshCw, Save, Send, Trash2, User, X } from 'lucide-react';
 import type React from 'react';
@@ -24,8 +24,6 @@ interface CarePlanFormProps {
 }
 
 const careLevelOptions = [
-  { value: '要支援1', label: '要支援1' },
-  { value: '要支援2', label: '要支援2' },
   { value: '要介護1', label: '要介護1' },
   { value: '要介護2', label: '要介護2' },
   { value: '要介護3', label: '要介護3' },
@@ -232,17 +230,40 @@ export const CarePlanForm: React.FC<CarePlanFormProps> = ({
               error={fieldErrors.planType}
               disabled={isSubmitting || isSavingDraft}
             />
-
-            <FormSelect
-              label="認定状況"
-              id="certificationStatus"
-              value={formData.certificationStatus}
-              onChange={(value) => updateField('certificationStatus', value)}
-              options={certificationStatusSelectOptions}
-              required
-              error={fieldErrors.certificationStatus}
-              disabled={isSubmitting || isSavingDraft}
-            />
+            <div className="space-y-2">
+              <Label className="text-sm font-medium text-gray-700">
+                紹介 <span className="text-red-500 ml-1">*</span>
+              </Label>
+              <div className="flex items-center space-x-4 p-3 h-10 border border-gray-200 rounded-lg bg-gray-50">
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id="isReferral-true"
+                    checked={formData.isReferral === true}
+                    onCheckedChange={() => updateField('isReferral', true)}
+                    disabled={isSubmitting || isSavingDraft}
+                  />
+                  <Label htmlFor="isReferral-true" className="cursor-pointer">
+                    紹介あり
+                  </Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id="isReferral-false"
+                    checked={formData.isReferral === false}
+                    onCheckedChange={() => updateField('isReferral', false)}
+                    disabled={isSubmitting || isSavingDraft}
+                  />
+                  <Label htmlFor="isReferral-false" className="cursor-pointer">
+                    紹介なし
+                  </Label>
+                </div>
+              </div>
+              {fieldErrors.isReferral && (
+                <p className="text-sm text-red-600" role="alert">
+                  {fieldErrors.isReferral}
+                </p>
+              )}
+            </div>
           </div>
 
           <FormSelect
@@ -256,7 +277,18 @@ export const CarePlanForm: React.FC<CarePlanFormProps> = ({
             disabled={isSubmitting || isSavingDraft}
           />
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <FormSelect
+              label="認定状況"
+              id="certificationStatus"
+              value={formData.certificationStatus}
+              onChange={(value) => updateField('certificationStatus', value)}
+              options={certificationStatusSelectOptions}
+              required
+              error={fieldErrors.certificationStatus}
+              disabled={isSubmitting || isSavingDraft}
+            />
+
             <FormField
               label="認定日"
               id="certificationDate"
@@ -267,7 +299,9 @@ export const CarePlanForm: React.FC<CarePlanFormProps> = ({
               error={fieldErrors.certificationDate}
               disabled={isSubmitting || isSavingDraft}
             />
+          </div>
 
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <FormField
               label="認定有効開始日"
               id="certValidityStart"
@@ -330,44 +364,8 @@ export const CarePlanForm: React.FC<CarePlanFormProps> = ({
         {/* Right Column - Goals and Notes */}
         <div className="space-y-4">
           <h3 className="text-lg font-semibold text-carebase-text-primary border-b pb-2">
-            紹介・ケア目標
+            ケア目標
           </h3>
-
-          {/* Referral */}
-          <div className="space-y-2">
-            <Label className="text-sm font-medium text-gray-700">
-              紹介 <span className="text-red-500 ml-1">*</span>
-            </Label>
-            <div className="flex items-center space-x-4 p-4 border border-gray-200 rounded-lg bg-gray-50">
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="isReferral-true"
-                  checked={formData.isReferral === true}
-                  onCheckedChange={() => updateField('isReferral', true)}
-                  disabled={isSubmitting || isSavingDraft}
-                />
-                <Label htmlFor="isReferral-true" className="cursor-pointer">
-                  紹介あり
-                </Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="isReferral-false"
-                  checked={formData.isReferral === false}
-                  onCheckedChange={() => updateField('isReferral', false)}
-                  disabled={isSubmitting || isSavingDraft}
-                />
-                <Label htmlFor="isReferral-false" className="cursor-pointer">
-                  紹介なし
-                </Label>
-              </div>
-            </div>
-            {fieldErrors.isReferral && (
-              <p className="text-sm text-red-600" role="alert">
-                {fieldErrors.isReferral}
-              </p>
-            )}
-          </div>
 
           {/* Goals */}
           <div className="space-y-2">

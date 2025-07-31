@@ -5,23 +5,10 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import type { CarePlan } from '@/types/care-plan';
-import { serviceTypeOptions, planTypeOptions, certificationStatusOptions } from '@/types/care-plan';
+import { serviceTypeOptions } from '@/types/care-plan';
 import { format } from 'date-fns';
 import { ja } from 'date-fns/locale';
-import {
-  ArrowLeft,
-  Calendar,
-  Edit3,
-  FileText,
-  Target,
-  User,
-  Building2,
-  Clock,
-  CheckCircle,
-  MessageSquare,
-  Users,
-  Lightbulb,
-} from 'lucide-react';
+import { ArrowLeft, Building2, Calendar, Clock, Edit3, FileText, User } from 'lucide-react';
 import Link from 'next/link';
 import type React from 'react';
 
@@ -44,16 +31,6 @@ export const CarePlanDetail: React.FC<CarePlanDetailProps> = ({ carePlan, reside
     return serviceType?.label || type;
   };
 
-  const getPlanTypeLabel = (type: string) => {
-    const planType = planTypeOptions.find((option) => option.value === type);
-    return planType?.label || type;
-  };
-
-  const getCertificationStatusLabel = (status: string) => {
-    const certStatus = certificationStatusOptions.find((option) => option.value === status);
-    return certStatus?.label || status;
-  };
-
   const isExpiringSoon = () => {
     const endDate = new Date(carePlan.certValidityEnd);
     const today = new Date();
@@ -71,13 +48,12 @@ export const CarePlanDetail: React.FC<CarePlanDetailProps> = ({ carePlan, reside
 
   return (
     <div className="p-4 md:p-6 bg-carebase-bg min-h-screen">
-      {/* Header */}
-      <div className="mb-6">
+      <div className="max-w-6xl space-y-4">
+        {/* Header */}
         <div className="flex items-center gap-3 mb-4">
           <Button variant="outline" asChild>
             <Link href={`/residents/${residentId}/care-plans`}>
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              ケアプラン一覧に戻る
+              <ArrowLeft className="h-4 w-4" />
             </Link>
           </Button>
           <div className="flex items-center gap-3">
@@ -85,9 +61,6 @@ export const CarePlanDetail: React.FC<CarePlanDetailProps> = ({ carePlan, reside
             <h1 className="text-2xl font-bold text-carebase-text-primary">ケアプラン詳細</h1>
           </div>
         </div>
-      </div>
-
-      <div className="max-w-6xl space-y-6">
         {/* Basic Information */}
         <Card>
           <CardHeader>
@@ -105,6 +78,9 @@ export const CarePlanDetail: React.FC<CarePlanDetailProps> = ({ carePlan, reside
                       期限切れ
                     </span>
                   )}
+                  {carePlan.isReferral && (
+                    <Badge className="bg-blue-100 text-blue-700 border border-blue-200">紹介</Badge>
+                  )}
                 </div>
                 <CardTitle className="text-xl text-carebase-text-primary">
                   {carePlan.planTitle}
@@ -112,8 +88,15 @@ export const CarePlanDetail: React.FC<CarePlanDetailProps> = ({ carePlan, reside
                 <div className="flex items-center gap-4 text-sm text-gray-600">
                   <span>プランID: {carePlan.id}</span>
                   <div className="flex items-center gap-1">
+                    <User className="h-4 w-4 text-gray-500" />
+                    <span className="text-sm font-medium">作成者: {carePlan.createdByName}</span>
+                    <span className="text-sm text-gray-500">
+                      (作成日: {formatDateTime(carePlan.createdAt)})
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-1">
                     <Calendar className="h-4 w-4" />
-                    <span>作成日: {formatDateTime(carePlan.createdAt)}</span>
+                    <span>更新日: {formatDateTime(carePlan.updatedAt)}</span>
                   </div>
                 </div>
               </div>
@@ -133,100 +116,75 @@ export const CarePlanDetail: React.FC<CarePlanDetailProps> = ({ carePlan, reside
           </CardHeader>
           <CardContent className="space-y-6">
             {/* 認定情報 */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              <div className="space-y-3">
-                <h4 className="text-sm font-semibold text-gray-700 border-b pb-1">認定情報</h4>
-                <div className="space-y-2 text-sm">
-                  <div>
-                    <span className="font-medium text-gray-600">要介護度:</span>
-                    <span className="ml-2 font-semibold text-carebase-blue">
-                      {carePlan.careLevel}
-                    </span>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="flex flex-col gap-6">
+                <div className="space-y-3">
+                  <h4 className="text-sm font-semibold text-gray-700 border-b pb-1">認定情報</h4>
+                  <div className="space-y-2 text-sm">
+                    <div>
+                      <span className="font-medium text-gray-600">要介護度:</span>
+                      <span className="ml-2 font-semibold text-carebase-blue">
+                        {carePlan.careLevel}
+                      </span>
+                    </div>
+                    <div>
+                      <span className="font-medium text-gray-600">認定日:</span>
+                      <span className="ml-2">{formatDate(carePlan.certificationDate)}</span>
+                    </div>
+                    <div>
+                      <span className="font-medium text-gray-600">有効期間:</span>
+                      <span className="ml-2">
+                        {formatDate(carePlan.certValidityStart)}
+                        <span className="mx-1">〜</span>
+                        {formatDate(carePlan.certValidityEnd)}
+                      </span>
+                    </div>
                   </div>
-                  <div>
-                    <span className="font-medium text-gray-600">認定日:</span>
-                    <span className="ml-2">{formatDate(carePlan.certificationDate)}</span>
+                </div>
+
+                <div className="space-y-3">
+                  <h4 className="text-sm font-semibold text-gray-700 border-b pb-1">
+                    ケアマネージャー
+                  </h4>
+                  <div className="space-y-2 text-sm">
+                    <div className="flex items-center gap-2">
+                      <User className="h-4 w-4 text-gray-500" />
+                      <span className="font-medium">{carePlan.careManager}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Building2 className="h-4 w-4 text-gray-500" />
+                      <span>{carePlan.careManagerOffice}</span>
+                    </div>
                   </div>
-                  <div>
-                    <span className="font-medium text-gray-600">有効期間:</span>
-                    <div className="ml-2">
-                      {formatDate(carePlan.certValidityStart)} 〜<br />
-                      {formatDate(carePlan.certValidityEnd)}
+                </div>
+
+                <div className="space-y-3">
+                  <h4 className="text-sm font-semibold text-gray-700 border-b pb-1">見直し予定</h4>
+                  <div className="space-y-2 text-sm">
+                    <div className="flex items-center gap-2">
+                      <Calendar className="h-4 w-4 text-gray-500" />
+                      <span className="font-medium">{formatDate(carePlan.nextReviewDate)}</span>
                     </div>
                   </div>
                 </div>
               </div>
-
               <div className="space-y-3">
-                <h4 className="text-sm font-semibold text-gray-700 border-b pb-1">
-                  ケアマネージャー
-                </h4>
-                <div className="space-y-2 text-sm">
-                  <div className="flex items-center gap-2">
-                    <User className="h-4 w-4 text-gray-500" />
-                    <span className="font-medium">{carePlan.careManager}</span>
+                <h4 className="text-sm font-semibold text-gray-700 border-b pb-1">ケア目標</h4>
+                {carePlan.goals.map((goal, index) => (
+                  <div key={index} className="flex items-start gap-3 p-3 bg-blue-50 rounded-lg">
+                    <div className="w-6 h-6 bg-carebase-blue text-white rounded-full flex items-center justify-center text-sm font-bold mt-0.5">
+                      {index + 1}
+                    </div>
+                    <p className="text-gray-700 leading-relaxed">{goal}</p>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <Building2 className="h-4 w-4 text-gray-500" />
-                    <span>{carePlan.careManagerOffice}</span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="space-y-3">
-                <h4 className="text-sm font-semibold text-gray-700 border-b pb-1">見直し予定</h4>
-                <div className="space-y-2 text-sm">
-                  <div className="flex items-center gap-2">
-                    <Calendar className="h-4 w-4 text-gray-500" />
-                    <span className="font-medium">{formatDate(carePlan.nextReviewDate)}</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* 作成者情報 */}
-            <div className="p-3 bg-gray-50 rounded-lg">
-              <div className="flex items-center gap-2">
-                <User className="h-4 w-4 text-gray-500" />
-                <span className="text-sm font-medium">作成者: {carePlan.createdByName}</span>
-                <span className="text-sm text-gray-500">
-                  (最終更新: {formatDateTime(carePlan.updatedAt)})
-                </span>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Intentions */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Users className="h-5 w-5" />
-              紹介・利用者・家族の意向
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            {/* Referral Information */}
-            <div className="mb-6 p-4 bg-gray-50 rounded-lg">
-              <div className="flex items-center gap-2">
-                <MessageSquare className="h-4 w-4 text-gray-500" />
-                <span className="text-sm font-medium text-gray-700">紹介:</span>
-                <span
-                  className={`px-2 py-1 rounded-full text-xs font-medium ${
-                    carePlan.isReferral
-                      ? 'bg-blue-100 text-blue-700 border border-blue-200'
-                      : 'bg-gray-100 text-gray-700 border border-gray-200'
-                  }`}
-                >
-                  {carePlan.isReferral ? '紹介あり' : '紹介なし'}
-                </span>
+                ))}
               </div>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <div className="space-y-3">
                 <h4 className="text-sm font-semibold text-gray-700 border-b pb-1">利用者の意向</h4>
-                <div className="p-4 bg-green-50 rounded-lg">
+                <div className="p-4 bg-gray-50 border border-gray-200 rounded-lg">
                   <p className="text-gray-700 leading-relaxed whitespace-pre-line">
                     {carePlan.residentIntention}
                   </p>
@@ -234,31 +192,17 @@ export const CarePlanDetail: React.FC<CarePlanDetailProps> = ({ carePlan, reside
               </div>
               <div className="space-y-3">
                 <h4 className="text-sm font-semibold text-gray-700 border-b pb-1">家族の意向</h4>
-                <div className="p-4 bg-blue-50 rounded-lg">
+                <div className="p-4 bg-gray-50 border border-gray-200 rounded-lg">
                   <p className="text-gray-700 leading-relaxed whitespace-pre-line">
                     {carePlan.familyIntention}
                   </p>
                 </div>
               </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Assessment Committee Opinion and Comprehensive Guidance */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Lightbulb className="h-5 w-5" />
-              審査会意見・援助指針
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-6">
               <div className="space-y-3">
                 <h4 className="text-sm font-semibold text-gray-700 border-b pb-1">
                   介護認定審査会の意見及びサービスの種類の指定
                 </h4>
-                <div className="p-4 bg-yellow-50 rounded-lg">
+                <div className="p-4 bg-gray-50 border border-gray-200 rounded-lg">
                   <p className="text-gray-700 leading-relaxed whitespace-pre-line">
                     {carePlan.assessmentCommitteeOpinion}
                   </p>
@@ -268,34 +212,20 @@ export const CarePlanDetail: React.FC<CarePlanDetailProps> = ({ carePlan, reside
                 <h4 className="text-sm font-semibold text-gray-700 border-b pb-1">
                   総合的な援助の指針
                 </h4>
-                <div className="p-4 bg-purple-50 rounded-lg">
+                <div className="p-4 bg-gray-50 border border-gray-200 rounded-lg">
                   <p className="text-gray-700 leading-relaxed whitespace-pre-line">
                     {carePlan.comprehensiveGuidance}
                   </p>
                 </div>
               </div>
             </div>
-          </CardContent>
-        </Card>
-
-        {/* Care Goals */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Target className="h-5 w-5" />
-              ケア目標
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
             <div className="space-y-3">
-              {carePlan.goals.map((goal, index) => (
-                <div key={index} className="flex items-start gap-3 p-3 bg-blue-50 rounded-lg">
-                  <div className="w-6 h-6 bg-carebase-blue text-white rounded-full flex items-center justify-center text-sm font-bold mt-0.5">
-                    {index + 1}
-                  </div>
-                  <p className="text-gray-700 leading-relaxed">{goal}</p>
-                </div>
-              ))}
+              <h4 className="text-sm font-semibold text-gray-700 border-b pb-1">備考</h4>
+              <div className="p-4 bg-gray-50 border border-gray-200 rounded-lg">
+                <p className="text-gray-700 leading-relaxed whitespace-pre-line">
+                  {carePlan.notes}
+                </p>
+              </div>
             </div>
           </CardContent>
         </Card>
@@ -364,25 +294,6 @@ export const CarePlanDetail: React.FC<CarePlanDetailProps> = ({ carePlan, reside
             </div>
           </CardContent>
         </Card>
-
-        {/* Notes */}
-        {carePlan.notes && (
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <FileText className="h-5 w-5" />
-                備考
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="p-4 bg-gray-50 rounded-lg">
-                <p className="text-gray-700 leading-relaxed whitespace-pre-line">
-                  {carePlan.notes}
-                </p>
-              </div>
-            </CardContent>
-          </Card>
-        )}
       </div>
     </div>
   );
