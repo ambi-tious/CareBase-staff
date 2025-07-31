@@ -108,13 +108,21 @@ export default function EditCarePlanPage({ params }: EditCarePlanPageProps) {
   // Convert care plan to form data
   const initialData: Partial<CarePlanFormData> = {
     planTitle: carePlan.planTitle,
+    planType: carePlan.planType,
     careLevel: carePlan.careLevel,
     certificationDate: carePlan.certificationDate,
     certValidityStart: carePlan.certValidityStart,
     certValidityEnd: carePlan.certValidityEnd,
+    certificationStatus: carePlan.certificationStatus,
     careManager: carePlan.careManager,
     careManagerOffice: carePlan.careManagerOffice,
     nextReviewDate: carePlan.nextReviewDate,
+    referralInfo: carePlan.referralInfo || '',
+    residentIntention: carePlan.residentIntention,
+    familyIntention: carePlan.familyIntention,
+    assessmentCommitteeOpinion: carePlan.assessmentCommitteeOpinion,
+    comprehensiveGuidance: carePlan.comprehensiveGuidance,
+    consentObtained: carePlan.consentObtained,
     goals: carePlan.goals,
     services: carePlan.services.map(service => ({
       serviceName: service.serviceName,

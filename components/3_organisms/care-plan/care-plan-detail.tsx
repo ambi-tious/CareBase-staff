@@ -178,6 +178,89 @@ export const CarePlanDetail: React.FC<CarePlanDetailProps> = ({ carePlan, reside
           </CardContent>
         </Card>
 
+        {/* Referral Information */}
+        {carePlan.referralInfo && (
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <MessageSquare className="h-5 w-5" />
+                紹介情報
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="p-4 bg-blue-50 rounded-lg">
+                <p className="text-gray-700 leading-relaxed whitespace-pre-line">
+                  {carePlan.referralInfo}
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Intentions */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Users className="h-5 w-5" />
+              利用者・家族の意向
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div className="space-y-3">
+                <h4 className="text-sm font-semibold text-gray-700 border-b pb-1">利用者の意向</h4>
+                <div className="p-4 bg-green-50 rounded-lg">
+                  <p className="text-gray-700 leading-relaxed whitespace-pre-line">
+                    {carePlan.residentIntention}
+                  </p>
+                </div>
+              </div>
+              <div className="space-y-3">
+                <h4 className="text-sm font-semibold text-gray-700 border-b pb-1">家族の意向</h4>
+                <div className="p-4 bg-blue-50 rounded-lg">
+                  <p className="text-gray-700 leading-relaxed whitespace-pre-line">
+                    {carePlan.familyIntention}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Assessment Committee Opinion and Comprehensive Guidance */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Lightbulb className="h-5 w-5" />
+              審査会意見・援助指針
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-6">
+              <div className="space-y-3">
+                <h4 className="text-sm font-semibold text-gray-700 border-b pb-1">
+                  介護認定審査会の意見及びサービスの種類の指定
+                </h4>
+                <div className="p-4 bg-yellow-50 rounded-lg">
+                  <p className="text-gray-700 leading-relaxed whitespace-pre-line">
+                    {carePlan.assessmentCommitteeOpinion}
+                  </p>
+                </div>
+              </div>
+              <div className="space-y-3">
+                <h4 className="text-sm font-semibold text-gray-700 border-b pb-1">
+                  総合的な援助の指針
+                </h4>
+                <div className="p-4 bg-purple-50 rounded-lg">
+                  <p className="text-gray-700 leading-relaxed whitespace-pre-line">
+                    {carePlan.comprehensiveGuidance}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
         {/* Care Goals */}
         <Card>
           <CardHeader>
