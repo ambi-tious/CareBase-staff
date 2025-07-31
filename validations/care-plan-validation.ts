@@ -46,6 +46,9 @@ export const carePlanFormSchema = z
       .string()
       .min(1, 'プラン名は必須です')
       .max(100, 'プラン名は100文字以内で入力してください'),
+    planType: z.enum(['initial', 'continuation'], {
+      required_error: 'プラン種別は必須です',
+    }),
     careLevel: z.string().min(1, '要介護度は必須です'),
     certificationDate: z
       .string()
@@ -59,6 +62,9 @@ export const carePlanFormSchema = z
       .string()
       .min(1, '認定有効終了日は必須です')
       .regex(/^\d{4}-\d{2}-\d{2}$/, '有効な日付を入力してください（YYYY-MM-DD）'),
+    certificationStatus: z.enum(['certified', 'pending'], {
+      required_error: '認定状況は必須です',
+    }),
     careManager: z
       .string()
       .min(1, 'ケアマネージャー名は必須です')
@@ -71,6 +77,26 @@ export const carePlanFormSchema = z
       .string()
       .min(1, '次回見直し日は必須です')
       .regex(/^\d{4}-\d{2}-\d{2}$/, '有効な日付を入力してください（YYYY-MM-DD）'),
+    referralInfo: z.string().max(1000, '紹介情報は1000文字以内で入力してください').optional(),
+    residentIntention: z
+      .string()
+      .min(1, '利用者の意向は必須です')
+      .max(1000, '利用者の意向は1000文字以内で入力してください'),
+    familyIntention: z
+      .string()
+      .min(1, '家族の意向は必須です')
+      .max(1000, '家族の意向は1000文字以内で入力してください'),
+    assessmentCommitteeOpinion: z
+      .string()
+      .min(1, '介護認定審査会の意見は必須です')
+      .max(1000, '介護認定審査会の意見は1000文字以内で入力してください'),
+    comprehensiveGuidance: z
+      .string()
+      .min(1, '総合的な援助の指針は必須です')
+      .max(1000, '総合的な援助の指針は1000文字以内で入力してください'),
+    consentObtained: z.boolean({
+      required_error: '同意確認は必須です',
+    }),
     goals: z.array(z.string().min(1, 'ケア目標を入力してください')).min(1, 'ケア目標は1つ以上入力してください'),
     services: z.array(carePlanServiceSchema).min(1, 'サービスは1つ以上登録してください'),
     notes: z.string().max(1000, 'メモは1000文字以内で入力してください').optional(),

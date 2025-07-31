@@ -7,19 +7,33 @@
 // Care plan status
 export type CarePlanStatus = 'active' | 'expired' | 'draft' | 'archived';
 
+// Care plan type
+export type CarePlanType = 'initial' | 'continuation';
+
+// Certification status
+export type CertificationStatus = 'certified' | 'pending';
+
 // Care plan entity type
 export interface CarePlan {
   id: string;
   residentId: string;
   residentName: string;
   planTitle: string;
+  planType: CarePlanType;
   careLevel: string;
   certificationDate: string;
   certValidityStart: string;
   certValidityEnd: string;
+  certificationStatus: CertificationStatus;
   careManager: string;
   careManagerOffice: string;
   status: CarePlanStatus;
+  referralInfo?: string;
+  residentIntention: string;
+  familyIntention: string;
+  assessmentCommitteeOpinion: string;
+  comprehensiveGuidance: string;
+  consentObtained: boolean;
   goals: string[];
   services: CarePlanService[];
   notes?: string;
@@ -67,6 +81,18 @@ export interface CarePlanSearchParams {
   page?: number;
   limit?: number;
 }
+
+// Plan type options
+export const planTypeOptions = [
+  { value: 'initial', label: '初回' },
+  { value: 'continuation', label: '継続' },
+] as const;
+
+// Certification status options
+export const certificationStatusOptions = [
+  { value: 'certified', label: '認定済み' },
+  { value: 'pending', label: '申請中' },
+] as const;
 
 // Status options
 export const statusOptions = [

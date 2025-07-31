@@ -1,13 +1,14 @@
 'use client';
 
 import { StatusBadge } from '@/components/1_atoms/care-plan/status-badge';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import type { CarePlan } from '@/types/care-plan';
-import { serviceTypeOptions } from '@/types/care-plan';
+import { serviceTypeOptions, planTypeOptions, certificationStatusOptions } from '@/types/care-plan';
 import { format } from 'date-fns';
 import { ja } from 'date-fns/locale';
-import { ArrowLeft, Calendar, Edit3, FileText, Target, User, Building2, Clock } from 'lucide-react';
+import { ArrowLeft, Calendar, Edit3, FileText, Target, User, Building2, Clock, CheckCircle, MessageSquare, Users, Lightbulb } from 'lucide-react';
 import Link from 'next/link';
 import type React from 'react';
 
@@ -28,6 +29,16 @@ export const CarePlanDetail: React.FC<CarePlanDetailProps> = ({ carePlan, reside
   const getServiceTypeLabel = (type: string) => {
     const serviceType = serviceTypeOptions.find(option => option.value === type);
     return serviceType?.label || type;
+  };
+
+  const getPlanTypeLabel = (type: string) => {
+    const planType = planTypeOptions.find(option => option.value === type);
+    return planType?.label || type;
+  };
+
+  const getCertificationStatusLabel = (status: string) => {
+    const certStatus = certificationStatusOptions.find(option => option.value === status);
+    return certStatus?.label || status;
   };
 
   const isExpiringSoon = () => {

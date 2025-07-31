@@ -4,11 +4,12 @@ import { FormField } from '@/components/1_atoms/forms/form-field';
 import { FormSelect } from '@/components/1_atoms/forms/form-select';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { useCarePlanForm } from '@/hooks/useCarePlanForm';
-import { serviceTypeOptions } from '@/types/care-plan';
+import { serviceTypeOptions, planTypeOptions, certificationStatusOptions } from '@/types/care-plan';
 import type { CarePlanFormData, CarePlanServiceFormData } from '@/validations/care-plan-validation';
 import { AlertCircle, Plus, RefreshCw, Save, Send, Trash2, User, X } from 'lucide-react';
 import type React from 'react';
@@ -76,6 +77,15 @@ export const CarePlanForm: React.FC<CarePlanFormProps> = ({
     []
   );
 
+  const planTypeSelectOptions = useMemo(
+    () => planTypeOptions.map((type) => ({ value: type.value, label: type.label })),
+    []
+  );
+
+  const certificationStatusSelectOptions = useMemo(
+    () => certificationStatusOptions.map((status) => ({ value: status.value, label: status.label })),
+    []
+  );
   const onFormSubmit = useCallback(
     async (e: React.FormEvent) => {
       e.preventDefault();
@@ -210,6 +220,30 @@ export const CarePlanForm: React.FC<CarePlanFormProps> = ({
             disabled={isSubmitting || isSavingDraft}
           />
 
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <FormSelect
+              label="プラン種別"
+              id="planType"
+              value={formData.planType}
+              onChange={(value) => updateField('planType', value)}
+              options={planTypeSelectOptions}
+              required
+              error={fieldErrors.planType}
+              disabled={isSubmitting || isSavingDraft}
+            />
+
+            <FormSelect
+              label="認定状況"
+              id="certificationStatus"
+              value={formData.certificationStatus}
+              onChange={(value) => updateField('certificationStatus', value)}
+              options={certificationStatusSelectOptions}
+              required
+              error={fieldErrors.certificationStatus}
+              disabled={isSubmitting || isSavingDraft}
+            />
+          </div>
+
           <FormSelect
             label="要介護度"
             id="careLevel"
@@ -295,8 +329,30 @@ export const CarePlanForm: React.FC<CarePlanFormProps> = ({
         {/* Right Column - Goals and Notes */}
         <div className="space-y-4">
           <h3 className="text-lg font-semibold text-carebase-text-primary border-b pb-2">
-            ケア目標・備考
+            紹介情報・ケア目標
           </h3>
+
+          {/* Referral Info */}
+          <div className="space-y-2">
+            <Label htmlFor="referralInfo" className="text-sm font-medium text-gray-700">
+              紹介情報
+            </Label>
+            <Textarea
+              id="referralInfo"
+              value={formData.referralInfo || ''}
+              onChange={(e) => updateField('referralInfo', e.target.value)}
+              placeholder="紹介元や経緯について記入してください"
+              disabled={isSubmitting || isSavingDraft}
+              className="min-h-20"
+              rows={3}
+            />
+            {fieldErrors.referralInfo && (
+              <p className="text-sm text-red-600" role="alert">
+                {fieldErrors.referralInfo}
+              </p>
+            )}
+            <div className="text-xs text-gray-500 mt-1">{(formData.referralInfo || '').length}/1000文字</div>
+          </div>
 
           {/* Goals */}
           <div className="space-y-2">
@@ -348,8 +404,179 @@ export const CarePlanForm: React.FC<CarePlanFormProps> = ({
               </p>
             )}
           </div>
+        </div>
+      </div>
 
-          {/* Notes */}
+      {/* Intentions and Opinions Section */}
+      <div className="space-y-4">
+        <h3 className="text-lg font-semibold text-carebase-text-primary border-b pb-2">
+          意向・意見
+        </h3>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Left Column - Intentions */}
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="residentIntention" className="text-sm font-medium text-gray-700">
+                利用者の生活に対する意向 <span className="text-red-500 ml-1">*</span>
+              </Label>
+              <Textarea
+                id="residentIntention"
+                value={formData.residentIntention}
+                onChange={(e) => updateField('residentIntention', e.target.value)}
+                placeholder="利用者様ご本人の生活に対する希望や意向を記入してください"
+                disabled={isSubmitting || isSavingDraft}
+                className={`min-h-24 ${fieldErrors.residentIntention ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : ''}`}
+                rows={4}
+              />
+              {fieldErrors.residentIntention && (
+                <p className="text-sm text-red-600" role="alert">
+                  {fieldErrors.residentIntention}
+                </p>
+              )}
+              <div className="text-xs text-gray-500 mt-1">{formData.residentIntention.length}/1000文字</div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="familyIntention" className="text-sm font-medium text-gray-700">
+                家族の生活に対する意向 <span className="text-red-500 ml-1">*</span>
+              </Label>
+              <Textarea
+                id="familyIntention"
+                value={formData.familyIntention}
+                onChange={(e) => updateField('familyIntention', e.target.value)}
+                placeholder="ご家族の生活に対する希望や意向を記入してください"
+                disabled={isSubmitting || isSavingDraft}
+                className={`min-h-24 ${fieldErrors.familyIntention ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : ''}`}
+                rows={4}
+              />
+              {fieldErrors.familyIntention && (
+                <p className="text-sm text-red-600" role="alert">
+                  {fieldErrors.familyIntention}
+                </p>
+              )}
+              <div className="text-xs text-gray-500 mt-1">{formData.familyIntention.length}/1000文字</div>
+            </div>
+          </div>
+
+          {/* Right Column - Opinions and Guidance */}
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="assessmentCommitteeOpinion" className="text-sm font-medium text-gray-700">
+                介護認定審査会の意見及びサービスの種類の指定 <span className="text-red-500 ml-1">*</span>
+              </Label>
+              <Textarea
+                id="assessmentCommitteeOpinion"
+                value={formData.assessmentCommitteeOpinion}
+                onChange={(e) => updateField('assessmentCommitteeOpinion', e.target.value)}
+                placeholder="介護認定審査会からの意見やサービス種類の指定について記入してください"
+                disabled={isSubmitting || isSavingDraft}
+                className={`min-h-24 ${fieldErrors.assessmentCommitteeOpinion ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : ''}`}
+                rows={4}
+              />
+              {fieldErrors.assessmentCommitteeOpinion && (
+                <p className="text-sm text-red-600" role="alert">
+                  {fieldErrors.assessmentCommitteeOpinion}
+                </p>
+              )}
+              <div className="text-xs text-gray-500 mt-1">{formData.assessmentCommitteeOpinion.length}/1000文字</div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="comprehensiveGuidance" className="text-sm font-medium text-gray-700">
+                総合的な援助の指針 <span className="text-red-500 ml-1">*</span>
+              </Label>
+              <Textarea
+                id="comprehensiveGuidance"
+                value={formData.comprehensiveGuidance}
+                onChange={(e) => updateField('comprehensiveGuidance', e.target.value)}
+                placeholder="総合的な援助方針について記入してください"
+                disabled={isSubmitting || isSavingDraft}
+                className={`min-h-24 ${fieldErrors.comprehensiveGuidance ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : ''}`}
+                rows={4}
+              />
+              {fieldErrors.comprehensiveGuidance && (
+                <p className="text-sm text-red-600" role="alert">
+                  {fieldErrors.comprehensiveGuidance}
+                </p>
+              )}
+              <div className="text-xs text-gray-500 mt-1">{formData.comprehensiveGuidance.length}/1000文字</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Notes and Consent Section */}
+      <div className="space-y-4">
+        <h3 className="text-lg font-semibold text-carebase-text-primary border-b pb-2">
+          備考・同意確認
+        </h3>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="space-y-4">
+            {/* Notes */}
+            <div className="space-y-2">
+              <Label htmlFor="notes" className="text-sm font-medium text-gray-700">
+                備考
+              </Label>
+              <Textarea
+                id="notes"
+                value={formData.notes || ''}
+                onChange={(e) => updateField('notes', e.target.value)}
+                placeholder="特記事項や注意点があれば記入してください"
+                disabled={isSubmitting || isSavingDraft}
+                className="min-h-24"
+                rows={4}
+              />
+              {fieldErrors.notes && (
+                <p className="text-sm text-red-600" role="alert">
+                  {fieldErrors.notes}
+                </p>
+              )}
+              <div className="text-xs text-gray-500 mt-1">{(formData.notes || '').length}/1000文字</div>
+            </div>
+          </div>
+
+          <div className="space-y-4">
+            {/* Consent */}
+            <div className="space-y-2">
+              <Label className="text-sm font-medium text-gray-700">
+                同意確認 <span className="text-red-500 ml-1">*</span>
+              </Label>
+              <div className="flex items-start space-x-3 p-4 border border-gray-200 rounded-lg bg-gray-50">
+                <Checkbox
+                  id="consentObtained"
+                  checked={formData.consentObtained}
+                  onCheckedChange={(checked) => updateField('consentObtained', checked === true)}
+                  disabled={isSubmitting || isSavingDraft}
+                  className="mt-1"
+                />
+                <div className="space-y-1">
+                  <Label
+                    htmlFor="consentObtained"
+                    className="text-sm font-medium text-gray-700 cursor-pointer"
+                  >
+                    施設サービス計画について説明を行い同意を得た
+                  </Label>
+                  <p className="text-xs text-gray-500">
+                    利用者様及びご家族に対してケアプランの内容について十分に説明し、
+                    同意を得た場合にチェックしてください。
+                  </p>
+                </div>
+              </div>
+              {fieldErrors.consentObtained && (
+                <p className="text-sm text-red-600" role="alert">
+                  {fieldErrors.consentObtained}
+                </p>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Notes Section (moved) */}
+      <div className="space-y-4 hidden">
+        <div className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="notes" className="text-sm font-medium text-gray-700">
               備考
@@ -371,7 +598,6 @@ export const CarePlanForm: React.FC<CarePlanFormProps> = ({
             <div className="text-xs text-gray-500 mt-1">{(formData.notes || '').length}/1000文字</div>
           </div>
         </div>
-      </div>
 
       {/* Services Section */}
       <div className="space-y-4">
