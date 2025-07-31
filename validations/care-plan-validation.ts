@@ -71,7 +71,9 @@ export const carePlanFormSchema = z
       .string()
       .min(1, '次回見直し日は必須です')
       .regex(/^\d{4}-\d{2}-\d{2}$/, '有効な日付を入力してください（YYYY-MM-DD）'),
-    referralInfo: z.string().max(1000, '紹介情報は1000文字以内で入力してください').optional(),
+    isReferral: z.boolean({
+      required_error: '紹介情報は必須です',
+    }),
     residentIntention: z
       .string()
       .min(1, '利用者の意向は必須です')

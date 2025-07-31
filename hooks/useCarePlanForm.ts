@@ -33,7 +33,7 @@ const initialFormData: CarePlanFormData = {
   careManager: '',
   careManagerOffice: '',
   nextReviewDate: '',
-  referralInfo: '',
+  isReferral: false,
   residentIntention: '',
   familyIntention: '',
   assessmentCommitteeOpinion: '',

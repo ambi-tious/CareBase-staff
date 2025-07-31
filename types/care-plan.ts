@@ -28,7 +28,7 @@ export interface CarePlan {
   careManager: string;
   careManagerOffice: string;
   status: CarePlanStatus;
-  referralInfo?: string;
+  isReferral: boolean;
   residentIntention: string;
   familyIntention: string;
   assessmentCommitteeOpinion: string;
