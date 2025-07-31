@@ -2,7 +2,7 @@
 
 - 画面名: `ケアプラン編集`
 - パス: `/residents/[residentId]/care-plans/[planId]/edit`
-- URL: https://carebase-staff.vercel.app/residents/[residentId]/care-plans/[planId]/edit
+- URL: https://carebase-staff.vercel.app/residents/1/care-plans/plan-001/edit
 
 ## 概要
 

@@ -2,7 +2,7 @@
 
 - 画面名: `ケアプラン詳細`
 - パス: `/residents/[residentId]/care-plans/[planId]`
-- URL: https://carebase-staff.vercel.app/residents/1/care-plans/cp001
+- URL: https://carebase-staff.vercel.app/residents/1/care-plans/plan-001
 
 ## 概要
 
