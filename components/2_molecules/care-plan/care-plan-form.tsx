@@ -330,31 +330,43 @@ export const CarePlanForm: React.FC<CarePlanFormProps> = ({
         {/* Right Column - Goals and Notes */}
         <div className="space-y-4">
           <h3 className="text-lg font-semibold text-carebase-text-primary border-b pb-2">
-            紹介情報・ケア目標
+            紹介・ケア目標
           </h3>
 
-          {/* Referral Info */}
+          {/* Referral */}
           <div className="space-y-2">
-            <Label htmlFor="referralInfo" className="text-sm font-medium text-gray-700">
-              紹介情報
+            <Label className="text-sm font-medium text-gray-700">
+              紹介 <span className="text-red-500 ml-1">*</span>
             </Label>
-            <Textarea
-              id="referralInfo"
-              value={formData.referralInfo || ''}
-              onChange={(e) => updateField('referralInfo', e.target.value)}
-              placeholder="紹介元や経緯について記入してください"
-              disabled={isSubmitting || isSavingDraft}
-              className="min-h-20"
-              rows={3}
-            />
-            {fieldErrors.referralInfo && (
+            <div className="flex items-center space-x-4 p-4 border border-gray-200 rounded-lg bg-gray-50">
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="isReferral-true"
+                  checked={formData.isReferral === true}
+                  onCheckedChange={() => updateField('isReferral', true)}
+                  disabled={isSubmitting || isSavingDraft}
+                />
+                <Label htmlFor="isReferral-true" className="cursor-pointer">
+                  紹介あり
+                </Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="isReferral-false"
+                  checked={formData.isReferral === false}
+                  onCheckedChange={() => updateField('isReferral', false)}
+                  disabled={isSubmitting || isSavingDraft}
+                />
+                <Label htmlFor="isReferral-false" className="cursor-pointer">
+                  紹介なし
+                </Label>
+              </div>
+            </div>
+            {fieldErrors.isReferral && (
               <p className="text-sm text-red-600" role="alert">
-                {fieldErrors.referralInfo}
+                {fieldErrors.isReferral}
               </p>
             )}
-            <div className="text-xs text-gray-500 mt-1">
-              {(formData.referralInfo || '').length}/1000文字
-            </div>
           </div>
 
           {/* Goals */}

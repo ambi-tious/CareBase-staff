@@ -117,7 +117,7 @@ export default function EditCarePlanPage({ params }: EditCarePlanPageProps) {
     careManager: carePlan.careManager,
     careManagerOffice: carePlan.careManagerOffice,
     nextReviewDate: carePlan.nextReviewDate,
-    referralInfo: carePlan.referralInfo || '',
+    isReferral: carePlan.isReferral,
     residentIntention: carePlan.residentIntention,
     familyIntention: carePlan.familyIntention,
     assessmentCommitteeOpinion: carePlan.assessmentCommitteeOpinion,

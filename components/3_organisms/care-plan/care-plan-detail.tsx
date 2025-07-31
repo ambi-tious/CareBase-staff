@@ -197,34 +197,32 @@ export const CarePlanDetail: React.FC<CarePlanDetailProps> = ({ carePlan, reside
           </CardContent>
         </Card>
 
-        {/* Referral Information */}
-        {carePlan.referralInfo && (
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <MessageSquare className="h-5 w-5" />
-                紹介情報
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="p-4 bg-blue-50 rounded-lg">
-                <p className="text-gray-700 leading-relaxed whitespace-pre-line">
-                  {carePlan.referralInfo}
-                </p>
-              </div>
-            </CardContent>
-          </Card>
-        )}
-
         {/* Intentions */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Users className="h-5 w-5" />
-              利用者・家族の意向
+              紹介・利用者・家族の意向
             </CardTitle>
           </CardHeader>
           <CardContent>
+            {/* Referral Information */}
+            <div className="mb-6 p-4 bg-gray-50 rounded-lg">
+              <div className="flex items-center gap-2">
+                <MessageSquare className="h-4 w-4 text-gray-500" />
+                <span className="text-sm font-medium text-gray-700">紹介:</span>
+                <span
+                  className={`px-2 py-1 rounded-full text-xs font-medium ${
+                    carePlan.isReferral
+                      ? 'bg-blue-100 text-blue-700 border border-blue-200'
+                      : 'bg-gray-100 text-gray-700 border border-gray-200'
+                  }`}
+                >
+                  {carePlan.isReferral ? '紹介あり' : '紹介なし'}
+                </span>
+              </div>
+            </div>
+
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <div className="space-y-3">
                 <h4 className="text-sm font-semibold text-gray-700 border-b pb-1">利用者の意向</h4>
