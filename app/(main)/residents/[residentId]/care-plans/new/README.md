@@ -14,6 +14,7 @@
 Issue: [#113 [設計] #015 利用者｜ケアプラン登録](https://github.com/ambi-tious/CareBase-staff/issues/113)
 
 ## 全体レイアウト
+<img width="1026" height="1757" alt="image" src="https://github.com/user-attachments/assets/dce7587f-d1e1-4014-8e47-fe4965811874" />
 
 ### 画面構成
 
@@ -37,7 +38,7 @@ Issue: [#113 [設計] #015 利用者｜ケアプラン登録](https://github.com
 | エラーアラート | Alert | - | 送信エラー時 | - | 赤色背景、エラーメッセージ表示 |
 
 #### 該当ご利用者セクション
-| 利用者区分 | FormSelect | ◯ | 常時 | 初回 | 選択肢：初回/紹介/継続 |
+| プラン種別 | FormSelect | ◯ | 常時 | 初回 | 選択肢：初回/紹介/継続 |
 | 認定状況 | FormSelect | ◯ | 常時 | 認定済み | 選択肢：認定済み/申請中 |
 
 #### 施設サービス計画セクション
@@ -67,21 +68,6 @@ Issue: [#113 [設計] #015 利用者｜ケアプラン登録](https://github.com
 | 登録ボタン | Button | - | 常時 | 登録 | 青色スタイル、Save アイコン |
 
 ## 機能仕様
-
-### 自動入力機能
-
-| 項目名 | データソース | 取得方法 | フォールバック処理 |
-| ------ | ------------ | -------- | ------------------ |
-| 作成者氏名 | localStorage `carebase_selected_staff_data` | `staff.name` プロパティを取得 | 空文字のまま（手動入力必要） |
-| 作成者職種 | localStorage `carebase_selected_staff_data` | `staff.role` プロパティを取得 | 空文字のまま（手動入力必要） |
-| 作成介護保険施設名 | localStorage `carebase_selected_staff_data` | 事業所名を取得 | 空文字のまま（手動入力必要） |
-| 施設所在地 | localStorage `carebase_selected_staff_data` | 施設住所を取得 | 空文字のまま（手動入力必要） |
-
-#### 自動計算機能
-
-- **認定有効期限**: 開始日が入力されると終了日を自動計算（開始日 + 1年 - 1日）
-- **作成日**: デフォルトで今日の日付を設定
-- **初回施設サービス計画作成日**: デフォルトで今日の日付を設定
 
 ### アクション
 
