@@ -1199,7 +1199,7 @@ export const careBoardData: Resident[] = [
     registrationDate: '2025/01/01',
     lastUpdateDate: '2025/03/01',
     admissionStatus: '入居中',
-    careLevel: '要支援1',
+    careLevel: '要介護2',
     certificationDate: '2024/12/15',
     certValidityStart: '2024/12/15',
     certValidityEnd: '2025/12/14',
