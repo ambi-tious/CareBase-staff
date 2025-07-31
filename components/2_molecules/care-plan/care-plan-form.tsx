@@ -598,6 +598,7 @@ export const CarePlanForm: React.FC<CarePlanFormProps> = ({
             <div className="text-xs text-gray-500 mt-1">{(formData.notes || '').length}/1000文字</div>
           </div>
         </div>
+      </div>
 
       {/* Services Section */}
       <div className="space-y-4">
