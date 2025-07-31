@@ -13,6 +13,7 @@
 関連Issue: [#115 [設計] #014 利用者｜利用者詳細（ケアプラン）](https://github.com/ambi-tious/CareBase-staff/issues/115)
 
 ## 全体レイアウト
+<img width="1037" height="1222" alt="image" src="https://github.com/user-attachments/assets/90d946c7-11d1-40f5-9650-05b654cd6c85" />
 
 ### 画面構成
 
