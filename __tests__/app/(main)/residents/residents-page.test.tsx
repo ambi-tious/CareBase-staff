@@ -2,7 +2,7 @@ import ResidentsPage from '@/app/(main)/residents/page';
 import { render, screen } from '@testing-library/react';
 
 // Mock the ResidentsList component
-vi.mock('@/components/3_organisms/residents/residents-list', () => ({
+vi.mock('@/components/3_organisms/resident/residents-list', () => ({
   ResidentsList: () => <div data-testid="residents-list">Residents List Component</div>,
 }));
 
