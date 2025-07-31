@@ -8,7 +8,20 @@ import type { CarePlan } from '@/types/care-plan';
 import { serviceTypeOptions, planTypeOptions, certificationStatusOptions } from '@/types/care-plan';
 import { format } from 'date-fns';
 import { ja } from 'date-fns/locale';
-import { ArrowLeft, Calendar, Edit3, FileText, Target, User, Building2, Clock, CheckCircle, MessageSquare, Users, Lightbulb } from 'lucide-react';
+import {
+  ArrowLeft,
+  Calendar,
+  Edit3,
+  FileText,
+  Target,
+  User,
+  Building2,
+  Clock,
+  CheckCircle,
+  MessageSquare,
+  Users,
+  Lightbulb,
+} from 'lucide-react';
 import Link from 'next/link';
 import type React from 'react';
 
@@ -27,24 +40,26 @@ export const CarePlanDetail: React.FC<CarePlanDetailProps> = ({ carePlan, reside
   };
 
   const getServiceTypeLabel = (type: string) => {
-    const serviceType = serviceTypeOptions.find(option => option.value === type);
+    const serviceType = serviceTypeOptions.find((option) => option.value === type);
     return serviceType?.label || type;
   };
 
   const getPlanTypeLabel = (type: string) => {
-    const planType = planTypeOptions.find(option => option.value === type);
+    const planType = planTypeOptions.find((option) => option.value === type);
     return planType?.label || type;
   };
 
   const getCertificationStatusLabel = (status: string) => {
-    const certStatus = certificationStatusOptions.find(option => option.value === status);
+    const certStatus = certificationStatusOptions.find((option) => option.value === status);
     return certStatus?.label || status;
   };
 
   const isExpiringSoon = () => {
     const endDate = new Date(carePlan.certValidityEnd);
     const today = new Date();
-    const daysUntilExpiry = Math.ceil((endDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+    const daysUntilExpiry = Math.ceil(
+      (endDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24)
+    );
     return daysUntilExpiry <= 30 && daysUntilExpiry > 0;
   };
 
@@ -124,7 +139,9 @@ export const CarePlanDetail: React.FC<CarePlanDetailProps> = ({ carePlan, reside
                 <div className="space-y-2 text-sm">
                   <div>
                     <span className="font-medium text-gray-600">要介護度:</span>
-                    <span className="ml-2 font-semibold text-carebase-blue">{carePlan.careLevel}</span>
+                    <span className="ml-2 font-semibold text-carebase-blue">
+                      {carePlan.careLevel}
+                    </span>
                   </div>
                   <div>
                     <span className="font-medium text-gray-600">認定日:</span>
@@ -141,7 +158,9 @@ export const CarePlanDetail: React.FC<CarePlanDetailProps> = ({ carePlan, reside
               </div>
 
               <div className="space-y-3">
-                <h4 className="text-sm font-semibold text-gray-700 border-b pb-1">ケアマネージャー</h4>
+                <h4 className="text-sm font-semibold text-gray-700 border-b pb-1">
+                  ケアマネージャー
+                </h4>
                 <div className="space-y-2 text-sm">
                   <div className="flex items-center gap-2">
                     <User className="h-4 w-4 text-gray-500" />

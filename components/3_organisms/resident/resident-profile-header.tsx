@@ -37,9 +37,7 @@ export const ResidentProfileHeader: React.FC<ResidentProfileHeaderProps> = ({ re
               className="w-full border-carebase-blue text-carebase-blue hover:bg-carebase-blue-light font-semibold py-3 text-base"
               asChild
             >
-              <Link href={`/residents/${resident.id}/care-plans`}>
-                ケアプラン
-              </Link>
+              <Link href={`/residents/${resident.id}/care-plans`}>ケアプラン</Link>
             </Button>
           </div>
 

@@ -24,7 +24,9 @@ export const CarePlanCard: React.FC<CarePlanCardProps> = ({ carePlan, className 
   const isExpiringSoon = () => {
     const endDate = new Date(carePlan.certValidityEnd);
     const today = new Date();
-    const daysUntilExpiry = Math.ceil((endDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+    const daysUntilExpiry = Math.ceil(
+      (endDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24)
+    );
     return daysUntilExpiry <= 30 && daysUntilExpiry > 0;
   };
 
@@ -45,7 +47,10 @@ export const CarePlanCard: React.FC<CarePlanCardProps> = ({ carePlan, className 
                 {carePlan.careLevel}
               </Badge>
               {isExpiringSoon() && (
-                <Badge variant="outline" className="text-xs bg-orange-100 text-orange-700 border-orange-200">
+                <Badge
+                  variant="outline"
+                  className="text-xs bg-orange-100 text-orange-700 border-orange-200"
+                >
                   期限間近
                 </Badge>
               )}

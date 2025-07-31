@@ -64,7 +64,7 @@ export const useCarePlanForm = ({ onSubmit, initialData = {}, mode }: UseCarePla
     if (mode === 'create' && !formData.certificationDate) {
       const today = new Date();
       const todayStr = today.toISOString().split('T')[0];
-      
+
       // 認定有効期間は通常1年間
       const nextYear = new Date(today);
       nextYear.setFullYear(nextYear.getFullYear() + 1);

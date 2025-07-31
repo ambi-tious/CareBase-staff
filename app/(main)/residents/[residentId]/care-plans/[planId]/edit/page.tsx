@@ -124,7 +124,7 @@ export default function EditCarePlanPage({ params }: EditCarePlanPageProps) {
     comprehensiveGuidance: carePlan.comprehensiveGuidance,
     consentObtained: carePlan.consentObtained,
     goals: carePlan.goals,
-    services: carePlan.services.map(service => ({
+    services: carePlan.services.map((service) => ({
       serviceName: service.serviceName,
       serviceType: service.serviceType,
       frequency: service.frequency,

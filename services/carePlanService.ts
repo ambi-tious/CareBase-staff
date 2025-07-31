@@ -43,20 +43,27 @@ class CarePlanService {
   /**
    * Update existing care plan
    */
-  async updateCarePlan(residentId: string, planId: string, data: CarePlanFormData): Promise<CarePlan> {
+  async updateCarePlan(
+    residentId: string,
+    planId: string,
+    data: CarePlanFormData
+  ): Promise<CarePlan> {
     try {
       // For development, use mock update
       if (process.env.NODE_ENV === 'development') {
         return this.mockUpdateCarePlan(residentId, planId, data);
       }
 
-      const response = await fetch(`${this.baseUrl}/api/v1/residents/${residentId}/care-plans/${planId}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      });
+      const response = await fetch(
+        `${this.baseUrl}/api/v1/residents/${residentId}/care-plans/${planId}`,
+        {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data),
+        }
+      );
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -80,7 +87,9 @@ class CarePlanService {
         return this.mockGetCarePlan(residentId, planId);
       }
 
-      const response = await fetch(`${this.baseUrl}/api/v1/residents/${residentId}/care-plans/${planId}`);
+      const response = await fetch(
+        `${this.baseUrl}/api/v1/residents/${residentId}/care-plans/${planId}`
+      );
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -104,9 +113,12 @@ class CarePlanService {
         return this.mockDeleteCarePlan(residentId, planId);
       }
 
-      const response = await fetch(`${this.baseUrl}/api/v1/residents/${residentId}/care-plans/${planId}`, {
-        method: 'DELETE',
-      });
+      const response = await fetch(
+        `${this.baseUrl}/api/v1/residents/${residentId}/care-plans/${planId}`,
+        {
+          method: 'DELETE',
+        }
+      );
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -167,8 +179,8 @@ class CarePlanService {
       assessmentCommitteeOpinion: data.assessmentCommitteeOpinion,
       comprehensiveGuidance: data.comprehensiveGuidance,
       consentObtained: data.consentObtained,
-      goals: data.goals.filter(goal => goal.trim() !== ''),
-      services: data.services.map(service => ({
+      goals: data.goals.filter((goal) => goal.trim() !== ''),
+      services: data.services.map((service) => ({
         ...service,
         id: `service-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
       })),
@@ -187,7 +199,11 @@ class CarePlanService {
   /**
    * Mock care plan update for development
    */
-  private async mockUpdateCarePlan(residentId: string, planId: string, data: CarePlanFormData): Promise<CarePlan> {
+  private async mockUpdateCarePlan(
+    residentId: string,
+    planId: string,
+    data: CarePlanFormData
+  ): Promise<CarePlan> {
     // Simulate network delay
     await new Promise((resolve) => setTimeout(resolve, 1000));
 
@@ -234,10 +250,10 @@ class CarePlanService {
       assessmentCommitteeOpinion: data.assessmentCommitteeOpinion,
       comprehensiveGuidance: data.comprehensiveGuidance,
       consentObtained: data.consentObtained,
-      goals: data.goals.filter(goal => goal.trim() !== ''),
-      services: data.services.map(service => ({
+      goals: data.goals.filter((goal) => goal.trim() !== ''),
+      services: data.services.map((service) => ({
         ...service,
-        id: service.id || `service-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+        id: (service as any).id || `service-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
       })),
       notes: data.notes || undefined,
       createdAt: '2025-01-01T00:00:00.000Z', // Mock creation date

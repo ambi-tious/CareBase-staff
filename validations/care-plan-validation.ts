@@ -15,14 +15,8 @@ export const carePlanServiceSchema = z.object({
   serviceType: z.enum(['home_care', 'day_service', 'short_stay', 'other'], {
     required_error: 'サービス種別は必須です',
   }),
-  frequency: z
-    .string()
-    .min(1, '頻度は必須です')
-    .max(50, '頻度は50文字以内で入力してください'),
-  duration: z
-    .string()
-    .min(1, '時間は必須です')
-    .max(50, '時間は50文字以内で入力してください'),
+  frequency: z.string().min(1, '頻度は必須です').max(50, '頻度は50文字以内で入力してください'),
+  duration: z.string().min(1, '時間は必須です').max(50, '時間は50文字以内で入力してください'),
   provider: z
     .string()
     .min(1, '提供事業者は必須です')
@@ -97,7 +91,9 @@ export const carePlanFormSchema = z
     consentObtained: z.boolean({
       required_error: '同意確認は必須です',
     }),
-    goals: z.array(z.string().min(1, 'ケア目標を入力してください')).min(1, 'ケア目標は1つ以上入力してください'),
+    goals: z
+      .array(z.string().min(1, 'ケア目標を入力してください'))
+      .min(1, 'ケア目標は1つ以上入力してください'),
     services: z.array(carePlanServiceSchema).min(1, 'サービスは1つ以上登録してください'),
     notes: z.string().max(1000, 'メモは1000文字以内で入力してください').optional(),
   })

@@ -99,7 +99,11 @@ export const statusOptions = [
   { value: 'active', label: '有効', color: 'bg-green-100 text-green-700 border-green-200' },
   { value: 'expired', label: '期限切れ', color: 'bg-red-100 text-red-700 border-red-200' },
   { value: 'draft', label: '下書き', color: 'bg-gray-100 text-gray-700 border-gray-200' },
-  { value: 'archived', label: 'アーカイブ', color: 'bg-yellow-100 text-yellow-700 border-yellow-200' },
+  {
+    value: 'archived',
+    label: 'アーカイブ',
+    color: 'bg-yellow-100 text-yellow-700 border-yellow-200',
+  },
 ] as const;
 
 // Service type options

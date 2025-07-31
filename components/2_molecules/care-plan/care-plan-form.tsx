@@ -83,7 +83,8 @@ export const CarePlanForm: React.FC<CarePlanFormProps> = ({
   );
 
   const certificationStatusSelectOptions = useMemo(
-    () => certificationStatusOptions.map((status) => ({ value: status.value, label: status.label })),
+    () =>
+      certificationStatusOptions.map((status) => ({ value: status.value, label: status.label })),
     []
   );
   const onFormSubmit = useCallback(
@@ -351,7 +352,9 @@ export const CarePlanForm: React.FC<CarePlanFormProps> = ({
                 {fieldErrors.referralInfo}
               </p>
             )}
-            <div className="text-xs text-gray-500 mt-1">{(formData.referralInfo || '').length}/1000文字</div>
+            <div className="text-xs text-gray-500 mt-1">
+              {(formData.referralInfo || '').length}/1000文字
+            </div>
           </div>
 
           {/* Goals */}
@@ -434,7 +437,9 @@ export const CarePlanForm: React.FC<CarePlanFormProps> = ({
                   {fieldErrors.residentIntention}
                 </p>
               )}
-              <div className="text-xs text-gray-500 mt-1">{formData.residentIntention.length}/1000文字</div>
+              <div className="text-xs text-gray-500 mt-1">
+                {formData.residentIntention.length}/1000文字
+              </div>
             </div>
 
             <div className="space-y-2">
@@ -455,15 +460,21 @@ export const CarePlanForm: React.FC<CarePlanFormProps> = ({
                   {fieldErrors.familyIntention}
                 </p>
               )}
-              <div className="text-xs text-gray-500 mt-1">{formData.familyIntention.length}/1000文字</div>
+              <div className="text-xs text-gray-500 mt-1">
+                {formData.familyIntention.length}/1000文字
+              </div>
             </div>
           </div>
 
           {/* Right Column - Opinions and Guidance */}
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="assessmentCommitteeOpinion" className="text-sm font-medium text-gray-700">
-                介護認定審査会の意見及びサービスの種類の指定 <span className="text-red-500 ml-1">*</span>
+              <Label
+                htmlFor="assessmentCommitteeOpinion"
+                className="text-sm font-medium text-gray-700"
+              >
+                介護認定審査会の意見及びサービスの種類の指定{' '}
+                <span className="text-red-500 ml-1">*</span>
               </Label>
               <Textarea
                 id="assessmentCommitteeOpinion"
@@ -479,7 +490,9 @@ export const CarePlanForm: React.FC<CarePlanFormProps> = ({
                   {fieldErrors.assessmentCommitteeOpinion}
                 </p>
               )}
-              <div className="text-xs text-gray-500 mt-1">{formData.assessmentCommitteeOpinion.length}/1000文字</div>
+              <div className="text-xs text-gray-500 mt-1">
+                {formData.assessmentCommitteeOpinion.length}/1000文字
+              </div>
             </div>
 
             <div className="space-y-2">
@@ -500,7 +513,9 @@ export const CarePlanForm: React.FC<CarePlanFormProps> = ({
                   {fieldErrors.comprehensiveGuidance}
                 </p>
               )}
-              <div className="text-xs text-gray-500 mt-1">{formData.comprehensiveGuidance.length}/1000文字</div>
+              <div className="text-xs text-gray-500 mt-1">
+                {formData.comprehensiveGuidance.length}/1000文字
+              </div>
             </div>
           </div>
         </div>
@@ -533,7 +548,9 @@ export const CarePlanForm: React.FC<CarePlanFormProps> = ({
                   {fieldErrors.notes}
                 </p>
               )}
-              <div className="text-xs text-gray-500 mt-1">{(formData.notes || '').length}/1000文字</div>
+              <div className="text-xs text-gray-500 mt-1">
+                {(formData.notes || '').length}/1000文字
+              </div>
             </div>
           </div>
 
@@ -595,7 +612,9 @@ export const CarePlanForm: React.FC<CarePlanFormProps> = ({
                 {fieldErrors.notes}
               </p>
             )}
-            <div className="text-xs text-gray-500 mt-1">{(formData.notes || '').length}/1000文字</div>
+            <div className="text-xs text-gray-500 mt-1">
+              {(formData.notes || '').length}/1000文字
+            </div>
           </div>
         </div>
       </div>

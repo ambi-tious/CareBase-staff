@@ -29,7 +29,7 @@ export default function NewCarePlanPage({ params }: NewCarePlanPageProps) {
       const resolvedParams = await params;
       const residentIdNum = Number.parseInt(resolvedParams.residentId, 10);
       const resident = getResidentById(residentIdNum);
-      
+
       if (resident) {
         setResidentId(resolvedParams.residentId);
         setResidentName(resident.name);

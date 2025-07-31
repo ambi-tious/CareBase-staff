@@ -19,13 +19,10 @@ export const carePlanData: CarePlan[] = [
     residentIntention: '自宅での生活を継続したい。できるだけ自立した生活を送りたい。',
     familyIntention: '本人の意向を尊重し、安全に自宅で過ごせるよう支援したい。',
     assessmentCommitteeOpinion: '要介護1の認定は適切。訪問介護とデイサービスの組み合わせが効果的。',
-    comprehensiveGuidance: '血圧管理を中心とした健康維持と、転倒予防に重点を置いたケアを実施。社会参加の機会も確保する。',
+    comprehensiveGuidance:
+      '血圧管理を中心とした健康維持と、転倒予防に重点を置いたケアを実施。社会参加の機会も確保する。',
     consentObtained: true,
-    goals: [
-      '自立した日常生活の維持',
-      '転倒リスクの軽減',
-      '社会参加の促進',
-    ],
+    goals: ['自立した日常生活の維持', '転倒リスクの軽減', '社会参加の促進'],
     services: [
       {
         id: 'service-001',
@@ -75,10 +72,7 @@ export const carePlanData: CarePlan[] = [
     assessmentCommitteeOpinion: '要介護1の認定継続が適切。',
     comprehensiveGuidance: '自立支援を中心としたケアプラン。',
     consentObtained: true,
-    goals: [
-      '自立した日常生活の維持',
-      '健康状態の安定',
-    ],
+    goals: ['自立した日常生活の維持', '健康状態の安定'],
     services: [
       {
         id: 'service-003',
@@ -115,15 +109,13 @@ export const carePlanData: CarePlan[] = [
     status: 'active',
     referralInfo: '病院からの退院に伴う初回プラン作成。アルツハイマー型認知症の診断あり。',
     residentIntention: '家族と一緒に過ごしたい。できることは自分でやりたい。',
-    familyIntention: '本人の尊厳を保ちながら、安全に過ごせる環境を整えたい。家族の負担も軽減したい。',
+    familyIntention:
+      '本人の尊厳を保ちながら、安全に過ごせる環境を整えたい。家族の負担も軽減したい。',
     assessmentCommitteeOpinion: '要介護3の認定が適切。認知症対応型サービスの利用が必要。',
-    comprehensiveGuidance: '認知症の進行予防と家族支援を中心としたケアプラン。安全確保と社会参加のバランスを重視。',
+    comprehensiveGuidance:
+      '認知症の進行予防と家族支援を中心としたケアプラン。安全確保と社会参加のバランスを重視。',
     consentObtained: true,
-    goals: [
-      '認知機能の維持',
-      '安全な生活環境の確保',
-      '家族負担の軽減',
-    ],
+    goals: ['認知機能の維持', '安全な生活環境の確保', '家族負担の軽減'],
     services: [
       {
         id: 'service-004',
@@ -171,13 +163,10 @@ export const carePlanData: CarePlan[] = [
     residentIntention: '妻と一緒に自宅で過ごしたい。病気の管理をしっかりしたい。',
     familyIntention: '本人の体調管理を最優先に、安心して生活できる環境を整えたい。',
     assessmentCommitteeOpinion: '要介護2の認定継続。医療的ケアの必要性が高い。',
-    comprehensiveGuidance: '心房細動の管理を中心とした医療的ケアと、ADL維持のためのリハビリテーションを組み合わせたケア。',
+    comprehensiveGuidance:
+      '心房細動の管理を中心とした医療的ケアと、ADL維持のためのリハビリテーションを組み合わせたケア。',
     consentObtained: true,
-    goals: [
-      '心房細動の管理',
-      'ADLの維持・向上',
-      '服薬管理の徹底',
-    ],
+    goals: ['心房細動の管理', 'ADLの維持・向上', '服薬管理の徹底'],
     services: [
       {
         id: 'service-006',
