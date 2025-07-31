@@ -15,6 +15,7 @@ Issue: [#115 [設計] #014 利用者｜利用者詳細（ケアプラン）](htt
 ## 全体レイアウト
 
 ### 画面構成
+<img width="1035" height="583" alt="image" src="https://github.com/user-attachments/assets/6d944bf3-4a06-44c8-bcda-b3ada6514754" />
 
 1画面で完結するケアプラン管理インターフェース：
 
