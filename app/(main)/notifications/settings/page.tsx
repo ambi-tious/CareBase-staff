@@ -1,5 +1,6 @@
 'use client';
 
+import { PushNotificationToggle } from '@/components/2_molecules/push-notification-toggle';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
@@ -110,17 +111,7 @@ export default function NotificationSettingsPage() {
             <CardTitle>通知方法設定</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div className="space-y-0.5">
-                <Label htmlFor="push-notifications">プッシュ通知</Label>
-                <p className="text-sm text-gray-500">ブラウザでプッシュ通知を受信します</p>
-              </div>
-              <Switch
-                id="push-notifications"
-                checked={settings.pushNotifications}
-                onCheckedChange={(checked) => handleSettingChange('pushNotifications', checked)}
-              />
-            </div>
+            <PushNotificationToggle />
 
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">

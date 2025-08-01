@@ -245,7 +245,6 @@ Issue: [#021 [設計] #021 連絡・予定｜連絡登録](https://github.com/am
   - 下書き保存: `bg-gray-100 hover:bg-gray-200 text-gray-700`
   - キャンセル: `border-gray-300 text-gray-700`
 
-
 ### アニメーション
 
 - **モーダル表示**: フェードイン・スケールアップ効果

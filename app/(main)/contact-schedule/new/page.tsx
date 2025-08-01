@@ -10,6 +10,28 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
+// プッシュ通知送信ヘルパー関数
+const sendPushNotification = async (data: ContactScheduleFormData) => {
+  const response = await fetch('/api/push/send', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      title: `新しい${data.type === 'contact' ? '連絡' : data.type === 'schedule' ? '予定' : '申し送り'}`,
+      body: `${data.title} - ${data.content.length > 50 ? data.content.substring(0, 50) + '...' : data.content}`,
+      url: '/contact-schedule',
+      icon: '/icons/icon-192x192.png',
+    }),
+  });
+
+  if (!response.ok) {
+    throw new Error(`プッシュ通知の送信に失敗しました: ${response.statusText}`);
+  }
+
+  return response.json();
+};
+
 export default function NewContactSchedulePage() {
   const router = useRouter();
   const [submitError, setSubmitError] = useState<string | null>(null);
@@ -36,6 +58,15 @@ export default function NewContactSchedulePage() {
         return true;
       } else {
         setSuccessMessage('連絡・予定を作成しました。');
+
+        // プッシュ通知を送信
+        try {
+          await sendPushNotification(data);
+        } catch (notificationError) {
+          console.error('プッシュ通知の送信に失敗しました:', notificationError);
+          // プッシュ通知の失敗は全体の処理をブロックしない
+        }
+
         // Navigate back to contact schedule list after successful submission
         setTimeout(() => {
           router.push('/contact-schedule');
