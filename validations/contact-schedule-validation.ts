@@ -25,6 +25,7 @@ export const contactScheduleFormSchema = z.object({
   endTime: z.string().optional(),
   relatedResidentId: z.string().optional(),
   tags: z.string().optional(),
+  category: z.string({ required_error: 'カテゴリは必須です' }),
 });
 
 export type ContactScheduleFormData = z.infer<typeof contactScheduleFormSchema>;
@@ -44,4 +45,5 @@ export const CONTACT_SCHEDULE_ERROR_MESSAGES = {
   REQUIRED_DUE_DATE: '実施日は必須です',
   TITLE_TOO_LONG: 'タイトルは100文字以内で入力してください',
   CONTENT_TOO_LONG: '内容は1000文字以内で入力してください',
+  REQUIRED_CATEGORY: 'カテゴリは必須です',
 } as const;
