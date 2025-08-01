@@ -1,14 +1,14 @@
 # 書類登録画面設計書
 
-画面名: `書類登録`  
-パス: `/documents/new`  
+画面名: `書類登録`
+パス: `/documents/new`
 URL: https://carebase-staff.vercel.app/documents/new
 
 ## 概要
 
-CareBase-staffアプリケーションの書類登録画面設計書です。  
-職員が新しい書類（議事録等）を作成・登録するためのフォーム画面です。  
-GoogleDocs風のインターフェースを採用し、下書き機能や画像・動画添付機能を提供します。  
+書類登録画面設計書です。
+職員が新しい書類（議事録等）を作成・登録するためのフォーム画面です。
+GoogleDocs風のインターフェースを採用し、下書き機能や画像・動画添付機能を提供します。
 書類一覧画面から遷移し、登録完了後は新しく作成された書類の詳細画面に自動遷移します。
 
 Issue: [#033 [設計] #033 書類｜書類登録](https://github.com/ambi-tious/CareBase-staff/issues/77)

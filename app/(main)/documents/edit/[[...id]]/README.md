@@ -1,13 +1,13 @@
 # 書類編集画面設計書
 
-画面名: `書類編集`  
-パス: `/documents/[documentId]/edit`  
+画面名: `書類編集`
+パス: `/documents/[documentId]/edit`
 URL: [https://carebase-staff.vercel.app/documents/edit/doc-3](https://carebase-staff.vercel.app/documents/edit/doc-3)
 
 ## 概要
 
-CareBase-staffアプリケーションの書類編集画面設計書です。  
-既存書類の編集機能を提供し、議事録形式でのコンテンツ管理、下書き保存、画像・動画添付機能を備えます。  
+書類編集画面設計書です。
+既存書類の編集機能を提供し、議事録形式でのコンテンツ管理、下書き保存、画像・動画添付機能を備えます。
 GoogleDocs風のインターフェースで直感的な編集体験を実現し、会議記録の効率的な作成・更新を支援します。
 
 Issue: [#75 [設計] #034 書類｜書類編集](https://github.com/ambi-tious/CareBase-staff/issues/75)

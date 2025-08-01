@@ -10,7 +10,7 @@ import type { CarePlanFormData } from '@/validations/care-plan-validation';
 import { ArrowLeft, CheckCircle, FileText } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 interface NewCarePlanPageProps {
   params: Promise<{ residentId: string }>;
@@ -87,12 +87,11 @@ export default function NewCarePlanPage({ params }: NewCarePlanPageProps) {
   return (
     <div className="p-4 md:p-6 bg-carebase-bg min-h-screen">
       {/* Header */}
-      <div className="mb-6">
-        <div className="flex items-center gap-4 mb-4">
+      <div className="mb-4">
+        <div className="flex items-center gap-4 mb-2">
           <Button variant="outline" asChild>
             <Link href={`/residents/${residentId}/care-plans`}>
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              戻る
+              <ArrowLeft className="h-4 w-4" />
             </Link>
           </Button>
           <div className="flex items-center gap-3">
@@ -100,7 +99,7 @@ export default function NewCarePlanPage({ params }: NewCarePlanPageProps) {
             <h1 className="text-2xl font-bold text-carebase-text-primary">新規ケアプラン作成</h1>
           </div>
         </div>
-        <p className="text-gray-600">
+        <p className="text-gray-600 text-sm">
           {residentName}様の新しいケアプランを作成してください。必須項目（
           <span className="text-red-500">*</span>）は必ず入力してください。
         </p>
@@ -122,7 +121,7 @@ export default function NewCarePlanPage({ params }: NewCarePlanPageProps) {
       )}
 
       {/* Form */}
-      <Card className="max-w-6xl">
+      <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <FileText className="h-5 w-5" />

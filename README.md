@@ -170,7 +170,7 @@ UIコンポーネントは Atomic Design の階層に従って実装します：
 
 ## 🔗 関連リンク
 
-- **モック環境**: [https://vercel.com/hornet-ventures/carebase-staff](https://vercel.com/hornet-ventures/carebase-staff)
+- **モック環境**: [https://carebase-staff.vercel.app](https://carebase-staff.vercel.app)
 - **設計ドキュメント**: [docs/overview.md](./docs/overview.md)
 
 ---

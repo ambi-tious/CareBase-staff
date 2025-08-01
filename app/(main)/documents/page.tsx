@@ -67,15 +67,11 @@ function DocumentsContent() {
 
       try {
         if (!categoryOrFolderId) {
-          // ルートビュー（ホーム）
+          // ルートビュー
           const contents = getFolderContents(null);
-          const path = getFolderPath(null).map((item) => ({
-            ...item,
-            path: `/documents${item.id === 'root' ? '' : `?folder=${item.id}`}`,
-          }));
 
           setDocuments(contents);
-          setBreadcrumbPath(path);
+          setBreadcrumbPath([]);
           setIsFolderView(false);
           setCategory(null);
           setFolder(null);
@@ -97,10 +93,12 @@ function DocumentsContent() {
             }
 
             // フォルダパスを取得
-            const path = getFolderPath(categoryOrFolderId).map((item) => ({
-              ...item,
-              path: `/documents${item.id === 'root' ? '' : `?folder=${item.id}`}`,
-            }));
+            const path = getFolderPath(categoryOrFolderId)
+              .filter((item) => item.id !== 'root')
+              .map((item) => ({
+                ...item,
+                path: `/documents/folder/${item.id}`,
+              }));
             setBreadcrumbPath(path);
 
             // フォルダコンテンツを取得
@@ -119,7 +117,6 @@ function DocumentsContent() {
             setDocuments(docs as unknown as DocumentItem[]);
 
             setBreadcrumbPath([
-              { id: 'root', name: 'ホーム', path: '/documents' },
               {
                 id: categoryOrFolderId,
                 name: cat?.name || categoryOrFolderId,
