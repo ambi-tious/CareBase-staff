@@ -9,7 +9,12 @@ import { Textarea } from '@/components/ui/textarea';
 import { useContactScheduleForm } from '@/hooks/useContactScheduleForm';
 import { careBoardData } from '@/mocks/care-board-data';
 import type { ContactScheduleFormData } from '@/types/contact-schedule';
-import { assignmentOptions, priorityOptions, typeOptions } from '@/types/contact-schedule';
+import {
+  assignmentOptions,
+  categoryOptions,
+  priorityOptions,
+  typeOptions,
+} from '@/types/contact-schedule';
 import { AlertCircle, Save, Send, User } from 'lucide-react';
 import type React from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -74,6 +79,11 @@ export const ContactScheduleForm: React.FC<ContactScheduleFormProps> = ({
   const assignmentSelectOptions = useMemo(
     () =>
       assignmentOptions.map((assignment) => ({ value: assignment.value, label: assignment.label })),
+    []
+  );
+
+  const categorySelectOptions = useMemo(
+    () => categoryOptions.map((category) => ({ value: category.value, label: category.label })),
     []
   );
 
@@ -178,6 +188,13 @@ export const ContactScheduleForm: React.FC<ContactScheduleFormProps> = ({
     [updateField]
   );
 
+  const handleCategoryChange = useCallback(
+    (value: string) => {
+      updateField('category', value);
+    },
+    [updateField]
+  );
+
   const handleContentChange = useCallback(
     (e: React.ChangeEvent<HTMLTextAreaElement>) => {
       updateField('content', e.target.value);
@@ -246,6 +263,17 @@ export const ContactScheduleForm: React.FC<ContactScheduleFormProps> = ({
             options={typeSelectOptions}
             required
             error={fieldErrors.type}
+            disabled={isSubmitting || isSavingDraft}
+          />
+
+          <FormSelect
+            label="カテゴリ"
+            id="category"
+            value={formData.category}
+            onChange={handleCategoryChange}
+            options={categorySelectOptions}
+            required
+            error={fieldErrors.category}
             disabled={isSubmitting || isSavingDraft}
           />
 

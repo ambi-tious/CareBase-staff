@@ -33,6 +33,7 @@ const initialFormData: ContactScheduleFormData = {
   endTime: '',
   relatedResidentId: '',
   tags: '',
+  category: 'company-wide',
 };
 
 export const useContactScheduleForm = ({

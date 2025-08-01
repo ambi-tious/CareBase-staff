@@ -30,6 +30,7 @@ export interface ContactScheduleItem {
   tags?: string[];
   relatedResidentId?: string;
   relatedResidentName?: string;
+  category: string;
 }
 
 // Contact schedule form data schema
@@ -51,6 +52,7 @@ export const contactScheduleFormSchema = z.object({
   endTime: z.string().optional(),
   relatedResidentId: z.string().optional(),
   tags: z.string().optional(),
+  category: z.string().min(1, 'カテゴリは必須です'),
 });
 
 export type ContactScheduleFormData = z.infer<typeof contactScheduleFormSchema>;
@@ -101,4 +103,14 @@ export const assignmentOptions = [
   { value: 'group-3', label: '管理部門' },
   { value: 'recreation-team', label: 'レクリエーション担当' },
   { value: 'training-group', label: '研修担当' },
+] as const;
+
+// Category options
+export const categoryOptions = [
+  { value: 'other', label: 'その他' },
+  { value: 'office-related', label: '事業所関連' },
+  { value: 'company-wide', label: '全社連絡' },
+  { value: 'resident-related', label: '利用者関連' },
+  { value: 'document-related', label: '書類関連' },
+  { value: 'confirmation-request', label: '確認依頼' },
 ] as const;
