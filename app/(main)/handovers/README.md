@@ -1,13 +1,13 @@
 # 申し送り一覧画面設計書
 
-画面名: `申し送り一覧`  
-パス: `/handovers`  
-URL: https://carebase-staff.vercel.app/handovers
+- 画面名: `申し送り一覧`
+- パス: `/handovers`
+- URL: https://carebase-staff.vercel.app/handovers
 
 ## 概要
 
-CareBase-staffアプリケーションの申し送り一覧画面設計書です。  
-職員間の申し送り情報を一覧表示し、検索・フィルタリング機能、詳細表示、新規作成機能を提供します。  
+申し送り一覧画面設計書です。
+職員間の申し送り情報を一覧表示し、検索・フィルタリング機能、詳細表示、新規作成機能を提供します。
 未読・既読・対応済みのステータス管理と重要度による優先度表示を行います。
 
 ## 全体レイアウト
@@ -39,6 +39,8 @@ CareBase-staffアプリケーションの申し送り一覧画面設計書です
 ## 機能仕様
 
 ### デフォルト表示仕様
+
+<img width="1470" height="799" alt="スクリーンショット 2025-07-30 10 52 41" src="https://github.com/user-attachments/assets/3e3d1203-9a3a-4794-ab69-3cf346ad5413" />
 
 - **初期表示**: 未読の申し送りのみを表示（selectedStatus = 'unread'）
 - **未読判定基準**:

@@ -86,7 +86,7 @@ function StaffSelectionContent() {
   };
 
   return (
-    <div className="min-h-screen bg-carebase-bg flex items-center justify-center p-4">
+    <div className="min-h-screen bg-carebase-bg p-4">
       <StaffSelectionScreen
         ref={staffSelectionRef}
         fromHeader={fromHeader}

@@ -1,14 +1,14 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Alert, AlertDescription } from '@/components/ui/alert';
 import { ContactScheduleForm } from '@/components/2_molecules/contact-schedule/contact-schedule-form';
-import type { ContactScheduleFormData } from '@/types/contact-schedule';
-import { ArrowLeft, Plus, CheckCircle } from 'lucide-react';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import type { ContactScheduleFormData } from '@/validations/contact-schedule-validation';
+import { ArrowLeft, CheckCircle, Plus } from 'lucide-react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 
 export default function NewContactSchedulePage() {
   const router = useRouter();
@@ -24,7 +24,7 @@ export default function NewContactSchedulePage() {
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
       // Mock API call - in production, this would call the actual API
-      console.log('Submitting contact schedule:', { ...data, isDraft });
+      // console.log('Submitting contact schedule:', { ...data, isDraft });
 
       // Simulate occasional errors for testing
       if (Math.random() < 0.1) {

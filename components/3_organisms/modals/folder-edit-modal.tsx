@@ -1,21 +1,21 @@
 'use client';
 
-import type React from 'react';
-import { useState, useEffect } from 'react';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
-  DialogHeader,
-  DialogTitle,
   DialogDescription,
   DialogFooter,
+  DialogHeader,
+  DialogTitle,
 } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { AlertCircle, Edit, Loader2 } from 'lucide-react';
 import type { DocumentFolder } from '@/mocks/documents-data';
+import { AlertCircle, Edit, Loader2 } from 'lucide-react';
+import type React from 'react';
+import { useEffect, useState } from 'react';
 
 interface FolderEditModalProps {
   isOpen: boolean;

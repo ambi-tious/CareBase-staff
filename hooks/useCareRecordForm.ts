@@ -4,8 +4,8 @@
  * Manages care record form state and validation for create/edit operations
  */
 
-import type { CareRecordFormData } from '@/types/care-record';
-import { careRecordFormSchema } from '@/types/care-record';
+import type { CareRecordFormData } from '@/validations/care-record-validation';
+import { careRecordFormSchema } from '@/validations/care-record-validation';
 import { useCallback, useEffect, useState } from 'react';
 
 interface UseCareRecordFormOptions {

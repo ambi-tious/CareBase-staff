@@ -1,16 +1,16 @@
 'use client';
 
-import type React from 'react';
+import { ContactForm } from '@/components/2_molecules/forms/contact-form';
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogDescription,
 } from '@/components/ui/dialog';
-import { ContactForm } from '@/components/2_molecules/forms/contact-form';
-import type { ContactFormData } from '@/types/contact';
 import type { ContactPerson } from '@/mocks/care-board-data';
+import type { ContactFormData } from '@/validations/contact-validation';
+import type React from 'react';
 
 interface ContactEditModalProps {
   isOpen: boolean;

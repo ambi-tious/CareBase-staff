@@ -4,7 +4,7 @@ import { HandoverForm } from '@/components/2_molecules/handover/handover-form';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import type { HandoverFormData } from '@/types/handover';
+import type { HandoverFormData } from '@/validations/handover-validation';
 import { ArrowLeft, CheckCircle, MessageSquarePlus } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';

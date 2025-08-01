@@ -2,7 +2,7 @@
 
 import { MedicalHistoryForm } from '@/components/2_molecules/forms/medical-history-form';
 import type { MedicalHistory } from '@/mocks/care-board-data';
-import type { MedicalHistoryFormData } from '@/types/resident-data';
+import type { MedicalHistoryFormData } from '@/validations/resident-data-validation';
 import type React from 'react';
 import { GenericFormModal } from './generic-form-modal';
 

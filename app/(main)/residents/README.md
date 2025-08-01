@@ -1,12 +1,12 @@
 # 利用者一覧画面設計書
 
-画面名: `利用者一覧`
-パス: `/residents`
-URL: https://carebase-staff.vercel.app/residents
+- 画面名: `利用者一覧`
+- パス: `/residents`
+- URL: https://carebase-staff.vercel.app/residents
 
 ## 概要
 
-CareBase-staffアプリケーションの利用者一覧画面設計書です。
+利用者一覧画面設計書です。
 ログインしているグループとチームに紐づいた利用者の一覧表示、検索機能、アラート状態の検知機能を提供します。
 利用者の基本情報とアラート状況を一目で把握でき、詳細画面への遷移や新規利用者登録が可能です。
 

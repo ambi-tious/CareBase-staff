@@ -1,5 +1,5 @@
-import type { ResidentBasicInfo } from '@/components/2_molecules/forms/resident-basic-info-form';
 import type { Resident } from '@/mocks/care-board-data';
+import type { ResidentBasicInfo } from '@/validations/resident-validation';
 
 // Helper function to calculate certification validity end date
 const calculateCertValidityEnd = (admissionDate: string): string => {
@@ -60,7 +60,7 @@ export const residentService = {
     };
 
     // In production, this would make an API call to create the resident
-    console.log('Creating resident:', newResident);
+    // console.log('Creating resident:', newResident);
 
     const { careBoardData } = await import('@/mocks/care-board-data');
     careBoardData.push(newResident);
@@ -72,7 +72,7 @@ export const residentService = {
     await new Promise((resolve) => setTimeout(resolve, 1000));
 
     // In production, this would make an API call to update the resident
-    console.log('Updating resident:', id, data);
+    // console.log('Updating resident:', id, data);
 
     // For now, return a mock updated resident
     const { careBoardData } = await import('@/mocks/care-board-data');
@@ -85,6 +85,7 @@ export const residentService = {
     const updatedResident = {
       ...existingResident,
       ...data,
+      age: existingResident.age, // Keep existing age as number
       sex:
         data.sex === '男' || data.sex === '女' || data.sex === 'その他'
           ? data.sex

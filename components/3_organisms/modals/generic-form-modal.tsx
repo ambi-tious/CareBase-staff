@@ -33,7 +33,7 @@ export const GenericFormModal: React.FC<GenericFormModalProps> = ({
   description,
   residentName,
   children,
-  className = 'max-w-4xl max-h-[90vh] overflow-y-auto tablet:max-w-[95vw] tablet:max-h-[95vh] tablet-portrait:max-w-[90vw] tablet-landscape:max-w-[90vw]',
+  className = 'max-w-4xl max-h-[90vh] overflow-y-auto tablet:max-w-[95vw] tablet:max-h-[95vh]',
   testId,
 }) => {
   const fullDescription = description

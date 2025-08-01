@@ -1,15 +1,15 @@
 'use client';
 
-import type React from 'react';
-import { useState } from 'react';
-import type { Medication } from '@/types/medication';
+import { GenericDeleteModal } from '@/components/3_organisms/modals/generic-delete-modal';
+import { MedicationModal } from '@/components/3_organisms/modals/medication-modal';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import { Edit3, Calendar, Building2, Trash2, Pill } from 'lucide-react';
-import { MedicationModal } from '@/components/3_organisms/modals/medication-modal';
-import { GenericDeleteModal } from '@/components/3_organisms/modals/generic-delete-modal';
 import { medicationService } from '@/services/medicationService';
-import type { MedicationFormData } from '@/types/medication';
+import type { Medication } from '@/types/medication';
+import type { MedicationFormData } from '@/validations/medication-validation';
+import { Building2, Calendar, Edit3, Pill, Trash2 } from 'lucide-react';
+import type React from 'react';
+import { useState } from 'react';
 
 interface MedicationCardProps {
   medication: Medication;

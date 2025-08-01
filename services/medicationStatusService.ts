@@ -1,10 +1,11 @@
 /**
  * Medication Status Service
  *
- * Service layer for medication status API calls
+ * API service for medication status operations
  */
 
-import type { MedicationStatusFormData, MedicationStatus } from '@/types/medication-status';
+import type { MedicationStatus } from '@/types/medication-status';
+import type { MedicationStatusFormData } from '@/validations/medication-status-validation';
 
 class MedicationStatusService {
   private baseUrl = process.env.NEXT_PUBLIC_API_URL || '';
@@ -133,7 +134,7 @@ class MedicationStatusService {
       updatedAt: new Date().toISOString(),
     };
 
-    console.log('Mock created medication status:', newStatus);
+    // console.log('Mock created medication status:', newStatus);
     return newStatus;
   }
 
@@ -163,7 +164,7 @@ class MedicationStatusService {
       updatedAt: new Date().toISOString(),
     };
 
-    console.log('Mock updated medication status:', updatedStatus);
+    // console.log('Mock updated medication status:', updatedStatus);
     return updatedStatus;
   }
 
@@ -179,7 +180,7 @@ class MedicationStatusService {
       throw new Error('ネットワークエラーが発生しました。');
     }
 
-    console.log('Mock deleted medication status:', { residentId, statusId });
+    // console.log('Mock deleted medication status:', { residentId, statusId });
   }
 }
 

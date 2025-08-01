@@ -10,6 +10,7 @@ interface GroupSelectorProps {
   groups: Group[];
   selectedGroupId?: string;
   onGroupSelect: (groupId: string) => void;
+  disabled?: boolean;
   className?: string;
 }
 
@@ -17,13 +18,11 @@ export const GroupSelector: React.FC<GroupSelectorProps> = ({
   groups,
   selectedGroupId,
   onGroupSelect,
+  disabled = false,
   className = '',
 }) => {
   const handleGroupClick = (groupId: string) => {
-    if (selectedGroupId === groupId) {
-      // Allow deselection by clicking the same group
-      onGroupSelect('');
-    } else {
+    if (!disabled) {
       onGroupSelect(groupId);
     }
   };
@@ -31,9 +30,9 @@ export const GroupSelector: React.FC<GroupSelectorProps> = ({
   return (
     <div className={`space-y-3 ${className}`}>
       <h3 className="text-lg font-semibold text-carebase-text-primary mb-3">
-        グループを選択してください
+        ① グループ［フロア］を選択
       </h3>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+      <div className="grid md:grid-cols-3 lg:grid-cols-4 gap-2">
         {groups.map((group) => {
           const Icon = getLucideIcon(group.icon);
           const isSelected = selectedGroupId === group.id;
@@ -41,10 +40,10 @@ export const GroupSelector: React.FC<GroupSelectorProps> = ({
             <Card
               key={group.id}
               className={cn(
-                'cursor-pointer hover:shadow-md',
+                disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer hover:shadow-md',
                 isSelected
                   ? 'ring-2 ring-carebase-blue bg-carebase-blue text-white shadow-lg'
-                  : 'hover:ring-1 hover:ring-carebase-blue-light'
+                  : !disabled && 'hover:ring-1 hover:ring-carebase-blue-light'
               )}
               onClick={() => handleGroupClick(group.id)}
             >

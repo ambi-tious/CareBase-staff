@@ -1,10 +1,11 @@
 /**
  * Care Record Service
  *
- * Service layer for care record API calls
+ * API service for care record operations
  */
 
-import type { CareRecord, CareRecordFormData } from '@/types/care-record';
+import type { CareRecord } from '@/types/care-record';
+import type { CareRecordFormData } from '@/validations/care-record-validation';
 
 class CareRecordService {
   private baseUrl = process.env.NEXT_PUBLIC_API_URL || '';
@@ -163,7 +164,7 @@ class CareRecordService {
       status: data.status,
     };
 
-    console.log('Mock created care record:', newRecord);
+    // console.log('Mock created care record:', newRecord);
     return newRecord;
   }
 
@@ -217,7 +218,7 @@ class CareRecordService {
       status: data.status,
     };
 
-    console.log('Mock updated care record:', updatedRecord);
+    // console.log('Mock updated care record:', updatedRecord);
     return updatedRecord;
   }
 
@@ -233,7 +234,7 @@ class CareRecordService {
       throw new Error('ネットワークエラーが発生しました。');
     }
 
-    console.log('Mock deleted care record:', recordId);
+    // console.log('Mock deleted care record:', recordId);
   }
 
   /**

@@ -12,9 +12,6 @@ interface ResidentInfoCellProps {
 export const ResidentInfoCell: React.FC<ResidentInfoCellProps> = ({ resident, className = '' }) => {
   const careLevelColor = (() => {
     switch (resident.careLevel) {
-      case '要支援1':
-      case '要支援2':
-        return 'bg-green-100 text-green-800 border-green-200';
       case '要介護1':
       case '要介護2':
         return 'bg-yellow-100 text-yellow-800 border-yellow-200';

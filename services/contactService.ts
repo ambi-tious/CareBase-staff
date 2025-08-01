@@ -1,11 +1,11 @@
 /**
  * Contact Service
  *
- * Service layer for contact/family information API calls
+ * API service for resident contact information
  */
 
-import type { ContactFormData } from '@/types/contact';
 import type { ContactPerson } from '@/mocks/care-board-data';
+import type { ContactFormData } from '@/validations/contact-validation';
 
 class ContactService {
   private baseUrl = process.env.NEXT_PUBLIC_API_URL || '';
@@ -69,7 +69,7 @@ class ContactService {
       notes: contactData.notes || undefined,
     };
 
-    console.log('Mock created contact:', newContact);
+    // console.log('Mock created contact:', newContact);
     return newContact;
   }
 
@@ -140,7 +140,7 @@ class ContactService {
       notes: contactData.notes || undefined,
     };
 
-    console.log('Mock updated contact:', updatedContact);
+    // console.log('Mock updated contact:', updatedContact);
     return updatedContact;
   }
 
@@ -182,7 +182,7 @@ class ContactService {
       throw new Error('ネットワークエラーが発生しました。');
     }
 
-    console.log('Mock deleted contact:', { residentId, contactId });
+    // console.log('Mock deleted contact:', { residentId, contactId });
   }
 }
 

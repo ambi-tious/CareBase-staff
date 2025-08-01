@@ -1,15 +1,15 @@
 'use client';
 
-import type React from 'react';
-import { useState } from 'react';
-import type { MedicationStatus } from '@/types/medication-status';
+import { GenericDeleteModal } from '@/components/3_organisms/modals/generic-delete-modal';
+import { MedicationStatusModal } from '@/components/3_organisms/modals/medication-status-modal';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import { Edit3, Calendar, FileText, Trash2 } from 'lucide-react';
-import { MedicationStatusModal } from '@/components/3_organisms/modals/medication-status-modal';
-import { GenericDeleteModal } from '@/components/3_organisms/modals/generic-delete-modal';
 import { medicationStatusService } from '@/services/medicationStatusService';
-import type { MedicationStatusFormData } from '@/types/medication-status';
+import type { MedicationStatus } from '@/types/medication-status';
+import type { MedicationStatusFormData } from '@/validations/medication-status-validation';
+import { Calendar, Edit3, FileText, Trash2 } from 'lucide-react';
+import type React from 'react';
+import { useState } from 'react';
 
 interface MedicationStatusCardProps {
   medicationStatus: MedicationStatus;

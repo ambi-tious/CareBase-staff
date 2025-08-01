@@ -1,9 +1,6 @@
 'use client';
 
-import {
-  DocumentFormFields,
-  type DocumentFormData,
-} from '@/components/2_molecules/documents/document-form-fields';
+import { DocumentFormFields } from '@/components/2_molecules/documents/document-form-fields';
 import { DocumentEditor } from '@/components/2_molecules/editor/document-editor';
 import { DocumentToolbar } from '@/components/2_molecules/editor/document-toolbar';
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -15,6 +12,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { useDocumentForm } from '@/hooks/useDocumentForm';
 import { getFolder } from '@/mocks/hierarchical-documents';
 import { getCategoryFromFolderId, getFolderIdFromSearchParams } from '@/utils/folder-utils';
+import type { DocumentFormData } from '@/validations/document-validation';
 import {
   AlertCircle,
   ArrowLeft,

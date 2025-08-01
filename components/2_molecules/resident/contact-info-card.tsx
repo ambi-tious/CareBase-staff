@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import type { ContactPerson } from '@/mocks/care-board-data';
 import { contactService } from '@/services/contactService';
-import type { ContactFormData } from '@/types/contact';
+import type { ContactFormData } from '@/validations/contact-validation';
 import { Edit3, Mail, MapPin, Phone, Trash2 } from 'lucide-react';
 import type React from 'react';
 import { useState } from 'react';

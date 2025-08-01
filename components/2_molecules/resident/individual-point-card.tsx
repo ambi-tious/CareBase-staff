@@ -1,7 +1,7 @@
-import type React from 'react';
-import type { IndividualPoint } from '@/mocks/care-board-data';
 import { Badge } from '@/components/ui/badge';
 import { getLucideIcon } from '@/lib/lucide-icon-registry';
+import type { IndividualPoint } from '@/mocks/care-board-data';
+import type React from 'react';
 
 interface IndividualPointCardProps {
   point: IndividualPoint;

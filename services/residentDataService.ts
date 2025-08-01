@@ -17,7 +17,7 @@ import type {
   MedicalInstitutionFormData,
   MedicationInfoFormData,
   MedicationStatusFormData,
-} from '@/types/resident-data';
+} from '@/validations/resident-data-validation';
 
 class ResidentDataService {
   private baseUrl = process.env.NEXT_PUBLIC_API_URL || '';
@@ -43,7 +43,7 @@ class ResidentDataService {
       notes: data.notes,
     };
 
-    console.log('Mock created home care office:', newOffice);
+    // console.log('Mock created home care office:', newOffice);
     return newOffice;
   }
 
@@ -68,7 +68,7 @@ class ResidentDataService {
       notes: data.notes,
     };
 
-    console.log('Mock updated home care office:', updatedOffice);
+    // console.log('Mock updated home care office:', updatedOffice);
     return updatedOffice;
   }
 
@@ -79,7 +79,7 @@ class ResidentDataService {
       throw new Error('ネットワークエラーが発生しました。');
     }
 
-    console.log('Mock deleted home care office:', { residentId, officeId });
+    // console.log('Mock deleted home care office:', { residentId, officeId });
   }
 
   // Medical Institution Methods
@@ -103,7 +103,7 @@ class ResidentDataService {
       notes: data.notes,
     };
 
-    console.log('Mock created medical institution:', newInstitution);
+    // console.log('Mock created medical institution:', newInstitution);
     return newInstitution;
   }
 
@@ -128,7 +128,7 @@ class ResidentDataService {
       notes: data.notes,
     };
 
-    console.log('Mock updated medical institution:', updatedInstitution);
+    // console.log('Mock updated medical institution:', updatedInstitution);
     return updatedInstitution;
   }
 
@@ -139,7 +139,7 @@ class ResidentDataService {
       throw new Error('ネットワークエラーが発生しました。');
     }
 
-    console.log('Mock deleted medical institution:', { residentId, institutionId });
+    // console.log('Mock deleted medical institution:', { residentId, institutionId });
   }
 
   // Medical History Methods
@@ -162,7 +162,7 @@ class ResidentDataService {
       notes: data.notes,
     };
 
-    console.log('Mock created medical history:', newHistory);
+    // console.log('Mock created medical history:', newHistory);
     return newHistory;
   }
 
@@ -186,7 +186,7 @@ class ResidentDataService {
       notes: data.notes,
     };
 
-    console.log('Mock updated medical history:', updatedHistory);
+    // console.log('Mock updated medical history:', updatedHistory);
     return updatedHistory;
   }
 
@@ -197,7 +197,7 @@ class ResidentDataService {
       throw new Error('ネットワークエラーが発生しました。');
     }
 
-    console.log('Mock deleted medical history:', { residentId, historyId });
+    // console.log('Mock deleted medical history:', { residentId, historyId });
   }
 
   // Medication Info Methods
@@ -225,7 +225,7 @@ class ResidentDataService {
       updatedAt: new Date().toISOString(),
     };
 
-    console.log('Mock created medication info:', newMedication);
+    // console.log('Mock created medication info:', newMedication);
     return newMedication;
   }
 
@@ -254,7 +254,7 @@ class ResidentDataService {
       updatedAt: new Date().toISOString(),
     };
 
-    console.log('Mock updated medication info:', updatedMedication);
+    // console.log('Mock updated medication info:', updatedMedication);
     return updatedMedication;
   }
 
@@ -265,7 +265,7 @@ class ResidentDataService {
       throw new Error('ネットワークエラーが発生しました。');
     }
 
-    console.log('Mock deleted medication info:', { residentId, medicationId });
+    // console.log('Mock deleted medication info:', { residentId, medicationId });
   }
 
   // Medication Status Methods
@@ -288,7 +288,7 @@ class ResidentDataService {
       updatedAt: new Date().toISOString(),
     };
 
-    console.log('Mock created medication status:', newStatus);
+    // console.log('Mock created medication status:', newStatus);
     return newStatus;
   }
 
@@ -312,7 +312,7 @@ class ResidentDataService {
       updatedAt: new Date().toISOString(),
     };
 
-    console.log('Mock updated medication status:', updatedStatus);
+    // console.log('Mock updated medication status:', updatedStatus);
     return updatedStatus;
   }
 
@@ -323,7 +323,7 @@ class ResidentDataService {
       throw new Error('ネットワークエラーが発生しました。');
     }
 
-    console.log('Mock deleted medication status:', { residentId, statusId });
+    // console.log('Mock deleted medication status:', { residentId, statusId });
   }
 }
 

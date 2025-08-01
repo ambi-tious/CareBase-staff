@@ -4,7 +4,7 @@ import { FormField } from '@/components/1_atoms/forms/form-field';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { useMedicationForm } from '@/hooks/useMedicationForm';
-import type { MedicationFormData } from '@/types/medication';
+import type { MedicationFormData } from '@/validations/medication-validation';
 import { AlertCircle, RefreshCw } from 'lucide-react';
 import type React from 'react';
 

@@ -5,8 +5,8 @@ import { FormSelect } from '@/components/1_atoms/forms/form-select';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { useContactForm } from '@/hooks/useContactForm';
-import type { ContactFormData } from '@/types/contact';
 import { contactTypeOptions, relationshipOptions } from '@/types/contact';
+import type { ContactFormData } from '@/validations/contact-validation';
 import { AlertCircle, RefreshCw } from 'lucide-react';
 import type React from 'react';
 

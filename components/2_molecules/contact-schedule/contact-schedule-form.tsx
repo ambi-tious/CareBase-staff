@@ -8,13 +8,13 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { useContactScheduleForm } from '@/hooks/useContactScheduleForm';
 import { careBoardData } from '@/mocks/care-board-data';
-import type { ContactScheduleFormData } from '@/types/contact-schedule';
 import {
   assignmentOptions,
   categoryOptions,
   priorityOptions,
   typeOptions,
 } from '@/types/contact-schedule';
+import type { ContactScheduleFormData } from '@/validations/contact-schedule-validation';
 import { AlertCircle, Save, Send, User } from 'lucide-react';
 import type React from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -114,7 +114,7 @@ export const ContactScheduleForm: React.FC<ContactScheduleFormProps> = ({
   const handleSaveDraft = useCallback(async () => {
     const success = await saveDraft();
     if (success) {
-      console.log('Draft saved successfully');
+      // console.log('Draft saved successfully');
     }
   }, [saveDraft]);
 

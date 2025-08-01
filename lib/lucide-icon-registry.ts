@@ -40,6 +40,7 @@ import {
   Shield,
   Soup,
   Stethoscope,
+  Target,
   Thermometer,
   SmileIcon as Tooth,
   User,
@@ -47,6 +48,10 @@ import {
   Users,
   Utensils,
   Wind,
+  Settings,
+  FolderPlus,
+  Palette,
+  Bell,
   type LucideIcon,
 } from 'lucide-react';
 
@@ -78,6 +83,7 @@ const iconRegistry: Record<string, LucideIcon> = {
   Notebook,
   MessageCircle,
   FileClock,
+  Bell,
 
   // Staff data icons
   UserCheck,
@@ -105,6 +111,10 @@ const iconRegistry: Record<string, LucideIcon> = {
   Activity,
   Dumbbell,
   Edit3,
+  Target,
+  Settings,
+  FolderPlus,
+  Palette,
 };
 
 // Helper function to get icon component by string name

@@ -1,19 +1,19 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { FileIcon } from '@/components/1_atoms/documents/file-icon';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
-  DialogHeader,
-  DialogTitle,
   DialogDescription,
   DialogFooter,
+  DialogHeader,
+  DialogTitle,
 } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Progress } from '@/components/ui/progress';
 import { AlertCircle, FileUp, Loader2, Upload, X } from 'lucide-react';
-import { FileIcon } from '@/components/1_atoms/documents/file-icon';
+import { useRef, useState } from 'react';
 
 interface FileUploadModalProps {
   isOpen: boolean;

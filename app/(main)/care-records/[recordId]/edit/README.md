@@ -1,13 +1,13 @@
 # 介護記録編集画面設計書
 
-画面名: `介護記録編集`  
-パス: `/care-records/[recordId]/edit`  
-URL: https://carebase-staff.vercel.app/care-records/[recordId]/edit
+- 画面名: `介護記録編集`
+- パス: `/care-records/[recordId]/edit`
+- URL: https://carebase-staff.vercel.app/care-records/[recordId]/edit
 
 ## 概要
 
-CareBase-staffアプリケーションの介護記録編集画面設計書です。  
-既存の介護記録の内容を編集・更新する機能を提供し、介護現場での記録修正や追記を効率的に行えます。  
+介護記録編集画面設計書です。
+既存の介護記録の内容を編集・更新する機能を提供し、介護現場での記録修正や追記を効率的に行えます。
 下書き保存機能により、作業の中断・再開が可能で、削除機能も含む包括的な編集機能を提供します。
 
 ## 全体レイアウト

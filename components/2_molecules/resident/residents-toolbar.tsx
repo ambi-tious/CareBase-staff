@@ -1,11 +1,11 @@
 'use client';
 
-import type React from 'react';
 import { Button } from '@/components/ui/button';
-import { ResidentSearchBar } from './resident-search-bar';
-import { UserPlus, Filter, Download } from 'lucide-react';
-import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
+import { Download, Filter, UserPlus } from 'lucide-react';
+import type React from 'react';
+import { ResidentSearchBar } from './resident-search-bar';
 
 interface ResidentsToolbarProps {
   onSearch: (query: string) => void;

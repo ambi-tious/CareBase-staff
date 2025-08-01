@@ -1,13 +1,13 @@
 # 連絡・予定画面設計書
 
-画面名: `連絡・予定`  
-パス: `/contact-schedule`  
-URL: https://carebase-staff.vercel.app/contact-schedule
+- 画面名: `連絡・予定`
+- パス: `/contact-schedule`
+- URL: https://carebase-staff.vercel.app/contact-schedule
 
 ## 概要
 
-CareBase-staffアプリケーションの連絡・予定画面設計書です。  
-職員間の連絡事項、予定、申し送りを効率的に管理・表示する機能を提供します。  
+連絡・予定画面設計書です。
+職員間の連絡事項、予定、申し送りを効率的に管理・表示する機能を提供します。
 週間表示と月間表示の2つのカレンダー表示方式を切り替えて使用できます。
 
 ## 全体レイアウト
@@ -41,12 +41,16 @@ CareBase-staffアプリケーションの連絡・予定画面設計書です。
 
 #### 週間表示
 
+<img width="1881" height="800" alt="image" src="https://github.com/user-attachments/assets/6512ffa3-bc7e-49d5-83ab-17f55a192150" />
+
 - 選択した週の7日間を縦に並べて表示
 - 各日の予定・連絡事項を時系列で表示
 - 今日の日付をハイライト表示
 - 選択した日付をリング表示で強調
 
 #### 月間表示
+
+<img width="1882" height="888" alt="image" src="https://github.com/user-attachments/assets/7c04efa2-5c22-4b9e-b169-332161a8496e" />
 
 - 選択した月のカレンダーグリッド表示
 - 各日付セルに最大3件の予定を表示

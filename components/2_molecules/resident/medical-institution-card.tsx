@@ -1,13 +1,13 @@
-import type React from 'react';
-import { useState } from 'react';
-import type { MedicalInstitution } from '@/mocks/care-board-data';
+import { GenericDeleteModal } from '@/components/3_organisms/modals/generic-delete-modal';
+import { MedicalInstitutionModal } from '@/components/3_organisms/modals/medical-institution-modal';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import { Edit3, Phone, MapPin, Trash2 } from 'lucide-react';
-import { MedicalInstitutionModal } from '@/components/3_organisms/modals/medical-institution-modal';
-import { GenericDeleteModal } from '@/components/3_organisms/modals/generic-delete-modal';
+import type { MedicalInstitution } from '@/mocks/care-board-data';
 import { residentDataService } from '@/services/residentDataService';
-import type { MedicalInstitutionFormData } from '@/types/resident-data';
+import type { MedicalInstitutionFormData } from '@/validations/resident-data-validation';
+import { Edit3, MapPin, Phone, Trash2 } from 'lucide-react';
+import type React from 'react';
+import { useState } from 'react';
 
 interface MedicalInstitutionCardProps {
   institution: MedicalInstitution;
