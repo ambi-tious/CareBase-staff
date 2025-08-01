@@ -2,11 +2,14 @@
 
 import { useCallback, useEffect, useState } from 'react';
 
+// Web API型定義
+type NotificationPermission = 'default' | 'denied' | 'granted';
+
 interface PushNotificationState {
   isSupported: boolean;
   permission: NotificationPermission;
   isSubscribed: boolean;
-  subscription: PushSubscription | null;
+  subscription: any; // PushSubscription型を避けるため
   isLoading: boolean;
   error: string | null;
 }
@@ -30,7 +33,10 @@ export const usePushNotifications = () => {
       setState((prev) => ({
         ...prev,
         isSupported,
-        permission: isSupported ? Notification.permission : 'denied',
+        permission:
+          isSupported && typeof (window as any).Notification !== 'undefined'
+            ? ((window as any).Notification.permission as NotificationPermission)
+            : 'denied',
       }));
     };
 
@@ -67,7 +73,7 @@ export const usePushNotifications = () => {
 
   // プッシュ通知の許可を要求
   const requestPermission = useCallback(async (): Promise<boolean> => {
-    if (!state.isSupported) {
+    if (!state.isSupported || typeof (window as any).Notification === 'undefined') {
       setState((prev) => ({ ...prev, error: 'プッシュ通知がサポートされていません' }));
       return false;
     }
@@ -75,11 +81,12 @@ export const usePushNotifications = () => {
     try {
       setState((prev) => ({ ...prev, isLoading: true, error: null }));
 
-      const permission = await Notification.requestPermission();
+      const permission = await (window as any).Notification.requestPermission();
+      const typedPermission = permission as NotificationPermission;
 
-      setState((prev) => ({ ...prev, permission, isLoading: false }));
+      setState((prev) => ({ ...prev, permission: typedPermission, isLoading: false }));
 
-      return permission === 'granted';
+      return typedPermission === 'granted';
     } catch (error) {
       console.error('通知許可要求でエラー:', error);
       setState((prev) => ({
@@ -111,7 +118,7 @@ export const usePushNotifications = () => {
         applicationServerKey: urlBase64ToUint8Array(
           process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY ||
             'BANkjz6pnwS2ba20B7CJHa645sdVPq5HEYgQgz3KrvAF593wNulqcEhw5bRwTw9xa8HTzY8eydo3pzh86RYs0zU'
-        ),
+        ) as any,
       });
 
       // サーバーにサブスクリプションを送信

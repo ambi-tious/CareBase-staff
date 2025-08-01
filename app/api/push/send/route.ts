@@ -1,9 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import webpush from 'web-push';
+import { subscriptions } from '../subscriptions';
 
 // VAPID設定
+const vapidEmail = process.env.VAPID_EMAIL || 'mailto:admin@carebase-staff.vercel.app';
+const vapidSubject = vapidEmail.startsWith('mailto:') ? vapidEmail : `mailto:${vapidEmail}`;
+
 webpush.setVapidDetails(
-  process.env.VAPID_EMAIL || 'mailto:admin@carebase-staff.vercel.app',
+  vapidSubject,
   process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY ||
     'BANkjz6pnwS2ba20B7CJHa645sdVPq5HEYgQgz3KrvAF593wNulqcEhw5bRwTw9xa8HTzY8eydo3pzh86RYs0zU',
   process.env.VAPID_PRIVATE_KEY || '6xZthipotyNW4MN7Z5HFgNDHwCHMnGDJ0q908J2SMiY'
@@ -34,16 +38,9 @@ export async function POST(request: NextRequest) {
       ],
     });
 
-    // TODO: データベースから全ての有効なサブスクリプションを取得
-    // 現在はモックデータ（開発用）
-    const subscriptions: any[] = [];
+    // メモリ内のサブスクリプションを使用（開発用）
 
-    // 実際のアプリケーションでは、以下のようにデータベースから取得
-    // const subscriptions = await db.pushSubscription.findMany({
-    //   where: {
-    //     isActive: true,
-    //   },
-    // });
+    console.log(`送信対象サブスクリプション数: ${subscriptions.length}`);
 
     if (subscriptions.length === 0) {
       console.log('アクティブなプッシュ通知サブスクリプションが見つかりません');

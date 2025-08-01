@@ -1,90 +1,85 @@
-// プッシュ通知専用のService Worker機能
+// プッシュ通知専用Service Worker
 
-// プッシュ通知を受信した時の処理
+// プッシュ通知受信時の処理
 self.addEventListener('push', function (event) {
-  console.log('プッシュ通知を受信しました:', event);
+  console.log('Push event received:', event);
 
-  if (!event.data) {
-    console.log('プッシュ通知にデータがありません');
-    return;
-  }
-
-  try {
-    const data = event.data.json();
-    console.log('プッシュ通知データ:', data);
-
-    const options = {
-      body: data.body || '新しい連絡・予定が作成されました',
-      icon: data.icon || '/icons/icon-192x192.png',
-      badge: data.badge || '/icons/icon-96x96.png',
-      image: data.image,
-      vibrate: [200, 100, 200],
-      data: {
-        url: data.url || '/contact-schedule',
-        timestamp: data.timestamp || Date.now(),
+  let options = {
+    body: '新しい通知があります',
+    icon: '/icons/icon-192x192.png',
+    badge: '/icons/icon-96x96.png',
+    vibrate: [200, 100, 200],
+    tag: 'carebase-notification',
+    requireInteraction: true,
+    actions: [
+      {
+        action: 'view',
+        title: '表示',
+        icon: '/icons/icon-96x96.png',
       },
-      actions: data.actions || [
-        {
-          action: 'view',
-          title: '表示',
-          icon: '/icons/icon-96x96.png',
-        },
-        {
-          action: 'close',
-          title: '閉じる',
-        },
-      ],
-      requireInteraction: true, // ユーザーが操作するまで表示を維持
-      silent: false,
-    };
+      {
+        action: 'close',
+        title: '閉じる',
+      },
+    ],
+  };
 
-    event.waitUntil(self.registration.showNotification(data.title || '新しい連絡・予定', options));
-  } catch (error) {
-    console.error('プッシュ通知の処理でエラーが発生しました:', error);
+  if (event.data) {
+    try {
+      const payload = event.data.json();
+      console.log('Push payload:', payload);
 
-    // フォールバック通知を表示
-    event.waitUntil(
-      self.registration.showNotification('新しい連絡・予定', {
-        body: '新しい連絡・予定が作成されました',
-        icon: '/icons/icon-192x192.png',
-        badge: '/icons/icon-96x96.png',
+      options = {
+        ...options,
+        body: payload.body || options.body,
+        icon: payload.icon || options.icon,
+        badge: payload.badge || options.badge,
+        tag: payload.tag || options.tag,
         data: {
-          url: '/contact-schedule',
-          timestamp: Date.now(),
+          url: payload.url || '/notifications',
+          timestamp: payload.timestamp || Date.now(),
         },
-      })
-    );
+        actions: payload.actions || options.actions,
+      };
+    } catch (error) {
+      console.error('Failed to parse push payload:', error);
+    }
   }
+
+  const title = event.data ? event.data.json().title || 'CareBase' : 'CareBase';
+
+  event.waitUntil(self.registration.showNotification(title, options));
 });
 
-// 通知をクリックした時の処理
+// 通知クリック時の処理
 self.addEventListener('notificationclick', function (event) {
-  console.log('通知がクリックされました:', event);
+  console.log('Notification click received:', event);
 
   event.notification.close();
 
-  // アクションボタンの処理
-  if (event.action === 'close') {
+  const action = event.action;
+  const url = event.notification.data?.url || '/notifications';
+
+  if (action === 'close') {
+    // 閉じるアクションの場合は何もしない
     return;
   }
 
-  const url = event.notification.data?.url || '/contact-schedule';
-
+  // 表示アクション（デフォルト）の場合はアプリを開く
   event.waitUntil(
-    clients.matchAll({ type: 'window' }).then(function (clientList) {
-      // 既に開いているウィンドウがあるかチェック
-      for (let i = 0; i < clientList.length; i++) {
-        const client = clientList[i];
-        const clientUrl = new URL(client.url);
-        const targetUrl = new URL(url, self.location.origin);
-
-        if (clientUrl.origin === targetUrl.origin && 'focus' in client) {
-          // 既存のウィンドウにフォーカスして指定のURLに移動
-          client.focus();
-          return client.navigate(targetUrl.href);
+    clients.matchAll({ type: 'window', includeUncontrolled: true }).then(function (clientList) {
+      // 既存のウィンドウがあるかチェック
+      for (let client of clientList) {
+        if (client.url.includes(self.location.origin) && 'focus' in client) {
+          // 既存のウィンドウにフォーカス
+          return client.focus().then(() => {
+            // URLが異なる場合はナビゲート
+            if (client.url !== self.location.origin + url) {
+              return client.navigate(url);
+            }
+          });
         }
       }
-
       // 新しいウィンドウを開く
       if (clients.openWindow) {
         return clients.openWindow(url);
@@ -93,30 +88,25 @@ self.addEventListener('notificationclick', function (event) {
   );
 });
 
-// プッシュサブスクリプションが変更された時の処理
-self.addEventListener('pushsubscriptionchange', function (event) {
-  console.log('プッシュサブスクリプションが変更されました:', event);
+// Service Worker のバックグラウンド同期
+self.addEventListener('backgroundsync', function (event) {
+  if (event.tag === 'carebase-sync') {
+    console.log('Background sync:', event);
+    event.waitUntil(
+      // バックグラウンドでデータ同期の処理
+      Promise.resolve()
+    );
+  }
+});
 
-  event.waitUntil(
-    self.registration.pushManager
-      .subscribe({
-        userVisibleOnly: true,
-        applicationServerKey: self.location.origin.includes('localhost')
-          ? 'BJFybK3wc0AIrs62V3tnWM-JNo2vUoaFQbfS6ut5hfg6DNrI-JJE6pqGWkBs8jFOJOiDtXNSIJkr4kXWXsNaD0A' // 開発用
-          : 'BJFybK3wc0AIrs62V3tnWM-JNo2vUoaFQbfS6ut5hfg6DNrI-JJE6pqGWkBs8jFOJOiDtXNSIJkr4kXWXsNaD0A', // 本番用（環境変数から取得することを推奨）
-      })
-      .then(function (newSubscription) {
-        // 新しいサブスクリプションをサーバーに送信
-        return fetch('/api/push/subscribe', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(newSubscription),
-        });
-      })
-      .catch(function (error) {
-        console.error('プッシュサブスクリプションの再登録に失敗しました:', error);
-      })
-  );
+// インストール時の処理
+self.addEventListener('install', function (event) {
+  console.log('Push Service Worker installed');
+  self.skipWaiting();
+});
+
+// アクティベート時の処理
+self.addEventListener('activate', function (event) {
+  console.log('Push Service Worker activated');
+  event.waitUntil(self.clients.claim());
 });
