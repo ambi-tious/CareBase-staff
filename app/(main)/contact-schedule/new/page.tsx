@@ -1,11 +1,12 @@
 'use client';
 
 import { ContactScheduleForm } from '@/components/2_molecules/contact-schedule/contact-schedule-form';
+import { ContactScheduleCategoryModal } from '@/components/3_organisms/modals/contact-schedule-category-modal';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import type { ContactScheduleFormData } from '@/validations/contact-schedule-validation';
-import { ArrowLeft, CheckCircle, Plus } from 'lucide-react';
+import { ArrowLeft, CheckCircle, Plus, Settings } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -14,6 +15,8 @@ export default function NewContactSchedulePage() {
   const router = useRouter();
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
+  const [customCategories, setCustomCategories] = useState<any[]>([]);
 
   const handleSubmit = async (data: ContactScheduleFormData, isDraft = false): Promise<boolean> => {
     try {
@@ -99,15 +102,33 @@ export default function NewContactSchedulePage() {
       {/* Form */}
       <Card className="max-w-6xl">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Plus className="h-5 w-5" />
-            連絡・予定作成フォーム
+          <CardTitle className="flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2">
+              <Plus className="h-5 w-5" />
+              連絡・予定作成フォーム
+            </div>
+            <Button
+              variant="outline"
+              onClick={() => setIsCategoryModalOpen(true)}
+              className="bg-white border-carebase-blue text-carebase-blue hover:bg-carebase-blue-light font-medium"
+            >
+              <Settings className="h-4 w-4 mr-2 text-carebase-blue" />
+              <span>カテゴリ管理</span>
+            </Button>
           </CardTitle>
         </CardHeader>
         <CardContent>
           <ContactScheduleForm onSubmit={handleSubmit} onCancel={handleCancel} mode="create" />
         </CardContent>
       </Card>
+
+      {/* Category Management Modal */}
+      <ContactScheduleCategoryModal
+        isOpen={isCategoryModalOpen}
+        onClose={() => setIsCategoryModalOpen(false)}
+        onCategoryChange={setCustomCategories}
+        initialCategories={customCategories}
+      />
     </div>
   );
 }
