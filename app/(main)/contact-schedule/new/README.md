@@ -81,7 +81,8 @@ Issue: [#021 [設計] #021 連絡・予定｜連絡登録](https://github.com/am
 
 ### 連絡・予定作成フォーム
 
-<img width="1470" height="799" alt="スクリーンショット 2025-07-30 9 54 37" src="https://github.com/user-attachments/assets/a0ce8967-2384-4290-bd20-51b8b5876c96" />
+<img width="787" height="755" alt="スクリーンショット 2025-08-03 20 27 55" src="https://github.com/user-attachments/assets/03d23a2f-11b1-4ed1-9380-782790b0e48a" />
+
 
 - **日時選択**: カレンダーポップオーバーと時刻ドロップダウン
 - **デフォルト設定**:
