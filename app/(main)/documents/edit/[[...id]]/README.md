@@ -16,7 +16,7 @@ Issue: [#75 [設計] #034 書類｜書類編集](https://github.com/ambi-tious/C
 
 ### 画面構成
 
-<img width="1470" height="793" alt="スクリーンショット 2025-07-30 10 29 53" src="https://github.com/user-attachments/assets/e7c4f0dc-3e2f-4fe8-a668-a53ad90d32e0" />
+<img width="1132" height="777" alt="スクリーンショット 2025-08-04 13 01 43（2）" src="https://github.com/user-attachments/assets/45261396-628b-4fe4-bd8c-c02986c4fcd1" />
 
 書類編集のメイン画面として以下の要素で構成：
 
