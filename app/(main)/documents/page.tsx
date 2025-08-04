@@ -344,7 +344,7 @@ function DocumentsContent() {
             {isFolderView && folder?.updatedAt && ` • 最終更新: ${folder.updatedAt}`}
           </p>
           <div className="flex items-center gap-2">
-            <Link href="/documents/edit">
+            <Link href="/documents/new">
               <Button className="bg-carebase-blue hover:bg-carebase-blue-dark">
                 <FileText className="h-4 w-4 mr-2" />
                 新規書類
