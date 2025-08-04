@@ -26,7 +26,7 @@
 - 空状態表示
 - モーダル（フォルダ作成・編集・削除、ファイルアップロード、一括削除確認）
 
-![書類一覧画面スクリーンショット](https://github.com/user-attachments/assets/de4fb4c5-7973-42f7-adc5-e89a6f477d14)
+<img width="1470" height="730" alt="スクリーンショット 2025-08-04 21 09 55" src="https://github.com/user-attachments/assets/bc70022f-ec6e-442b-adce-ec1db9f00a26" />
 
 ### 画面項目
 
