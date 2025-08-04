@@ -255,9 +255,6 @@ export const DocumentFormEditor: React.FC<DocumentFormEditorProps> = ({
   };
 
   const pageTitle = isEditMode ? '書類編集' : '新規書類作成';
-  const pageDescription = isEditMode
-    ? '書類の情報と内容を編集してください。'
-    : `書類の基本情報を入力してください。必須項目（* ）は必ず入力してください。${isAutoCategory ? ` カテゴリは「${folderName}」フォルダに基づいて自動設定されます。` : ''}`;
 
   const isProcessing = isSubmitting || isSaving;
 
@@ -289,7 +286,24 @@ export const DocumentFormEditor: React.FC<DocumentFormEditorProps> = ({
               <h1 className="text-2xl font-bold text-carebase-text-primary">{pageTitle}</h1>
             </div>
           </div>
-          <p className="text-gray-600">{pageDescription}</p>
+          <p className="text-gray-600">
+            {isEditMode ? (
+              <>
+                書類の情報と内容を編集してください。必須項目（
+                <span className="text-red-500">*</span>
+                ）は必ず入力してください。
+              </>
+            ) : (
+              <>
+                書類の基本情報を入力してください。必須項目（
+                <span className="text-red-500">*</span>
+                ）は必ず入力してください。
+                {isAutoCategory && (
+                  <> カテゴリは「{folderName}」フォルダに基づいて自動設定されます。</>
+                )}
+              </>
+            )}
+          </p>
         </div>
 
         {/* アラート表示 */}
