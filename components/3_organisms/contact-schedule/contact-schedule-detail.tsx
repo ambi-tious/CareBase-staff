@@ -1,19 +1,28 @@
 'use client';
 
+import { GenericDeleteModal } from '@/components/3_organisms/modals/generic-delete-modal';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import type { ContactScheduleItem } from '@/types/contact-schedule';
 import { format } from 'date-fns';
 import { ja } from 'date-fns/locale';
-import { ArrowLeft, Calendar, Clock, Edit3, MessageSquare, Tag, User } from 'lucide-react';
+import { ArrowLeft, Calendar, Clock, Edit3, MessageSquare, Tag, Trash2, User } from 'lucide-react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import type React from 'react';
+import { useState } from 'react';
 
 interface ContactScheduleDetailProps {
   item: ContactScheduleItem;
+  onDelete?: (itemId: string) => Promise<boolean>;
 }
 
-export const ContactScheduleDetail: React.FC<ContactScheduleDetailProps> = ({ item }) => {
+export const ContactScheduleDetail: React.FC<ContactScheduleDetailProps> = ({ item, onDelete }) => {
+  const router = useRouter();
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+
   const formatDateTime = (dateString: string) => {
     return format(new Date(dateString), 'yyyy年MM月dd日 HH:mm', { locale: ja });
   };
@@ -105,6 +114,39 @@ export const ContactScheduleDetail: React.FC<ContactScheduleDetailProps> = ({ it
     }
   };
 
+  const handleDeleteClick = () => {
+    setDeleteError(null);
+    setIsDeleteModalOpen(true);
+  };
+
+  const handleDeleteConfirm = async (): Promise<boolean> => {
+    setIsDeleting(true);
+    setDeleteError(null);
+
+    try {
+      if (onDelete) {
+        const success = await onDelete(item.id);
+        if (success) {
+          router.push('/contact-schedule');
+          return true;
+        } else {
+          setDeleteError('削除に失敗しました。もう一度お試しください。');
+          return false;
+        }
+      } else {
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+        router.push('/contact-schedule');
+        return true;
+      }
+    } catch (error) {
+      console.error('Failed to delete contact schedule:', error);
+      setDeleteError('削除中にエラーが発生しました。もう一度お試しください。');
+      return false;
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
   return (
     <div className="p-4 md:p-6 bg-carebase-bg min-h-screen">
       {/* Header */}
@@ -123,7 +165,6 @@ export const ContactScheduleDetail: React.FC<ContactScheduleDetailProps> = ({ it
         </div>
       </div>
 
-      {/* Detail Card */}
       <Card className="max-w-4xl">
         <CardHeader>
           <div className="flex items-start justify-between">
@@ -148,6 +189,14 @@ export const ContactScheduleDetail: React.FC<ContactScheduleDetailProps> = ({ it
                   編集
                 </Link>
               </Button>
+              <Button
+                variant="outline"
+                onClick={handleDeleteClick}
+                className="border-red-300 text-red-600 hover:bg-red-50 hover:border-red-400"
+              >
+                <Trash2 className="h-4 w-4 mr-2" />
+                削除
+              </Button>
               {getTypeBadge(item.type)}
               {getPriorityBadge(item.priority)}
               {getStatusBadge(item.status)}
@@ -155,7 +204,6 @@ export const ContactScheduleDetail: React.FC<ContactScheduleDetailProps> = ({ it
           </div>
         </CardHeader>
         <CardContent className="space-y-6">
-          {/* 基本情報 */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-3">
               <div className="flex items-center gap-2 p-3 bg-gray-50 rounded-lg">
@@ -180,7 +228,6 @@ export const ContactScheduleDetail: React.FC<ContactScheduleDetailProps> = ({ it
             </div>
 
             <div className="space-y-3">
-              {/* 関連利用者 */}
               {item.relatedResidentName && (
                 <div className="p-3 bg-green-50 border border-green-200 rounded-lg">
                   <span className="text-sm font-medium text-green-800">関連利用者: </span>
@@ -193,7 +240,6 @@ export const ContactScheduleDetail: React.FC<ContactScheduleDetailProps> = ({ it
                 </div>
               )}
 
-              {/* タグ */}
               {item.tags && item.tags.length > 0 && (
                 <div className="p-3 bg-gray-50 rounded-lg">
                   <div className="flex items-center gap-2 mb-2">
@@ -215,7 +261,6 @@ export const ContactScheduleDetail: React.FC<ContactScheduleDetailProps> = ({ it
             </div>
           </div>
 
-          {/* Content */}
           <div className="space-y-2">
             <h3 className="text-lg font-semibold text-carebase-text-primary">内容</h3>
             <div className="p-4 bg-white border border-gray-200 rounded-lg">
@@ -223,7 +268,6 @@ export const ContactScheduleDetail: React.FC<ContactScheduleDetailProps> = ({ it
             </div>
           </div>
 
-          {/* Timestamps */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t">
             <div className="text-sm">
               <span className="font-medium text-gray-500">作成日時:</span>
@@ -236,6 +280,16 @@ export const ContactScheduleDetail: React.FC<ContactScheduleDetailProps> = ({ it
           </div>
         </CardContent>
       </Card>
+
+      <GenericDeleteModal
+        isOpen={isDeleteModalOpen}
+        onClose={() => setIsDeleteModalOpen(false)}
+        onConfirm={handleDeleteConfirm}
+        itemName={item.title}
+        itemType="連絡・予定"
+        isDeleting={isDeleting}
+        error={deleteError}
+      />
     </div>
   );
 };
