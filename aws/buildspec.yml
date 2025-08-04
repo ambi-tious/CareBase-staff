@@ -32,11 +32,10 @@ phases:
       - echo "$(cat imagedefinitions.json)"
       # ここでパラメータストアを更新
       - echo "Updating SSM parameter with image URI..."
-      - aws ssm put-parameter \
-        --name "/$ENV_NAME/ecs/WEB_STAFF_IMAGE_URI" \
-        --value "$ECR_REPOSITORY_URL:$IMAGE_TAG" \
-        --type String \
-        --overwrite
+      - echo "ENV_NAME=$ENV_NAME"
+      - echo "ECR_REPOSITORY_URL=$ECR_REPOSITORY_URL"
+      - echo "IMAGE_TAG=$IMAGE_TAG"
+      - aws ssm put-parameter --name "/$ENV_NAME/ecs/WEB_STAFF_IMAGE_URI" --value "$ECR_REPOSITORY_URL:$IMAGE_TAG" --type String --overwrite
 
 artifacts:
   files:
