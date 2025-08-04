@@ -48,7 +48,7 @@
 
 ## 機能仕様
 
-<img width="1470" height="796" alt="スクリーンショット 2025-07-30 10 01 30" src="https://github.com/user-attachments/assets/53bb286a-42ee-4d68-a04b-b470dae44507" />
+<img width="889" height="870" alt="スクリーンショット 2025-08-04 12 18 03（2）" src="https://github.com/user-attachments/assets/92659788-6282-48ad-a071-6b0cd86c93f8" />
 
 ### アクション
 
