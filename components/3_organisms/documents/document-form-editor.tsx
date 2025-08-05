@@ -75,6 +75,7 @@ export const DocumentFormEditor: React.FC<DocumentFormEditorProps> = ({
   const [fontSize, setFontSize] = useState('16px');
   const [textColor, setTextColor] = useState('#000000');
   const [saveSuccess, setSaveSuccess] = useState(false);
+  const [saveSuccessMessage, setSaveSuccessMessage] = useState('');
   const [saveError, setSaveError] = useState<string | null>(null);
 
   // 初期化時に既存の添付ファイルがある場合は添付モードに設定
@@ -165,75 +166,81 @@ export const DocumentFormEditor: React.FC<DocumentFormEditorProps> = ({
     category: initialDocument?.category || autoCategory || '議事録', // デフォルトカテゴリを設定
   };
 
-  const { formData, updateField, isSubmitting, error, fieldErrors, handleSubmit } = useDocumentForm(
-    {
-      initialData: initialFormData,
-      onSubmit: async (data) => {
-        setIsSaving(true);
-        setSaveError(null);
+  const {
+    formData,
+    updateField,
+    isSubmitting,
+    error,
+    fieldErrors,
+    handleSubmit,
+    isSavingDraft,
+    saveDraft,
+    hasUnsavedChanges,
+    reset,
+    clearError,
+  } = useDocumentForm({
+    initialData: initialFormData,
+    onSubmit: async (data) => {
+      setIsSaving(true);
+      setSaveError(null);
 
-        try {
-          let success = false;
+      try {
+        let success = false;
 
-          // 内容の検証
-          if (contentInputMode === 'manual' && !content.trim()) {
-            setSaveError('文書内容を入力してください');
-            setIsSaving(false);
-            return false;
-          }
+        // 内容の検証
+        if (contentInputMode === 'manual' && !content.trim()) {
+          setSaveError('文書内容を入力してください');
+          setIsSaving(false);
+          return false;
+        }
 
-          if (
-            contentInputMode === 'attachment' &&
-            !attachedFile &&
-            !initialDocument?.attachedFile
-          ) {
-            setSaveError('ファイルを添付してください');
-            setIsSaving(false);
-            return false;
-          }
+        if (contentInputMode === 'attachment' && !attachedFile && !initialDocument?.attachedFile) {
+          setSaveError('ファイルを添付してください');
+          setIsSaving(false);
+          return false;
+        }
 
-          if (onSave) {
-            const finalContent = contentInputMode === 'manual' ? content : '';
-            const finalFile =
-              contentInputMode === 'attachment' ? attachedFile || undefined : undefined;
-            success = await onSave({
-              formData: data,
-              content: finalContent,
-              attachedFile: finalFile,
-            });
+        if (onSave) {
+          const finalContent = contentInputMode === 'manual' ? content : '';
+          const finalFile =
+            contentInputMode === 'attachment' ? attachedFile || undefined : undefined;
+          success = await onSave({
+            formData: data,
+            content: finalContent,
+            attachedFile: finalFile,
+          });
+        } else {
+          // デフォルトの保存処理
+          await new Promise((resolve) => setTimeout(resolve, 500));
+          success = true;
+        }
+
+        if (success) {
+          setSaveSuccessMessage(isEditMode ? '書類を更新しました。' : '書類を保存しました。');
+          setSaveSuccess(true);
+
+          // 保存成功後の遷移
+          if (isEditMode) {
+            router.push(`/documents/view/${documentId}`);
           } else {
-            // デフォルトの保存処理
-            await new Promise((resolve) => setTimeout(resolve, 500));
-            success = true;
-          }
-
-          if (success) {
-            setSaveSuccess(true);
-            setTimeout(() => setSaveSuccess(false), 3000);
-
-            // 保存成功後の遷移
-            if (isEditMode) {
-              router.push(`/documents/view/${documentId}`);
+            if (folderId) {
+              router.push(`/documents?folder=${folderId}`);
             } else {
-              if (folderId) {
-                router.push(`/documents?folder=${folderId}`);
-              } else {
-                router.push('/documents');
-              }
+              router.push('/documents');
             }
           }
-
-          return success;
-        } catch (error) {
-          console.error('Failed to save document:', error);
-          setSaveError('保存に失敗しました。もう一度お試しください。');
-          return false;
-        } finally {
-          setIsSaving(false);
         }
-      },
-    }
-  );
+
+        return success;
+      } catch (error) {
+        console.error('Failed to save document:', error);
+        setSaveError('保存に失敗しました。もう一度お試しください。');
+        return false;
+      } finally {
+        setIsSaving(false);
+      }
+    },
+  });
 
   // 文書フォーマット処理
   const handleFormatText = (command: string, value?: string) => {
@@ -244,6 +251,44 @@ export const DocumentFormEditor: React.FC<DocumentFormEditorProps> = ({
   const handleSaveAll = async () => {
     const success = await handleSubmit();
     return success;
+  };
+
+  // 下書き保存処理（バリデーションスキップ）
+  const handleSaveDraftWithValidationSkip = async () => {
+    setIsSaving(true);
+    setSaveError(null);
+
+    try {
+      let success = false;
+
+      if (onSave) {
+        const finalContent = contentInputMode === 'manual' ? content : '';
+        const finalFile = contentInputMode === 'attachment' ? attachedFile || undefined : undefined;
+        success = await onSave({
+          formData: formData,
+          content: finalContent,
+          attachedFile: finalFile,
+        });
+      } else {
+        // デフォルトの保存処理
+        await new Promise((resolve) => setTimeout(resolve, 500));
+        success = true;
+      }
+
+      if (success) {
+        setSaveSuccessMessage('下書きを保存しました。');
+        setSaveSuccess(true);
+        reset();
+      }
+
+      return success;
+    } catch (error) {
+      console.error('Failed to save draft:', error);
+      setSaveError('下書き保存に失敗しました。もう一度お試しください。');
+      return false;
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const handleCancel = () => {
@@ -268,6 +313,13 @@ export const DocumentFormEditor: React.FC<DocumentFormEditorProps> = ({
     const i = Math.floor(Math.log(bytes) / Math.log(k));
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
   };
+
+  const handleSaveDraft = useCallback(async () => {
+    const success = await handleSaveDraftWithValidationSkip();
+    if (success) {
+      // console.log('Draft saved successfully');
+    }
+  }, [handleSaveDraftWithValidationSkip]);
 
   return (
     <div className={`min-h-screen bg-carebase-bg ${className}`}>
@@ -296,9 +348,7 @@ export const DocumentFormEditor: React.FC<DocumentFormEditorProps> = ({
         {saveSuccess && (
           <Alert className="mb-6 bg-green-50 border-green-200">
             <CheckCircle2 className="h-4 w-4 text-green-600" />
-            <AlertDescription className="text-green-700">
-              文書が正常に保存されました
-            </AlertDescription>
+            <AlertDescription className="text-green-700">{saveSuccessMessage}</AlertDescription>
           </Alert>
         )}
 
@@ -488,6 +538,16 @@ export const DocumentFormEditor: React.FC<DocumentFormEditorProps> = ({
             </Card>
           </div>
 
+          {/* Unsaved Changes Warning */}
+          {hasUnsavedChanges && (
+            <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+              <div className="flex items-center gap-2">
+                <AlertCircle className="h-4 w-4 text-yellow-600" />
+                <span className="text-sm text-yellow-800">未保存の変更があります</span>
+              </div>
+            </div>
+          )}
+
           {/* アクションボタン */}
           <div className="flex justify-end gap-3 p-4 bg-white rounded-lg border">
             <Button
@@ -499,6 +559,16 @@ export const DocumentFormEditor: React.FC<DocumentFormEditorProps> = ({
             >
               <X className="h-4 w-4" />
               キャンセル
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={handleSaveDraft}
+              disabled={isSubmitting || isSavingDraft}
+              className="border-gray-400 text-gray-700 hover:bg-gray-50"
+            >
+              <Save className="h-4 w-4 mr-2" />
+              {isSavingDraft ? '保存中...' : '下書き保存'}
             </Button>
             <Button
               onClick={handleSaveAll}

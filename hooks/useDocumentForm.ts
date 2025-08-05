@@ -8,7 +8,7 @@ import { documentFormSchema, type DocumentFormData } from '@/validations/documen
 import { useCallback, useState } from 'react';
 
 interface UseDocumentFormOptions {
-  onSubmit: (data: DocumentFormData) => Promise<boolean>;
+  onSubmit: (data: DocumentFormData, isDraft?: boolean) => Promise<boolean>;
   initialData?: Partial<DocumentFormData>;
 }
 
@@ -28,6 +28,8 @@ export const useDocumentForm = ({ onSubmit, initialData = {} }: UseDocumentFormO
 
   const [formState, setFormState] = useState({
     isSubmitting: false,
+    isSavingDraft: false,
+    hasUnsavedChanges: false,
     error: null as string | null,
     fieldErrors: {} as Partial<Record<keyof DocumentFormData, string>>,
   });
@@ -35,6 +37,13 @@ export const useDocumentForm = ({ onSubmit, initialData = {} }: UseDocumentFormO
   const updateField = useCallback(
     (field: keyof DocumentFormData, value: string) => {
       setFormData((prev) => ({ ...prev, [field]: value }));
+      setFormState((prev) => ({
+        ...prev,
+        hasUnsavedChanges: true,
+        fieldErrors: prev.fieldErrors[field]
+          ? { ...prev.fieldErrors, [field]: undefined }
+          : prev.fieldErrors,
+      }));
 
       // Clear field error when user starts typing
       if (formState.fieldErrors[field]) {
@@ -47,83 +56,108 @@ export const useDocumentForm = ({ onSubmit, initialData = {} }: UseDocumentFormO
     [formState.fieldErrors]
   );
 
-  const validateForm = useCallback(() => {
-    const result = documentFormSchema.safeParse(formData);
+  const validateForm = useCallback(
+    (isDraft = false) => {
+      // 下書き保存の場合はバリデーションをスキップ
+      if (isDraft) {
+        setFormState((prev) => ({
+          ...prev,
+          fieldErrors: {},
+          error: null,
+        }));
+        return true;
+      }
 
-    if (!result.success) {
-      const fieldErrors: Partial<Record<keyof DocumentFormData, string>> = {};
+      const result = documentFormSchema.safeParse(formData);
 
-      for (const error of result.error.errors) {
-        if (error.path.length > 0) {
-          const field = error.path[0] as keyof DocumentFormData;
-          fieldErrors[field] = error.message;
+      if (!result.success) {
+        const fieldErrors: Partial<Record<keyof DocumentFormData, string>> = {};
+
+        for (const error of result.error.errors) {
+          if (error.path.length > 0) {
+            const field = error.path[0] as keyof DocumentFormData;
+            fieldErrors[field] = error.message;
+          }
         }
+
+        setFormState((prev) => ({
+          ...prev,
+          fieldErrors,
+          error: '入力内容に不備があります。必須項目を確認してください。',
+        }));
+
+        return false;
       }
 
       setFormState((prev) => ({
         ...prev,
-        fieldErrors,
-        error: '入力内容に不備があります。必須項目を確認してください。',
+        fieldErrors: {},
+        error: null,
       }));
 
-      return false;
-    }
+      return true;
+    },
+    [formData]
+  );
 
-    setFormState((prev) => ({
-      ...prev,
-      fieldErrors: {},
-      error: null,
-    }));
+  const handleSubmit = useCallback(
+    async (isDraft = false) => {
+      if (!validateForm(isDraft)) {
+        return false;
+      }
 
-    return true;
-  }, [formData]);
+      const stateKey = isDraft ? 'isSavingDraft' : 'isSubmitting';
+      setFormState((prev) => ({
+        ...prev,
+        [stateKey]: true,
+        error: null,
+      }));
 
-  const handleSubmit = useCallback(async () => {
-    if (!validateForm()) {
-      return false;
-    }
+      try {
+        const success = await onSubmit(formData, isDraft);
 
-    setFormState((prev) => ({
-      ...prev,
-      isSubmitting: true,
-      error: null,
-    }));
-
-    try {
-      const success = await onSubmit(formData);
-
-      if (success) {
-        // Reset form on success
-        setFormData({ ...initialFormData, ...initialData });
-        setFormState({
-          isSubmitting: false,
-          error: null,
-          fieldErrors: {},
-        });
-        return true;
-      } else {
+        if (success) {
+          // Reset form on success
+          setFormData({ ...initialFormData, ...initialData });
+          setFormState({
+            isSubmitting: false,
+            isSavingDraft: false,
+            hasUnsavedChanges: false, // 保存成功時は未保存変更フラグをリセット
+            error: null,
+            fieldErrors: {},
+          });
+          return true;
+        } else {
+          setFormState((prev) => ({
+            ...prev,
+            [stateKey]: false,
+            error: isDraft ? '下書き保存に失敗しました。' : '書類の作成に失敗しました。',
+          }));
+          return false;
+        }
+      } catch (error) {
+        console.error('Document form submission error:', error);
         setFormState((prev) => ({
           ...prev,
           isSubmitting: false,
-          error: '保存に失敗しました。もう一度お試しください。',
+          error: 'ネットワークエラーが発生しました。接続を確認してもう一度お試しください。',
         }));
         return false;
       }
-    } catch (error) {
-      console.error('Document form submission error:', error);
-      setFormState((prev) => ({
-        ...prev,
-        isSubmitting: false,
-        error: 'ネットワークエラーが発生しました。接続を確認してもう一度お試しください。',
-      }));
-      return false;
-    }
-  }, [formData, validateForm, onSubmit, initialData]);
+    },
+    [formData, validateForm, onSubmit, initialData]
+  );
+
+  const saveDraft = useCallback(() => {
+    return handleSubmit(true);
+  }, [handleSubmit]);
 
   const reset = useCallback(() => {
     setFormData({ ...initialFormData, ...initialData });
     setFormState({
       isSubmitting: false,
+      isSavingDraft: false,
+      hasUnsavedChanges: false,
       error: null,
       fieldErrors: {},
     });
@@ -140,10 +174,13 @@ export const useDocumentForm = ({ onSubmit, initialData = {} }: UseDocumentFormO
     formData,
     updateField,
     isSubmitting: formState.isSubmitting,
+    isSavingDraft: formState.isSavingDraft,
+    hasUnsavedChanges: formState.hasUnsavedChanges,
     error: formState.error,
     fieldErrors: formState.fieldErrors,
     handleSubmit,
     reset,
     clearError,
+    saveDraft,
   };
 };
