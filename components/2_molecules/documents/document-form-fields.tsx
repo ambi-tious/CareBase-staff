@@ -1,7 +1,6 @@
 'use client';
 
 import { FormField } from '@/components/1_atoms/forms/form-field';
-import { FormSelect } from '@/components/1_atoms/forms/form-select';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { getFolderPath } from '@/mocks/hierarchical-documents';
 import type { DocumentFormData } from '@/validations/document-validation';
@@ -20,12 +19,6 @@ interface DocumentFormFieldsProps {
   folderId?: string; // フォルダID
   folderName?: string; // フォルダ名（表示用）
 }
-
-const statusOptions = [
-  { value: 'draft', label: '下書き' },
-  { value: 'published', label: '公開済み' },
-  { value: 'archived', label: 'アーカイブ' },
-];
 
 export const DocumentFormFields: React.FC<DocumentFormFieldsProps> = ({
   formData,
@@ -101,17 +94,6 @@ export const DocumentFormFields: React.FC<DocumentFormFieldsProps> = ({
           </div>
           <p className="text-xs text-gray-500">書類が保存されるフォルダの場所です</p>
         </div>
-
-        <FormSelect
-          label="ステータス"
-          id="status"
-          value={formData.status}
-          onChange={(value) => updateField('status', value as 'draft' | 'published' | 'archived')}
-          options={statusOptions}
-          required
-          error={fieldErrors.status}
-          disabled={isSubmitting}
-        />
 
         <FormField
           label="タグ"

@@ -14,9 +14,7 @@ export const documentFormSchema = z.object({
     .max(100, '書類タイトルは100文字以内で入力してください'),
   category: z.string().min(1, 'カテゴリは必須です'),
   description: z.string(),
-  status: z.enum(['draft', 'published', 'archived'], {
-    errorMap: () => ({ message: 'ステータスは必須です' }),
-  }),
+  status: z.enum(['draft', 'published', 'archived']).default('draft'),
   tags: z.string(),
   folderId: z.string().optional(),
 });
