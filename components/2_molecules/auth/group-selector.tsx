@@ -48,7 +48,7 @@ export const GroupSelector: React.FC<GroupSelectorProps> = ({
                   ? 'ring-2 ring-carebase-blue bg-carebase-blue text-white shadow-lg'
                   : isCurrent
                     ? 'ring-2 ring-green-500 bg-green-50 border-green-200'
-                  : !disabled && 'hover:ring-1 hover:ring-carebase-blue-light'
+                    : !disabled && 'hover:ring-1 hover:ring-carebase-blue-light'
               )}
               onClick={() => handleGroupClick(group.id)}
             >
@@ -58,7 +58,11 @@ export const GroupSelector: React.FC<GroupSelectorProps> = ({
                     <Icon
                       className={cn(
                         'w-6 h-6 transition-colors',
-                        isSelected ? 'text-white' : isCurrent ? 'text-green-600' : 'text-carebase-blue'
+                        isSelected
+                          ? 'text-white'
+                          : isCurrent
+                            ? 'text-green-600'
+                            : 'text-carebase-blue'
                       )}
                     />
                   </div>
@@ -66,7 +70,11 @@ export const GroupSelector: React.FC<GroupSelectorProps> = ({
                     <h4
                       className={cn(
                         'font-semibold transition-colors',
-                        isSelected ? 'text-white' : isCurrent ? 'text-green-800' : 'text-carebase-text-primary'
+                        isSelected
+                          ? 'text-white'
+                          : isCurrent
+                            ? 'text-green-800'
+                            : 'text-carebase-text-primary'
                       )}
                     >
                       {group.name}
@@ -74,7 +82,11 @@ export const GroupSelector: React.FC<GroupSelectorProps> = ({
                     <p
                       className={cn(
                         'text-sm transition-colors',
-                        isSelected ? 'text-blue-100' : isCurrent ? 'text-green-600' : 'text-gray-500'
+                        isSelected
+                          ? 'text-blue-100'
+                          : isCurrent
+                            ? 'text-green-600'
+                            : 'text-gray-500'
                       )}
                     >
                       {group.description}
@@ -82,7 +94,11 @@ export const GroupSelector: React.FC<GroupSelectorProps> = ({
                     <p
                       className={cn(
                         'text-xs mt-1 transition-colors',
-                        isSelected ? 'text-blue-200' : isCurrent ? 'text-green-500' : 'text-gray-400'
+                        isSelected
+                          ? 'text-blue-200'
+                          : isCurrent
+                            ? 'text-green-500'
+                            : 'text-gray-400'
                       )}
                     >
                       {group.teams.length} チーム

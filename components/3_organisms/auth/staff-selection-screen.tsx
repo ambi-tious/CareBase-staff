@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import type { Staff } from '@/mocks/staff-data';
 import { getGroupById, getStaffById, getTeamById, organizationData } from '@/mocks/staff-data';
 import { AlertCircle, LogOut, User } from 'lucide-react';
-import { forwardRef, useEffect, useRef, useState } from 'react';
+import { forwardRef, useCallback, useEffect, useRef, useState } from 'react';
 
 // Define the type for selected staff data
 interface SelectedStaffData {
@@ -116,19 +116,12 @@ const StaffSelectionScreenComponent = forwardRef<HTMLDivElement, StaffSelectionS
       setSelectedStaffId('');
       setError('');
 
-      // In group/team change mode, complete the process when team is selected
-      if (isGroupTeamChangeMode) {
-        setTimeout(() => {
-          handleGroupTeamChangeComplete();
-        }, 500);
-      } else {
-        setTimeout(() => {
-          staffSelectorRef.current?.scrollIntoView({
-            behavior: 'smooth',
-            block: 'start',
-          });
-        }, 100);
-      }
+      setTimeout(() => {
+        staffSelectorRef.current?.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start',
+        });
+      }, 100);
     };
 
     const handleStaffSelect = (staffId: string) => {
@@ -194,13 +187,14 @@ const StaffSelectionScreenComponent = forwardRef<HTMLDivElement, StaffSelectionS
     ]);
 
     // Handle group/team change mode completion
-    const handleGroupTeamChangeComplete = () => {
+    const handleGroupTeamChangeComplete = useCallback(() => {
       if (isGroupTeamChangeMode && selectedGroupId && selectedTeamId && selectedStaffData) {
         // Update localStorage with new group/team but keep the same staff
         const updatedStaffData = {
           staff: selectedStaffData.staff,
           groupName: getGroupById(selectedGroupId)?.name || selectedStaffData.groupName,
-          teamName: getTeamById(selectedGroupId, selectedTeamId)?.name || selectedStaffData.teamName,
+          teamName:
+            getTeamById(selectedGroupId, selectedTeamId)?.name || selectedStaffData.teamName,
         };
 
         try {
@@ -212,24 +206,22 @@ const StaffSelectionScreenComponent = forwardRef<HTMLDivElement, StaffSelectionS
           setError('グループ・チーム情報の更新に失敗しました。');
         }
       }
-    };
+    }, [isGroupTeamChangeMode, selectedGroupId, selectedTeamId, selectedStaffData]);
 
     // Get current group and team IDs from selected staff data
     const getCurrentGroupTeamIds = () => {
       if (!selectedStaffData) return { currentGroupId: null, currentTeamId: null };
 
       // Find current group ID by name
-      const currentGroupId = organizationData.find(
-        (group) => group.name === selectedStaffData.groupName
-      )?.id || null;
+      const currentGroupId =
+        organizationData.find((group) => group.name === selectedStaffData.groupName)?.id || null;
 
       // Find current team ID by name within the group
       let currentTeamId: string | null = null;
       if (currentGroupId) {
         const group = getGroupById(currentGroupId);
-        currentTeamId = group?.teams.find(
-          (team) => team.name === selectedStaffData.teamName
-        )?.id || null;
+        currentTeamId =
+          group?.teams.find((team) => team.name === selectedStaffData.teamName)?.id || null;
       }
 
       return { currentGroupId, currentTeamId };
@@ -293,7 +285,7 @@ const StaffSelectionScreenComponent = forwardRef<HTMLDivElement, StaffSelectionS
               <GroupSelector
                 groups={organizationData}
                 selectedGroupId={selectedGroupId}
-                currentGroupId={currentGroupId}
+                currentGroupId={currentGroupId || undefined}
                 onGroupSelect={handleGroupSelect}
                 disabled={isLoading}
               />
@@ -305,7 +297,7 @@ const StaffSelectionScreenComponent = forwardRef<HTMLDivElement, StaffSelectionS
                 <TeamSelector
                   teams={selectedGroup!.teams}
                   selectedTeamId={selectedTeamId}
-                  currentTeamId={currentTeamId}
+                  currentTeamId={currentTeamId || undefined}
                   onTeamSelect={handleTeamSelect}
                   disabled={isLoading}
                 />
