@@ -214,6 +214,29 @@ const StaffSelectionScreenComponent = forwardRef<HTMLDivElement, StaffSelectionS
       }
     };
 
+    // Get current group and team IDs from selected staff data
+    const getCurrentGroupTeamIds = () => {
+      if (!selectedStaffData) return { currentGroupId: null, currentTeamId: null };
+
+      // Find current group ID by name
+      const currentGroupId = organizationData.find(
+        (group) => group.name === selectedStaffData.groupName
+      )?.id || null;
+
+      // Find current team ID by name within the group
+      let currentTeamId: string | null = null;
+      if (currentGroupId) {
+        const group = getGroupById(currentGroupId);
+        currentTeamId = group?.teams.find(
+          (team) => team.name === selectedStaffData.teamName
+        )?.id || null;
+      }
+
+      return { currentGroupId, currentTeamId };
+    };
+
+    const { currentGroupId, currentTeamId } = getCurrentGroupTeamIds();
+
     const showTeamSelector = selectedGroupId;
     const showStaffSelector = selectedGroupId && selectedTeamId && !isGroupTeamChangeMode;
 
@@ -270,6 +293,7 @@ const StaffSelectionScreenComponent = forwardRef<HTMLDivElement, StaffSelectionS
               <GroupSelector
                 groups={organizationData}
                 selectedGroupId={selectedGroupId}
+                currentGroupId={currentGroupId}
                 onGroupSelect={handleGroupSelect}
                 disabled={isLoading}
               />
@@ -281,6 +305,7 @@ const StaffSelectionScreenComponent = forwardRef<HTMLDivElement, StaffSelectionS
                 <TeamSelector
                   teams={selectedGroup!.teams}
                   selectedTeamId={selectedTeamId}
+                  currentTeamId={currentTeamId}
                   onTeamSelect={handleTeamSelect}
                   disabled={isLoading}
                 />
@@ -300,13 +325,32 @@ const StaffSelectionScreenComponent = forwardRef<HTMLDivElement, StaffSelectionS
             )}
 
             {/* Group/Team Change Mode Loading */}
-            {isGroupTeamChangeMode && selectedGroupId && selectedTeamId && (
+            {isGroupTeamChangeMode && selectedGroupId && selectedTeamId && isLoading && (
               <div className="flex flex-col items-center justify-center py-4 bg-green-50 rounded-lg border border-green-200">
                 <div className="flex items-center gap-2 mb-2">
                   <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-green-600"></div>
                   <p className="text-green-800 font-semibold">グループ・チーム情報を更新中...</p>
                 </div>
                 <p className="text-green-600 text-sm">少々お待ちください</p>
+              </div>
+            )}
+
+            {/* Group/Team Change Mode Completion Button */}
+            {isGroupTeamChangeMode && selectedGroupId && selectedTeamId && !isLoading && (
+              <div className="flex flex-col items-center justify-center py-4 bg-green-50 rounded-lg border border-green-200">
+                <div className="text-center mb-4">
+                  <p className="text-green-800 font-semibold mb-2">変更内容を確認してください</p>
+                  <div className="text-sm text-green-700 space-y-1">
+                    <p>グループ: {getGroupById(selectedGroupId)?.name}</p>
+                    <p>チーム: {getTeamById(selectedGroupId, selectedTeamId)?.name}</p>
+                  </div>
+                </div>
+                <Button
+                  onClick={handleGroupTeamChangeComplete}
+                  className="bg-green-600 hover:bg-green-700 text-white"
+                >
+                  変更を確定してメイン画面に戻る
+                </Button>
               </div>
             )}
 
