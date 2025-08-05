@@ -115,8 +115,6 @@ export function AppHeader() {
   };
 
   const handleGroupTeamClickFallback = () => {
-    // Clear current selection to start from group selection
-    localStorage.removeItem('carebase_selected_staff_data');
     router.push('/staff-selection?from=header&group=true');
   };
 
