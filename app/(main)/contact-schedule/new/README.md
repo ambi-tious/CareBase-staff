@@ -83,7 +83,6 @@ Issue: [#021 [設計] #021 連絡・予定｜連絡登録](https://github.com/am
 
 <img width="787" height="755" alt="スクリーンショット 2025-08-03 20 27 55" src="https://github.com/user-attachments/assets/03d23a2f-11b1-4ed1-9380-782790b0e48a" />
 
-
 - **日時選択**: カレンダーポップオーバーと時刻ドロップダウン
 - **デフォルト設定**:
   - 開始日時: 現在日時
