@@ -38,8 +38,8 @@ phases:
       - aws ssm put-parameter --name "/$ENV_NAME/ecs/WEB_STAFF_IMAGE_URI" --value "$ECR_REPOSITORY_URL:$IMAGE_TAG" --type String --overwrite
       # 1. 最新のタスク定義の ARN を取得
       # ECS から指定したファミリーの最新リビジョンの ARN を取得
-      - echo "Fetching latest task definition..."
-      - TASK_DEF_ARN=$(aws ecs describe-task-definition --task-definition $TASK_FAMILY --query "taskDefinition.taskDefinitionArn" --output text)
+      - echo "Fetching task definition ARN from SSM Parameter Store..."
+      - TASK_DEF_ARN=$(aws ssm get-parameter --name "/$ENV_NAME/ecs/WEB_STAFF_TASK_DEF_ARN" --query "Parameter.Value" --output text)
       # 2. タスク定義の JSON を取得
       # タスク定義全体を JSON として出力し、ファイルに保存
       - aws ecs describe-task-definition --task-definition $TASK_DEF_ARN --query "taskDefinition" > task-def-latest.json
@@ -51,7 +51,10 @@ phases:
       - jq --arg IMAGE "$ECR_REPOSITORY_URL:$IMAGE_TAG" '.containerDefinitions[0].image = $IMAGE' task-def-editable.json > task-def-new.json
       # 5. 新しいタスク定義を登録
       # 編集した JSON を元に ECS にタスク定義を登録
-      - aws ecs register-task-definition --cli-input-json file://task-def-new.json
+      - echo "Registering new task definition and storing ARN to SSM..."
+      - NEW_TASK_DEF_ARN=$(aws ecs register-task-definition --cli-input-json file://task-def-new.json --query "taskDefinition.taskDefinitionArn" --output text)
+      - echo "New Task Definition ARN: $NEW_TASK_DEF_ARN"
+      - aws ssm put-parameter --name "/$ENV_NAME/ecs/WEB_STAFF_TASK_DEF_ARN" --value "$NEW_TASK_DEF_ARN" --type String --overwrite
 
 artifacts:
   files:
