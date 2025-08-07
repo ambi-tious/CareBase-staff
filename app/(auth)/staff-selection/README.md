@@ -47,7 +47,7 @@
 | グループ選択エリア | GroupSelector  | ◯    | 複数グループ存在時         | -                                 | 1列（モバイル）→4列グリッド        |
 | チーム選択エリア   | TeamSelector   | ◯    | 複数チーム存在時           | -                                 | 1列（モバイル）→4列グリッド        |
 | スタッフ選択エリア | StaffSelector  | ◯    | チーム選択後               | -                                 | 1列（モバイル）→4列グリッド        |
-| 変更確定ボタン     | Button         | -    | グループ・チーム変更モード | 変更を確定してメイン画面に戻る    | 緑色背景、変更完了時               |
+| 変更確定ボタン     | Button         | -    | グループ・チーム変更モード | 変更する                          | 緑色背景、変更完了時               |
 | ローディング表示   | div            | -    | 処理中                     | ログイン処理中.../更新中...       | 青色/緑色背景、スピナー付き        |
 
 ## 機能仕様
@@ -211,7 +211,7 @@ interface StaffSelectionScreenProps {
 - **表示内容**: グループ名、説明、チーム数、アイコン
 - **レイアウト**: `grid-cols-2 md:grid-cols-4`
 - **選択状態**: `ring-2 ring-carebase-blue bg-carebase-blue text-white`
-- **現在所属状態**: `ring-2 ring-green-500 bg-green-50 border-green-200` + "現在の所属"バッジ
+- **現在所属状態**: `ring-2 ring-green-500 bg-green-50 border-green-200` + "選択中"バッジ
 - **disabled対応**: クリック無効化、透明度50%
 - **現在所属表示**: 現在のグループには緑色の枠線と専用バッジを表示
 
@@ -222,7 +222,7 @@ interface StaffSelectionScreenProps {
 - **表示内容**: チーム名、説明、スタッフ数、アイコン
 - **レイアウト**: `grid-cols-2 md:grid-cols-4`
 - **選択状態**: `ring-2 ring-carebase-blue bg-carebase-blue text-white`
-- **現在所属状態**: `ring-2 ring-green-500 bg-green-50 border-green-200` + "現在の所属"バッジ
+- **現在所属状態**: `ring-2 ring-green-500 bg-green-50 border-green-200` + "選択中"バッジ
 - **disabled対応**: クリック無効化、透明度50%
 - **現在所属表示**: 現在のチームには緑色の枠線と専用バッジを表示
 

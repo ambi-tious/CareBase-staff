@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import type { Staff } from '@/mocks/staff-data';
 import { getGroupById, getStaffById, getTeamById, organizationData } from '@/mocks/staff-data';
-import { AlertCircle, LogOut, User } from 'lucide-react';
+import { AlertCircle, LogOut } from 'lucide-react';
 import { forwardRef, useCallback, useEffect, useRef, useState } from 'react';
 
 // Define the type for selected staff data
@@ -249,19 +249,6 @@ const StaffSelectionScreenComponent = forwardRef<HTMLDivElement, StaffSelectionS
                 ログアウト
               </Button>
             </div>
-            {isGroupTeamChangeMode && selectedStaffData && (
-              <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-                <div className="flex items-center gap-2">
-                  <User className="h-4 w-4 text-blue-600" />
-                  <span className="text-sm font-medium text-blue-800">
-                    現在のスタッフ: {selectedStaffData.staff.name}
-                  </span>
-                </div>
-                <p className="text-xs text-blue-600 mt-1">
-                  スタッフはそのままで、所属するグループ・チームのみ変更します
-                </p>
-              </div>
-            )}
           </CardHeader>
           <CardContent className="space-y-6">
             {/* Error Message */}
@@ -269,15 +256,6 @@ const StaffSelectionScreenComponent = forwardRef<HTMLDivElement, StaffSelectionS
               <Alert className="border-red-200 bg-red-50">
                 <AlertCircle className="h-4 w-4 text-red-600" />
                 <AlertDescription className="text-red-700">{error}</AlertDescription>
-              </Alert>
-            )}
-
-            {/* Group/Team Change Mode Instructions */}
-            {isGroupTeamChangeMode && (
-              <Alert className="border-green-200 bg-green-50">
-                <AlertDescription className="text-green-700">
-                  新しいグループとチームを選択してください。選択完了後、自動的にメイン画面に戻ります。
-                </AlertDescription>
               </Alert>
             )}
 
@@ -341,7 +319,7 @@ const StaffSelectionScreenComponent = forwardRef<HTMLDivElement, StaffSelectionS
                   onClick={handleGroupTeamChangeComplete}
                   className="bg-green-600 hover:bg-green-700 text-white"
                 >
-                  変更を確定してメイン画面に戻る
+                  変更する
                 </Button>
               </div>
             )}

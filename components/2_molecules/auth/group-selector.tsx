@@ -106,7 +106,7 @@ export const GroupSelector: React.FC<GroupSelectorProps> = ({
                     {isCurrent && (
                       <div className="mt-2">
                         <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full border border-green-300">
-                          現在の所属
+                          選択中
                         </span>
                       </div>
                     )}
