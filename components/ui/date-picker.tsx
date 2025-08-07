@@ -66,10 +66,13 @@ export function DatePicker({
   // 月が変更された時の処理（年月モード用）
   const handleMonthChange = (date: Date) => {
     setCurrentMonth(date);
-    if (mode === 'month' && onChange) {
-      const formattedDate = format(date, 'yyyy-MM');
+    if (onChange) {
+      const day = value ? new Date(value).getDate() : 1;
+      const formattedDate = format(new Date(date.setDate(day)), 'yyyy-MM-dd');
       onChange(formattedDate);
-      setIsOpen(false);
+      if (mode === 'month') {
+        setIsOpen(false);
+      }
     }
   };
 
