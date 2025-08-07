@@ -51,10 +51,11 @@ phases:
       - jq --arg IMAGE "$ECR_REPOSITORY_URL:$IMAGE_TAG" '.containerDefinitions[0].image = $IMAGE' task-def-editable.json > task-def-new.json
       # 5. 新しいタスク定義を登録
       # 編集した JSON を元に ECS にタスク定義を登録
-      - echo "Registering new task definition and storing ARN to SSM..."
-      - NEW_TASK_DEF_ARN=$(aws ecs register-task-definition --cli-input-json file://task-def-new.json --query "taskDefinition.taskDefinitionArn" --output text)
-      - echo "New Task Definition ARN: $NEW_TASK_DEF_ARN"
-      - aws ssm put-parameter --name "/$ENV_NAME/ecs/WEB_STAFF_TASK_DEF_ARN" --value "$NEW_TASK_DEF_ARN" --type String --overwrite
+      - |
+        echo "Registering new task definition and storing ARN to SSM..."
+        NEW_TASK_DEF_ARN=$(aws ecs register-task-definition --cli-input-json file://task-def-new.json --query "taskDefinition.taskDefinitionArn" --output text)
+        echo "New Task Definition ARN: $NEW_TASK_DEF_ARN"
+        aws ssm put-parameter --name "/$ENV_NAME/ecs/WEB_STAFF_TASK_DEF_ARN" --value "$NEW_TASK_DEF_ARN" --type String --overwrite
 
 artifacts:
   files:
