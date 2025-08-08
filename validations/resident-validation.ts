@@ -27,7 +27,6 @@ export const residentBasicInfoSchema = z
     address: z.string(),
     admissionDate: z.string().min(1, '入所日は必須です'),
     dischargeDate: z.string().optional(),
-    admissionStatus: z.enum(['入居中', '退所済', '待機中']).default('入居中'),
     profileImage: z.string(),
     certificationDate: z.string(),
     certificationStartDate: z.string(),
@@ -45,19 +44,6 @@ export const residentBasicInfoSchema = z
     {
       message: '入所日は生年月日より後の日付を入力してください',
       path: ['admissionDate'],
-    }
-  )
-  .refine(
-    (data) => {
-      // 退所済みの場合は退所日が必須
-      if (data.admissionStatus === '退所済' && !data.dischargeDate) {
-        return false;
-      }
-      return true;
-    },
-    {
-      message: '退所済みの場合は退所日を入力してください',
-      path: ['dischargeDate'],
     }
   )
   .refine(

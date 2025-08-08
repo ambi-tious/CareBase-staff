@@ -87,7 +87,7 @@ export interface Resident {
   lastUpdateDate: string;
   admissionDate: string;
   dischargeDate?: string;
-  admissionStatus: '入居中' | '退所済' | '待機中';
+  admissionStatus: '入居中' | '退所済';
   careLevel: string;
   certificationDate: string;
   certValidityStart: string;
