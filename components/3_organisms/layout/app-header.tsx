@@ -213,6 +213,62 @@ export function AppHeader() {
                   </Button>
                 </SheetClose>
               </SheetHeader>
+
+              {/* Mobile Selection Buttons */}
+              <div className="sticky top-[73px] bg-carebase-bg z-10 border-b p-4 space-y-3 lg:hidden">
+                {selectedStaffData ? (
+                  <>
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        setIsMenuOpen(false);
+                        handleStaffNameClick({ stopPropagation: () => {} } as React.MouseEvent);
+                      }}
+                      className="w-full rounded-full border-carebase-blue text-carebase-blue hover:bg-carebase-blue-light font-medium min-h-touch-target flex items-center justify-start"
+                    >
+                      <User className="mr-2 h-4 w-4" />
+                      {selectedStaffData.staff.name}
+                    </Button>
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        setIsMenuOpen(false);
+                        handleGroupTeamClick({ stopPropagation: () => {} } as React.MouseEvent);
+                      }}
+                      className="w-full rounded-full border-carebase-blue text-carebase-blue hover:bg-carebase-blue-light font-medium min-h-touch-target flex items-center justify-start"
+                    >
+                      <Users className="mr-2 h-4 w-4" />
+                      {selectedStaffData.groupName} - {selectedStaffData.teamName}
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        setIsMenuOpen(false);
+                        handleStaffNameClickFallback();
+                      }}
+                      className="w-full rounded-full border-carebase-blue text-carebase-blue hover:bg-carebase-blue-light font-medium min-h-touch-target flex items-center justify-center"
+                    >
+                      <User className="mr-2 h-4 w-4" />
+                      職員を選択
+                    </Button>
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        setIsMenuOpen(false);
+                        handleGroupTeamClickFallback();
+                      }}
+                      className="w-full rounded-full border-carebase-blue text-carebase-blue hover:bg-carebase-blue-light font-medium min-h-touch-target flex items-center justify-center"
+                    >
+                      <Users className="mr-2 h-4 w-4" />
+                      グループ・チームを選択
+                    </Button>
+                  </>
+                )}
+              </div>
+
               <StaffDashboard setIsMenuOpen={setIsMenuOpen} />
             </SheetContent>
           </Sheet>
