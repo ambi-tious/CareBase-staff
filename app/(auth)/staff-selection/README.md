@@ -17,9 +17,9 @@
 - **localStorage永続化**: 選択されたスタッフ情報の保存・復元
 - **スムーズスクロール**: 選択後の自動スクロール機能
 - **URLパラメータ制御**: 遷移元に応じた動作制御
-- **グループ・チーム変更モード**: 現在のスタッフを維持したままグループ・チームのみ変更
+- **グループ・チーム変更モーダル**: 現在のスタッフを維持したままグループ・チームのみ変更
 - **現在所属表示**: 各セレクタで現在の所属グループ・チームを視覚的に表示
-- **職員マスタ管理連携**: 職員の役職・バッジ色のカスタマイズ対応
+- **役職バッジ色**: 職員の役職に応じたバッジ色の表示
 
 ## 全体レイアウト
 
@@ -37,62 +37,53 @@
 
 ### 画面項目
 
-| 項目名             | コンポーネント | 必須 | 表示条件                   | 初期値                            | 備考                               |
-| ------------------ | -------------- | ---- | -------------------------- | --------------------------------- | ---------------------------------- |
-| ページタイトル     | CardTitle      | -    | 常時                       | スタッフ選択/グループ・チーム変更 | モードにより動的変更               |
-| ログアウトボタン   | Button         | -    | 常時                       | ログアウト                        | 右上に配置、赤色スタイル           |
-| 現在スタッフ表示   | Alert          | -    | グループ・チーム変更モード | 現在のスタッフ: {名前}            | 青色背景、現在選択中のスタッフ表示 |
-| 変更モード説明     | Alert          | -    | グループ・チーム変更モード | 新しいグループとチームを選択...   | 緑色背景、操作説明                 |
-| エラーメッセージ   | Alert          | -    | エラー時                   | -                                 | 選択エラー時に表示                 |
-| グループ選択エリア | GroupSelector  | ◯    | 複数グループ存在時         | -                                 | 1列（モバイル）→4列グリッド        |
-| チーム選択エリア   | TeamSelector   | ◯    | 複数チーム存在時           | -                                 | 1列（モバイル）→4列グリッド        |
-| スタッフ選択エリア | StaffSelector  | ◯    | チーム選択後               | -                                 | 1列（モバイル）→4列グリッド        |
-| 変更確定ボタン     | Button         | -    | グループ・チーム変更モード | 変更する                          | 緑色背景、変更完了時               |
-| ローディング表示   | div            | -    | 処理中                     | ログイン処理中.../更新中...       | 青色/緑色背景、スピナー付き        |
+| 項目名             | コンポーネント | 必須 | 表示条件       | 初期値            | 備考                        |
+| ------------------ | -------------- | ---- | -------------- | ----------------- | --------------------------- |
+| ページタイトル     | CardTitle      | -    | 常時           | スタッフ選択      | 固定タイトル                |
+| ログアウトボタン   | Button         | -    | 常時           | ログアウト        | 右上に配置、赤色スタイル    |
+| エラーメッセージ   | Alert          | -    | エラー時       | -                 | 選択エラー時に表示          |
+| グループ選択エリア | GroupSelector  | ◯    | 常時           | -                 | 1列（モバイル）→4列グリッド |
+| チーム選択エリア   | TeamSelector   | ◯    | グループ選択後 | -                 | 1列（モバイル）→4列グリッド |
+| スタッフ選択エリア | StaffSelector  | ◯    | チーム選択後   | -                 | 1列（モバイル）→4列グリッド |
+| ローディング表示   | div            | -    | 処理中         | ログイン処理中... | 青色背景、スピナー付き      |
 
 ## 機能仕様
 
 ### URLパラメータ仕様
 
-| パラメータ名      | 型     | 説明                   | 使用例                                  |
-| ----------------- | ------ | ---------------------- | --------------------------------------- |
-| `from`            | string | 遷移元の識別子         | `header` - ヘッダーからの遷移           |
-| `staff`           | string | スタッフクリックフラグ | `true` - スタッフ名クリックからの遷移   |
-| `group`           | string | グループクリックフラグ | `true` - グループ・チーム名クリックから |
-| `autoSelectStaff` | string | スタッフ自動選択制御   | `false` - 自動選択を無効化              |
-| `autoSelectTeam`  | string | チーム自動選択制御     | `false` - 自動選択を無効化              |
+| パラメータ名      | 型     | 説明                   | 使用例                                |
+| ----------------- | ------ | ---------------------- | ------------------------------------- |
+| `from`            | string | 遷移元の識別子         | `header` - ヘッダーからの遷移         |
+| `staff`           | string | スタッフクリックフラグ | `true` - スタッフ名クリックからの遷移 |
+| `autoSelectStaff` | string | スタッフ自動選択制御   | `false` - 自動選択を無効化            |
+| `autoSelectTeam`  | string | チーム自動選択制御     | `false` - 自動選択を無効化            |
 
 #### URLパラメータの使用例
 
 ```bash
 # ヘッダーのスタッフ名クリック時
 /staff-selection?from=header&staff=true&autoSelectStaff=false
-
-# ヘッダーのグループ・チーム名クリック時
-/staff-selection?from=header&group=true&autoSelectTeam=false
 ```
 
 ### アクション
 
-| 項目名                   | 処理内容                                     | 対象API | 遷移先画面                         |
-| ------------------------ | -------------------------------------------- | ------- | ---------------------------------- |
-| グループ選択             | グループを選択し、チーム一覧を更新           | -       | 同一画面（チーム選択エリア表示）   |
-| チーム選択               | チームを選択し、スタッフ一覧を更新           | -       | 同一画面（スタッフ選択エリア表示） |
-| スタッフ選択             | スタッフを選択し、自動ログイン処理実行       | -       | ダッシュボード画面 (`/`)           |
-| 変更確定ボタン           | グループ・チーム変更情報をlocalStorageに保存 | -       | ダッシュボード画面 (`/`)           |
-| ログアウトボタン         | 認証情報をクリアしてログアウト               | -       | ログイン画面 (`/login`)            |
-| 現在所属グループクリック | 該当グループを選択状態にする                 | -       | 同一画面                           |
-| 現在所属チームクリック   | 該当チームを選択状態にする                   | -       | 同一画面                           |
+| 項目名                   | 処理内容                               | 対象API | 遷移先画面                         |
+| ------------------------ | -------------------------------------- | ------- | ---------------------------------- |
+| グループ選択             | グループを選択し、チーム一覧を更新     | -       | 同一画面（チーム選択エリア表示）   |
+| チーム選択               | チームを選択し、スタッフ一覧を更新     | -       | 同一画面（スタッフ選択エリア表示） |
+| スタッフ選択             | スタッフを選択し、自動ログイン処理実行 | -       | ダッシュボード画面 (`/`)           |
+| ログアウトボタン         | 認証情報をクリアしてログアウト         | -       | ログイン画面 (`/login`)            |
+| 現在所属グループクリック | 該当グループを選択状態にする           | -       | 同一画面                           |
+| 現在所属チームクリック   | 該当チームを選択状態にする             | -       | 同一画面                           |
 
 ### 入力チェック
 
-| 項目名         | イベント | チェック内容       | エラーメッセージ                                   |
-| -------------- | -------- | ------------------ | -------------------------------------------------- |
-| グループ選択   | click    | 必須選択チェック   | グループを選択してください                         |
-| チーム選択     | click    | 必須選択チェック   | チームを選択してください                           |
-| スタッフ選択   | click    | 必須選択チェック   | スタッフを選択してください                         |
-| スタッフ選択   | click    | 有効性チェック     | 有効なスタッフを選択してください                   |
-| ログインボタン | click    | 全項目選択チェック | グループ、チーム、スタッフをすべて選択してください |
+| 項目名       | イベント | チェック内容     | エラーメッセージ                 |
+| ------------ | -------- | ---------------- | -------------------------------- |
+| グループ選択 | click    | 必須選択チェック | グループを選択してください       |
+| チーム選択   | click    | 必須選択チェック | チームを選択してください         |
+| スタッフ選択 | click    | 必須選択チェック | スタッフを選択してください       |
+| スタッフ選択 | click    | 有効性チェック   | 有効なスタッフを選択してください |
 
 ### バリデーション仕様
 
@@ -105,16 +96,16 @@
 #### ヘッダーナビゲーション連携
 
 - **スタッフ名クリック時**: 現在のグループ・チームを選択状態にし、スタッフ自動選択を無効化
-- **グループ・チーム名クリック時**: グループ・チーム変更モードを有効化し、現在のスタッフを維持
+- **グループ・チーム名クリック時**: グループ・チーム選択モーダルを開く
 - **選択状態復元**: localStorageから`selectedStaffData`を読み込み、適切な選択状態を復元
 - **現在所属表示**: 各セレクタで現在の所属グループ・チームを緑色の枠線とバッジで強調表示
 
-#### グループ・チーム変更モード
+#### グループ・チーム変更モーダル
 
-- **変更モード有効化**: `fromGroupClick=true`時にグループ・チーム変更モードを開始
+- **モーダル表示**: ヘッダーのグループ・チーム名クリック時にモーダルを開く
 - **スタッフ維持**: 現在のスタッフ情報を維持し、所属グループ・チームのみ変更
 - **変更確定**: 新しいグループ・チーム選択後、localStorageの`selectedStaffData`を更新
-- **自動リダイレクト**: 変更確定後、自動的にメイン画面（`/`）にリダイレクト
+- **ストレージイベント**: 変更確定後、他のコンポーネントに変更を通知
 
 #### localStorage連携
 
@@ -127,7 +118,7 @@ interface SelectedStaffData {
 ```
 
 - **保存キー**: `carebase_selected_staff_data`
-- **保存タイミング**: スタッフ選択完了時
+- **保存タイミング**: スタッフ選択完了時、グループ・チーム変更時
 - **読み込みタイミング**: 画面初期化時、ヘッダーナビゲーション時
 
 #### スムーズスクロール機能
@@ -146,9 +137,9 @@ interface SelectedStaffData {
 
 ### レスポンシブデザイン
 
-- **グループ選択**: 1列（モバイル）→ 4列
-- **チーム選択**: 1列（モバイル）→ 4列
-- **スタッフ選択**: 1列（モバイル）→ 4列
+- **グループ選択**: 1列（モバイル）→ 3列（md）→ 4列（lg）
+- **チーム選択**: 1列（モバイル）→ 3列（md）→ 4列（lg）
+- **スタッフ選択**: 1列（モバイル）→ 3列（md）→ 4列（lg）
 
 ### カラーテーマ
 
@@ -158,11 +149,6 @@ interface SelectedStaffData {
 - **ホバー状態**: `hover:ring-1 hover:ring-carebase-blue-light hover:shadow-md`
 - **無効状態**: `cursor-not-allowed opacity-50`
 - **ログアウトボタン**: `text-red-600 border-red-300 hover:bg-red-50`
-- **グループ・チーム変更モード**:
-  - **現在スタッフ表示**: `bg-blue-50 border-blue-200 text-blue-800`
-  - **変更説明**: `bg-green-50 border-green-200 text-green-700`
-  - **変更確定ボタン**: `bg-green-600 hover:bg-green-700 text-white`
-  - **変更処理中**: `bg-green-50 border-green-200 text-green-800`
 
 ### アニメーション
 
@@ -196,7 +182,6 @@ interface StaffSelectionScreenProps {
   onLogout?: () => void;
   fromHeader?: boolean;
   fromStaffClick?: boolean;
-  fromGroupClick?: boolean;
   autoSelectStaff?: boolean;
   autoSelectTeam?: boolean;
   selectedStaffData?: SelectedStaffData;
@@ -208,8 +193,19 @@ interface StaffSelectionScreenProps {
 
 **ファイル**: `components/2_molecules/auth/group-selector.tsx`
 
+```typescript
+interface GroupSelectorProps {
+  groups: Group[];
+  selectedGroupId?: string;
+  currentGroupId?: string; // 現在所属しているグループID
+  onGroupSelect: (groupId: string) => void;
+  disabled?: boolean;
+  className?: string;
+}
+```
+
 - **表示内容**: グループ名、説明、チーム数、アイコン
-- **レイアウト**: `grid-cols-2 md:grid-cols-4`
+- **レイアウト**: `grid md:grid-cols-3 lg:grid-cols-4`
 - **選択状態**: `ring-2 ring-carebase-blue bg-carebase-blue text-white`
 - **現在所属状態**: `ring-2 ring-green-500 bg-green-50 border-green-200` + "選択中"バッジ
 - **disabled対応**: クリック無効化、透明度50%
@@ -219,8 +215,19 @@ interface StaffSelectionScreenProps {
 
 **ファイル**: `components/2_molecules/auth/team-selector.tsx`
 
+```typescript
+interface TeamSelectorProps {
+  teams: Team[];
+  selectedTeamId?: string;
+  currentTeamId?: string; // 現在所属しているチームID
+  onTeamSelect: (teamId: string) => void;
+  disabled?: boolean;
+  className?: string;
+}
+```
+
 - **表示内容**: チーム名、説明、スタッフ数、アイコン
-- **レイアウト**: `grid-cols-2 md:grid-cols-4`
+- **レイアウト**: `grid md:grid-cols-3 lg:grid-cols-4`
 - **選択状態**: `ring-2 ring-carebase-blue bg-carebase-blue text-white`
 - **現在所属状態**: `ring-2 ring-green-500 bg-green-50 border-green-200` + "選択中"バッジ
 - **disabled対応**: クリック無効化、透明度50%
@@ -230,8 +237,18 @@ interface StaffSelectionScreenProps {
 
 **ファイル**: `components/2_molecules/auth/staff-selector.tsx`
 
+```typescript
+interface StaffSelectorProps {
+  staff: Staff[];
+  selectedStaffId?: string;
+  onStaffSelect: (staffId: string) => void;
+  disabled?: boolean;
+  className?: string;
+}
+```
+
 - **表示内容**: アクティブなスタッフのみ表示
-- **レイアウト**: `grid-cols-2 md:grid-cols-4`
+- **レイアウト**: `grid md:grid-cols-3 lg:grid-cols-4`
 - **空状態**: `このチームには現在利用可能なスタッフがいません。`
 
 ### StaffCard
@@ -251,13 +268,29 @@ interface StaffCardProps {
 - **表示内容**: アバター、役職バッジ、名前、ふりがな
 - **役職バッジ色**: 職員マスタ管理でカスタマイズ可能
   - **デフォルト色**:
-    - 施設長: `bg-purple-100 text-purple-700`
-    - 主任介護職員: `bg-blue-100 text-blue-700`
-    - 看護師: `bg-green-100 text-green-700`
-    - 介護職員: `bg-orange-100 text-orange-700`
-    - 事務職員: `bg-gray-100 text-gray-700`
-  - **カスタマイズ対応**: 職員マスタで役職ごとのバッジ色を設定可能
-  - **選択時色調整**: 選択状態時は自動的に色を濃く調整（例: `bg-purple-200 text-purple-900`）
+    - 施設長: `bg-purple-100 text-purple-700` / `bg-purple-200 text-purple-900`（選択時）
+    - 主任介護職員: `bg-blue-100 text-blue-700` / `bg-blue-200 text-blue-900`（選択時）
+    - 看護師: `bg-green-100 text-green-700` / `bg-green-200 text-green-900`（選択時）
+    - 介護職員: `bg-orange-100 text-orange-700` / `bg-orange-200 text-orange-900`（選択時）
+    - 事務職員: `bg-gray-100 text-gray-700` / `bg-gray-200 text-gray-900`（選択時）
+
+### GroupTeamSelectionModal
+
+**ファイル**: `components/3_organisms/modals/group-team-selection-modal.tsx`
+
+```typescript
+interface GroupTeamSelectionModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  selectedStaffData?: SelectedStaffData;
+  onGroupTeamChange?: (updatedData: SelectedStaffData) => void;
+}
+```
+
+- **表示内容**: グループ・チーム選択モーダル
+- **機能**: 現在のスタッフを維持したままグループ・チームのみ変更
+- **確定ボタン**: 変更する / 変更中...
+- **キャンセルボタン**: モーダルを閉じる
 
 ## API仕様
 
@@ -278,36 +311,22 @@ interface Staff {
   employeeId: string;
   avatar?: string;
   isActive: boolean;
-  roleBadgeColor?: RoleBadgeColor; // 職員マスタ管理でカスタマイズされたバッジ色
 }
 
-interface RoleBadgeColor {
-  normal: string; // 通常時のTailwind CSSクラス（例: "bg-purple-100 text-purple-700"）
-  selected: string; // 選択時のTailwind CSSクラス（例: "bg-purple-200 text-purple-900"）
-}
-
-interface RoleMaster {
-  id: string;
-  name: string; // 役職名
-  badgeColor: RoleBadgeColor;
-  displayOrder: number;
-  isActive: boolean;
-  createdAt: string;
-  updatedAt: string;
-}
-
-interface StaffMaster {
+interface Group {
   id: string;
   name: string;
-  furigana: string;
-  roleId: string; // RoleMasterのID
-  employeeId: string;
-  avatar?: string;
-  isActive: boolean;
-  groupId: string;
-  teamId: string;
-  createdAt: string;
-  updatedAt: string;
+  description: string;
+  icon: string;
+  teams: Team[];
+}
+
+interface Team {
+  id: string;
+  name: string;
+  description: string;
+  icon: string;
+  staff: Staff[];
 }
 ```
 
@@ -325,98 +344,35 @@ const selectedStaffData = data ? JSON.parse(data) : null;
 localStorage.removeItem('carebase_selected_staff_data');
 localStorage.removeItem('carebase_token');
 localStorage.removeItem('carebase_user');
+
+// ストレージイベント発火（他のコンポーネントに変更を通知）
+window.dispatchEvent(
+  new StorageEvent('storage', {
+    key: 'carebase_selected_staff_data',
+    newValue: JSON.stringify(updatedData),
+    oldValue: JSON.stringify(selectedStaffData),
+  })
+);
 ```
 
-### 職員マスタ管理API
+### 役職バッジ色の実装
 
 ```typescript
-// 役職マスタ取得
-GET /api/roles
-Response: RoleMaster[]
-
-// 役職マスタ作成/更新
-POST /api/roles
-PUT /api/roles/{roleId}
-Request: Omit<RoleMaster, 'id' | 'createdAt' | 'updatedAt'>
-
-// 職員マスタ取得
-GET /api/staff
-Response: StaffMaster[]
-
-// 職員マスタ作成/更新
-POST /api/staff
-PUT /api/staff/{staffId}
-Request: Omit<StaffMaster, 'id' | 'createdAt' | 'updatedAt'>
-
-// バッジ色の動的取得
-GET /api/staff/{staffId}/badge-color
-Response: RoleBadgeColor
-```
-
-## 職員マスタ管理機能
-
-### 役職マスタ管理
-
-- **役職作成**: 新しい役職の作成（名前、バッジ色、表示順の設定）
-- **バッジ色カスタマイズ**: 役職ごとにTailwind CSSクラスを指定してバッジ色を設定
-- **表示順管理**: 役職の表示順序を設定
-- **有効/無効切り替え**: 役職の有効・無効状態を管理
-
-#### バッジ色設定例
-
-```typescript
-const roleBadgeColors = {
-  施設長: {
-    normal: 'bg-purple-100 text-purple-700 border-purple-200',
-    selected: 'bg-purple-200 text-purple-900 border-purple-300',
-  },
-  主任介護職員: {
-    normal: 'bg-blue-100 text-blue-700 border-blue-200',
-    selected: 'bg-blue-200 text-blue-900 border-blue-300',
-  },
-  看護師: {
-    normal: 'bg-green-100 text-green-700 border-green-200',
-    selected: 'bg-green-200 text-green-900 border-green-300',
-  },
-  // カスタム役職例
-  ケアマネージャー: {
-    normal: 'bg-indigo-100 text-indigo-700 border-indigo-200',
-    selected: 'bg-indigo-200 text-indigo-900 border-indigo-300',
-  },
-};
-```
-
-### 職員マスタ管理
-
-- **職員登録**: 新しい職員の登録（基本情報、役職、所属グループ・チーム）
-- **所属管理**: 職員の所属グループ・チームの変更
-- **役職変更**: 職員の役職変更（バッジ色も自動的に反映）
-- **有効/無効切り替え**: 職員の有効・無効状態を管理
-- **プロフィール画像管理**: アバター画像のアップロード・変更
-
-### StaffCardでの色適用ロジック
-
-```typescript
-const getRoleBadgeColor = (staff: Staff, isSelected: boolean) => {
-  // カスタマイズされたバッジ色があれば使用
-  if (staff.roleBadgeColor) {
-    return isSelected ? staff.roleBadgeColor.selected : staff.roleBadgeColor.normal;
+const getRoleBadgeColor = (role: string, isSelected: boolean) => {
+  switch (role) {
+    case '施設長':
+      return isSelected ? 'bg-purple-200 text-purple-900' : 'bg-purple-100 text-purple-700';
+    case '主任介護職員':
+      return isSelected ? 'bg-blue-200 text-blue-900' : 'bg-blue-100 text-blue-700';
+    case '看護師':
+      return isSelected ? 'bg-green-200 text-green-900' : 'bg-green-100 text-green-700';
+    case '介護職員':
+      return isSelected ? 'bg-orange-200 text-orange-900' : 'bg-orange-100 text-orange-700';
+    case '事務職員':
+      return isSelected ? 'bg-gray-200 text-gray-900' : 'bg-gray-100 text-gray-700';
+    default:
+      return isSelected ? 'bg-gray-200 text-gray-900' : 'bg-gray-100 text-gray-700';
   }
-
-  // デフォルトの色を使用
-  const defaultColors = {
-    施設長: { normal: 'bg-purple-100 text-purple-700', selected: 'bg-purple-200 text-purple-900' },
-    主任介護職員: { normal: 'bg-blue-100 text-blue-700', selected: 'bg-blue-200 text-blue-900' },
-    看護師: { normal: 'bg-green-100 text-green-700', selected: 'bg-green-200 text-green-900' },
-    介護職員: {
-      normal: 'bg-orange-100 text-orange-700',
-      selected: 'bg-orange-200 text-orange-900',
-    },
-    事務職員: { normal: 'bg-gray-100 text-gray-700', selected: 'bg-gray-200 text-gray-900' },
-  };
-
-  const roleColor = defaultColors[staff.role] || defaultColors['事務職員'];
-  return isSelected ? roleColor.selected : roleColor.normal;
 };
 ```
 
@@ -427,4 +383,5 @@ const getRoleBadgeColor = (staff: Staff, isSelected: boolean) => {
 - [画面一覧](../../../docs/screen-list.md#認証関連)
 - [スタッフ選択画面実装](./page.tsx)
 - [StaffSelectionScreen コンポーネント](../../../components/3_organisms/auth/staff-selection-screen.tsx)
+- [GroupTeamSelectionModal コンポーネント](../../../components/3_organisms/modals/group-team-selection-modal.tsx)
 - [AppHeader コンポーネント](../../../components/3_organisms/layout/app-header.tsx)
