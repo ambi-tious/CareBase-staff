@@ -216,7 +216,7 @@ export function CareBoard() {
       <BulkCareRecordModal
         isOpen={showBulkRecordModal}
         onClose={() => setShowBulkRecordModal(false)}
-        residents={careBoardData.filter((r) => r.admissionStatus === '入居中')}
+        residents={careBoardData.filter((r) => r.dischargeDate === null)}
         onSave={handleSaveBulkRecords}
       />
     </div>

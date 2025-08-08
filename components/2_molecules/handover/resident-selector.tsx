@@ -1,14 +1,14 @@
 'use client';
 
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import type { Resident } from '@/mocks/care-board-data';
+import { careBoardData } from '@/mocks/care-board-data';
+import { Search, User, X } from 'lucide-react';
 import type React from 'react';
 import { useState } from 'react';
-import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { careBoardData } from '@/mocks/care-board-data';
-import type { Resident } from '@/mocks/care-board-data';
-import { Search, User, X } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 
 interface ResidentSelectorProps {
   selectedResidentId?: string;
@@ -25,7 +25,7 @@ export const ResidentSelector: React.FC<ResidentSelectorProps> = ({
   const [isOpen, setIsOpen] = useState(false);
 
   // Filter active residents only
-  const activeResidents = careBoardData.filter((resident) => resident.admissionStatus === '入居中');
+  const activeResidents = careBoardData.filter((resident) => resident.dischargeDate === null);
 
   // Filter residents based on search query
   const filteredResidents = activeResidents.filter(

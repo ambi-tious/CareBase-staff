@@ -66,7 +66,7 @@ export const ResidentProfileHeader: React.FC<ResidentProfileHeaderProps> = ({ re
               <div>
                 <InfoRow label="入所日" value={resident.admissionDate} />
                 <InfoRow label="退所日" value={resident.dischargeDate} />
-                <InfoRow label="入所状況" value={resident.admissionStatus} />
+                <InfoRow label="入所状況" value={resident.dischargeDate ? '退所済' : '入居中'} />
                 <InfoRow label="要介護度" value={resident.careLevel} />
                 <InfoRow label="認定日" value={resident.certificationDate} />
                 <InfoRow

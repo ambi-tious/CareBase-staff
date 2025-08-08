@@ -87,7 +87,6 @@ export interface Resident {
   lastUpdateDate: string;
   admissionDate: string;
   dischargeDate?: string;
-  admissionStatus: '入居中' | '退所済';
   careLevel: string;
   certificationDate: string;
   certValidityStart: string;
@@ -119,7 +118,6 @@ export const careBoardData: Resident[] = [
     registrationDate: '2025/04/15',
     lastUpdateDate: '2025/05/20',
     admissionDate: '2025/04/15',
-    admissionStatus: '入居中',
     careLevel: '要介護1',
     certificationDate: '2025/01/11',
     certValidityStart: '2024/12/28',
@@ -364,7 +362,6 @@ export const careBoardData: Resident[] = [
     registrationDate: '2025/03/01',
     lastUpdateDate: '2025/05/15',
     admissionDate: '2025/03/01',
-    admissionStatus: '入居中',
     careLevel: '要介護3',
     certificationDate: '2025/02/01',
     certValidityStart: '2025/01/15',
@@ -604,7 +601,6 @@ export const careBoardData: Resident[] = [
     registrationDate: '2025/01/20',
     lastUpdateDate: '2025/05/18',
     admissionDate: '2025/01/20',
-    admissionStatus: '入居中',
     careLevel: '要介護2',
     certificationDate: '2025/01/01',
     certValidityStart: '2024/12/15',
@@ -844,7 +840,6 @@ export const careBoardData: Resident[] = [
     registrationDate: '2025/02/10',
     lastUpdateDate: '2025/05/12',
     admissionDate: '2025/02/10',
-    admissionStatus: '入居中',
     careLevel: '要支援2',
     certificationDate: '2025/01/20',
     certValidityStart: '2025/01/01',
@@ -1084,7 +1079,6 @@ export const careBoardData: Resident[] = [
     admissionDate: '2024/11/10',
     registrationDate: '2024/11/01',
     lastUpdateDate: '2025/05/15',
-    admissionStatus: '入居中',
     careLevel: '要介護2',
     certificationDate: '2024/10/20',
     certValidityStart: '2024/10/20',
@@ -1198,7 +1192,6 @@ export const careBoardData: Resident[] = [
     admissionDate: '2025/01/01',
     registrationDate: '2025/01/01',
     lastUpdateDate: '2025/03/01',
-    admissionStatus: '入居中',
     careLevel: '要介護2',
     certificationDate: '2024/12/15',
     certValidityStart: '2024/12/15',
@@ -1277,7 +1270,6 @@ export const careBoardData: Resident[] = [
     admissionDate: '2025/02/10',
     registrationDate: '2025/02/01',
     lastUpdateDate: '2025/04/01',
-    admissionStatus: '入居中',
     careLevel: '自立',
     certificationDate: '2025/01/20',
     certValidityStart: '2025/01/20',
@@ -1337,7 +1329,6 @@ export const careBoardData: Resident[] = [
     registrationDate: '2025/01/15',
     lastUpdateDate: '2025/05/10',
     admissionDate: '2025/01/15',
-    admissionStatus: '入居中',
     careLevel: '要介護1',
     certificationDate: '2025/01/01',
     certValidityStart: '2024/12/20',
@@ -1373,7 +1364,6 @@ export const careBoardData: Resident[] = [
     registrationDate: '2025/03/01',
     lastUpdateDate: '2025/05/08',
     admissionDate: '2025/03/01',
-    admissionStatus: '入居中',
     careLevel: '要介護2',
     certificationDate: '2025/02/15',
     certValidityStart: '2025/02/15',
@@ -1410,7 +1400,6 @@ export const careBoardData: Resident[] = [
     lastUpdateDate: '2025/05/05',
     admissionDate: '2025/02/20',
     dischargeDate: '2025/05/15',
-    admissionStatus: '退所済',
     careLevel: '要介護3',
     certificationDate: '2025/02/01',
     certValidityStart: '2025/02/01',

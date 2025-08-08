@@ -81,7 +81,7 @@ export const ContactScheduleForm: React.FC<ContactScheduleFormProps> = ({
     () => [
       { value: 'none', label: '選択なし' },
       ...careBoardData
-        .filter((resident) => resident.admissionStatus === '入居中')
+        .filter((resident) => resident.dischargeDate === null)
         .map((resident) => ({
           value: resident.id.toString(),
           label: `${resident.name} (${resident.careLevel})`,

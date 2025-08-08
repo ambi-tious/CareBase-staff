@@ -62,7 +62,7 @@ export const ResidentsList: React.FC = () => {
         resident.furigana.toLowerCase().includes(searchQuery.toLowerCase());
 
       // Filter by discharge status
-      const matchesStatus = showDischargedResidents || resident.admissionStatus !== '退所済';
+      const matchesStatus = showDischargedResidents || resident.dischargeDate === null;
 
       // Filter by group and team if selected staff data exists
       const matchesGroupTeam =
