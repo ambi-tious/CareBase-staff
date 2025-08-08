@@ -1,10 +1,10 @@
-import type React from 'react';
-import type { Resident } from '@/mocks/care-board-data';
-import Image from 'next/image';
+import { InfoRow } from '@/components/1_atoms/common/info-row';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { InfoRow } from '@/components/1_atoms/common/info-row';
+import type { Resident } from '@/mocks/care-board-data';
+import Image from 'next/image';
 import Link from 'next/link';
+import type React from 'react';
 
 interface ResidentProfileHeaderProps {
   resident: Resident;

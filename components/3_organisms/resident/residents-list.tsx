@@ -6,14 +6,53 @@ import { careBoardData } from '@/mocks/care-board-data';
 import { Users } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import type React from 'react';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+
+interface SelectedStaffData {
+  staff: {
+    id: string;
+    name: string;
+  };
+  groupName: string;
+  teamName: string;
+}
 
 export const ResidentsList: React.FC = () => {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState('');
   const [showDischargedResidents, setShowDischargedResidents] = useState(false);
+  const [selectedStaffData, setSelectedStaffData] = useState<SelectedStaffData | null>(null);
 
-  // Filter residents based on search query and discharge status
+  // Load selected staff data from localStorage
+  useEffect(() => {
+    const loadSelectedStaffData = () => {
+      try {
+        const data = localStorage.getItem('carebase_selected_staff_data');
+        if (data) {
+          setSelectedStaffData(JSON.parse(data));
+        }
+      } catch (error) {
+        console.error('Failed to load selected staff data:', error);
+      }
+    };
+
+    loadSelectedStaffData();
+
+    // Listen for storage changes (when staff selection changes)
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'carebase_selected_staff_data') {
+        loadSelectedStaffData();
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
+  }, []);
+
+  // Filter residents based on search query, discharge status, and group/team
   const filteredResidents = useMemo(() => {
     return careBoardData.filter((resident) => {
       // Filter by search query
@@ -25,34 +64,22 @@ export const ResidentsList: React.FC = () => {
       // Filter by discharge status
       const matchesStatus = showDischargedResidents || resident.admissionStatus !== '退所済';
 
-      return matchesSearch && matchesStatus;
+      // Filter by group and team if selected staff data exists
+      const matchesGroupTeam =
+        !selectedStaffData ||
+        (resident.floorGroup === selectedStaffData.groupName &&
+          resident.unitTeam === selectedStaffData.teamName);
+
+      return matchesSearch && matchesStatus && matchesGroupTeam;
     });
-  }, [searchQuery, showDischargedResidents]);
+  }, [searchQuery, showDischargedResidents, selectedStaffData]);
 
   const handleCreateResident = () => {
     router.push('/residents/new');
   };
 
-  const activeResidentsCount = careBoardData.filter((r) => r.admissionStatus === '入居中').length;
-  const dischargedResidentsCount = careBoardData.filter(
-    (r) => r.admissionStatus === '退所済'
-  ).length;
-
   return (
     <div className="p-4 md:p-6 bg-carebase-bg min-h-screen">
-      {/* Header */}
-      <div className="mb-6">
-        <div className="flex items-center gap-3 mb-2">
-          <Users className="h-6 w-6 text-carebase-blue" />
-          <h1 className="text-2xl font-bold text-carebase-text-primary">利用者一覧</h1>
-        </div>
-        <div className="flex items-center gap-4 text-sm text-gray-600">
-          <span>入居中: {activeResidentsCount}名</span>
-          <span>退所済: {dischargedResidentsCount}名</span>
-          <span>表示中: {filteredResidents.length}名</span>
-        </div>
-      </div>
-
       {/* Toolbar */}
       <ResidentsToolbar
         onSearch={setSearchQuery}

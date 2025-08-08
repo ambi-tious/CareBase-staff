@@ -17,8 +17,8 @@ export const dashboardMenu: NavCategory[] = [
     title: '利用者関連',
     icon: 'Users',
     links: [
-      { label: 'ケアボード', href: '/', icon: 'Notebook' },
       { label: '利用者リスト', href: '/residents', icon: 'User' },
+      { label: 'ケアボード', href: '/', icon: 'Notebook' },
     ],
   },
   {

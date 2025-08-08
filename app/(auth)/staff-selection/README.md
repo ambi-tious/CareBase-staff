@@ -366,23 +366,23 @@ Response: RoleBadgeColor
 
 ```typescript
 const roleBadgeColors = {
-  "施設長": {
-    normal: "bg-purple-100 text-purple-700 border-purple-200",
-    selected: "bg-purple-200 text-purple-900 border-purple-300"
+  施設長: {
+    normal: 'bg-purple-100 text-purple-700 border-purple-200',
+    selected: 'bg-purple-200 text-purple-900 border-purple-300',
   },
-  "主任介護職員": {
-    normal: "bg-blue-100 text-blue-700 border-blue-200",
-    selected: "bg-blue-200 text-blue-900 border-blue-300"
+  主任介護職員: {
+    normal: 'bg-blue-100 text-blue-700 border-blue-200',
+    selected: 'bg-blue-200 text-blue-900 border-blue-300',
   },
-  "看護師": {
-    normal: "bg-green-100 text-green-700 border-green-200",
-    selected: "bg-green-200 text-green-900 border-green-300"
+  看護師: {
+    normal: 'bg-green-100 text-green-700 border-green-200',
+    selected: 'bg-green-200 text-green-900 border-green-300',
   },
   // カスタム役職例
-  "ケアマネージャー": {
-    normal: "bg-indigo-100 text-indigo-700 border-indigo-200",
-    selected: "bg-indigo-200 text-indigo-900 border-indigo-300"
-  }
+  ケアマネージャー: {
+    normal: 'bg-indigo-100 text-indigo-700 border-indigo-200',
+    selected: 'bg-indigo-200 text-indigo-900 border-indigo-300',
+  },
 };
 ```
 
@@ -402,16 +402,19 @@ const getRoleBadgeColor = (staff: Staff, isSelected: boolean) => {
   if (staff.roleBadgeColor) {
     return isSelected ? staff.roleBadgeColor.selected : staff.roleBadgeColor.normal;
   }
-  
+
   // デフォルトの色を使用
   const defaultColors = {
-    '施設長': { normal: 'bg-purple-100 text-purple-700', selected: 'bg-purple-200 text-purple-900' },
-    '主任介護職員': { normal: 'bg-blue-100 text-blue-700', selected: 'bg-blue-200 text-blue-900' },
-    '看護師': { normal: 'bg-green-100 text-green-700', selected: 'bg-green-200 text-green-900' },
-    '介護職員': { normal: 'bg-orange-100 text-orange-700', selected: 'bg-orange-200 text-orange-900' },
-    '事務職員': { normal: 'bg-gray-100 text-gray-700', selected: 'bg-gray-200 text-gray-900' },
+    施設長: { normal: 'bg-purple-100 text-purple-700', selected: 'bg-purple-200 text-purple-900' },
+    主任介護職員: { normal: 'bg-blue-100 text-blue-700', selected: 'bg-blue-200 text-blue-900' },
+    看護師: { normal: 'bg-green-100 text-green-700', selected: 'bg-green-200 text-green-900' },
+    介護職員: {
+      normal: 'bg-orange-100 text-orange-700',
+      selected: 'bg-orange-200 text-orange-900',
+    },
+    事務職員: { normal: 'bg-gray-100 text-gray-700', selected: 'bg-gray-200 text-gray-900' },
   };
-  
+
   const roleColor = defaultColors[staff.role] || defaultColors['事務職員'];
   return isSelected ? roleColor.selected : roleColor.normal;
 };

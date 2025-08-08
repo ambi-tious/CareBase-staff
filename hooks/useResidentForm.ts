@@ -19,6 +19,8 @@ const initialFormData: ResidentBasicInfo = {
   roomInfo: '',
   address: '',
   admissionDate: '',
+  dischargeDate: '',
+  admissionStatus: '入居中',
   profileImage: '',
   certificationDate: '',
   certificationStartDate: '',

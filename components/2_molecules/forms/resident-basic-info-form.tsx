@@ -648,16 +648,27 @@ export const ResidentBasicInfoForm: React.FC<ResidentBasicInfoFormProps> = ({
           </div>
         </div>
 
-        <FormField
-          label="入所日"
-          id="admissionDate"
-          type="date"
-          value={data.admissionDate}
-          onChange={(value) => updateField('admissionDate', value)}
-          required
-          error={errors.admissionDate}
-          disabled={disabled}
-        />
+        <div className="flex gap-3">
+          <FormField
+            label="入所日"
+            id="admissionDate"
+            type="date"
+            value={data.admissionDate}
+            onChange={(value) => updateField('admissionDate', value)}
+            required
+            error={errors.admissionDate}
+            disabled={disabled}
+          />
+
+          <FormField
+            label="退所日"
+            id="dischargeDate"
+            type="date"
+            value={data.dischargeDate || ''}
+            onChange={(value) => updateField('dischargeDate', value)}
+            error={errors.dischargeDate}
+          />
+        </div>
 
         <FormField
           label="住所"
