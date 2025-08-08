@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import type { Staff } from '@/mocks/staff-data';
 import { getGroupById, getStaffById, getTeamById, organizationData } from '@/mocks/staff-data';
 import { AlertCircle, LogOut } from 'lucide-react';
-import { forwardRef, useCallback, useEffect, useRef, useState } from 'react';
+import { forwardRef, useEffect, useRef, useState } from 'react';
 
 // Define the type for selected staff data
 interface SelectedStaffData {
@@ -23,7 +23,6 @@ interface StaffSelectionScreenProps {
   onLogout?: () => void;
   fromHeader?: boolean;
   fromStaffClick?: boolean;
-  fromGroupClick?: boolean;
   autoSelectStaff?: boolean;
   autoSelectTeam?: boolean;
   selectedStaffData?: SelectedStaffData;
@@ -39,7 +38,6 @@ const StaffSelectionScreenComponent = forwardRef<HTMLDivElement, StaffSelectionS
       fromStaffClick = false,
       autoSelectStaff = true,
       autoSelectTeam = true,
-      fromGroupClick = false,
       selectedStaffData,
       className = '',
     },
@@ -50,7 +48,6 @@ const StaffSelectionScreenComponent = forwardRef<HTMLDivElement, StaffSelectionS
     const [selectedStaffId, setSelectedStaffId] = useState<string>('');
     const [error, setError] = useState<string>('');
     const [isLoading, setIsLoading] = useState<boolean>(false);
-    const [isGroupTeamChangeMode, setIsGroupTeamChangeMode] = useState<boolean>(false);
 
     // Refs for scrolling
     const teamSelectorRef = useRef<HTMLDivElement>(null);
@@ -155,15 +152,8 @@ const StaffSelectionScreenComponent = forwardRef<HTMLDivElement, StaffSelectionS
         if (groupId) {
           setSelectedGroupId(groupId);
 
-          // If coming from group click, enable group/team change mode
-          if (fromGroupClick) {
-            setIsGroupTeamChangeMode(true);
-            // Don't auto-select team, let user choose
-            setSelectedTeamId('');
-            setSelectedStaffId('');
-          }
           // If coming from staff click, also select the staff
-          else if (fromStaffClick && teamId) {
+          if (fromStaffClick && teamId) {
             if (autoSelectTeam) {
               setSelectedTeamId(teamId);
             }
@@ -177,36 +167,7 @@ const StaffSelectionScreenComponent = forwardRef<HTMLDivElement, StaffSelectionS
           }
         }
       }
-    }, [
-      fromHeader,
-      fromStaffClick,
-      fromGroupClick,
-      selectedStaffData,
-      autoSelectStaff,
-      autoSelectTeam,
-    ]);
-
-    // Handle group/team change mode completion
-    const handleGroupTeamChangeComplete = useCallback(() => {
-      if (isGroupTeamChangeMode && selectedGroupId && selectedTeamId && selectedStaffData) {
-        // Update localStorage with new group/team but keep the same staff
-        const updatedStaffData = {
-          staff: selectedStaffData.staff,
-          groupName: getGroupById(selectedGroupId)?.name || selectedStaffData.groupName,
-          teamName:
-            getTeamById(selectedGroupId, selectedTeamId)?.name || selectedStaffData.teamName,
-        };
-
-        try {
-          localStorage.setItem('carebase_selected_staff_data', JSON.stringify(updatedStaffData));
-          // Navigate back to main page
-          window.location.href = '/';
-        } catch (error) {
-          console.error('Error updating localStorage:', error);
-          setError('グループ・チーム情報の更新に失敗しました。');
-        }
-      }
-    }, [isGroupTeamChangeMode, selectedGroupId, selectedTeamId, selectedStaffData]);
+    }, [fromHeader, fromStaffClick, selectedStaffData, autoSelectStaff, autoSelectTeam]);
 
     // Get current group and team IDs from selected staff data
     const getCurrentGroupTeamIds = () => {
@@ -230,7 +191,7 @@ const StaffSelectionScreenComponent = forwardRef<HTMLDivElement, StaffSelectionS
     const { currentGroupId, currentTeamId } = getCurrentGroupTeamIds();
 
     const showTeamSelector = selectedGroupId;
-    const showStaffSelector = selectedGroupId && selectedTeamId && !isGroupTeamChangeMode;
+    const showStaffSelector = selectedGroupId && selectedTeamId;
 
     return (
       <div ref={ref} className={`max-w-4xl w-full mx-auto ${className}`}>
@@ -238,7 +199,7 @@ const StaffSelectionScreenComponent = forwardRef<HTMLDivElement, StaffSelectionS
           <CardHeader>
             <div className="flex items-center justify-between">
               <CardTitle className="text-xl font-bold text-carebase-text-primary">
-                {isGroupTeamChangeMode ? 'グループ・チーム変更' : 'スタッフ選択'}
+                スタッフ選択
               </CardTitle>
               <Button
                 variant="outline"
@@ -294,38 +255,8 @@ const StaffSelectionScreenComponent = forwardRef<HTMLDivElement, StaffSelectionS
               </div>
             )}
 
-            {/* Group/Team Change Mode Loading */}
-            {isGroupTeamChangeMode && selectedGroupId && selectedTeamId && isLoading && (
-              <div className="flex flex-col items-center justify-center py-4 bg-green-50 rounded-lg border border-green-200">
-                <div className="flex items-center gap-2 mb-2">
-                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-green-600"></div>
-                  <p className="text-green-800 font-semibold">グループ・チーム情報を更新中...</p>
-                </div>
-                <p className="text-green-600 text-sm">少々お待ちください</p>
-              </div>
-            )}
-
-            {/* Group/Team Change Mode Completion Button */}
-            {isGroupTeamChangeMode && selectedGroupId && selectedTeamId && !isLoading && (
-              <div className="flex flex-col items-center justify-center py-4 bg-green-50 rounded-lg border border-green-200">
-                <div className="text-center mb-4">
-                  <p className="text-green-800 font-semibold mb-2">変更内容を確認してください</p>
-                  <div className="text-sm text-green-700 space-y-1">
-                    <p>グループ: {getGroupById(selectedGroupId)?.name}</p>
-                    <p>チーム: {getTeamById(selectedGroupId, selectedTeamId)?.name}</p>
-                  </div>
-                </div>
-                <Button
-                  onClick={handleGroupTeamChangeComplete}
-                  className="bg-green-600 hover:bg-green-700 text-white"
-                >
-                  変更する
-                </Button>
-              </div>
-            )}
-
             {/* Loading State */}
-            {isLoading && !isGroupTeamChangeMode && (
+            {isLoading && (
               <div className="flex flex-col items-center justify-center py-4 bg-blue-50 rounded-lg border border-blue-200">
                 <div className="flex items-center gap-2 mb-2">
                   <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-600"></div>

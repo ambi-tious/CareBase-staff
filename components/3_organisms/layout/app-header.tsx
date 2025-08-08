@@ -3,6 +3,7 @@
 import { Logo } from '@/components/1_atoms/common/logo';
 import { NotificationDropdown } from '@/components/2_molecules/common/notification-dropdown';
 import { StaffDashboard } from '@/components/3_organisms/dashboard/staff-dashboard';
+import { GroupTeamSelectionModal } from '@/components/3_organisms/modals/group-team-selection-modal';
 import { Button, buttonVariants } from '@/components/ui/button'; // Import buttonVariants
 import {
   Sheet,
@@ -12,9 +13,9 @@ import {
   SheetTitle,
   SheetTrigger,
 } from '@/components/ui/sheet';
+import { useNotifications } from '@/hooks/useNotifications';
 import { cn } from '@/lib/utils'; // Import cn
 import type { Staff } from '@/mocks/staff-data';
-import { useNotifications } from '@/hooks/useNotifications';
 import { Menu, User, Users, X } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -31,6 +32,7 @@ export function AppHeader() {
   const [selectedStaffData, setSelectedStaffData] = useState<SelectedStaffData | null>(null);
   const [isStaffSelected, setIsStaffSelected] = useState(false);
   const [isGroupTeamSelected, setIsGroupTeamSelected] = useState(false);
+  const [isGroupTeamModalOpen, setIsGroupTeamModalOpen] = useState(false);
   const router = useRouter();
   const { notifications, unreadCount, markAsRead } = useNotifications();
 
@@ -93,29 +95,27 @@ export function AppHeader() {
     [isStaffSelected, router]
   );
 
-  const handleGroupTeamClick = useCallback(
-    (e: React.MouseEvent) => {
-      e.stopPropagation();
-      // Toggle group/team selection
-      const newGroupTeamSelected = !isGroupTeamSelected;
-      setIsGroupTeamSelected(newGroupTeamSelected);
-
-      if (newGroupTeamSelected) {
-        // Navigate to staff selection with query parameter to indicate we're coming from header
-        setTimeout(() => {
-          router.push('/staff-selection?from=header&group=true&autoSelectTeam=false');
-        }, 200);
-      }
-    },
-    [isGroupTeamSelected, router]
-  );
+  const handleGroupTeamClick = useCallback((e: React.MouseEvent) => {
+    e.stopPropagation();
+    // Open group/team selection modal
+    setIsGroupTeamModalOpen(true);
+    setIsGroupTeamSelected(false);
+  }, []);
 
   const handleStaffNameClickFallback = () => {
     router.push('/staff-selection?from=header&staff=true&autoSelectStaff=false');
   };
 
   const handleGroupTeamClickFallback = () => {
-    router.push('/staff-selection?from=header&group=true');
+    setIsGroupTeamModalOpen(true);
+  };
+
+  const handleGroupTeamChange = (updatedData: SelectedStaffData) => {
+    setSelectedStaffData(updatedData);
+  };
+
+  const handleCloseGroupTeamModal = () => {
+    setIsGroupTeamModalOpen(false);
   };
 
   return (
@@ -218,6 +218,14 @@ export function AppHeader() {
           </Sheet>
         </div>
       </div>
+
+      {/* Group Team Selection Modal */}
+      <GroupTeamSelectionModal
+        isOpen={isGroupTeamModalOpen}
+        onClose={handleCloseGroupTeamModal}
+        selectedStaffData={selectedStaffData}
+        onGroupTeamChange={handleGroupTeamChange}
+      />
     </header>
   );
 }
