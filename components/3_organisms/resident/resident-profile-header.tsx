@@ -2,6 +2,7 @@ import { InfoRow } from '@/components/1_atoms/common/info-row';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import type { Resident } from '@/mocks/care-board-data';
+import { Edit3 } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import type React from 'react';
@@ -29,15 +30,15 @@ export const ResidentProfileHeader: React.FC<ResidentProfileHeaderProps> = ({ re
                 className="rounded-lg"
               />
             </div>
-            <Button className="w-full mb-3 bg-carebase-blue hover:bg-carebase-blue-dark font-semibold py-3 text-base">
-              記録データ
-            </Button>
             <Button
               variant="outline"
-              className="w-full border-carebase-blue text-carebase-blue hover:bg-carebase-blue-light font-semibold py-3 text-base"
+              className="w-full border-green-600 text-green-600 hover:bg-green-50 font-semibold py-3 text-base"
               asChild
             >
-              <Link href={`/residents/${resident.id}/care-plans`}>ケアプラン</Link>
+              <Link href={`/residents/${resident.id}/edit`}>
+                <Edit3 className="h-4 w-4 mr-2" />
+                編集
+              </Link>
             </Button>
           </div>
 

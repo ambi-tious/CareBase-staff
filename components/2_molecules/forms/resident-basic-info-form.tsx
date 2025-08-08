@@ -477,7 +477,7 @@ export const ResidentBasicInfoForm: React.FC<ResidentBasicInfoFormProps> = ({
           </div>
         </div>
 
-        <div className="flex gap-3">
+        <div className="flex gap-3 md:flex-row flex-col">
           <FormField
             label="生年月日"
             id="dob"
@@ -487,7 +487,7 @@ export const ResidentBasicInfoForm: React.FC<ResidentBasicInfoFormProps> = ({
             required
             error={errors.dob}
             disabled={disabled}
-            className="w-1/2"
+            className="w-full md:w-2/3"
           />
           <FormSelect
             label="年齢"
@@ -497,7 +497,7 @@ export const ResidentBasicInfoForm: React.FC<ResidentBasicInfoFormProps> = ({
             options={ageOptions}
             error={errors.age}
             disabled={disabled}
-            className="w-1/2"
+            className="w-full md:w-1/3"
           />
         </div>
 
@@ -648,7 +648,7 @@ export const ResidentBasicInfoForm: React.FC<ResidentBasicInfoFormProps> = ({
           </div>
         </div>
 
-        <div className="flex gap-3">
+        <div className="flex gap-3 lg:flex-row flex-col">
           <FormField
             label="入所日"
             id="admissionDate"
