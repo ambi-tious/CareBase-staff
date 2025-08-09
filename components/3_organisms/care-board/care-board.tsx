@@ -8,14 +8,14 @@ import { careBoardData, careCategoryGroups, CareEvent } from '@/mocks/care-board
 import { addDays, format } from 'date-fns';
 import { ja } from 'date-fns/locale';
 import {
-  CalendarIcon,
-  Check,
-  ChevronLeft,
-  ChevronRight,
-  ClipboardEdit,
-  Clock as ClockIcon,
-  Filter,
-  Users,
+    CalendarIcon,
+    Check,
+    ChevronLeft,
+    ChevronRight,
+    ClipboardEdit,
+    Clock as ClockIcon,
+    Filter,
+    Users,
 } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { toast } from 'sonner';
@@ -216,7 +216,7 @@ export function CareBoard() {
       <BulkCareRecordModal
         isOpen={showBulkRecordModal}
         onClose={() => setShowBulkRecordModal(false)}
-        residents={careBoardData.filter((r) => r.dischargeDate === null)}
+        residents={careBoardData.filter((r) => r.dischargeDate === undefined)}
         onSave={handleSaveBulkRecords}
       />
     </div>

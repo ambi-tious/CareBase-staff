@@ -48,7 +48,7 @@ export const ResidentCard: React.FC<ResidentCardProps> = ({ resident, className 
                 </div>
                 <div className="flex items-center gap-2">
                   <ResidentStatusBadge
-                    status={resident.dischargeDate === null ? '入居中' : '退所済'}
+                    status={resident.dischargeDate === undefined ? '入居中' : '退所済'}
                   />
                 </div>
               </div>

@@ -25,7 +25,7 @@ export const ResidentSelector: React.FC<ResidentSelectorProps> = ({
   const [isOpen, setIsOpen] = useState(false);
 
   // Filter active residents only
-  const activeResidents = careBoardData.filter((resident) => resident.dischargeDate === null);
+  const activeResidents = careBoardData.filter((resident) => resident.dischargeDate === undefined);
 
   // Filter residents based on search query
   const filteredResidents = activeResidents.filter(
