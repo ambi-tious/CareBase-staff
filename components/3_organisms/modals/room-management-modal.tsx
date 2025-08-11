@@ -14,9 +14,27 @@ import {
 } from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import type { Room, RoomFormData } from '@/types/room';
-import { getAllGroupOptions, getAllTeamOptions } from '@/utils/staff-utils';
+import {
+  getAllGroupOptions,
+  getGroupIdByName,
+  getTeamIdByName,
+  getTeamOptionsByGroup,
+} from '@/utils/staff-utils';
 import { AlertCircle, Building, Edit3, Home, Plus, Trash2 } from 'lucide-react';
 import React, { useCallback, useEffect, useState } from 'react';
+
+// Interface for selected staff data from localStorage
+interface SelectedStaffData {
+  staff: {
+    id: string;
+    name: string;
+    furigana: string;
+    role: string;
+    employeeId: string;
+  };
+  groupName: string;
+  teamName: string;
+}
 
 interface RoomManagementModalProps {
   isOpen: boolean;
@@ -48,15 +66,41 @@ export const RoomManagementModal: React.FC<RoomManagementModalProps> = ({
   const [fieldErrors, setFieldErrors] = useState<Partial<Record<keyof RoomFormData, string>>>({});
 
   const groupOptions = getAllGroupOptions();
-  const teamOptions = getAllTeamOptions();
+  const teamOptions = getTeamOptionsByGroup(formData.groupId || '');
 
-  // Reset form when modal opens/closes
+  // Load current logged-in user's group and team information
   useEffect(() => {
+    const loadSelectedStaffData = () => {
+      try {
+        const staffData = localStorage.getItem('carebase_selected_staff_data');
+        if (staffData) {
+          const parsedData: SelectedStaffData = JSON.parse(staffData);
+
+          // Convert group and team names to IDs
+          const groupId = getGroupIdByName(parsedData.groupName);
+          const teamId = groupId ? getTeamIdByName(parsedData.teamName, groupId) : null;
+
+          // Set default values for new room creation
+          if (!editingRoom && groupId && teamId) {
+            setFormData((prev) => ({
+              ...prev,
+              groupId,
+              teamId,
+            }));
+          }
+        }
+      } catch (error) {
+        console.error('Failed to load selected staff data:', error);
+      }
+    };
     if (isOpen) {
       setActiveTab('list');
       resetForm();
+      if (!editingRoom) {
+        loadSelectedStaffData();
+      }
     }
-  }, [isOpen]);
+  }, [isOpen, editingRoom]);
 
   const resetForm = useCallback(() => {
     setFormData({
@@ -430,12 +474,7 @@ export const RoomManagementModal: React.FC<RoomManagementModalProps> = ({
                       updateField('teamId', ''); // Reset team when group changes
                     }}
                     options={groupOptions.map((option) => ({
-                      value:
-                        option.value === '介護フロア A'
-                          ? 'group-1'
-                          : option.value === '介護フロア B'
-                            ? 'group-2'
-                            : 'group-3',
+                      value: getGroupIdByName(option.value) || '',
                       label: option.label,
                     }))}
                     required
@@ -448,33 +487,10 @@ export const RoomManagementModal: React.FC<RoomManagementModalProps> = ({
                     id="teamId"
                     value={formData.teamId}
                     onChange={(value) => updateField('teamId', value)}
-                    options={teamOptions
-                      .map((option) => {
-                        // Map team names to IDs based on selected group
-                        let teamId = '';
-                        if (formData.groupId === 'group-1') {
-                          const teamMapping: Record<string, string> = {
-                            朝番チーム: 'team-a1',
-                            日勤チーム: 'team-a2',
-                            夜勤チーム: 'team-a3',
-                          };
-                          teamId = teamMapping[option.value] || '';
-                        } else if (formData.groupId === 'group-2') {
-                          const teamMapping: Record<string, string> = {
-                            朝番チーム: 'team-b1',
-                            日勤チーム: 'team-b2',
-                          };
-                          teamId = teamMapping[option.value] || '';
-                        } else if (formData.groupId === 'group-3') {
-                          teamId = option.value === '管理チーム' ? 'team-m1' : '';
-                        }
-
-                        return {
-                          value: teamId,
-                          label: option.label,
-                        };
-                      })
-                      .filter((option) => option.value !== '')}
+                    options={teamOptions.map((option) => ({
+                      value: getTeamIdByName(option.value, formData.groupId) || '',
+                      label: option.label,
+                    }))}
                     required
                     error={fieldErrors.teamId}
                     disabled={isSubmitting || !formData.groupId}
