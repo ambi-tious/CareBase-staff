@@ -8,6 +8,7 @@ import {
   type Resident,
 } from '@/mocks/care-board-data';
 import React, { useCallback, useEffect, useState } from 'react';
+import { CareBoardEmptyState } from './care-board-empty-state';
 import {
   CareEventStatusComponent as CareEventStatus,
   CareRecordModal,
@@ -18,7 +19,6 @@ import {
 } from './care-board-utils';
 
 export function UserBaseView({ residents }: { residents: Resident[] }) {
-  const [isClient, setIsClient] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState<{
     event: CareEvent;
     residentId: number;
@@ -30,8 +30,6 @@ export function UserBaseView({ residents }: { residents: Resident[] }) {
 
   // Set client-side flag to avoid hydration mismatch
   useEffect(() => {
-    setIsClient(true);
-
     // Initialize care events from residents data
     const initialEvents: Record<number, CareEvent[]> = {};
     residents.forEach((resident) => {
@@ -120,6 +118,13 @@ export function UserBaseView({ residents }: { residents: Resident[] }) {
       (event) => event.categoryKey && groupCategoryKeys.includes(event.categoryKey)
     );
   };
+
+  // 利用者がいない場合の表示
+  if (residents.length === 0) {
+    return (
+      <CareBoardEmptyState description="利用者の登録が完了すると、ここにケアカテゴリ別のスケジュールが表示されます。" />
+    );
+  }
 
   return (
     <>

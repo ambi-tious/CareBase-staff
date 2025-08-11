@@ -13,6 +13,7 @@ import {
 import { SortableContext, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { CareBoardEmptyState } from './care-board-empty-state';
 import {
   CareEventStatusComponent as CareEventStatus,
   CareRecordModal,
@@ -373,6 +374,11 @@ export function TimeBaseView({ residents }: { residents: Resident[] }) {
   };
 
   const activeEvent = getActiveEvent();
+
+  // 利用者がいない場合の表示
+  if (residents.length === 0) {
+    return <CareBoardEmptyState />;
+  }
 
   return (
     <>
