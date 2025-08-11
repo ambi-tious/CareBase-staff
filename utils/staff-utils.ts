@@ -58,7 +58,7 @@ export function getAllTeamOptions() {
 // Get team options based on selected group
 export function getTeamOptionsByGroup(groupId: string) {
   if (!groupId) return [];
-  
+
   const group = organizationData.find((g) => g.id === groupId);
   if (!group) return [];
 
