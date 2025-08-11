@@ -1,11 +1,11 @@
 import { getLucideIcon } from '@/lib/lucide-icon-registry';
 import {
-  careBoardData,
   CareCategoryGroupKey,
   careCategoryGroups,
   CareCategoryKey,
   CareEvent,
   getCategoriesByGroup,
+  type Resident,
 } from '@/mocks/care-board-data';
 import React, { useCallback, useEffect, useState } from 'react';
 import {
@@ -17,7 +17,7 @@ import {
   type CareEventStatus as CareEventStatusType,
 } from './care-board-utils';
 
-export function UserBaseView() {
+export function UserBaseView({ residents }: { residents: Resident[] }) {
   const [isClient, setIsClient] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState<{
     event: CareEvent;
@@ -32,13 +32,13 @@ export function UserBaseView() {
   useEffect(() => {
     setIsClient(true);
 
-    // Initialize care events from careBoardData
+    // Initialize care events from residents data
     const initialEvents: Record<number, CareEvent[]> = {};
-    careBoardData.forEach((resident) => {
+    residents.forEach((resident) => {
       initialEvents[resident.id] = [...resident.events];
     });
     setCareEvents(initialEvents);
-  }, []);
+  }, [residents]);
 
   const handleEventClick = useCallback(
     (event: CareEvent, residentId: number, residentName: string) => {
@@ -150,7 +150,7 @@ export function UserBaseView() {
           ))}
 
           {/* 利用者行 */}
-          {careBoardData.map((resident) => (
+          {residents.map((resident) => (
             <div key={resident.id} className="contents">
               <div className="flex items-center gap-3 p-3 border-b border-r border-gray-200 bg-gray-50 sticky left-0 z-[5] hover:bg-gray-100 transition-colors">
                 <ResidentInfoCell resident={resident} />

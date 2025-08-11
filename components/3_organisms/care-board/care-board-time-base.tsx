@@ -1,5 +1,5 @@
 import { cn } from '@/lib/utils';
-import { CareCategoryKey, CareEvent, careBoardData } from '@/mocks/care-board-data';
+import { CareCategoryKey, CareEvent, type Resident } from '@/mocks/care-board-data';
 import {
   DndContext,
   DragEndEvent,
@@ -64,7 +64,7 @@ function DraggableEvent({
   );
 }
 
-export function TimeBaseView() {
+export function TimeBaseView({ residents }: { residents: Resident[] }) {
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
   const currentTimeRowRef = useRef<HTMLDivElement | null>(null);
   const headerRowRef = useRef<HTMLDivElement | null>(null);
@@ -98,19 +98,24 @@ export function TimeBaseView() {
       const roundedMinute = Math.floor(minute / 60) * 60;
       return `${hour.toString().padStart(2, '0')}:${roundedMinute.toString().padStart(2, '0')}`;
     };
+
     setCurrentTime(getCurrentTimeSlot());
+
+    const interval = setInterval(() => {
+      setCurrentTime(getCurrentTimeSlot());
+    }, 60000); // Update every minute
+
+    return () => clearInterval(interval);
   }, []);
 
-  // Initialize care events from careBoardData
+  // Initialize care events from residents data
   useEffect(() => {
-    if (isClient) {
-      const initialEvents: Record<number, CareEvent[]> = {};
-      careBoardData.forEach((resident) => {
-        initialEvents[resident.id] = [...resident.events];
-      });
-      setCareEvents(initialEvents);
-    }
-  }, [isClient]);
+    const initialEvents: Record<number, CareEvent[]> = {};
+    residents.forEach((resident) => {
+      initialEvents[resident.id] = [...resident.events];
+    });
+    setCareEvents(initialEvents);
+  }, [residents]);
 
   useEffect(() => {
     if (!isClient) return;
@@ -392,7 +397,7 @@ export function TimeBaseView() {
               <div
                 className="grid relative"
                 style={{
-                  gridTemplateColumns: `80px repeat(${careBoardData.length}, minmax(160px, 1fr))`,
+                  gridTemplateColumns: `80px repeat(${residents.length}, minmax(160px, 1fr))`,
                 }}
               >
                 <div
@@ -401,7 +406,7 @@ export function TimeBaseView() {
                 >
                   <span className="font-semibold text-base">時間</span>
                 </div>
-                {careBoardData.map((resident) => (
+                {residents.map((resident) => (
                   <div
                     key={resident.id}
                     className="sticky top-0 bg-gray-100 z-20 flex flex-col items-center py-2 border-b border-r border-gray-300 p-2"
@@ -425,7 +430,7 @@ export function TimeBaseView() {
                     >
                       {time}
                     </div>
-                    {careBoardData.map((resident) => (
+                    {residents.map((resident) => (
                       <div
                         key={`${resident.id}-${time}`}
                         className={cn(
