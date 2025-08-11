@@ -2,9 +2,15 @@
 
 import { FormField } from '@/components/1_atoms/forms/form-field';
 import { FormSelect } from '@/components/1_atoms/forms/form-select';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/components/ui/accordion';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import {
   Dialog,
   DialogContent,
@@ -64,6 +70,7 @@ export const RoomManagementModal: React.FC<RoomManagementModalProps> = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<Partial<Record<keyof RoomFormData, string>>>({});
+  const [currentUserTeamId, setCurrentUserTeamId] = useState<string>('');
 
   const groupOptions = getAllGroupOptions();
   const teamOptions = getTeamOptionsByGroup(formData.groupId || '');
@@ -87,6 +94,11 @@ export const RoomManagementModal: React.FC<RoomManagementModalProps> = ({
               groupId,
               teamId,
             }));
+          }
+
+          // Set current user's team ID for accordion default state
+          if (teamId) {
+            setCurrentUserTeamId(teamId);
           }
         }
       } catch (error) {
@@ -333,13 +345,29 @@ export const RoomManagementModal: React.FC<RoomManagementModalProps> = ({
                   </CardContent>
                 </Card>
               ) : (
-                <div className="space-y-6">
+                <Accordion
+                  type="multiple"
+                  defaultValue={
+                    currentUserTeamId
+                      ? Object.values(groupedRooms)
+                          .filter((group) => group.teamId === currentUserTeamId)
+                          .map((group) => `${group.groupId}-${group.teamId}`)
+                      : []
+                  }
+                  className="space-y-4"
+                >
                   {Object.values(groupedRooms).map((group) => (
-                    <Card key={`${group.groupId}-${group.teamId}`}>
-                      <CardHeader>
-                        <CardTitle className="text-lg flex items-center gap-2">
+                    <AccordionItem
+                      key={`${group.groupId}-${group.teamId}`}
+                      value={`${group.groupId}-${group.teamId}`}
+                      className="border border-gray-200 rounded-lg"
+                    >
+                      <AccordionTrigger className="px-6 py-4 hover:no-underline">
+                        <div className="flex items-center gap-2">
                           <Building className="h-5 w-5 text-carebase-blue" />
-                          {getGroupName(group.groupId)} - {getTeamName(group.teamId)}
+                          <span className="text-lg font-semibold text-carebase-text-primary">
+                            {getGroupName(group.groupId)} - {getTeamName(group.teamId)}
+                          </span>
                           <div className="flex items-center gap-2 text-sm font-normal text-gray-500">
                             <span>({group.rooms.length}部屋)</span>
                             <span className="text-xs">
@@ -351,9 +379,9 @@ export const RoomManagementModal: React.FC<RoomManagementModalProps> = ({
                               /{group.rooms.reduce((sum, room) => sum + room.capacity, 0)}名
                             </span>
                           </div>
-                        </CardTitle>
-                      </CardHeader>
-                      <CardContent>
+                        </div>
+                      </AccordionTrigger>
+                      <AccordionContent className="px-6 pb-6">
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                           {group.rooms.map((room) => (
                             <Card key={room.id} className="border border-gray-200">
@@ -420,10 +448,10 @@ export const RoomManagementModal: React.FC<RoomManagementModalProps> = ({
                             </Card>
                           ))}
                         </div>
-                      </CardContent>
-                    </Card>
+                      </AccordionContent>
+                    </AccordionItem>
                   ))}
-                </div>
+                </Accordion>
               )}
             </TabsContent>
 
