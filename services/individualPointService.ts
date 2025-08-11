@@ -18,7 +18,7 @@ class IndividualPointService {
    */
   async getIndividualPoints(residentId: string): Promise<IndividualPoint[]> {
     try {
-      if (process.env.NODE_ENV === 'development') {
+      if (process.env.NODE_ENV) {
         return this.mockGetIndividualPoints(residentId);
       }
 
@@ -44,7 +44,7 @@ class IndividualPointService {
     mediaFiles?: File[]
   ): Promise<IndividualPoint> {
     try {
-      if (process.env.NODE_ENV === 'development') {
+      if (process.env.NODE_ENV) {
         return this.mockCreateIndividualPoint(residentId, data, mediaFiles);
       }
 
@@ -87,7 +87,7 @@ class IndividualPointService {
     mediaFiles?: File[]
   ): Promise<IndividualPoint> {
     try {
-      if (process.env.NODE_ENV === 'development') {
+      if (process.env.NODE_ENV) {
         return this.mockUpdateIndividualPoint(residentId, pointId, data, mediaFiles);
       }
 
@@ -125,7 +125,7 @@ class IndividualPointService {
    */
   async deleteIndividualPoint(residentId: string, pointId: string): Promise<void> {
     try {
-      if (process.env.NODE_ENV === 'development') {
+      if (process.env.NODE_ENV) {
         return this.mockDeleteIndividualPoint(residentId, pointId);
       }
 
@@ -150,7 +150,7 @@ class IndividualPointService {
    */
   async getPointCategories(): Promise<PointCategory[]> {
     try {
-      if (process.env.NODE_ENV === 'development') {
+      if (process.env.NODE_ENV) {
         return this.mockGetPointCategories();
       }
 
@@ -172,7 +172,7 @@ class IndividualPointService {
    */
   async createPointCategory(data: CategoryFormData): Promise<PointCategory> {
     try {
-      if (process.env.NODE_ENV === 'development') {
+      if (process.env.NODE_ENV) {
         return this.mockCreatePointCategory(data);
       }
 

@@ -16,7 +16,7 @@ class CarePlanService {
   async createCarePlan(residentId: string, data: CarePlanFormData): Promise<CarePlan> {
     try {
       // For development, use mock creation
-      if (process.env.NODE_ENV === 'development') {
+      if (process.env.NODE_ENV) {
         return this.mockCreateCarePlan(residentId, data);
       }
 
@@ -50,7 +50,7 @@ class CarePlanService {
   ): Promise<CarePlan> {
     try {
       // For development, use mock update
-      if (process.env.NODE_ENV === 'development') {
+      if (process.env.NODE_ENV) {
         return this.mockUpdateCarePlan(residentId, planId, data);
       }
 
@@ -83,7 +83,7 @@ class CarePlanService {
   async getCarePlan(residentId: string, planId: string): Promise<CarePlan> {
     try {
       // For development, use mock data
-      if (process.env.NODE_ENV === 'development') {
+      if (process.env.NODE_ENV) {
         return this.mockGetCarePlan(residentId, planId);
       }
 
@@ -109,7 +109,7 @@ class CarePlanService {
   async deleteCarePlan(residentId: string, planId: string): Promise<void> {
     try {
       // For development, use mock deletion
-      if (process.env.NODE_ENV === 'development') {
+      if (process.env.NODE_ENV) {
         return this.mockDeleteCarePlan(residentId, planId);
       }
 

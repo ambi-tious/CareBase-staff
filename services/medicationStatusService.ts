@@ -19,7 +19,7 @@ class MedicationStatusService {
   ): Promise<MedicationStatus> {
     try {
       // For development, use mock creation
-      if (process.env.NODE_ENV === 'development') {
+      if (!!process.env.NODE_ENV) {
         return this.mockCreateMedicationStatus(residentId, statusData);
       }
 
@@ -56,7 +56,7 @@ class MedicationStatusService {
   ): Promise<MedicationStatus> {
     try {
       // For development, use mock update
-      if (process.env.NODE_ENV === 'development') {
+      if (!!process.env.NODE_ENV) {
         return this.mockUpdateMedicationStatus(residentId, statusId, statusData);
       }
 
@@ -89,7 +89,7 @@ class MedicationStatusService {
   async deleteMedicationStatus(residentId: number, statusId: string): Promise<void> {
     try {
       // For development, use mock deletion
-      if (process.env.NODE_ENV === 'development') {
+      if (!!process.env.NODE_ENV) {
         return this.mockDeleteMedicationStatus(residentId, statusId);
       }
 

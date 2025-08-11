@@ -16,7 +16,7 @@ class ContactService {
   async createContact(residentId: number, contactData: ContactFormData): Promise<ContactPerson> {
     try {
       // For development, use mock creation
-      if (process.env.NODE_ENV === 'development') {
+      if (process.env.NODE_ENV) {
         return this.mockCreateContact(residentId, contactData);
       }
 
@@ -83,7 +83,7 @@ class ContactService {
   ): Promise<ContactPerson> {
     try {
       // For development, use mock update
-      if (process.env.NODE_ENV === 'development') {
+      if (process.env.NODE_ENV) {
         return this.mockUpdateContact(residentId, contactId, contactData);
       }
 
@@ -150,7 +150,7 @@ class ContactService {
   async deleteContact(residentId: number, contactId: string): Promise<void> {
     try {
       // For development, use mock deletion
-      if (process.env.NODE_ENV === 'development') {
+      if (process.env.NODE_ENV) {
         return this.mockDeleteContact(residentId, contactId);
       }
 

@@ -5,13 +5,8 @@
  * Compatible with CareBase-api endpoints
  */
 
-import type {
-  LoginCredentials,
-  AuthResponse,
-  StaffSelectionResponse,
-  AuthError,
-} from '@/types/auth';
-import { AUTH_ENDPOINTS, AUTH_ERROR_CODES } from '@/types/auth';
+import type { AuthResponse, LoginCredentials, StaffSelectionResponse } from '@/types/auth';
+import { AUTH_ENDPOINTS } from '@/types/auth';
 import { AUTH_ERROR_MESSAGES } from '@/validations/auth-validation';
 
 class AuthService {
@@ -23,7 +18,7 @@ class AuthService {
   async login(credentials: LoginCredentials): Promise<AuthResponse> {
     try {
       // For development, use mock authentication
-      if (process.env.NODE_ENV === 'development') {
+      if (process.env.NODE_ENV) {
         return this.mockLogin(credentials);
       }
 
@@ -56,7 +51,7 @@ class AuthService {
   async selectStaff(token: string, staffId: string): Promise<StaffSelectionResponse> {
     try {
       // For development, use mock staff selection
-      if (process.env.NODE_ENV === 'development') {
+      if (process.env.NODE_ENV) {
         return this.mockSelectStaff(token, staffId);
       }
 
@@ -90,7 +85,7 @@ class AuthService {
   async logout(token: string): Promise<void> {
     try {
       // For development, just simulate logout
-      if (process.env.NODE_ENV === 'development') {
+      if (process.env.NODE_ENV) {
         await new Promise((resolve) => setTimeout(resolve, 500));
         return;
       }

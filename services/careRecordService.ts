@@ -16,7 +16,7 @@ class CareRecordService {
   async createCareRecord(data: CareRecordFormData): Promise<CareRecord> {
     try {
       // For development, use mock creation
-      if (process.env.NODE_ENV === 'development') {
+      if (process.env.NODE_ENV) {
         return this.mockCreateCareRecord(data);
       }
 
@@ -46,7 +46,7 @@ class CareRecordService {
   async updateCareRecord(recordId: string, data: CareRecordFormData): Promise<CareRecord> {
     try {
       // For development, use mock update
-      if (process.env.NODE_ENV === 'development') {
+      if (process.env.NODE_ENV) {
         return this.mockUpdateCareRecord(recordId, data);
       }
 
@@ -76,7 +76,7 @@ class CareRecordService {
   async deleteCareRecord(recordId: string): Promise<void> {
     try {
       // For development, use mock deletion
-      if (process.env.NODE_ENV === 'development') {
+      if (process.env.NODE_ENV) {
         return this.mockDeleteCareRecord(recordId);
       }
 
@@ -99,7 +99,7 @@ class CareRecordService {
   async getCareRecord(recordId: string): Promise<CareRecord> {
     try {
       // For development, use mock data
-      if (process.env.NODE_ENV === 'development') {
+      if (process.env.NODE_ENV) {
         return this.mockGetCareRecord(recordId);
       }
 

@@ -4,13 +4,8 @@
  * API service for room management
  */
 
+import { getAllActiveRooms, getRoomsByGroup, getRoomsByGroupAndTeam } from '@/mocks/room-data';
 import type { Room } from '@/types/room';
-import {
-  getRoomsByGroupAndTeam,
-  getAllActiveRooms,
-  getRoomsByGroup,
-  getRoomsWithOccupancy,
-} from '@/mocks/room-data';
 
 class RoomService {
   private baseUrl = process.env.NEXT_PUBLIC_API_URL || '';
@@ -21,7 +16,7 @@ class RoomService {
   async getRoomsByGroupAndTeam(groupId: string, teamId: string): Promise<Room[]> {
     try {
       // For development, use mock data
-      if (process.env.NODE_ENV === 'development') {
+      if (process.env.NODE_ENV) {
         return this.mockGetRoomsByGroupAndTeam(groupId, teamId);
       }
 
@@ -45,7 +40,7 @@ class RoomService {
   async getAllActiveRooms(): Promise<Room[]> {
     try {
       // For development, use mock data
-      if (process.env.NODE_ENV === 'development') {
+      if (process.env.NODE_ENV) {
         return this.mockGetAllActiveRooms();
       }
 
@@ -69,7 +64,7 @@ class RoomService {
   async getRoomsByGroup(groupId: string): Promise<Room[]> {
     try {
       // For development, use mock data
-      if (process.env.NODE_ENV === 'development') {
+      if (process.env.NODE_ENV) {
         return this.mockGetRoomsByGroup(groupId);
       }
 
