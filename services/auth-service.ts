@@ -17,11 +17,6 @@ class AuthService {
    */
   async login(credentials: LoginCredentials): Promise<AuthResponse> {
     try {
-      // For development, use mock authentication
-      if (process.env.NODE_ENV) {
-        return this.mockLogin(credentials);
-      }
-
       const response = await fetch(`${this.baseUrl}${AUTH_ENDPOINTS.STAFF_LOGIN}`, {
         method: 'POST',
         headers: {
@@ -31,7 +26,11 @@ class AuthService {
       });
 
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        const errorData = await response.json().catch(() => ({}));
+        return {
+          success: false,
+          error: errorData.error || AUTH_ERROR_MESSAGES.NETWORK_ERROR,
+        };
       }
 
       const data = await response.json();

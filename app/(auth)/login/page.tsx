@@ -2,6 +2,7 @@
 
 import { Logo } from '@/components/1_atoms/common/logo';
 import { LoginForm } from '@/components/2_molecules/auth/login-form';
+import { authService } from '@/services/auth-service';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
@@ -16,16 +17,17 @@ export default function LoginPage() {
     setIsLoading(true);
 
     try {
-      // Simulate API call delay
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      // Mock authentication - in production, this would call a real API
-      if (credentials.facilityId === 'admin' && credentials.password === 'password') {
+      const result = await authService.login(credentials);
+      
+      if (result.success) {
+        if (result.token) {
+          localStorage.setItem('auth_token', result.token);
+        }
         router.push('/staff-selection');
         return { success: true };
       }
 
-      return { success: false, error: '施設IDまたはパスワードが正しくありません' };
+      return { success: false, error: result.error };
     } catch (error) {
       return {
         success: false,
