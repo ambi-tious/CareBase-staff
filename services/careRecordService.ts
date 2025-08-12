@@ -4,11 +4,11 @@
  * API service for care record operations
  */
 
-import api from '@/lib/api';
 import type { CareRecord } from '@/types/care-record';
 import type { CareRecordFormData } from '@/validations/care-record-validation';
 
 class CareRecordService {
+  private baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
 
   /**
    * Create new care record
@@ -20,8 +20,20 @@ class CareRecordService {
         return this.mockCreateCareRecord(data);
       }
 
-      const response = await api.post('/api/v1/care-records', data);
-      return response.data;
+      const response = await fetch(`${this.baseUrl}/api/v1/care-records`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const result = await response.json();
+      return result;
     } catch (error) {
       console.error('Create care record error:', error);
       throw new Error('介護記録の作成に失敗しました。');
@@ -38,8 +50,20 @@ class CareRecordService {
         return this.mockUpdateCareRecord(recordId, data);
       }
 
-      const response = await api.put(`/api/v1/care-records/${recordId}`, data);
-      return response.data;
+      const response = await fetch(`${this.baseUrl}/api/v1/care-records/${recordId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const result = await response.json();
+      return result;
     } catch (error) {
       console.error('Update care record error:', error);
       throw new Error('介護記録の更新に失敗しました。');
@@ -56,7 +80,13 @@ class CareRecordService {
         return this.mockDeleteCareRecord(recordId);
       }
 
-      await api.delete(`/api/v1/care-records/${recordId}`);
+      const response = await fetch(`${this.baseUrl}/api/v1/care-records/${recordId}`, {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
     } catch (error) {
       console.error('Delete care record error:', error);
       throw new Error('介護記録の削除に失敗しました。');
@@ -73,8 +103,14 @@ class CareRecordService {
         return this.mockGetCareRecord(recordId);
       }
 
-      const response = await api.get(`/api/v1/care-records/${recordId}`);
-      return response.data;
+      const response = await fetch(`${this.baseUrl}/api/v1/care-records/${recordId}`);
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const result = await response.json();
+      return result;
     } catch (error) {
       console.error('Get care record error:', error);
       throw new Error('介護記録の取得に失敗しました。');

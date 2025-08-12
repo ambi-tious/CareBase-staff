@@ -4,11 +4,11 @@
  * API service for resident contact information
  */
 
-import api from '@/lib/api';
 import type { ContactPerson } from '@/mocks/care-board-data';
 import type { ContactFormData } from '@/validations/contact-validation';
 
 class ContactService {
+  private baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
 
   /**
    * Create new contact for a resident
@@ -20,8 +20,20 @@ class ContactService {
         return this.mockCreateContact(residentId, contactData);
       }
 
-      const response = await api.post(`/api/residents/${residentId}/contacts`, contactData);
-      return response.data;
+      const response = await fetch(`${this.baseUrl}/api/residents/${residentId}/contacts`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(contactData),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      return data;
     } catch (error) {
       console.error('Create contact error:', error);
       throw new Error('連絡先の登録に失敗しました。');
@@ -75,8 +87,20 @@ class ContactService {
         return this.mockUpdateContact(residentId, contactId, contactData);
       }
 
-      const response = await api.put(`/api/residents/${residentId}/contacts/${contactId}`, contactData);
-      return response.data;
+      const response = await fetch(`${this.baseUrl}/api/residents/${residentId}/contacts/${contactId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(contactData),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      return data;
     } catch (error) {
       console.error('Update contact error:', error);
       throw new Error('連絡先の更新に失敗しました。');
@@ -127,7 +151,13 @@ class ContactService {
         return this.mockDeleteContact(residentId, contactId);
       }
 
-      await api.delete(`/api/residents/${residentId}/contacts/${contactId}`);
+      const response = await fetch(`${this.baseUrl}/api/residents/${residentId}/contacts/${contactId}`, {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
     } catch (error) {
       console.error('Delete contact error:', error);
       throw new Error('連絡先の削除に失敗しました。');

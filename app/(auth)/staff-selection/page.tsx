@@ -6,6 +6,8 @@ import { getGroupNameByStaff, getTeamNameByStaff } from '@/utils/staff-utils';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Suspense, useEffect, useRef, useState } from 'react';
 
+export const dynamic = 'force-dynamic';
+
 interface SelectedStaffData {
   staff: Staff;
   groupName: string;
