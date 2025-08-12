@@ -88,10 +88,10 @@ export interface AuthError {
 
 // API endpoints (matching CareBase-api structure)
 export const AUTH_ENDPOINTS = {
-  STAFF_LOGIN: '/api/v1/auth/staff/login',
-  STAFF_LOGOUT: '/api/v1/auth/staff/logout',
-  PASSWORD_REMINDER: '/api/v1/auth/staff/password-reminder',
-  PASSWORD_RESET: '/api/v1/auth/staff/password-reset',
+  STAFF_LOGIN: '/auth/staff/login',
+  STAFF_LOGOUT: '/auth/staff/logout',
+  PASSWORD_REMINDER: '/auth/staff/password-reminder',
+  PASSWORD_RESET: '/auth/staff/password-reset',
 } as const;
 
 // Authentication events
