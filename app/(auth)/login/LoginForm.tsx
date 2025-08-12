@@ -1,11 +1,12 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { authService } from '../../../services/auth-service';
 
 interface LoginFormProps {
-  onLogin: (credentials: { facility_id: string; password: string }) => Promise<void>;
+  onLogin: (credentials: {
+    facility_id: string;
+    password: string;
+  }) => Promise<{ success: boolean; error?: string }>;
   isLoading: boolean;
 }
 

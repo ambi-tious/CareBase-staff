@@ -6,8 +6,6 @@ import { authService } from '@/services/auth-service';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
-export const dynamic = 'force-dynamic';
-
 export default function LoginPage() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
@@ -29,7 +27,10 @@ export default function LoginPage() {
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'ログイン中にエラーが発生しました。しばらく経ってからもう一度お試しください。',
+        error:
+          error instanceof Error
+            ? error.message
+            : 'ログイン中にエラーが発生しました。しばらく経ってからもう一度お試しください。',
       };
     } finally {
       setIsLoading(false);
