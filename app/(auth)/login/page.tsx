@@ -1,7 +1,7 @@
 'use client';
 
 import { Logo } from '@/components/1_atoms/common/logo';
-import { LoginForm } from '@/components/2_molecules/auth/login-form';
+import LoginForm from './LoginForm';
 import { authService } from '@/services/auth-service';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -13,14 +13,14 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleLogin = async (credentials: {
-    facilityId: string;
+    facility_id: string;
     password: string;
   }): Promise<{ success: boolean; error?: string }> => {
     setIsLoading(true);
 
     try {
       const result = await authService.facilityLogin({
-        facility_id: credentials.facilityId,
+        facility_id: credentials.facility_id,
         password: credentials.password,
       });
 
@@ -29,7 +29,7 @@ export default function LoginPage() {
     } catch (error) {
       return {
         success: false,
-        error: 'ログイン中にエラーが発生しました。しばらく経ってからもう一度お試しください。',
+        error: error instanceof Error ? error.message : 'ログイン中にエラーが発生しました。しばらく経ってからもう一度お試しください。',
       };
     } finally {
       setIsLoading(false);

@@ -24,7 +24,10 @@ export default function LoginForm({ onLogin, isLoading }: LoginFormProps) {
     }
 
     try {
-      await onLogin({ facility_id: facilityId, password });
+      const result = await onLogin({ facility_id: facilityId, password });
+      if (!result.success && result.error) {
+        setError(result.error);
+      }
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'ログインに失敗しました');
     }

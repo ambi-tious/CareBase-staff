@@ -24,7 +24,7 @@ class AuthService {
 
   async facilityLogin(credentials: { facility_id: string; password: string }) {
     try {
-      const response = await fetch(`${this.baseUrl}/v1/auth/facility/login`, {
+      const response = await fetch(`${this.baseUrl}/auth/facility/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
