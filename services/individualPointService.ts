@@ -4,6 +4,7 @@
  * Service layer for individual point API calls
  */
 
+import api from '@/lib/api';
 import type { IndividualPoint, PointCategory } from '@/types/individual-point';
 import type {
   CategoryFormData,
@@ -11,7 +12,6 @@ import type {
 } from '@/validations/individual-point-validation';
 
 class IndividualPointService {
-  private baseUrl = process.env.NEXT_PUBLIC_API_URL || '';
 
   /**
    * Get individual points for a resident
@@ -22,13 +22,8 @@ class IndividualPointService {
         return this.mockGetIndividualPoints(residentId);
       }
 
-      const response = await fetch(`${this.baseUrl}/api/residents/${residentId}/individual-points`);
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const data = await response.json();
-      return data;
+      const response = await api.get(`/residents/${residentId}/individual-points`);
+      return response.data;
     } catch (error) {
       console.error('Get individual points error:', error);
       throw new Error('個別ポイントの取得に失敗しました。');
@@ -57,20 +52,17 @@ class IndividualPointService {
         });
       }
 
-      const response = await fetch(
-        `${this.baseUrl}/api/residents/${residentId}/individual-points`,
+      const response = await api.post(
+        `/residents/${residentId}/individual-points`,
+        formData,
         {
-          method: 'POST',
-          body: formData,
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
         }
       );
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const result = await response.json();
-      return result;
+      return response.data;
     } catch (error) {
       console.error('Create individual point error:', error);
       throw new Error('個別ポイントの作成に失敗しました。');
@@ -100,20 +92,17 @@ class IndividualPointService {
         });
       }
 
-      const response = await fetch(
-        `${this.baseUrl}/api/residents/${residentId}/individual-points/${pointId}`,
+      const response = await api.put(
+        `/residents/${residentId}/individual-points/${pointId}`,
+        formData,
         {
-          method: 'PUT',
-          body: formData,
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
         }
       );
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const result = await response.json();
-      return result;
+      return response.data;
     } catch (error) {
       console.error('Update individual point error:', error);
       throw new Error('個別ポイントの更新に失敗しました。');
@@ -129,16 +118,7 @@ class IndividualPointService {
         return this.mockDeleteIndividualPoint(residentId, pointId);
       }
 
-      const response = await fetch(
-        `${this.baseUrl}/api/residents/${residentId}/individual-points/${pointId}`,
-        {
-          method: 'DELETE',
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
+      await api.delete(`/residents/${residentId}/individual-points/${pointId}`);
     } catch (error) {
       console.error('Delete individual point error:', error);
       throw new Error('個別ポイントの削除に失敗しました。');
@@ -154,13 +134,8 @@ class IndividualPointService {
         return this.mockGetPointCategories();
       }
 
-      const response = await fetch(`${this.baseUrl}/api/point-categories`);
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const data = await response.json();
-      return data;
+      const response = await api.get('/point-categories');
+      return response.data;
     } catch (error) {
       console.error('Get point categories error:', error);
       throw new Error('カテゴリの取得に失敗しました。');
@@ -176,20 +151,8 @@ class IndividualPointService {
         return this.mockCreatePointCategory(data);
       }
 
-      const response = await fetch(`${this.baseUrl}/api/point-categories`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const result = await response.json();
-      return result;
+      const response = await api.post('/point-categories', data);
+      return response.data;
     } catch (error) {
       console.error('Create point category error:', error);
       throw new Error('カテゴリの作成に失敗しました。');

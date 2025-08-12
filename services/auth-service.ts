@@ -5,41 +5,36 @@
  * Compatible with CareBase-api endpoints
  */
 
+import api from '@/lib/api';
 import type { AuthResponse, LoginCredentials, StaffSelectionResponse } from '@/types/auth';
 import { AUTH_ENDPOINTS } from '@/types/auth';
 import { AUTH_ERROR_MESSAGES } from '@/validations/auth-validation';
 
 class AuthService {
-  private baseUrl = process.env.NEXT_PUBLIC_API_URL || '';
-
   /**
    * Login with facility credentials
    */
   async login(credentials: LoginCredentials): Promise<AuthResponse> {
     try {
-      const response = await fetch(`${this.baseUrl}${AUTH_ENDPOINTS.STAFF_LOGIN}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(credentials),
+      const response = await api.post(AUTH_ENDPOINTS.STAFF_LOGIN, {
+        facilityId: parseInt(credentials.facilityId),
+        password: credentials.password,
       });
 
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        return {
-          success: false,
-          error: errorData.error || AUTH_ERROR_MESSAGES.NETWORK_ERROR,
-        };
+      const data = response.data;
+      
+      if (data.token) {
+        localStorage.setItem('auth_token', data.token);
+        localStorage.setItem('user_data', JSON.stringify(data.user));
       }
 
-      const data = await response.json();
       return data;
-    } catch (error) {
+    } catch (error: any) {
       console.error('Login error:', error);
+      const errorMessage = error.response?.data?.error || AUTH_ERROR_MESSAGES.NETWORK_ERROR;
       return {
         success: false,
-        error: AUTH_ERROR_MESSAGES.NETWORK_ERROR,
+        error: errorMessage,
       };
     }
   }
@@ -54,22 +49,9 @@ class AuthService {
         return this.mockSelectStaff(token, staffId);
       }
 
-      const response = await fetch(`${this.baseUrl}/api/v1/auth/staff/select`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ staffId }),
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const data = await response.json();
-      return data;
-    } catch (error) {
+      const response = await api.post('/api/v1/auth/staff/select', { staffId });
+      return response.data;
+    } catch (error: any) {
       console.error('Staff selection error:', error);
       return {
         success: false,

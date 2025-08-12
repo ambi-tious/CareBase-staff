@@ -4,11 +4,11 @@
  * API service for care plan operations
  */
 
+import api from '@/lib/api';
 import type { CarePlan } from '@/types/care-plan';
 import type { CarePlanFormData } from '@/validations/care-plan-validation';
 
 class CarePlanService {
-  private baseUrl = process.env.NEXT_PUBLIC_API_URL || '';
 
   /**
    * Create new care plan
@@ -20,20 +20,8 @@ class CarePlanService {
         return this.mockCreateCarePlan(residentId, data);
       }
 
-      const response = await fetch(`${this.baseUrl}/api/v1/residents/${residentId}/care-plans`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const result = await response.json();
-      return result;
+      const response = await api.post(`/api/v1/residents/${residentId}/care-plans`, data);
+      return response.data;
     } catch (error) {
       console.error('Create care plan error:', error);
       throw new Error('ケアプランの作成に失敗しました。');
@@ -54,23 +42,8 @@ class CarePlanService {
         return this.mockUpdateCarePlan(residentId, planId, data);
       }
 
-      const response = await fetch(
-        `${this.baseUrl}/api/v1/residents/${residentId}/care-plans/${planId}`,
-        {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(data),
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const result = await response.json();
-      return result;
+      const response = await api.put(`/api/v1/residents/${residentId}/care-plans/${planId}`, data);
+      return response.data;
     } catch (error) {
       console.error('Update care plan error:', error);
       throw new Error('ケアプランの更新に失敗しました。');
@@ -87,16 +60,8 @@ class CarePlanService {
         return this.mockGetCarePlan(residentId, planId);
       }
 
-      const response = await fetch(
-        `${this.baseUrl}/api/v1/residents/${residentId}/care-plans/${planId}`
-      );
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const result = await response.json();
-      return result;
+      const response = await api.get(`/api/v1/residents/${residentId}/care-plans/${planId}`);
+      return response.data;
     } catch (error) {
       console.error('Get care plan error:', error);
       throw new Error('ケアプランの取得に失敗しました。');
@@ -113,16 +78,7 @@ class CarePlanService {
         return this.mockDeleteCarePlan(residentId, planId);
       }
 
-      const response = await fetch(
-        `${this.baseUrl}/api/v1/residents/${residentId}/care-plans/${planId}`,
-        {
-          method: 'DELETE',
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
+      await api.delete(`/api/v1/residents/${residentId}/care-plans/${planId}`);
     } catch (error) {
       console.error('Delete care plan error:', error);
       throw new Error('ケアプランの削除に失敗しました。');

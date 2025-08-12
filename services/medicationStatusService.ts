@@ -4,11 +4,11 @@
  * API service for medication status operations
  */
 
+import api from '@/lib/api';
 import type { MedicationStatus } from '@/types/medication-status';
 import type { MedicationStatusFormData } from '@/validations/medication-status-validation';
 
 class MedicationStatusService {
-  private baseUrl = process.env.NEXT_PUBLIC_API_URL || '';
 
   /**
    * Create new medication status for a resident
@@ -23,23 +23,8 @@ class MedicationStatusService {
         return this.mockCreateMedicationStatus(residentId, statusData);
       }
 
-      const response = await fetch(
-        `${this.baseUrl}/api/residents/${residentId}/medication-status`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(statusData),
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const data = await response.json();
-      return data;
+      const response = await api.post(`/api/residents/${residentId}/medication-status`, statusData);
+      return response.data;
     } catch (error) {
       console.error('Create medication status error:', error);
       throw new Error('服薬状況の登録に失敗しました。');
@@ -60,23 +45,8 @@ class MedicationStatusService {
         return this.mockUpdateMedicationStatus(residentId, statusId, statusData);
       }
 
-      const response = await fetch(
-        `${this.baseUrl}/api/residents/${residentId}/medication-status/${statusId}`,
-        {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(statusData),
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const data = await response.json();
-      return data;
+      const response = await api.put(`/api/residents/${residentId}/medication-status/${statusId}`, statusData);
+      return response.data;
     } catch (error) {
       console.error('Update medication status error:', error);
       throw new Error('服薬状況の更新に失敗しました。');
@@ -93,16 +63,7 @@ class MedicationStatusService {
         return this.mockDeleteMedicationStatus(residentId, statusId);
       }
 
-      const response = await fetch(
-        `${this.baseUrl}/api/residents/${residentId}/medication-status/${statusId}`,
-        {
-          method: 'DELETE',
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
+      await api.delete(`/api/residents/${residentId}/medication-status/${statusId}`);
     } catch (error) {
       console.error('Delete medication status error:', error);
       throw new Error('服薬状況の削除に失敗しました。');
