@@ -5,37 +5,45 @@
  * Compatible with CareBase-api endpoints
  */
 
-import api from '@/lib/api';
 import type { AuthResponse, LoginCredentials, StaffSelectionResponse } from '@/types/auth';
 import { AUTH_ENDPOINTS } from '@/types/auth';
 import { AUTH_ERROR_MESSAGES } from '@/validations/auth-validation';
 
 class AuthService {
+  private baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
+
   /**
    * Login with facility credentials
    */
   async login(credentials: LoginCredentials): Promise<AuthResponse> {
+    return this.facilityLogin({
+      facility_id: credentials.facilityId,
+      password: credentials.password
+    });
+  }
+
+  async facilityLogin(credentials: { facility_id: string; password: string }) {
     try {
-      const response = await api.post(AUTH_ENDPOINTS.STAFF_LOGIN, {
-        facilityId: parseInt(credentials.facilityId),
-        password: credentials.password,
+      const response = await fetch(`${this.baseUrl}/v1/auth/facility/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(credentials),
       });
 
-      const data = response.data;
-      
-      if (data.token) {
-        localStorage.setItem('auth_token', data.token);
-        localStorage.setItem('user_data', JSON.stringify(data.user));
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'ログインに失敗しました');
       }
 
+      const data = await response.json();
+      localStorage.setItem('auth_token', data.token);
+      localStorage.setItem('facility_info', JSON.stringify(data.facility));
+      
       return data;
-    } catch (error: any) {
-      console.error('Login error:', error);
-      const errorMessage = error.response?.data?.error || AUTH_ERROR_MESSAGES.NETWORK_ERROR;
-      return {
-        success: false,
-        error: errorMessage,
-      };
+    } catch (error) {
+      throw error;
     }
   }
 
@@ -49,8 +57,21 @@ class AuthService {
         return this.mockSelectStaff(token, staffId);
       }
 
-      const response = await api.post('/api/v1/auth/staff/select', { staffId });
-      return response.data;
+      const response = await fetch(`${this.baseUrl}/api/v1/auth/staff/select`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ staffId }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      return data;
     } catch (error: any) {
       console.error('Staff selection error:', error);
       return {
@@ -74,6 +95,7 @@ class AuthService {
       await fetch(`${this.baseUrl}${AUTH_ENDPOINTS.STAFF_LOGOUT}`, {
         method: 'POST',
         headers: {
+          'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
       });

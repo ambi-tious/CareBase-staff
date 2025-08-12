@@ -6,6 +6,8 @@ import { authService } from '@/services/auth-service';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
+export const dynamic = 'force-dynamic';
+
 export default function LoginPage() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
@@ -17,17 +19,13 @@ export default function LoginPage() {
     setIsLoading(true);
 
     try {
-      const result = await authService.login(credentials);
-      
-      if (result.success) {
-        if (result.token) {
-          localStorage.setItem('auth_token', result.token);
-        }
-        router.push('/staff-selection');
-        return { success: true };
-      }
+      const result = await authService.facilityLogin({
+        facility_id: credentials.facilityId,
+        password: credentials.password,
+      });
 
-      return { success: false, error: result.error };
+      router.push('/staff-selection');
+      return { success: true };
     } catch (error) {
       return {
         success: false,
