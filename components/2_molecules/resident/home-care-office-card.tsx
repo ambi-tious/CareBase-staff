@@ -135,7 +135,7 @@ export const HomeCareOfficeCard: React.FC<HomeCareOfficeCardProps> = ({
         onClose={() => setIsDeleteModalOpen(false)}
         onConfirm={handleDeleteConfirm}
         itemName={office.businessName}
-        itemType="居宅介護支援事業所情報"
+        itemType="居宅介護支援事業所の紐付け"
         isDeleting={isDeleting}
         error={deleteError}
       />

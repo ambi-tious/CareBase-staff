@@ -1,6 +1,8 @@
 import { ResidentDetailTabs } from '@/components/3_organisms/resident/resident-detail-tabs';
 import { ResidentProfileHeader } from '@/components/3_organisms/resident/resident-profile-header';
+import { Button } from '@/components/ui/button';
 import { getResidentById } from '@/mocks/care-board-data';
+import { Edit } from 'lucide-react';
 import Link from 'next/link';
 
 export default async function ResidentDetailPage({
@@ -33,19 +35,16 @@ export default async function ResidentDetailPage({
           </svg>
           利用者一覧に戻る
         </Link>
-        <Link href={`/residents/${resident.id}/edit`}>
-          <button className="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-            <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-              />
-            </svg>
+        <Button
+          variant="outline"
+          asChild
+          className="border-carebase-blue text-carebase-blue hover:bg-carebase-blue-light"
+        >
+          <Link href={`/residents/${resident.id}/edit`}>
+            <Edit className="h-4 w-4 mr-2" />
             編集
-          </button>
-        </Link>
+          </Link>
+        </Button>
       </div>
       <ResidentProfileHeader resident={resident} />
       <ResidentDetailTabs resident={resident} />

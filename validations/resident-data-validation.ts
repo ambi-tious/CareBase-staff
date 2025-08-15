@@ -12,20 +12,20 @@ export const homeCareOfficeFormSchema = z.object({
     .string()
     .min(1, '事業所名は必須です')
     .max(100, '事業所名は100文字以内で入力してください'),
-  careManager: z
-    .string()
-    .min(1, 'ケアマネージャー名は必須です')
-    .max(50, 'ケアマネージャー名は50文字以内で入力してください'),
+  careManager: z.string().max(50, 'ケアマネージャー名は50文字以内で入力してください').optional(),
   phone: z
     .string()
-    .min(1, '電話番号は必須です')
-    .regex(/^[0-9\-\+\(\)\s]+$/, '有効な電話番号を入力してください'),
+    .regex(/^[0-9\-\+\(\)\s]+$/, '有効な電話番号を入力してください')
+    .optional()
+    .or(z.literal(''))
+    .optional(),
   fax: z
     .string()
     .regex(/^[0-9\-\+\(\)\s]*$/, '有効なFAX番号を入力してください')
     .optional()
-    .or(z.literal('')),
-  address: z.string().min(1, '住所は必須です').max(200, '住所は200文字以内で入力してください'),
+    .or(z.literal(''))
+    .optional(),
+  address: z.string().max(200, '住所は200文字以内で入力してください').optional(),
   notes: z.string().optional(),
 });
 

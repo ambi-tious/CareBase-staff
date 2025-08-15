@@ -12,7 +12,9 @@ import {
   type IndividualPointsTabContentRef,
 } from '@/components/3_organisms/individual-points/individual-points-tab-content';
 import { ContactEditModal } from '@/components/3_organisms/modals/contact-edit-modal';
+import { HomeCareOfficeMasterModal } from '@/components/3_organisms/modals/home-care-office-master-modal';
 import { HomeCareOfficeModal } from '@/components/3_organisms/modals/home-care-office-modal';
+
 import { MedicalHistoryModal } from '@/components/3_organisms/modals/medical-history-modal';
 import { MedicalInstitutionModal } from '@/components/3_organisms/modals/medical-institution-modal';
 import { MedicationModal } from '@/components/3_organisms/modals/medication-modal';
@@ -51,13 +53,15 @@ interface ResidentDetailTabsProps {
 export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident }) => {
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
   const [isHomeCareModalOpen, setIsHomeCareModalOpen] = useState(false);
+
+  const [isHomeCareMasterModalOpen, setIsHomeCareMasterModalOpen] = useState(false);
   const [isMedicalModalOpen, setIsMedicalModalOpen] = useState(false);
   const [isMedicalHistoryModalOpen, setIsMedicalHistoryModalOpen] = useState(false);
   const [isMedicationModalOpen, setIsMedicationModalOpen] = useState(false);
   const [isMedicationStatusModalOpen, setIsMedicationStatusModalOpen] = useState(false);
   const [contacts, setContacts] = useState<ContactPerson[]>(resident.contacts || []);
-  const [homeCareOffice, setHomeCareOffice] = useState<HomeCareOffice | undefined>(
-    resident.homeCareOffice
+  const [homeCareOffices, setHomeCareOffices] = useState<HomeCareOffice[]>(
+    resident.homeCareOffices || []
   );
   const [medicalInstitutions, setMedicalInstitutions] = useState<MedicalInstitution[]>(
     resident.medicalInstitutions || []
@@ -95,7 +99,7 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
   };
 
   const handleAddHomeCareOffice = () => {
-    setIsHomeCareModalOpen(true);
+    setIsHomeCareMasterModalOpen(true);
   };
 
   const handleAddMedicalInstitution = () => {
@@ -128,12 +132,32 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
   const handleHomeCareOfficeSubmit = async (data: HomeCareOfficeFormData): Promise<boolean> => {
     try {
       const newOffice = await residentDataService.createHomeCareOffice(resident.id, data);
-      setHomeCareOffice(newOffice);
+      setHomeCareOffices((prev) => [...prev, newOffice]);
+      // 新規作成後、マスタ管理モーダルを再表示
+      setIsHomeCareModalOpen(false);
+      setIsHomeCareMasterModalOpen(true);
       return true;
     } catch (error) {
       console.error('Failed to create home care office:', error);
       return false;
     }
+  };
+
+  const handleHomeCareOfficeSelect = (office: HomeCareOffice) => {
+    // 既に登録されているかチェック
+    const isAlreadyRegistered = homeCareOffices.some((existing) => existing.id === office.id);
+    if (!isAlreadyRegistered) {
+      setHomeCareOffices((prev) => [...prev, office]);
+    }
+  };
+
+  const handleHomeCareOfficeCreateNew = () => {
+    setIsHomeCareModalOpen(true);
+  };
+
+  const handleHomeCareOfficeMasterRefresh = () => {
+    // マスタデータが更新された場合の処理
+    // 必要に応じて選択モーダルのデータを再取得
   };
 
   const handleMedicalInstitutionSubmit = async (
@@ -189,7 +213,9 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
   };
 
   const handleHomeCareOfficeUpdate = (updatedOffice: HomeCareOffice) => {
-    setHomeCareOffice(updatedOffice);
+    setHomeCareOffices((prev) =>
+      prev.map((office) => (office.id === updatedOffice.id ? updatedOffice : office))
+    );
   };
 
   const handleMedicalInstitutionUpdate = (updatedInstitution: MedicalInstitution) => {
@@ -224,8 +250,8 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
     setContacts((prev) => prev.filter((contact) => contact.id !== contactId));
   };
 
-  const handleHomeCareOfficeDelete = () => {
-    setHomeCareOffice(undefined);
+  const handleHomeCareOfficeDelete = (officeId: string) => {
+    setHomeCareOffices((prev) => prev.filter((office) => office.id !== officeId));
   };
 
   const handleMedicalInstitutionDelete = (institutionId: string) => {
@@ -333,14 +359,19 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
         </TabsContent>
 
         <TabsContent value="homeCare">
-          {homeCareOffice ? (
-            <HomeCareOfficeCard
-              office={homeCareOffice}
-              residentId={resident.id}
-              residentName={resident.name}
-              onOfficeUpdate={handleHomeCareOfficeUpdate}
-              onOfficeDelete={handleHomeCareOfficeDelete}
-            />
+          {homeCareOffices.length > 0 ? (
+            <div className="space-y-4">
+              {homeCareOffices.map((office) => (
+                <HomeCareOfficeCard
+                  key={office.id}
+                  office={office}
+                  residentId={resident.id}
+                  residentName={resident.name}
+                  onOfficeUpdate={handleHomeCareOfficeUpdate}
+                  onOfficeDelete={handleHomeCareOfficeDelete}
+                />
+              ))}
+            </div>
           ) : (
             <p className="text-center text-gray-500 py-8">居宅介護支援事業所の情報はありません。</p>
           )}
@@ -470,6 +501,17 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
           type: '連絡先',
         }}
         residentName={resident.name}
+      />
+
+      <HomeCareOfficeMasterModal
+        isOpen={isHomeCareMasterModalOpen}
+        onClose={() => setIsHomeCareMasterModalOpen(false)}
+        onRefresh={handleHomeCareOfficeMasterRefresh}
+        onSelect={handleHomeCareOfficeSelect}
+        isSelectionMode={true}
+        residentName={resident.name}
+        onCreateNew={handleHomeCareOfficeCreateNew}
+        selectedOfficeIds={homeCareOffices.map((office) => office.id)}
       />
 
       <HomeCareOfficeModal
