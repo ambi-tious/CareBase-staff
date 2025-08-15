@@ -1,6 +1,7 @@
 'use client';
 
 import { StaffSelectionScreen } from '@/components/3_organisms/auth/staff-selection-screen';
+import { useAuth } from '@/hooks/useAuth';
 import type { Staff } from '@/mocks/staff-data';
 import { getGroupNameByStaff, getTeamNameByStaff } from '@/utils/staff-utils';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -15,6 +16,7 @@ interface SelectedStaffData {
 function StaffSelectionContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { getStoredToken, getStoredFacility, selectStaff, logout } = useAuth();
   const fromHeader = searchParams.get('from') === 'header';
   const fromStaffClick = searchParams.get('staff') === 'true';
   const autoSelectStaff = searchParams.get('autoSelectStaff') !== 'false';
@@ -24,8 +26,16 @@ function StaffSelectionContent() {
     undefined
   );
 
-  // Load current staff data for header navigation context
+  // Check authentication and load current staff data
   useEffect(() => {
+    const token = getStoredToken();
+    const facility = getStoredFacility();
+
+    if (!token || !facility) {
+      router.push('/login');
+      return;
+    }
+
     try {
       const data = localStorage.getItem('carebase_selected_staff_data');
       if (data) {
@@ -34,7 +44,7 @@ function StaffSelectionContent() {
     } catch (error) {
       console.error('Failed to load selected staff data:', error);
     }
-  }, []);
+  }, [getStoredToken, getStoredFacility, router]);
 
   // Scroll to staff selection area after component mounts
   useEffect(() => {
@@ -52,35 +62,53 @@ function StaffSelectionContent() {
   }, []);
 
   const handleStaffSelected = async (staff: Staff): Promise<void> => {
-    // Simulate staff selection processing
-    await new Promise((resolve) => setTimeout(resolve, 500));
-
-    // Store selected staff in localStorage for header display
-    const selectedStaffData = {
-      staff,
-      groupName: getGroupNameByStaff(staff),
-      teamName: getTeamNameByStaff(staff),
-    };
-
-    try {
-      localStorage.setItem('carebase_selected_staff_data', JSON.stringify(selectedStaffData));
-    } catch (error) {
-      console.error('Error writing to localStorage:', error);
+    const token = getStoredToken();
+    if (!token) {
+      router.push('/login');
+      return;
     }
 
-    // In production, this would authenticate with the selected staff's credentials
-    router.push('/');
+    try {
+      // Call API to select staff
+      const response = await selectStaff(token, staff.id);
+
+      if (response.success) {
+        // Store selected staff in localStorage for header display
+        const selectedStaffData = {
+          staff,
+          groupName: getGroupNameByStaff(staff),
+          teamName: getTeamNameByStaff(staff),
+        };
+
+        localStorage.setItem('carebase_selected_staff_data', JSON.stringify(selectedStaffData));
+        router.push('/');
+      } else {
+        console.error('Staff selection failed:', response.error);
+        // Handle error - could show a toast or error message
+      }
+    } catch (error) {
+      console.error('Error selecting staff:', error);
+      // Handle error - could show a toast or error message
+    }
   };
 
-  const handleLogout = (): void => {
-    // Clear any stored authentication data
+  const handleLogout = async (): Promise<void> => {
+    const token = getStoredToken();
+    if (token) {
+      try {
+        await logout(token);
+      } catch (error) {
+        console.error('Error during logout:', error);
+      }
+    }
+
+    // Clear any remaining stored data
     try {
       localStorage.removeItem('carebase_selected_staff_data');
-      localStorage.removeItem('carebase_token');
-      localStorage.removeItem('carebase_user');
     } catch (error) {
       console.error('Error clearing localStorage:', error);
     }
+
     router.push('/login');
   };
 

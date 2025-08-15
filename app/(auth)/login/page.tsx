@@ -2,37 +2,59 @@
 
 import { Logo } from '@/components/1_atoms/common/logo';
 import { LoginForm } from '@/components/2_molecules/auth/login-form';
+import { useAuth } from '@/hooks/useAuth';
+import type { LoginCredentials } from '@/types/auth';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect } from 'react';
 
 export default function LoginPage() {
   const router = useRouter();
-  const [isLoading, setIsLoading] = useState(false);
+  const { login, isLoading, authData, getStoredToken, clearError } = useAuth();
 
-  const handleLogin = async (credentials: {
-    facilityId: string;
-    password: string;
-  }): Promise<{ success: boolean; error?: string }> => {
-    setIsLoading(true);
+  // 既にログイン済みの場合はリダイレクト
+  useEffect(() => {
+    const token = getStoredToken();
+    if (token) {
+      router.push('/staff-selection');
+    }
+  }, [getStoredToken, router]);
 
+  // ログイン成功時の処理
+  useEffect(() => {
+    if (authData?.success && authData.token) {
+      console.log('ログイン成功:', authData.token);
+      router.push('/staff-selection');
+    }
+  }, [authData, router]);
+
+  const handleLogin = async (
+    credentials: LoginCredentials
+  ): Promise<{ success: boolean; error?: string }> => {
     try {
-      // Simulate API call delay
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      // エラー状態をクリア
+      clearError();
 
-      // Mock authentication - in production, this would call a real API
-      if (credentials.facilityId === 'admin' && credentials.password === 'password') {
-        router.push('/staff-selection');
+      const response = await login(credentials);
+
+      console.log('response', response);
+
+      if (response.token) {
         return { success: true };
+      } else {
+        // APIからのエラーメッセージを返す
+        return {
+          success: false,
+          error: response.error || 'ログインに失敗しました',
+        };
       }
-
-      return { success: false, error: '施設IDまたはパスワードが正しくありません' };
     } catch (error) {
+      // 予期しないエラーの場合
+      const errorMessage =
+        error instanceof Error ? error.message : 'ログイン中にエラーが発生しました';
       return {
         success: false,
-        error: 'ログイン中にエラーが発生しました。しばらく経ってからもう一度お試しください。',
+        error: errorMessage,
       };
-    } finally {
-      setIsLoading(false);
     }
   };
 

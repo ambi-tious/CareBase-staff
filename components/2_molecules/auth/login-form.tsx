@@ -20,13 +20,13 @@ export const LoginForm: React.FC<LoginFormProps> = ({
   className = '',
 }) => {
   const {
-    facilityId,
+    login_id,
     password,
     error,
     success,
     fieldErrors,
     isFormValid,
-    setFacilityId,
+    setLoginId,
     setPassword,
     handleSubmit,
     clearError,
@@ -43,16 +43,16 @@ export const LoginForm: React.FC<LoginFormProps> = ({
       <CardContent>
         <form onSubmit={handleSubmit} className="flex flex-col gap-6">
           <InputField
-            id="facilityId"
+            id="login_id"
             type="text"
-            label="施設ID"
-            value={facilityId}
-            onChange={(e) => setFacilityId(e.target.value)}
-            placeholder="施設IDを入力"
+            label="ログインID"
+            value={login_id}
+            onChange={(e) => setLoginId(e.target.value)}
+            placeholder="ログインIDを入力"
             disabled={isLoading}
             isRequired
-            error={fieldErrors.facilityId}
-            variant={fieldErrors.facilityId ? 'error' : 'default'}
+            error={fieldErrors.login_id}
+            variant={fieldErrors.login_id ? 'error' : 'default'}
           />
 
           <InputField

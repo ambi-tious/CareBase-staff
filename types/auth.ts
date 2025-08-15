@@ -7,7 +7,7 @@
 
 // Base authentication credentials
 export interface LoginCredentials {
-  facilityId: string;
+  login_id: string;  // API expects login_id instead of facilityId
   password: string;
 }
 
@@ -19,20 +19,28 @@ export interface LoginResult {
 
 // Authentication request/response types (RPC compatible)
 export interface AuthRequest {
-  facilityId: string;
+  login_id: string;
   password: string;
 }
 
 export interface AuthResponse {
   success: boolean;
   token?: string;
-  user?: AuthUser;
+  facility?: Facility;
+  message?: string;
   error?: string;
+}
+
+export interface Facility {
+  id: string;
+  name: string;
+  login_id: string;
 }
 
 export interface AuthUser {
   id: string;
-  facilityId: string;
+  facilityId: string;  // Keep this for backward compatibility
+  login_id?: string;   // Add API response field
   role: 'staff' | 'admin';
   permissions: string[];
 }
@@ -62,7 +70,7 @@ export interface SelectedStaff {
 
 // Form state types
 export interface LoginFormState {
-  facilityId: string;
+  login_id: string;
   password: string;
   isLoading: boolean;
   error: string | null;
@@ -88,8 +96,10 @@ export interface AuthError {
 
 // API endpoints (matching CareBase-api structure)
 export const AUTH_ENDPOINTS = {
+  FACILITY_LOGIN: '/v1/auth/facility/login',
   STAFF_LOGIN: '/api/v1/auth/staff/login',
   STAFF_LOGOUT: '/api/v1/auth/staff/logout',
+  STAFF_SELECT: '/api/v1/auth/staff/select',
   PASSWORD_REMINDER: '/api/v1/auth/staff/password-reminder',
   PASSWORD_RESET: '/api/v1/auth/staff/password-reset',
 } as const;

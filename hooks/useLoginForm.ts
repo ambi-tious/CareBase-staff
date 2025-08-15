@@ -5,7 +5,11 @@
  */
 
 import type { LoginCredentials, LoginFormState, LoginResult } from '@/types/auth';
-import { validateLoginFormRelaxed } from '@/validations/auth-validation';
+import {
+  validateLoginForm,
+  validateLoginId,
+  validatePassword,
+} from '@/validations/auth-validation';
 import { useCallback, useEffect, useState } from 'react';
 
 interface UseLoginFormOptions {
@@ -20,7 +24,7 @@ export const useLoginForm = ({
   enableRealtimeValidation = true,
 }: UseLoginFormOptions) => {
   const [formState, setFormState] = useState<LoginFormState>({
-    facilityId: initialValues.facilityId || '',
+    login_id: initialValues.login_id || '',
     password: initialValues.password || '',
     isLoading: false,
     error: null,
@@ -28,15 +32,15 @@ export const useLoginForm = ({
   });
 
   const [fieldErrors, setFieldErrors] = useState<{
-    facilityId?: string;
+    login_id?: string;
     password?: string;
   }>({});
 
   const [touched, setTouched] = useState<{
-    facilityId: boolean;
+    login_id: boolean;
     password: boolean;
   }>({
-    facilityId: false,
+    login_id: false,
     password: false,
   });
 
@@ -47,30 +51,28 @@ export const useLoginForm = ({
     const validateField = (field: keyof LoginCredentials, value: string, isTouched: boolean) => {
       if (!isTouched) return;
 
-      let error: string | null = null;
+      let validationResult: { success: boolean; error: string | null };
 
       switch (field) {
-        case 'facilityId':
-          if (!value.trim()) {
-            error = '施設IDは必須です';
-          }
+        case 'login_id':
+          validationResult = validateLoginId(value);
           break;
         case 'password':
-          if (!value.trim()) {
-            error = 'パスワードは必須です';
-          }
+          validationResult = validatePassword(value);
           break;
+        default:
+          return;
       }
 
       setFieldErrors((prev) => ({
         ...prev,
-        [field]: error,
+        [field]: validationResult.error,
       }));
     };
 
-    validateField('facilityId', formState.facilityId, touched.facilityId);
+    validateField('login_id', formState.login_id, touched.login_id);
     validateField('password', formState.password, touched.password);
-  }, [formState.facilityId, formState.password, touched, enableRealtimeValidation]);
+  }, [formState.login_id, formState.password, touched, enableRealtimeValidation]);
 
   const updateField = useCallback(
     (field: keyof LoginCredentials, value: string) => {
@@ -91,9 +93,9 @@ export const useLoginForm = ({
     [touched]
   );
 
-  const setFacilityId = useCallback(
+  const setLoginId = useCallback(
     (value: string) => {
-      updateField('facilityId', value);
+      updateField('login_id', value);
     },
     [updateField]
   );
@@ -107,11 +109,11 @@ export const useLoginForm = ({
 
   const validateForm = useCallback(() => {
     const credentials = {
-      facilityId: formState.facilityId,
+      login_id: formState.login_id,
       password: formState.password,
     };
 
-    const validation = validateLoginFormRelaxed(credentials);
+    const validation = validateLoginForm(credentials);
 
     if (!validation.success) {
       const newFieldErrors: Record<string, string> = {};
@@ -134,7 +136,7 @@ export const useLoginForm = ({
       error: null,
     }));
     return true;
-  }, [formState.facilityId, formState.password]);
+  }, [formState.login_id, formState.password]);
 
   const handleSubmit = useCallback(
     async (e: React.FormEvent) => {
@@ -142,7 +144,7 @@ export const useLoginForm = ({
 
       // Mark all fields as touched
       setTouched({
-        facilityId: true,
+        login_id: true,
         password: true,
       });
 
@@ -159,7 +161,7 @@ export const useLoginForm = ({
 
       try {
         const credentials = {
-          facilityId: formState.facilityId.trim(),
+          login_id: formState.login_id.trim(),
           password: formState.password.trim(),
         };
 
@@ -180,12 +182,12 @@ export const useLoginForm = ({
         }));
       }
     },
-    [validateForm, onSubmit, formState.facilityId, formState.password]
+    [validateForm, onSubmit, formState.login_id, formState.password]
   );
 
   const reset = useCallback(() => {
     setFormState({
-      facilityId: initialValues.facilityId || '',
+      login_id: initialValues.login_id || '',
       password: initialValues.password || '',
       isLoading: false,
       error: null,
@@ -193,7 +195,7 @@ export const useLoginForm = ({
     });
     setFieldErrors({});
     setTouched({
-      facilityId: false,
+      login_id: false,
       password: false,
     });
   }, [initialValues]);
@@ -206,14 +208,14 @@ export const useLoginForm = ({
   }, []);
 
   const isFormValid =
-    !fieldErrors.facilityId &&
+    !fieldErrors.login_id &&
     !fieldErrors.password &&
-    formState.facilityId.trim() !== '' &&
+    formState.login_id.trim() !== '' &&
     formState.password.trim() !== '';
 
   return {
     // Form state
-    facilityId: formState.facilityId,
+    login_id: formState.login_id,
     password: formState.password,
     isLoading: formState.isLoading,
     error: formState.error,
@@ -226,7 +228,7 @@ export const useLoginForm = ({
     isFormValid,
 
     // Actions
-    setFacilityId,
+    setLoginId,
     setPassword,
     handleSubmit,
     reset,

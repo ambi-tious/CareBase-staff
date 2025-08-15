@@ -5,39 +5,48 @@
  * Compatible with CareBase-api endpoints
  */
 
+import { apiClient } from '@/lib/axios';
 import type { AuthResponse, LoginCredentials, StaffSelectionResponse } from '@/types/auth';
 import { AUTH_ENDPOINTS } from '@/types/auth';
 import { AUTH_ERROR_MESSAGES } from '@/validations/auth-validation';
+import axios from 'axios';
 
 class AuthService {
-  private baseUrl = process.env.NEXT_PUBLIC_API_URL || '';
-
   /**
    * Login with facility credentials
    */
   async login(credentials: LoginCredentials): Promise<AuthResponse> {
     try {
-      // For development, use mock authentication
-      if (process.env.NODE_ENV) {
-        return this.mockLogin(credentials);
-      }
+      const response = await apiClient.post(AUTH_ENDPOINTS.FACILITY_LOGIN, credentials);
 
-      const response = await fetch(`${this.baseUrl}${AUTH_ENDPOINTS.STAFF_LOGIN}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(credentials),
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const data = await response.json();
-      return data;
+      return response.data;
     } catch (error) {
-      console.error('Login error:', error);
+      if (axios.isAxiosError(error)) {
+        const status = error.response?.status;
+        const errorData = error.response?.data;
+
+        if (status === 400) {
+          return {
+            success: false,
+            error: errorData?.message || 'リクエストの形式が正しくありません',
+          };
+        }
+
+        if (status === 401) {
+          return {
+            success: false,
+            error: AUTH_ERROR_MESSAGES.INVALID_CREDENTIALS,
+          };
+        }
+
+        if (status && status >= 500) {
+          return {
+            success: false,
+            error: AUTH_ERROR_MESSAGES.SERVER_ERROR,
+          };
+        }
+      }
+
       return {
         success: false,
         error: AUTH_ERROR_MESSAGES.NETWORK_ERROR,
@@ -51,27 +60,30 @@ class AuthService {
   async selectStaff(token: string, staffId: string): Promise<StaffSelectionResponse> {
     try {
       // For development, use mock staff selection
-      if (process.env.NODE_ENV) {
+      if (process.env.NODE_ENV === 'development') {
         return this.mockSelectStaff(token, staffId);
       }
 
-      const response = await fetch(`${this.baseUrl}/api/v1/auth/staff/select`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ staffId }),
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const data = await response.json();
-      return data;
+      const response = await apiClient.post(
+        AUTH_ENDPOINTS.STAFF_SELECT,
+        { staffId },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      return response.data;
     } catch (error) {
       console.error('Staff selection error:', error);
+      if (axios.isAxiosError(error)) {
+        if (error.response?.status === 404) {
+          return {
+            success: false,
+            error: AUTH_ERROR_MESSAGES.STAFF_NOT_FOUND,
+          };
+        }
+      }
       return {
         success: false,
         error: AUTH_ERROR_MESSAGES.NETWORK_ERROR,
@@ -85,58 +97,23 @@ class AuthService {
   async logout(token: string): Promise<void> {
     try {
       // For development, just simulate logout
-      if (process.env.NODE_ENV) {
+      if (process.env.NODE_ENV === 'development') {
         await new Promise((resolve) => setTimeout(resolve, 500));
         return;
       }
 
-      await fetch(`${this.baseUrl}${AUTH_ENDPOINTS.STAFF_LOGOUT}`, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      await apiClient.post(
+        AUTH_ENDPOINTS.STAFF_LOGOUT,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
     } catch (error) {
       console.error('Logout error:', error);
     }
-  }
-
-  /**
-   * Mock login for development
-   */
-  private async mockLogin(credentials: LoginCredentials): Promise<AuthResponse> {
-    // Simulate network delay
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-
-    // Mock authentication logic
-    if (credentials.facilityId === 'admin' && credentials.password === 'password') {
-      return {
-        success: true,
-        token: 'mock-jwt-token-' + Date.now(),
-        user: {
-          id: 'user-1',
-          facilityId: credentials.facilityId,
-          role: 'staff',
-          permissions: ['read', 'write'],
-        },
-      };
-    } else if (credentials.facilityId === 'demo' && credentials.password === 'demo') {
-      return {
-        success: true,
-        token: 'mock-jwt-token-' + Date.now(),
-        user: {
-          id: 'user-2',
-          facilityId: credentials.facilityId,
-          role: 'staff',
-          permissions: ['read'],
-        },
-      };
-    }
-
-    return {
-      success: false,
-      error: AUTH_ERROR_MESSAGES.INVALID_CREDENTIALS,
-    };
   }
 
   /**
@@ -193,18 +170,10 @@ class AuthService {
     email: string
   ): Promise<{ success: boolean; error?: string }> {
     try {
-      const response = await fetch(`${this.baseUrl}${AUTH_ENDPOINTS.PASSWORD_REMINDER}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ facilityId, email }),
+      const response = await apiClient.post(AUTH_ENDPOINTS.PASSWORD_REMINDER, {
+        facilityId,
+        email,
       });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
       return { success: true };
     } catch (error) {
       console.error('Password reset request error:', error);
@@ -223,18 +192,10 @@ class AuthService {
     newPassword: string
   ): Promise<{ success: boolean; error?: string }> {
     try {
-      const response = await fetch(`${this.baseUrl}${AUTH_ENDPOINTS.PASSWORD_RESET}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ token, newPassword }),
+      const response = await apiClient.post(AUTH_ENDPOINTS.PASSWORD_RESET, {
+        token,
+        newPassword,
       });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
       return { success: true };
     } catch (error) {
       console.error('Password reset error:', error);
