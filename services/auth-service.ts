@@ -65,7 +65,7 @@ class AuthService {
       }
 
       const response = await apiClient.post(
-        AUTH_ENDPOINTS.STAFF_SELECT,
+        AUTH_ENDPOINTS.STAFF_SELECTION,
         { staffId },
         {
           headers: {
@@ -103,7 +103,7 @@ class AuthService {
       }
 
       await apiClient.post(
-        AUTH_ENDPOINTS.STAFF_LOGOUT,
+        AUTH_ENDPOINTS.LOGOUT,
         {},
         {
           headers: {
@@ -160,50 +160,6 @@ class AuthService {
       success: false,
       error: AUTH_ERROR_MESSAGES.STAFF_NOT_FOUND,
     };
-  }
-
-  /**
-   * Request password reset
-   */
-  async requestPasswordReset(
-    facilityId: string,
-    email: string
-  ): Promise<{ success: boolean; error?: string }> {
-    try {
-      const response = await apiClient.post(AUTH_ENDPOINTS.PASSWORD_REMINDER, {
-        facilityId,
-        email,
-      });
-      return { success: true };
-    } catch (error) {
-      console.error('Password reset request error:', error);
-      return {
-        success: false,
-        error: AUTH_ERROR_MESSAGES.NETWORK_ERROR,
-      };
-    }
-  }
-
-  /**
-   * Reset password with token
-   */
-  async resetPassword(
-    token: string,
-    newPassword: string
-  ): Promise<{ success: boolean; error?: string }> {
-    try {
-      const response = await apiClient.post(AUTH_ENDPOINTS.PASSWORD_RESET, {
-        token,
-        newPassword,
-      });
-      return { success: true };
-    } catch (error) {
-      console.error('Password reset error:', error);
-      return {
-        success: false,
-        error: AUTH_ERROR_MESSAGES.NETWORK_ERROR,
-      };
-    }
   }
 }
 

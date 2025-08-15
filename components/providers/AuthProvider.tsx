@@ -7,13 +7,12 @@
 'use client';
 
 import { useAuth } from '@/hooks/useAuth';
-import type { SelectedStaff } from '@/types/auth';
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useContext } from 'react';
 
 interface AuthContextType {
   isAuthenticated: boolean;
   facility: any | null;
-  selectedStaff: SelectedStaff | null;
+  selectedStaff: any | null;
   isLoading: boolean;
   error: string | null;
   login: ReturnType<typeof useAuth>['login'];
@@ -38,52 +37,16 @@ interface AuthProviderProps {
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   const {
+    isAuthenticated,
+    facility,
+    selectedStaff,
+    isLoading,
+    error,
     login,
     logout,
     selectStaff,
     clearError,
-    isLoading,
-    error,
-    authData,
-    getStoredToken,
-    getStoredFacility,
-    getStoredStaff,
   } = useAuth();
-
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [facility, setFacility] = useState<any | null>(null);
-  const [selectedStaff, setSelectedStaff] = useState<SelectedStaff | null>(null);
-
-  // Initialize authentication state from localStorage
-  useEffect(() => {
-    const initializeAuth = () => {
-      const token = getStoredToken();
-      const storedFacility = getStoredFacility();
-      const storedStaff = getStoredStaff();
-
-      if (token && storedFacility) {
-        setIsAuthenticated(true);
-        setFacility(storedFacility);
-        if (storedStaff) {
-          setSelectedStaff(storedStaff);
-        }
-      }
-    };
-
-    initializeAuth();
-  }, [getStoredToken, getStoredFacility, getStoredStaff]);
-
-  // Update authentication state when authData changes
-  useEffect(() => {
-    if (authData?.success && authData.token && authData.facility) {
-      setIsAuthenticated(true);
-      setFacility(authData.facility);
-    } else if (!authData) {
-      setIsAuthenticated(false);
-      setFacility(null);
-      setSelectedStaff(null);
-    }
-  }, [authData]);
 
   const contextValue: AuthContextType = {
     isAuthenticated,

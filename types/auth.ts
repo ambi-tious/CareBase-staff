@@ -7,7 +7,7 @@
 
 // Base authentication credentials
 export interface LoginCredentials {
-  login_id: string;  // API expects login_id instead of facilityId
+  login_id: string;
   password: string;
 }
 
@@ -39,8 +39,8 @@ export interface Facility {
 
 export interface AuthUser {
   id: string;
-  facilityId: string;  // Keep this for backward compatibility
-  login_id?: string;   // Add API response field
+  facilityId: string;
+  login_id?: string;
   role: 'staff' | 'admin';
   permissions: string[];
 }
@@ -77,14 +77,14 @@ export interface LoginFormState {
   success: boolean;
 }
 
-// Authentication state
+// Unified authentication state
 export interface AuthState {
   isAuthenticated: boolean;
-  token: string | null;
-  user: AuthUser | null;
-  selectedStaff: SelectedStaff | null;
   isLoading: boolean;
   error: string | null;
+  token: string | null;
+  facility: Facility | null;
+  selectedStaff: SelectedStaff | null;
 }
 
 // Error types
@@ -98,27 +98,19 @@ export interface AuthError {
 export const AUTH_ENDPOINTS = {
   FACILITY_LOGIN: '/v1/auth/facility/login',
   STAFF_LOGIN: '/api/v1/auth/staff/login',
-  STAFF_LOGOUT: '/api/v1/auth/staff/logout',
-  STAFF_SELECT: '/api/v1/auth/staff/select',
-  PASSWORD_REMINDER: '/api/v1/auth/staff/password-reminder',
-  PASSWORD_RESET: '/api/v1/auth/staff/password-reset',
+  STAFF_SELECTION: '/api/v1/auth/staff/select',
+  LOGOUT: '/api/v1/auth/logout',
 } as const;
 
-// Authentication events
-export type AuthEvent =
-  | { type: 'LOGIN_START' }
-  | { type: 'LOGIN_SUCCESS'; payload: AuthResponse }
-  | { type: 'LOGIN_FAILURE'; payload: AuthError }
-  | { type: 'LOGOUT' }
-  | { type: 'STAFF_SELECT'; payload: SelectedStaff }
-  | { type: 'CLEAR_ERROR' };
+// Validation error type
+export interface ValidationError {
+  path: string[];
+  message: string;
+}
 
-// Error codes
-export const AUTH_ERROR_CODES = {
-  INVALID_CREDENTIALS: 'INVALID_CREDENTIALS',
-  NETWORK_ERROR: 'NETWORK_ERROR',
-  STAFF_NOT_FOUND: 'STAFF_NOT_FOUND',
-  TOKEN_EXPIRED: 'TOKEN_EXPIRED',
-  UNAUTHORIZED: 'UNAUTHORIZED',
-  SERVER_ERROR: 'SERVER_ERROR',
-} as const;
+export interface ValidationResult {
+  success: boolean;
+  error?: {
+    errors: ValidationError[];
+  };
+}

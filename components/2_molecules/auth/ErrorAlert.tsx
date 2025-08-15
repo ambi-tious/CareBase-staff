@@ -4,10 +4,10 @@
  * Specialized alert component for displaying authentication errors
  */
 
-import type React from 'react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { AlertCircle, CheckCircle, Info, AlertTriangle, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { AlertCircle, AlertTriangle, CheckCircle, Info, X } from 'lucide-react';
+import type React from 'react';
 
 export interface ErrorAlertProps {
   type?: 'error' | 'success' | 'warning' | 'info';
