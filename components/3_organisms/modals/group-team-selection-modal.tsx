@@ -4,7 +4,8 @@ import { GroupSelector } from '@/components/2_molecules/auth/group-selector';
 import { TeamSelector } from '@/components/2_molecules/auth/team-selector';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { getGroupById, getTeamById, organizationData } from '@/mocks/staff-data';
+import type { Group, Team } from '@/mocks/staff-data';
+import { organizationService } from '@/services/organization-service';
 import type React from 'react';
 import { useCallback, useEffect, useState } from 'react';
 
@@ -27,29 +28,47 @@ export const GroupTeamSelectionModal: React.FC<GroupTeamSelectionModalProps> = (
   selectedStaffData,
   onGroupTeamChange,
 }) => {
+  const [groups, setGroups] = useState<Group[]>([]);
+  const [teams, setTeams] = useState<Team[]>([]);
   const [selectedGroupId, setSelectedGroupId] = useState<string>('');
   const [selectedTeamId, setSelectedTeamId] = useState<string>('');
   const [error, setError] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
+  // Load groups on component mount
+  useEffect(() => {
+    const loadGroups = async () => {
+      try {
+        const groupsData = await organizationService.getGroups();
+        setGroups(groupsData);
+      } catch (error) {
+        console.error('Failed to load groups:', error);
+        setError('グループデータの読み込みに失敗しました');
+      }
+    };
+
+    loadGroups();
+  }, []);
+
   // Get current group and team IDs from selected staff data
   const getCurrentGroupTeamIds = useCallback(() => {
-    if (!selectedStaffData) return { currentGroupId: null, currentTeamId: null };
+    if (!selectedStaffData || groups.length === 0)
+      return { currentGroupId: null, currentTeamId: null };
 
     // Find current group ID by name
     const currentGroupId =
-      organizationData.find((group) => group.name === selectedStaffData.groupName)?.id || null;
+      groups.find((group) => group.name === selectedStaffData.groupName)?.id || null;
 
     // Find current team ID by name within the group
     let currentTeamId: string | null = null;
     if (currentGroupId) {
-      const group = getGroupById(currentGroupId);
+      const group = groups.find((g) => g.id === currentGroupId);
       currentTeamId =
         group?.teams.find((team) => team.name === selectedStaffData.teamName)?.id || null;
     }
 
     return { currentGroupId, currentTeamId };
-  }, [selectedStaffData]);
+  }, [selectedStaffData, groups]);
 
   // Initialize selection with current values when modal opens
   useEffect(() => {
@@ -61,20 +80,33 @@ export const GroupTeamSelectionModal: React.FC<GroupTeamSelectionModalProps> = (
     }
   }, [isOpen, selectedStaffData, getCurrentGroupTeamIds]);
 
-  // Auto-select team if only one exists in selected group
+  // Load teams when group is selected
   useEffect(() => {
     if (selectedGroupId) {
-      const selectedGroup = getGroupById(selectedGroupId);
-      if (selectedGroup && selectedGroup.teams.length === 1) {
-        setSelectedTeamId(selectedGroup.teams[0].id);
-      } else if (selectedTeamId) {
-        // Check if currently selected team exists in the new group
-        const teamExists = selectedGroup?.teams.some((team) => team.id === selectedTeamId);
-        if (!teamExists) {
-          setSelectedTeamId('');
+      const loadTeams = async () => {
+        try {
+          const teamsData = await organizationService.getTeamsByGroup(selectedGroupId);
+          setTeams(teamsData);
+
+          // Auto-select team if only one exists
+          if (teamsData.length === 1) {
+            setSelectedTeamId(teamsData[0].id);
+          } else if (selectedTeamId) {
+            // Check if currently selected team exists in the new group
+            const teamExists = teamsData.some((team) => team.id === selectedTeamId);
+            if (!teamExists) {
+              setSelectedTeamId('');
+            }
+          }
+        } catch (error) {
+          console.error('Failed to load teams:', error);
+          setError('チームデータの読み込みに失敗しました');
         }
-      }
+      };
+
+      loadTeams();
     } else {
+      setTeams([]);
       setSelectedTeamId('');
     }
   }, [selectedGroupId, selectedTeamId]);
@@ -105,10 +137,13 @@ export const GroupTeamSelectionModal: React.FC<GroupTeamSelectionModalProps> = (
 
     try {
       // Create updated staff data
+      const selectedGroup = groups.find((g) => g.id === selectedGroupId);
+      const selectedTeam = teams.find((t) => t.id === selectedTeamId);
+
       const updatedStaffData = {
         staff: selectedStaffData.staff,
-        groupName: getGroupById(selectedGroupId)?.name || selectedStaffData.groupName,
-        teamName: getTeamById(selectedGroupId, selectedTeamId)?.name || selectedStaffData.teamName,
+        groupName: selectedGroup?.name || selectedStaffData.groupName,
+        teamName: selectedTeam?.name || selectedStaffData.teamName,
       };
 
       // Update localStorage
@@ -143,8 +178,7 @@ export const GroupTeamSelectionModal: React.FC<GroupTeamSelectionModalProps> = (
   };
 
   const { currentGroupId, currentTeamId } = getCurrentGroupTeamIds();
-  const selectedGroup = selectedGroupId ? getGroupById(selectedGroupId) : null;
-  const showTeamSelector = selectedGroup && selectedGroup.teams.length > 0;
+  const showTeamSelector = teams.length > 0;
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -158,7 +192,7 @@ export const GroupTeamSelectionModal: React.FC<GroupTeamSelectionModalProps> = (
         <div className="space-y-6 tablet:mt-6">
           {/* Group Selector */}
           <GroupSelector
-            groups={organizationData}
+            groups={groups}
             selectedGroupId={selectedGroupId}
             currentGroupId={currentGroupId || undefined}
             onGroupSelect={handleGroupSelect}
@@ -167,7 +201,7 @@ export const GroupTeamSelectionModal: React.FC<GroupTeamSelectionModalProps> = (
           {/* Team Selector */}
           {showTeamSelector && (
             <TeamSelector
-              teams={selectedGroup.teams}
+              teams={teams}
               selectedTeamId={selectedTeamId}
               currentTeamId={currentTeamId || undefined}
               onTeamSelect={handleTeamSelect}
