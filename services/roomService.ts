@@ -20,7 +20,7 @@ class RoomService {
         return this.mockGetRoomsByGroupAndTeam(groupId, teamId);
       }
 
-      const response = await fetch(`${this.baseUrl}/api/rooms?groupId=${groupId}&teamId=${teamId}`);
+      const response = await fetch(`${this.baseUrl}/rooms?groupId=${groupId}&teamId=${teamId}`);
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -44,7 +44,7 @@ class RoomService {
         return this.mockGetAllActiveRooms();
       }
 
-      const response = await fetch(`${this.baseUrl}/api/rooms`);
+      const response = await fetch(`${this.baseUrl}/rooms`);
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -68,7 +68,7 @@ class RoomService {
         return this.mockGetRoomsByGroup(groupId);
       }
 
-      const response = await fetch(`${this.baseUrl}/api/rooms?groupId=${groupId}`);
+      const response = await fetch(`${this.baseUrl}/rooms?groupId=${groupId}`);
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);

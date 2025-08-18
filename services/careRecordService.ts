@@ -20,7 +20,7 @@ class CareRecordService {
         return this.mockCreateCareRecord(data);
       }
 
-      const response = await fetch(`${this.baseUrl}/api/v1/care-records`, {
+      const response = await fetch(`${this.baseUrl}/v1/care-records`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -50,7 +50,7 @@ class CareRecordService {
         return this.mockUpdateCareRecord(recordId, data);
       }
 
-      const response = await fetch(`${this.baseUrl}/api/v1/care-records/${recordId}`, {
+      const response = await fetch(`${this.baseUrl}/v1/care-records/${recordId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -80,7 +80,7 @@ class CareRecordService {
         return this.mockDeleteCareRecord(recordId);
       }
 
-      const response = await fetch(`${this.baseUrl}/api/v1/care-records/${recordId}`, {
+      const response = await fetch(`${this.baseUrl}/v1/care-records/${recordId}`, {
         method: 'DELETE',
       });
 
@@ -103,7 +103,7 @@ class CareRecordService {
         return this.mockGetCareRecord(recordId);
       }
 
-      const response = await fetch(`${this.baseUrl}/api/v1/care-records/${recordId}`);
+      const response = await fetch(`${this.baseUrl}/v1/care-records/${recordId}`);
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);

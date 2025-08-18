@@ -58,20 +58,20 @@ URL: https://carebase-staff.vercel.app/care-records/new
 
 ### アクション
 
-| 項目名           | 処理内容                         | 対象API                              | 遷移先画面                                |
-| ---------------- | -------------------------------- | ------------------------------------ | ----------------------------------------- |
-| 戻るボタン       | 介護記録一覧画面に戻る           | -                                    | 介護記録一覧画面 (`/care-records`)        |
-| フォーム入力     | リアルタイムバリデーション実行   | -                                    | 同一画面（エラー表示更新）                |
-| 分類編集         | 記録種別設定画面に遷移           | -                                    | 記録種別設定画面 (`/settings/categories`) |
-| お知らせ職員選択 | 職員一覧から通知対象を選択       | `GET /api/v1/staff`                  | 同一画面（選択状態更新）                  |
-| テンプレート選択 | 既存テンプレートを記録内容に適用 | `GET /api/v1/care-record-templates`  | 同一画面（内容更新）                      |
-| テンプレート作成 | 新規テンプレート作成             | `POST /api/v1/care-record-templates` | テンプレート作成画面                      |
-| 画像添付         | 画像ファイルのアップロード       | `POST /api/v1/attachments/images`    | 同一画面（添付ファイル追加）              |
-| 動画添付         | 動画ファイルのアップロード       | `POST /api/v1/attachments/videos`    | 同一画面（添付ファイル追加）              |
-| 添付ファイル削除 | アップロード済みファイルの削除   | `DELETE /api/v1/attachments/{id}`    | 同一画面（添付ファイル削除）              |
-| 下書き保存       | 入力内容を下書きとして保存       | `POST /api/v1/care-records/draft`    | 同一画面（成功メッセージ表示）            |
-| 記録作成         | 介護記録を確定して作成           | `POST /api/v1/care-records`          | 記録詳細画面 (`/care-records/{id}`)       |
-| キャンセルボタン | 入力内容を破棄して一覧に戻る     | -                                    | 介護記録一覧画面 (`/care-records`)        |
+| 項目名           | 処理内容                         | 対象API                          | 遷移先画面                                |
+| ---------------- | -------------------------------- | -------------------------------- | ----------------------------------------- |
+| 戻るボタン       | 介護記録一覧画面に戻る           | -                                | 介護記録一覧画面 (`/care-records`)        |
+| フォーム入力     | リアルタイムバリデーション実行   | -                                | 同一画面（エラー表示更新）                |
+| 分類編集         | 記録種別設定画面に遷移           | -                                | 記録種別設定画面 (`/settings/categories`) |
+| お知らせ職員選択 | 職員一覧から通知対象を選択       | `GET /v1/staff`                  | 同一画面（選択状態更新）                  |
+| テンプレート選択 | 既存テンプレートを記録内容に適用 | `GET /v1/care-record-templates`  | 同一画面（内容更新）                      |
+| テンプレート作成 | 新規テンプレート作成             | `POST /v1/care-record-templates` | テンプレート作成画面                      |
+| 画像添付         | 画像ファイルのアップロード       | `POST /v1/attachments/images`    | 同一画面（添付ファイル追加）              |
+| 動画添付         | 動画ファイルのアップロード       | `POST /v1/attachments/videos`    | 同一画面（添付ファイル追加）              |
+| 添付ファイル削除 | アップロード済みファイルの削除   | `DELETE /v1/attachments/{id}`    | 同一画面（添付ファイル削除）              |
+| 下書き保存       | 入力内容を下書きとして保存       | `POST /v1/care-records/draft`    | 同一画面（成功メッセージ表示）            |
+| 記録作成         | 介護記録を確定して作成           | `POST /v1/care-records`          | 記録詳細画面 (`/care-records/{id}`)       |
+| キャンセルボタン | 入力内容を破棄して一覧に戻る     | -                                | 介護記録一覧画面 (`/care-records`)        |
 
 ### 入力チェック
 
@@ -286,20 +286,20 @@ interface CareRecordTemplate {
 
 ### API仕様
 
-| メソッド | エンドポイント                       | 説明                 |
-| -------- | ------------------------------------ | -------------------- |
-| POST     | `/api/v1/care-records`               | 介護記録新規作成     |
-| POST     | `/api/v1/care-records/draft`         | 下書き保存           |
-| PUT      | `/api/v1/care-records/{id}`          | 介護記録更新         |
-| GET      | `/api/v1/care-records/drafts`        | 下書き一覧取得       |
-| GET      | `/api/v1/care-record-templates`      | テンプレート一覧取得 |
-| POST     | `/api/v1/care-record-templates`      | テンプレート新規作成 |
-| PUT      | `/api/v1/care-record-templates/{id}` | テンプレート更新     |
-| DELETE   | `/api/v1/care-record-templates/{id}` | テンプレート削除     |
-| POST     | `/api/v1/attachments/images`         | 画像アップロード     |
-| POST     | `/api/v1/attachments/videos`         | 動画アップロード     |
-| DELETE   | `/api/v1/attachments/{id}`           | 添付ファイル削除     |
-| GET      | `/api/v1/staff`                      | 職員一覧取得         |
+| メソッド | エンドポイント                   | 説明                 |
+| -------- | -------------------------------- | -------------------- |
+| POST     | `/v1/care-records`               | 介護記録新規作成     |
+| POST     | `/v1/care-records/draft`         | 下書き保存           |
+| PUT      | `/v1/care-records/{id}`          | 介護記録更新         |
+| GET      | `/v1/care-records/drafts`        | 下書き一覧取得       |
+| GET      | `/v1/care-record-templates`      | テンプレート一覧取得 |
+| POST     | `/v1/care-record-templates`      | テンプレート新規作成 |
+| PUT      | `/v1/care-record-templates/{id}` | テンプレート更新     |
+| DELETE   | `/v1/care-record-templates/{id}` | テンプレート削除     |
+| POST     | `/v1/attachments/images`         | 画像アップロード     |
+| POST     | `/v1/attachments/videos`         | 動画アップロード     |
+| DELETE   | `/v1/attachments/{id}`           | 添付ファイル削除     |
+| GET      | `/v1/staff`                      | 職員一覧取得         |
 
 ### 状態管理
 

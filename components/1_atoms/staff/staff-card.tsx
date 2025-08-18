@@ -25,15 +25,13 @@ export const StaffCard: React.FC<StaffCardProps> = ({
 }) => {
   const getRoleBadgeColor = (role: string) => {
     switch (role) {
-      case '施設長':
+      case 'admin':
         return isSelected ? 'bg-purple-200 text-purple-900' : 'bg-purple-100 text-purple-700';
-      case '主任介護職員':
-        return isSelected ? 'bg-blue-200 text-blue-900' : 'bg-blue-100 text-blue-700';
-      case '看護師':
+      case 'nurse':
         return isSelected ? 'bg-green-200 text-green-900' : 'bg-green-100 text-green-700';
-      case '介護職員':
+      case 'staff':
         return isSelected ? 'bg-orange-200 text-orange-900' : 'bg-orange-100 text-orange-700';
-      case '事務職員':
+      case 'viewer':
         return isSelected ? 'bg-gray-200 text-gray-900' : 'bg-gray-100 text-gray-700';
       default:
         return isSelected ? 'bg-gray-200 text-gray-900' : 'bg-gray-100 text-gray-700';

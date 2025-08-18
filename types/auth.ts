@@ -97,9 +97,7 @@ export interface AuthError {
 // API endpoints (matching CareBase-api structure)
 export const AUTH_ENDPOINTS = {
   FACILITY_LOGIN: '/v1/auth/facility/login',
-  STAFF_LOGIN: '/api/v1/auth/staff/login',
-  STAFF_SELECTION: '/api/v1/auth/staff/select',
-  LOGOUT: '/api/v1/auth/logout',
+  STAFF_SELECTION: '/v1/auth/staff/select',
 } as const;
 
 // Validation error type

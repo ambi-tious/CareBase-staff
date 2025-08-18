@@ -23,7 +23,7 @@ class MedicationService {
         return this.mockCreateMedication(residentId, medicationData);
       }
 
-      const response = await fetch(`${this.baseUrl}/api/residents/${residentId}/medications`, {
+      const response = await fetch(`${this.baseUrl}/residents/${residentId}/medications`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -58,7 +58,7 @@ class MedicationService {
       }
 
       const response = await fetch(
-        `${this.baseUrl}/api/residents/${residentId}/medications/${medicationId}`,
+        `${this.baseUrl}/residents/${residentId}/medications/${medicationId}`,
         {
           method: 'PUT',
           headers: {
@@ -91,7 +91,7 @@ class MedicationService {
       }
 
       const response = await fetch(
-        `${this.baseUrl}/api/residents/${residentId}/medications/${medicationId}`,
+        `${this.baseUrl}/residents/${residentId}/medications/${medicationId}`,
         {
           method: 'DELETE',
         }

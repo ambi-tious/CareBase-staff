@@ -8,6 +8,7 @@ export interface Staff {
   employeeId: string;
   avatar?: string;
   isActive: boolean;
+  team?: Team;
 }
 
 export interface Team {
@@ -16,6 +17,7 @@ export interface Team {
   description: string;
   icon: IconName;
   staff: Staff[];
+  group?: Group;
 }
 
 export interface Group {
@@ -205,15 +207,6 @@ export const getGroupById = (groupId: string): Group | undefined => {
 export const getTeamById = (groupId: string, teamId: string): Team | undefined => {
   const group = getGroupById(groupId);
   return group?.teams.find((team) => team.id === teamId);
-};
-
-export const getStaffById = (
-  groupId: string,
-  teamId: string,
-  staffId: string
-): Staff | undefined => {
-  const team = getTeamById(groupId, teamId);
-  return team?.staff.find((staff) => staff.id === staffId);
 };
 
 export const getAllStaff = (): Staff[] => {

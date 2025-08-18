@@ -3,7 +3,6 @@
 import { StaffSelectionScreen } from '@/components/3_organisms/auth/staff-selection-screen';
 import { useAuth } from '@/hooks/useAuth';
 import type { Staff } from '@/mocks/staff-data';
-import { getGroupNameByStaff, getTeamNameByStaff } from '@/utils/staff-utils';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Suspense, useEffect, useRef, useState } from 'react';
 
@@ -16,7 +15,7 @@ interface SelectedStaffData {
 function StaffSelectionContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { getStoredToken, getStoredFacility, selectStaff, logout } = useAuth();
+  const { getStoredToken, getStoredFacility, logout } = useAuth();
   const fromHeader = searchParams.get('from') === 'header';
   const fromStaffClick = searchParams.get('staff') === 'true';
   const autoSelectStaff = searchParams.get('autoSelectStaff') !== 'false';
@@ -70,22 +69,16 @@ function StaffSelectionContent() {
 
     try {
       // Call API to select staff
-      const response = await selectStaff(token, staff.id);
+      localStorage.setItem('selected_staff', JSON.stringify(staff));
 
-      if (response.success) {
-        // Store selected staff in localStorage for header display
-        const selectedStaffData = {
-          staff,
-          groupName: getGroupNameByStaff(staff),
-          teamName: getTeamNameByStaff(staff),
-        };
+      const selectedStaffData = {
+        staff,
+        groupName: staff.team?.group?.name,
+        teamName: staff.team?.name,
+      };
 
-        localStorage.setItem('carebase_selected_staff_data', JSON.stringify(selectedStaffData));
-        router.push('/');
-      } else {
-        console.error('Staff selection failed:', response.error);
-        // Handle error - could show a toast or error message
-      }
+      localStorage.setItem('carebase_selected_staff_data', JSON.stringify(selectedStaffData));
+      router.push('/');
     } catch (error) {
       console.error('Error selecting staff:', error);
       // Handle error - could show a toast or error message
@@ -96,7 +89,7 @@ function StaffSelectionContent() {
     const token = getStoredToken();
     if (token) {
       try {
-        await logout(token);
+        await logout();
       } catch (error) {
         console.error('Error during logout:', error);
       }

@@ -20,7 +20,7 @@ class ContactService {
         return this.mockCreateContact(residentId, contactData);
       }
 
-      const response = await fetch(`${this.baseUrl}/api/residents/${residentId}/contacts`, {
+      const response = await fetch(`${this.baseUrl}/residents/${residentId}/contacts`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -88,7 +88,7 @@ class ContactService {
       }
 
       const response = await fetch(
-        `${this.baseUrl}/api/residents/${residentId}/contacts/${contactId}`,
+        `${this.baseUrl}/residents/${residentId}/contacts/${contactId}`,
         {
           method: 'PUT',
           headers: {
@@ -155,7 +155,7 @@ class ContactService {
       }
 
       const response = await fetch(
-        `${this.baseUrl}/api/residents/${residentId}/contacts/${contactId}`,
+        `${this.baseUrl}/residents/${residentId}/contacts/${contactId}`,
         {
           method: 'DELETE',
         }

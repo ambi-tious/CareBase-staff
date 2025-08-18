@@ -17,7 +17,6 @@ interface AuthContextType {
   error: string | null;
   login: ReturnType<typeof useAuth>['login'];
   logout: ReturnType<typeof useAuth>['logout'];
-  selectStaff: ReturnType<typeof useAuth>['selectStaff'];
   clearError: ReturnType<typeof useAuth>['clearError'];
 }
 
@@ -36,17 +35,8 @@ interface AuthProviderProps {
 }
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
-  const {
-    isAuthenticated,
-    facility,
-    selectedStaff,
-    isLoading,
-    error,
-    login,
-    logout,
-    selectStaff,
-    clearError,
-  } = useAuth();
+  const { isAuthenticated, facility, selectedStaff, isLoading, error, login, logout, clearError } =
+    useAuth();
 
   const contextValue: AuthContextType = {
     isAuthenticated,
@@ -56,7 +46,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     error,
     login,
     logout,
-    selectStaff,
     clearError,
   };
 

@@ -24,7 +24,7 @@ class MedicationStatusService {
       }
 
       const response = await fetch(
-        `${this.baseUrl}/api/residents/${residentId}/medication-status`,
+        `${this.baseUrl}/residents/${residentId}/medication-status`,
         {
           method: 'POST',
           headers: {
@@ -61,7 +61,7 @@ class MedicationStatusService {
       }
 
       const response = await fetch(
-        `${this.baseUrl}/api/residents/${residentId}/medication-status/${statusId}`,
+        `${this.baseUrl}/residents/${residentId}/medication-status/${statusId}`,
         {
           method: 'PUT',
           headers: {
@@ -94,7 +94,7 @@ class MedicationStatusService {
       }
 
       const response = await fetch(
-        `${this.baseUrl}/api/residents/${residentId}/medication-status/${statusId}`,
+        `${this.baseUrl}/residents/${residentId}/medication-status/${statusId}`,
         {
           method: 'DELETE',
         }

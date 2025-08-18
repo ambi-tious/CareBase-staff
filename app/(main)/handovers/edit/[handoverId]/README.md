@@ -63,20 +63,20 @@ URL: https://carebase-staff.vercel.app/handovers/edit/[handoverId]
 
 ### アクション
 
-| 項目名           | 処理内容                         | 対象API                                        | 遷移先画面                           |
-| ---------------- | -------------------------------- | ---------------------------------------------- | ------------------------------------ |
-| 戻るボタン       | 申し送り詳細画面に戻る           | -                                              | 申し送り詳細画面 (`/handovers/{id}`) |
-| フォーム入力     | リアルタイムバリデーション実行   | -                                              | 同一画面（エラー表示更新）           |
-| テンプレート選択 | テンプレート一覧から選択         | `GET /api/v1/handover-templates`               | 同一画面（テンプレート表示）         |
-| テンプレート挿入 | 選択テンプレートを内容に挿入     | -                                              | 同一画面（内容更新）                 |
-| ファイル追加     | 画像・動画ファイルのアップロード | `POST /api/v1/handovers/{id}/files`            | 同一画面（添付ファイル一覧更新）     |
-| ファイル削除     | 添付ファイルの削除               | `DELETE /api/v1/handovers/{id}/files/{fileId}` | 同一画面（添付ファイル一覧更新）     |
-| コメント送信     | コメントを追加                   | `POST /api/v1/handovers/{id}/comments`         | 同一画面（コメント一覧更新）         |
-| 下書き保存       | 入力内容を下書きとして保存       | `PUT /api/v1/handovers/{id}/draft`             | 同一画面（成功メッセージ表示）       |
-| 更新ボタン       | 申し送りを確定して更新           | `PUT /api/v1/handovers/{id}`                   | 申し送り詳細画面 (`/handovers/{id}`) |
-| 削除ボタン       | 削除確認モーダルを表示           | -                                              | 同一画面（モーダル表示）             |
-| 削除確認         | 申し送りを削除                   | `DELETE /api/v1/handovers/{id}`                | 申し送り一覧画面 (`/handovers`)      |
-| キャンセルボタン | 入力内容を破棄して詳細に戻る     | -                                              | 申し送り詳細画面 (`/handovers/{id}`) |
+| 項目名           | 処理内容                         | 対象API                                    | 遷移先画面                           |
+| ---------------- | -------------------------------- | ------------------------------------------ | ------------------------------------ |
+| 戻るボタン       | 申し送り詳細画面に戻る           | -                                          | 申し送り詳細画面 (`/handovers/{id}`) |
+| フォーム入力     | リアルタイムバリデーション実行   | -                                          | 同一画面（エラー表示更新）           |
+| テンプレート選択 | テンプレート一覧から選択         | `GET /v1/handover-templates`               | 同一画面（テンプレート表示）         |
+| テンプレート挿入 | 選択テンプレートを内容に挿入     | -                                          | 同一画面（内容更新）                 |
+| ファイル追加     | 画像・動画ファイルのアップロード | `POST /v1/handovers/{id}/files`            | 同一画面（添付ファイル一覧更新）     |
+| ファイル削除     | 添付ファイルの削除               | `DELETE /v1/handovers/{id}/files/{fileId}` | 同一画面（添付ファイル一覧更新）     |
+| コメント送信     | コメントを追加                   | `POST /v1/handovers/{id}/comments`         | 同一画面（コメント一覧更新）         |
+| 下書き保存       | 入力内容を下書きとして保存       | `PUT /v1/handovers/{id}/draft`             | 同一画面（成功メッセージ表示）       |
+| 更新ボタン       | 申し送りを確定して更新           | `PUT /v1/handovers/{id}`                   | 申し送り詳細画面 (`/handovers/{id}`) |
+| 削除ボタン       | 削除確認モーダルを表示           | -                                          | 同一画面（モーダル表示）             |
+| 削除確認         | 申し送りを削除                   | `DELETE /v1/handovers/{id}`                | 申し送り一覧画面 (`/handovers`)      |
+| キャンセルボタン | 入力内容を破棄して詳細に戻る     | -                                          | 申し送り詳細画面 (`/handovers/{id}`) |
 
 ### 入力チェック
 
@@ -344,19 +344,19 @@ interface HandoverComment {
 
 ### API仕様
 
-| メソッド | エンドポイント                                | 説明                 |
-| -------- | --------------------------------------------- | -------------------- |
-| GET      | `/api/v1/handovers/{id}`                      | 申し送り詳細取得     |
-| PUT      | `/api/v1/handovers/{id}`                      | 申し送り更新         |
-| DELETE   | `/api/v1/handovers/{id}`                      | 申し送り削除         |
-| PUT      | `/api/v1/handovers/{id}/draft`                | 下書き保存           |
-| GET      | `/api/v1/handover-templates`                  | テンプレート一覧取得 |
-| POST     | `/api/v1/handovers/{id}/files`                | ファイルアップロード |
-| DELETE   | `/api/v1/handovers/{id}/files/{fileId}`       | 添付ファイル削除     |
-| GET      | `/api/v1/handovers/{id}/comments`             | コメント一覧取得     |
-| POST     | `/api/v1/handovers/{id}/comments`             | コメント投稿         |
-| PUT      | `/api/v1/handovers/{id}/comments/{commentId}` | コメント更新         |
-| DELETE   | `/api/v1/handovers/{id}/comments/{commentId}` | コメント削除         |
+| メソッド | エンドポイント                            | 説明                 |
+| -------- | ----------------------------------------- | -------------------- |
+| GET      | `/v1/handovers/{id}`                      | 申し送り詳細取得     |
+| PUT      | `/v1/handovers/{id}`                      | 申し送り更新         |
+| DELETE   | `/v1/handovers/{id}`                      | 申し送り削除         |
+| PUT      | `/v1/handovers/{id}/draft`                | 下書き保存           |
+| GET      | `/v1/handover-templates`                  | テンプレート一覧取得 |
+| POST     | `/v1/handovers/{id}/files`                | ファイルアップロード |
+| DELETE   | `/v1/handovers/{id}/files/{fileId}`       | 添付ファイル削除     |
+| GET      | `/v1/handovers/{id}/comments`             | コメント一覧取得     |
+| POST     | `/v1/handovers/{id}/comments`             | コメント投稿         |
+| PUT      | `/v1/handovers/{id}/comments/{commentId}` | コメント更新         |
+| DELETE   | `/v1/handovers/{id}/comments/{commentId}` | コメント削除         |
 
 ### 状態管理
 

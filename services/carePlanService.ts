@@ -20,7 +20,7 @@ class CarePlanService {
         return this.mockCreateCarePlan(residentId, data);
       }
 
-      const response = await fetch(`${this.baseUrl}/api/v1/residents/${residentId}/care-plans`, {
+      const response = await fetch(`${this.baseUrl}/v1/residents/${residentId}/care-plans`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -55,7 +55,7 @@ class CarePlanService {
       }
 
       const response = await fetch(
-        `${this.baseUrl}/api/v1/residents/${residentId}/care-plans/${planId}`,
+        `${this.baseUrl}/v1/residents/${residentId}/care-plans/${planId}`,
         {
           method: 'PUT',
           headers: {
@@ -88,7 +88,7 @@ class CarePlanService {
       }
 
       const response = await fetch(
-        `${this.baseUrl}/api/v1/residents/${residentId}/care-plans/${planId}`
+        `${this.baseUrl}/v1/residents/${residentId}/care-plans/${planId}`
       );
 
       if (!response.ok) {
@@ -114,7 +114,7 @@ class CarePlanService {
       }
 
       const response = await fetch(
-        `${this.baseUrl}/api/v1/residents/${residentId}/care-plans/${planId}`,
+        `${this.baseUrl}/v1/residents/${residentId}/care-plans/${planId}`,
         {
           method: 'DELETE',
         }

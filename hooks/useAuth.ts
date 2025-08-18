@@ -5,7 +5,7 @@
  */
 
 import { authService } from '@/services/auth-service';
-import type { AuthResponse, LoginCredentials, StaffSelectionResponse } from '@/types/auth';
+import type { AuthResponse, LoginCredentials } from '@/types/auth';
 import { useCallback, useEffect, useState } from 'react';
 
 interface AuthState {
@@ -125,50 +125,6 @@ export const useAuth = () => {
     [setLoading, setError]
   );
 
-  const selectStaff = useCallback(
-    async (token: string, staffId: string): Promise<StaffSelectionResponse> => {
-      setLoading(true);
-      setError(null);
-
-      try {
-        const response = await authService.selectStaff(token, staffId);
-
-        if (response.success && response.staff) {
-          // Store selected staff
-          if (typeof window !== 'undefined') {
-            localStorage.setItem('selected_staff', JSON.stringify(response.staff));
-          }
-
-          // Update state
-          setState((prev) => ({
-            ...prev,
-            selectedStaff: response.staff,
-            error: null,
-          }));
-
-          return response;
-        } else {
-          const errorMessage = response.error || 'スタッフ選択に失敗しました';
-          setError(errorMessage);
-          return {
-            success: false,
-            error: errorMessage,
-          };
-        }
-      } catch (err) {
-        const errorMessage = err instanceof Error ? err.message : 'スタッフ選択に失敗しました';
-        setError(errorMessage);
-        return {
-          success: false,
-          error: errorMessage,
-        };
-      } finally {
-        setLoading(false);
-      }
-    },
-    [setLoading, setError]
-  );
-
   const logout = useCallback(() => {
     // Clear localStorage
     if (typeof window !== 'undefined') {
@@ -217,7 +173,6 @@ export const useAuth = () => {
 
     // Actions
     login,
-    selectStaff,
     logout,
     clearError,
 
