@@ -1,16 +1,16 @@
 'use client';
 
-import type React from 'react';
+import { HomeCareOfficeForm } from '@/components/2_molecules/forms/home-care-office-form';
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogDescription,
 } from '@/components/ui/dialog';
-import { HomeCareOfficeForm } from '@/components/2_molecules/forms/home-care-office-form';
-import type { HomeCareOfficeFormData } from '@/types/resident-data';
 import type { HomeCareOffice } from '@/mocks/care-board-data';
+import type { HomeCareOfficeFormData } from '@/validations/resident-data-validation';
+import type React from 'react';
 
 interface HomeCareOfficeModalProps {
   isOpen: boolean;

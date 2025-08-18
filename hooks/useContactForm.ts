@@ -5,8 +5,8 @@
  * Now using the generic form hook for consistency
  */
 
-import type { ContactFormData } from '@/types/contact';
-import { contactFormSchema } from '@/types/contact';
+import type { ContactFormData } from '@/validations/contact-validation';
+import { contactFormSchema } from '@/validations/contact-validation';
 import { useGenericForm } from './useGenericForm';
 
 interface UseContactFormOptions {

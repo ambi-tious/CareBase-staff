@@ -5,8 +5,8 @@ import { FormSelect } from '@/components/1_atoms/forms/form-select';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { useContactForm } from '@/hooks/useContactForm';
-import type { ContactFormData } from '@/types/contact';
 import { contactTypeOptions, relationshipOptions } from '@/types/contact';
+import type { ContactFormData } from '@/validations/contact-validation';
 import { AlertCircle, RefreshCw } from 'lucide-react';
 import type React from 'react';
 
@@ -101,10 +101,9 @@ export const ContactForm: React.FC<ContactFormProps> = ({
           <FormSelect
             label="続柄"
             id="relationship"
-            value={formData.relationship}
+            value={formData.relationship || ''}
             onChange={(value) => updateField('relationship', value)}
             options={Array.from(relationshipOptions)}
-            required
             error={fieldErrors.relationship}
             disabled={isSubmitting}
           />
@@ -118,10 +117,9 @@ export const ContactForm: React.FC<ContactFormProps> = ({
             label="電話番号1"
             id="phone1"
             type="tel"
-            value={formData.phone1}
+            value={formData.phone1 || ''}
             onChange={(value) => updateField('phone1', value)}
             placeholder="078-000-0000"
-            required
             error={fieldErrors.phone1}
             disabled={isSubmitting}
           />

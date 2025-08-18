@@ -8,7 +8,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import type { MedicationStatus, MedicationStatusFormData } from '@/types/medication-status';
+import type { MedicationStatus } from '@/types/medication-status';
+import type { MedicationStatusFormData } from '@/validations/medication-status-validation';
 import type React from 'react';
 
 interface MedicationStatusModalProps {

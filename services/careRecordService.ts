@@ -1,10 +1,11 @@
 /**
  * Care Record Service
  *
- * Service layer for care record API calls
+ * API service for care record operations
  */
 
-import type { CareRecord, CareRecordFormData } from '@/types/care-record';
+import type { CareRecord } from '@/types/care-record';
+import type { CareRecordFormData } from '@/validations/care-record-validation';
 
 class CareRecordService {
   private baseUrl = process.env.NEXT_PUBLIC_API_URL || '';
@@ -15,7 +16,7 @@ class CareRecordService {
   async createCareRecord(data: CareRecordFormData): Promise<CareRecord> {
     try {
       // For development, use mock creation
-      if (process.env.NODE_ENV === 'development') {
+      if (process.env.NODE_ENV) {
         return this.mockCreateCareRecord(data);
       }
 
@@ -45,7 +46,7 @@ class CareRecordService {
   async updateCareRecord(recordId: string, data: CareRecordFormData): Promise<CareRecord> {
     try {
       // For development, use mock update
-      if (process.env.NODE_ENV === 'development') {
+      if (process.env.NODE_ENV) {
         return this.mockUpdateCareRecord(recordId, data);
       }
 
@@ -75,7 +76,7 @@ class CareRecordService {
   async deleteCareRecord(recordId: string): Promise<void> {
     try {
       // For development, use mock deletion
-      if (process.env.NODE_ENV === 'development') {
+      if (process.env.NODE_ENV) {
         return this.mockDeleteCareRecord(recordId);
       }
 
@@ -98,7 +99,7 @@ class CareRecordService {
   async getCareRecord(recordId: string): Promise<CareRecord> {
     try {
       // For development, use mock data
-      if (process.env.NODE_ENV === 'development') {
+      if (process.env.NODE_ENV) {
         return this.mockGetCareRecord(recordId);
       }
 
@@ -163,7 +164,7 @@ class CareRecordService {
       status: data.status,
     };
 
-    console.log('Mock created care record:', newRecord);
+    // console.log('Mock created care record:', newRecord);
     return newRecord;
   }
 
@@ -217,7 +218,7 @@ class CareRecordService {
       status: data.status,
     };
 
-    console.log('Mock updated care record:', updatedRecord);
+    // console.log('Mock updated care record:', updatedRecord);
     return updatedRecord;
   }
 
@@ -233,7 +234,7 @@ class CareRecordService {
       throw new Error('ネットワークエラーが発生しました。');
     }
 
-    console.log('Mock deleted care record:', recordId);
+    // console.log('Mock deleted care record:', recordId);
   }
 
   /**

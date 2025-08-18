@@ -1,7 +1,8 @@
 'use client';
 
 import { MedicationForm } from '@/components/2_molecules/forms/medication-form';
-import type { Medication, MedicationFormData } from '@/types/medication';
+import type { Medication } from '@/types/medication';
+import type { MedicationFormData } from '@/validations/medication-validation';
 import type React from 'react';
 import { GenericFormModal } from './generic-form-modal';
 

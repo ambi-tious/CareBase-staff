@@ -4,30 +4,12 @@
  * Types for contact/family information management
  */
 
-import { z } from 'zod';
-
-// Contact form data schema
-export const contactFormSchema = z.object({
-  name: z.string().min(1, '氏名は必須です').max(50, '氏名は50文字以内で入力してください'),
-  furigana: z.string().optional(),
-  relationship: z.string().min(1, '続柄は必須です').max(30, '続柄は30文字以内で入力してください'),
-  phone1: z
-    .string()
-    .min(1, '連絡先は必須です')
-    .regex(/^[0-9\-\+\(\)\s]+$/, '有効な電話番号を入力してください'),
-  phone2: z.string().optional(),
-  email: z.string().email('有効なメールアドレスを入力してください').optional().or(z.literal('')),
-  address: z.string().optional(),
-  notes: z.string().optional(),
-  type: z.enum(['緊急連絡先', '連絡先', 'その他']),
-});
-
-export type ContactFormData = z.infer<typeof contactFormSchema>;
+import type { ContactFormData } from '@/validations/contact-validation';
 
 // API response types
 export interface ContactCreateResponse {
   success: boolean;
-  contact?: ContactFormData & { id: string };
+  contact?: { id: string } & ContactFormData;
   error?: string;
 }
 
@@ -35,7 +17,7 @@ export interface ContactCreateResponse {
 export interface ContactFormState {
   isSubmitting: boolean;
   error: string | null;
-  fieldErrors: Partial<Record<keyof ContactFormData, string>>;
+  fieldErrors: Partial<Record<string, string>>;
 }
 
 // Contact type options

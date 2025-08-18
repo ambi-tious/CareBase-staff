@@ -1,15 +1,15 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Alert, AlertDescription } from '@/components/ui/alert';
 import { CareRecordForm } from '@/components/2_molecules/care-record/care-record-form';
-import type { CareRecordFormData } from '@/types/care-record';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { careRecordService } from '@/services/careRecordService';
-import { ArrowLeft, FileText, CheckCircle } from 'lucide-react';
+import type { CareRecordFormData } from '@/validations/care-record-validation';
+import { ArrowLeft, CheckCircle, FileText } from 'lucide-react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 
 export default function NewCareRecordPage() {
   const router = useRouter();

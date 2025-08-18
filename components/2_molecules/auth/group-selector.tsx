@@ -9,21 +9,22 @@ import type React from 'react';
 interface GroupSelectorProps {
   groups: Group[];
   selectedGroupId?: string;
+  currentGroupId?: string; // 現在所属しているグループID
   onGroupSelect: (groupId: string) => void;
+  disabled?: boolean;
   className?: string;
 }
 
 export const GroupSelector: React.FC<GroupSelectorProps> = ({
   groups,
   selectedGroupId,
+  currentGroupId,
   onGroupSelect,
+  disabled = false,
   className = '',
 }) => {
   const handleGroupClick = (groupId: string) => {
-    if (selectedGroupId === groupId) {
-      // Allow deselection by clicking the same group
-      onGroupSelect('');
-    } else {
+    if (!disabled) {
       onGroupSelect(groupId);
     }
   };
@@ -31,20 +32,23 @@ export const GroupSelector: React.FC<GroupSelectorProps> = ({
   return (
     <div className={`space-y-3 ${className}`}>
       <h3 className="text-lg font-semibold text-carebase-text-primary mb-3">
-        グループを選択してください
+        ① グループ［フロア］を選択
       </h3>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+      <div className="grid md:grid-cols-3 lg:grid-cols-4 gap-2">
         {groups.map((group) => {
           const Icon = getLucideIcon(group.icon);
           const isSelected = selectedGroupId === group.id;
+          const isCurrent = currentGroupId === group.id;
           return (
             <Card
               key={group.id}
               className={cn(
-                'cursor-pointer hover:shadow-md',
+                disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer hover:shadow-md',
                 isSelected
                   ? 'ring-2 ring-carebase-blue bg-carebase-blue text-white shadow-lg'
-                  : 'hover:ring-1 hover:ring-carebase-blue-light'
+                  : isCurrent
+                    ? 'ring-2 ring-green-500 bg-green-50 border-green-200'
+                    : !disabled && 'hover:ring-1 hover:ring-carebase-blue-light'
               )}
               onClick={() => handleGroupClick(group.id)}
             >
@@ -54,7 +58,11 @@ export const GroupSelector: React.FC<GroupSelectorProps> = ({
                     <Icon
                       className={cn(
                         'w-6 h-6 transition-colors',
-                        isSelected ? 'text-white' : 'text-carebase-blue'
+                        isSelected
+                          ? 'text-white'
+                          : isCurrent
+                            ? 'text-green-600'
+                            : 'text-carebase-blue'
                       )}
                     />
                   </div>
@@ -62,7 +70,11 @@ export const GroupSelector: React.FC<GroupSelectorProps> = ({
                     <h4
                       className={cn(
                         'font-semibold transition-colors',
-                        isSelected ? 'text-white' : 'text-carebase-text-primary'
+                        isSelected
+                          ? 'text-white'
+                          : isCurrent
+                            ? 'text-green-800'
+                            : 'text-carebase-text-primary'
                       )}
                     >
                       {group.name}
@@ -70,7 +82,11 @@ export const GroupSelector: React.FC<GroupSelectorProps> = ({
                     <p
                       className={cn(
                         'text-sm transition-colors',
-                        isSelected ? 'text-blue-100' : 'text-gray-500'
+                        isSelected
+                          ? 'text-blue-100'
+                          : isCurrent
+                            ? 'text-green-600'
+                            : 'text-gray-500'
                       )}
                     >
                       {group.description}
@@ -78,11 +94,22 @@ export const GroupSelector: React.FC<GroupSelectorProps> = ({
                     <p
                       className={cn(
                         'text-xs mt-1 transition-colors',
-                        isSelected ? 'text-blue-200' : 'text-gray-400'
+                        isSelected
+                          ? 'text-blue-200'
+                          : isCurrent
+                            ? 'text-green-500'
+                            : 'text-gray-400'
                       )}
                     >
                       {group.teams.length} チーム
                     </p>
+                    {isCurrent && (
+                      <div className="mt-2">
+                        <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full border border-green-300">
+                          選択中
+                        </span>
+                      </div>
+                    )}
                   </div>
                 </div>
               </CardContent>

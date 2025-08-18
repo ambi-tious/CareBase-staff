@@ -1,6 +1,8 @@
 'use client';
 
-import type React from 'react';
+import { Button } from '@/components/ui/button';
+import { DatePicker } from '@/components/ui/date-picker';
+import { Label } from '@/components/ui/label';
 import {
   Select,
   SelectContent,
@@ -8,12 +10,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import type { CareRecordCategory, CareRecordPriority, CareRecordStatus } from '@/types/care-record';
 import { categoryOptions, priorityOptions, statusOptions } from '@/types/care-record';
-import { Filter, RotateCcw, Calendar } from 'lucide-react';
+import { Filter, RotateCcw } from 'lucide-react';
+import type React from 'react';
 
 interface CareRecordFiltersProps {
   selectedCategory?: CareRecordCategory;
@@ -124,28 +124,20 @@ export const CareRecordFilters: React.FC<CareRecordFiltersProps> = ({
         {/* 日付範囲 */}
         <div className="space-y-2">
           <Label className="text-sm font-medium">開始日</Label>
-          <div className="relative">
-            <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-            <Input
-              type="date"
-              value={dateFrom || ''}
-              onChange={(e) => onDateFromChange(e.target.value || undefined)}
-              className="pl-10"
-            />
-          </div>
+          <DatePicker
+            value={dateFrom || ''}
+            onChange={(value) => onDateFromChange(value || undefined)}
+            placeholder="開始日を選択"
+          />
         </div>
 
         <div className="space-y-2">
           <Label className="text-sm font-medium">終了日</Label>
-          <div className="relative">
-            <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-            <Input
-              type="date"
-              value={dateTo || ''}
-              onChange={(e) => onDateToChange(e.target.value || undefined)}
-              className="pl-10"
-            />
-          </div>
+          <DatePicker
+            value={dateTo || ''}
+            onChange={(value) => onDateToChange(value || undefined)}
+            placeholder="終了日を選択"
+          />
         </div>
       </div>
 

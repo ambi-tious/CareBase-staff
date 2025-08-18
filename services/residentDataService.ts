@@ -17,12 +17,71 @@ import type {
   MedicalInstitutionFormData,
   MedicationInfoFormData,
   MedicationStatusFormData,
-} from '@/types/resident-data';
+} from '@/validations/resident-data-validation';
 
 class ResidentDataService {
   private baseUrl = process.env.NEXT_PUBLIC_API_URL || '';
 
   // Home Care Office Methods
+  async getHomeCareOffices(): Promise<HomeCareOffice[]> {
+    await new Promise((resolve) => setTimeout(resolve, 500));
+
+    if (Math.random() < 0.05) {
+      throw new Error('ネットワークエラーが発生しました。');
+    }
+
+    // モックデータ - 実際の実装ではAPIから取得
+    const mockOffices: HomeCareOffice[] = [
+      {
+        id: '1',
+        businessName: '渋谷ケアプランセンター',
+        address: '東京都渋谷区渋谷1-1-1',
+        phone: '03-1234-5678',
+        fax: '03-1234-5679',
+        careManager: '田中太郎',
+        notes: '渋谷エリア専門のケアプランセンター',
+      },
+      {
+        id: '2',
+        businessName: '新宿ライフケアサポート',
+        address: '東京都新宿区新宿2-2-2',
+        phone: '03-2345-6789',
+        fax: '03-2345-6790',
+        careManager: '佐藤花子',
+        notes: '新宿区在宅介護支援事業所',
+      },
+      {
+        id: '3',
+        businessName: '港区ホームケアサービス',
+        address: '東京都港区港3-3-3',
+        phone: '03-3456-7890',
+        fax: '03-3456-7891',
+        careManager: '鈴木一郎',
+        notes: '港区地域密着型ケアサービス',
+      },
+      {
+        id: '4',
+        businessName: '品川ケアライフサポート',
+        address: '東京都品川区品川4-4-4',
+        phone: '03-4567-8901',
+        fax: '03-4567-8902',
+        careManager: '高橋美咲',
+        notes: '品川区在宅介護支援センター',
+      },
+      {
+        id: '5',
+        businessName: '目黒サポートケアセンター',
+        address: '東京都目黒区目黒5-5-5',
+        phone: '03-5678-9012',
+        fax: '03-5678-9013',
+        careManager: '渡辺健太',
+        notes: '目黒区専門のケアプランセンター',
+      },
+    ];
+
+    return mockOffices;
+  }
+
   async createHomeCareOffice(
     residentId: number,
     data: HomeCareOfficeFormData
@@ -35,15 +94,15 @@ class ResidentDataService {
 
     const newOffice: HomeCareOffice = {
       id: `hco-${Date.now()}`,
-      businessName: data.businessName,
-      careManager: data.careManager,
-      phone: data.phone,
+      businessName: data.businessName || '',
+      careManager: data.careManager || '',
+      phone: data.phone || '',
       fax: data.fax || '',
-      address: data.address,
-      notes: data.notes,
+      address: data.address || '',
+      notes: data.notes || '',
     };
 
-    console.log('Mock created home care office:', newOffice);
+    // console.log('Mock created home care office:', newOffice);
     return newOffice;
   }
 
@@ -60,15 +119,15 @@ class ResidentDataService {
 
     const updatedOffice: HomeCareOffice = {
       id: officeId,
-      businessName: data.businessName,
-      careManager: data.careManager,
-      phone: data.phone,
+      businessName: data.businessName || '',
+      careManager: data.careManager || '',
+      phone: data.phone || '',
       fax: data.fax || '',
-      address: data.address,
-      notes: data.notes,
+      address: data.address || '',
+      notes: data.notes || '',
     };
 
-    console.log('Mock updated home care office:', updatedOffice);
+    // console.log('Mock updated home care office:', updatedOffice);
     return updatedOffice;
   }
 
@@ -79,7 +138,63 @@ class ResidentDataService {
       throw new Error('ネットワークエラーが発生しました。');
     }
 
-    console.log('Mock deleted home care office:', { residentId, officeId });
+    // console.log('Mock deleted home care office:', { residentId, officeId });
+  }
+
+  // マスタデータ管理用メソッド
+  async createHomeCareOfficeMaster(data: HomeCareOfficeFormData): Promise<HomeCareOffice> {
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+
+    if (Math.random() < 0.1) {
+      throw new Error('ネットワークエラーが発生しました。');
+    }
+
+    const newOffice: HomeCareOffice = {
+      id: `hco-master-${Date.now()}`,
+      businessName: data.businessName || '',
+      careManager: data.careManager || '',
+      phone: data.phone || '',
+      fax: data.fax || '',
+      address: data.address || '',
+      notes: data.notes || '',
+    };
+
+    // console.log('Mock created home care office master:', newOffice);
+    return newOffice;
+  }
+
+  async updateHomeCareOfficeMaster(
+    officeId: string,
+    data: HomeCareOfficeFormData
+  ): Promise<HomeCareOffice> {
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+
+    if (Math.random() < 0.05) {
+      throw new Error('ネットワークエラーが発生しました。');
+    }
+
+    const updatedOffice: HomeCareOffice = {
+      id: officeId,
+      businessName: data.businessName || '',
+      careManager: data.careManager || '',
+      phone: data.phone || '',
+      fax: data.fax || '',
+      address: data.address || '',
+      notes: data.notes || '',
+    };
+
+    // console.log('Mock updated home care office master:', updatedOffice);
+    return updatedOffice;
+  }
+
+  async deleteHomeCareOfficeMaster(officeId: string): Promise<void> {
+    await new Promise((resolve) => setTimeout(resolve, 800));
+
+    if (Math.random() < 0.05) {
+      throw new Error('ネットワークエラーが発生しました。');
+    }
+
+    // console.log('Mock deleted home care office master:', { officeId });
   }
 
   // Medical Institution Methods
@@ -103,7 +218,7 @@ class ResidentDataService {
       notes: data.notes,
     };
 
-    console.log('Mock created medical institution:', newInstitution);
+    // console.log('Mock created medical institution:', newInstitution);
     return newInstitution;
   }
 
@@ -128,7 +243,7 @@ class ResidentDataService {
       notes: data.notes,
     };
 
-    console.log('Mock updated medical institution:', updatedInstitution);
+    // console.log('Mock updated medical institution:', updatedInstitution);
     return updatedInstitution;
   }
 
@@ -139,7 +254,7 @@ class ResidentDataService {
       throw new Error('ネットワークエラーが発生しました。');
     }
 
-    console.log('Mock deleted medical institution:', { residentId, institutionId });
+    // console.log('Mock deleted medical institution:', { residentId, institutionId });
   }
 
   // Medical History Methods
@@ -162,7 +277,7 @@ class ResidentDataService {
       notes: data.notes,
     };
 
-    console.log('Mock created medical history:', newHistory);
+    // console.log('Mock created medical history:', newHistory);
     return newHistory;
   }
 
@@ -186,7 +301,7 @@ class ResidentDataService {
       notes: data.notes,
     };
 
-    console.log('Mock updated medical history:', updatedHistory);
+    // console.log('Mock updated medical history:', updatedHistory);
     return updatedHistory;
   }
 
@@ -197,7 +312,7 @@ class ResidentDataService {
       throw new Error('ネットワークエラーが発生しました。');
     }
 
-    console.log('Mock deleted medical history:', { residentId, historyId });
+    // console.log('Mock deleted medical history:', { residentId, historyId });
   }
 
   // Medication Info Methods
@@ -225,7 +340,7 @@ class ResidentDataService {
       updatedAt: new Date().toISOString(),
     };
 
-    console.log('Mock created medication info:', newMedication);
+    // console.log('Mock created medication info:', newMedication);
     return newMedication;
   }
 
@@ -254,7 +369,7 @@ class ResidentDataService {
       updatedAt: new Date().toISOString(),
     };
 
-    console.log('Mock updated medication info:', updatedMedication);
+    // console.log('Mock updated medication info:', updatedMedication);
     return updatedMedication;
   }
 
@@ -265,7 +380,7 @@ class ResidentDataService {
       throw new Error('ネットワークエラーが発生しました。');
     }
 
-    console.log('Mock deleted medication info:', { residentId, medicationId });
+    // console.log('Mock deleted medication info:', { residentId, medicationId });
   }
 
   // Medication Status Methods
@@ -288,7 +403,7 @@ class ResidentDataService {
       updatedAt: new Date().toISOString(),
     };
 
-    console.log('Mock created medication status:', newStatus);
+    // console.log('Mock created medication status:', newStatus);
     return newStatus;
   }
 
@@ -312,7 +427,7 @@ class ResidentDataService {
       updatedAt: new Date().toISOString(),
     };
 
-    console.log('Mock updated medication status:', updatedStatus);
+    // console.log('Mock updated medication status:', updatedStatus);
     return updatedStatus;
   }
 
@@ -323,7 +438,7 @@ class ResidentDataService {
       throw new Error('ネットワークエラーが発生しました。');
     }
 
-    console.log('Mock deleted medication status:', { residentId, statusId });
+    // console.log('Mock deleted medication status:', { residentId, statusId });
   }
 }
 

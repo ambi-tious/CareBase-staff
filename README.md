@@ -138,6 +138,13 @@ UIコンポーネントは Atomic Design の階層に従って実装します：
 - **時間ベース表示**: 24時間のタイムライン表示
 - **利用者ベース表示**: 利用者ごとのケア項目一覧
 
+### 連絡・予定管理
+
+- **週間表示**: Googleカレンダー風の週間スケジュール表示
+- **月間表示**: カレンダーグリッド形式での月間表示
+- **編集機能**: 連絡事項・予定・申し送りの作成・編集・削除
+- **フィルター機能**: 種別・重要度・ステータス別の絞り込み
+
 ### 利用者管理
 
 - 利用者詳細情報の表示・編集
@@ -147,27 +154,8 @@ UIコンポーネントは Atomic Design の階層に従って実装します：
 ### レスポンシブデザイン
 
 - タブレット・PC両対応
-- モバイルファーストアプローチ
-
-## 🚀 デプロイ
-
-### Vercel（推奨）
-
-```bash
-# Vercel CLIを使用
-npm i -g vercel
-vercel
-```
-
-### 手動デプロイ
-
-```bash
-# ビルド
-pnpm build
-
-# 本番サーバー起動
-pnpm start
-```
+- タブレット横向き操作を基本想定（1024px）
+- スマートフォンは補助的な役割（375px）
 
 ## 🤝 コントリビューション
 
@@ -182,9 +170,7 @@ pnpm start
 
 ## 🔗 関連リンク
 
-- **本番環境**: [https://vercel.com/hornet-ventures/carebase-staff](https://vercel.com/hornet-ventures/carebase-staff)
+- **モック環境**: [https://carebase-staff.vercel.app](https://carebase-staff.vercel.app)
 - **設計ドキュメント**: [docs/overview.md](./docs/overview.md)
 
 ---
-
-_このプロジェクトは [v0.dev](https://v0.dev) を使用して開発されています。_

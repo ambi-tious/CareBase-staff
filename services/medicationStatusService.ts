@@ -1,10 +1,11 @@
 /**
  * Medication Status Service
  *
- * Service layer for medication status API calls
+ * API service for medication status operations
  */
 
-import type { MedicationStatusFormData, MedicationStatus } from '@/types/medication-status';
+import type { MedicationStatus } from '@/types/medication-status';
+import type { MedicationStatusFormData } from '@/validations/medication-status-validation';
 
 class MedicationStatusService {
   private baseUrl = process.env.NEXT_PUBLIC_API_URL || '';
@@ -18,7 +19,7 @@ class MedicationStatusService {
   ): Promise<MedicationStatus> {
     try {
       // For development, use mock creation
-      if (process.env.NODE_ENV === 'development') {
+      if (!!process.env.NODE_ENV) {
         return this.mockCreateMedicationStatus(residentId, statusData);
       }
 
@@ -55,7 +56,7 @@ class MedicationStatusService {
   ): Promise<MedicationStatus> {
     try {
       // For development, use mock update
-      if (process.env.NODE_ENV === 'development') {
+      if (!!process.env.NODE_ENV) {
         return this.mockUpdateMedicationStatus(residentId, statusId, statusData);
       }
 
@@ -88,7 +89,7 @@ class MedicationStatusService {
   async deleteMedicationStatus(residentId: number, statusId: string): Promise<void> {
     try {
       // For development, use mock deletion
-      if (process.env.NODE_ENV === 'development') {
+      if (!!process.env.NODE_ENV) {
         return this.mockDeleteMedicationStatus(residentId, statusId);
       }
 
@@ -133,7 +134,7 @@ class MedicationStatusService {
       updatedAt: new Date().toISOString(),
     };
 
-    console.log('Mock created medication status:', newStatus);
+    // console.log('Mock created medication status:', newStatus);
     return newStatus;
   }
 
@@ -163,7 +164,7 @@ class MedicationStatusService {
       updatedAt: new Date().toISOString(),
     };
 
-    console.log('Mock updated medication status:', updatedStatus);
+    // console.log('Mock updated medication status:', updatedStatus);
     return updatedStatus;
   }
 
@@ -179,7 +180,7 @@ class MedicationStatusService {
       throw new Error('ネットワークエラーが発生しました。');
     }
 
-    console.log('Mock deleted medication status:', { residentId, statusId });
+    // console.log('Mock deleted medication status:', { residentId, statusId });
   }
 }
 

@@ -1,11 +1,11 @@
 'use client';
 
-import type React from 'react';
 import { Button } from '@/components/ui/button';
-import { ResidentSearchBar } from './resident-search-bar';
-import { UserPlus, Filter, Download } from 'lucide-react';
-import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
+import { Download, Filter, UserPlus } from 'lucide-react';
+import type React from 'react';
+import { ResidentSearchBar } from './resident-search-bar';
 
 interface ResidentsToolbarProps {
   onSearch: (query: string) => void;
@@ -24,18 +24,10 @@ export const ResidentsToolbar: React.FC<ResidentsToolbarProps> = ({
 }) => {
   return (
     <div className={`space-y-4 ${className}`}>
-      {/* Top row - Search and Create */}
-      <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
-        <ResidentSearchBar onSearch={onSearch} className="flex-1 max-w-md" />
-        <Button onClick={onCreateResident} className="bg-carebase-blue hover:bg-carebase-blue-dark">
-          <UserPlus className="h-4 w-4 mr-2" />
-          新規利用者登録
-        </Button>
-      </div>
-
       {/* Bottom row - Filters and Actions */}
       <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
         <div className="flex items-center gap-4">
+          <ResidentSearchBar onSearch={onSearch} className="flex-1" />
           <div className="flex items-center space-x-2">
             <Switch
               id="show-discharged"
@@ -56,6 +48,14 @@ export const ResidentsToolbar: React.FC<ResidentsToolbarProps> = ({
           <Button variant="outline" size="sm">
             <Download className="h-4 w-4 mr-2" />
             エクスポート
+          </Button>
+          <Button
+            onClick={onCreateResident}
+            className="bg-carebase-blue hover:bg-carebase-blue-dark"
+            size="sm"
+          >
+            <UserPlus className="h-4 w-4 mr-2" />
+            新規利用者登録
           </Button>
         </div>
       </div>

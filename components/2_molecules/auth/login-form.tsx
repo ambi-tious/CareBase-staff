@@ -1,15 +1,15 @@
 'use client';
 
-import type React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { InputField } from '@/components/1_atoms/auth/InputField';
 import { LoginButton } from '@/components/1_atoms/auth/LoginButton';
 import { ErrorAlert } from '@/components/2_molecules/auth/ErrorAlert';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useLoginForm } from '@/hooks/useLoginForm';
-import type { LoginCredentials } from '@/types/auth';
+import type { LoginCredentials, LoginResult } from '@/types/auth';
+import type React from 'react';
 
 interface LoginFormProps {
-  onLogin: (credentials: LoginCredentials) => Promise<boolean>;
+  onLogin: (credentials: LoginCredentials) => Promise<LoginResult>;
   isLoading?: boolean;
   className?: string;
 }
@@ -41,7 +41,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
         <CardTitle className="text-2xl font-bold text-carebase-text-primary">ログイン</CardTitle>
       </CardHeader>
       <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="flex flex-col gap-6">
           <InputField
             id="facilityId"
             type="text"
@@ -76,6 +76,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
             isLoading={isLoading}
             disabled={!isFormValid || isLoading}
             loadingText="ログイン中..."
+            size="lg"
             fullWidth
           >
             ログイン

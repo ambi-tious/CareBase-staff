@@ -11,6 +11,12 @@ export interface LoginCredentials {
   password: string;
 }
 
+// Login result type for handling both success and error cases
+export interface LoginResult {
+  success: boolean;
+  error?: string;
+}
+
 // Authentication request/response types (RPC compatible)
 export interface AuthRequest {
   facilityId: string;

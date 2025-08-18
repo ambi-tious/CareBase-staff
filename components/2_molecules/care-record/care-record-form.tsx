@@ -8,8 +8,8 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { useCareRecordForm } from '@/hooks/useCareRecordForm';
 import { careBoardData } from '@/mocks/care-board-data';
-import type { CareRecordFormData } from '@/types/care-record';
 import { categoryOptions, priorityOptions, statusOptions } from '@/types/care-record';
+import type { CareRecordFormData } from '@/validations/care-record-validation';
 import { AlertCircle, RefreshCw, Save, Send, User } from 'lucide-react';
 import type React from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -79,7 +79,7 @@ export const CareRecordForm: React.FC<CareRecordFormProps> = ({
   const residentOptions = useMemo(
     () =>
       careBoardData
-        .filter((resident) => resident.admissionStatus === '入居中')
+        .filter((resident) => resident.dischargeDate === undefined)
         .map((resident) => ({
           value: resident.id.toString(),
           label: `${resident.name} (${resident.careLevel})`,
