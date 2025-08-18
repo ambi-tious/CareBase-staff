@@ -18,7 +18,6 @@ function StaffSelectionContent() {
   const { getStoredToken, getStoredFacility, logout } = useAuth();
   const fromHeader = searchParams.get('from') === 'header';
   const fromStaffClick = searchParams.get('staff') === 'true';
-  const autoSelectStaff = searchParams.get('autoSelectStaff') !== 'false';
   const autoSelectTeam = searchParams.get('autoSelectTeam') !== 'false';
   const staffSelectionRef = useRef<HTMLDivElement>(null);
   const [selectedStaffData, setSelectedStaffData] = useState<SelectedStaffData | undefined>(
@@ -111,7 +110,6 @@ function StaffSelectionContent() {
         ref={staffSelectionRef}
         fromHeader={fromHeader}
         fromStaffClick={fromStaffClick}
-        autoSelectStaff={autoSelectStaff}
         autoSelectTeam={autoSelectTeam}
         onStaffSelected={handleStaffSelected}
         onLogout={handleLogout}

@@ -23,7 +23,6 @@ interface StaffSelectionScreenProps {
   onLogout?: () => void;
   fromHeader?: boolean;
   fromStaffClick?: boolean;
-  autoSelectStaff?: boolean;
   autoSelectTeam?: boolean;
   selectedStaffData?: SelectedStaffData;
   className?: string;
@@ -36,7 +35,6 @@ const StaffSelectionScreenComponent = forwardRef<HTMLDivElement, StaffSelectionS
       onLogout,
       fromHeader = false,
       fromStaffClick = false,
-      autoSelectStaff = true,
       autoSelectTeam = true,
       selectedStaffData,
       className = '',
@@ -201,18 +199,10 @@ const StaffSelectionScreenComponent = forwardRef<HTMLDivElement, StaffSelectionS
             if (autoSelectTeam) {
               setSelectedTeamId(teamId);
             }
-
-            // Find and select the staff
-            const group = groups.find((g) => g.id === groupId);
-            const team = group?.teams.find((t) => t.id === teamId);
-            const staffMember = team?.staff.find((s) => s.id === currentStaff.id);
-            if (staffMember && autoSelectStaff) {
-              setSelectedStaffId(staffMember.id);
-            }
           }
         }
       }
-    }, [fromHeader, fromStaffClick, selectedStaffData, autoSelectStaff, autoSelectTeam, groups]);
+    }, [fromHeader, fromStaffClick, selectedStaffData, autoSelectTeam, groups, staff]);
 
     // Get current group and team IDs from selected staff data
     const getCurrentGroupTeamIds = () => {

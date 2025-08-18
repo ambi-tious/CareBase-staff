@@ -51,18 +51,17 @@
 
 ### URLパラメータ仕様
 
-| パラメータ名      | 型     | 説明                   | 使用例                                |
-| ----------------- | ------ | ---------------------- | ------------------------------------- |
-| `from`            | string | 遷移元の識別子         | `header` - ヘッダーからの遷移         |
-| `staff`           | string | スタッフクリックフラグ | `true` - スタッフ名クリックからの遷移 |
-| `autoSelectStaff` | string | スタッフ自動選択制御   | `false` - 自動選択を無効化            |
-| `autoSelectTeam`  | string | チーム自動選択制御     | `false` - 自動選択を無効化            |
+| パラメータ名     | 型     | 説明                   | 使用例                                |
+| ---------------- | ------ | ---------------------- | ------------------------------------- |
+| `from`           | string | 遷移元の識別子         | `header` - ヘッダーからの遷移         |
+| `staff`          | string | スタッフクリックフラグ | `true` - スタッフ名クリックからの遷移 |
+| `autoSelectTeam` | string | チーム自動選択制御     | `false` - 自動選択を無効化            |
 
 #### URLパラメータの使用例
 
 ```bash
 # ヘッダーのスタッフ名クリック時
-/staff-selection?from=header&staff=true&autoSelectStaff=false
+/staff-selection?from=header&staff=true
 ```
 
 ### アクション
@@ -182,7 +181,6 @@ interface StaffSelectionScreenProps {
   onLogout?: () => void;
   fromHeader?: boolean;
   fromStaffClick?: boolean;
-  autoSelectStaff?: boolean;
   autoSelectTeam?: boolean;
   selectedStaffData?: SelectedStaffData;
   className?: string;
