@@ -2,7 +2,7 @@
 
 - 画面名: `利用者編集`
 - パス: `/residents/{residentId}/edit`
-- URL: https://carebase-staff.vercel.app/residents/{residentId}/edit
+- URL: https://carebase-staff.vercel.app/residents/5/edit
 
 ## 概要
 
