@@ -1,7 +1,7 @@
-import type React from 'react';
 import { Badge } from '@/components/ui/badge';
 import type { CareRecordPriority } from '@/types/care-record';
 import { priorityOptions } from '@/types/care-record';
+import type React from 'react';
 
 interface PriorityBadgeProps {
   priority: CareRecordPriority;

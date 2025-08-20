@@ -8,8 +8,8 @@ CareBase-staffアプリケーションに、連絡・予定作成時のプッシ
 
 - **web-push パッケージ**: サーバーサイドのプッシュ通知送信機能
 - **API エンドポイント**:
-  - `POST /api/push/subscribe`: プッシュ通知購読の登録
-  - `POST /api/push/send`: プッシュ通知の送信
+  - `POST /push/subscribe`: プッシュ通知購読の登録
+  - `POST /push/send`: プッシュ通知の送信
 
 ### 2. Service Worker
 

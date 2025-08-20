@@ -17,7 +17,7 @@ import {
   Filter,
   Users,
 } from 'lucide-react';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 import { BulkCareRecordModal } from './bulk-care-record-modal';
 import { TimeBaseView } from './care-board-time-base';
@@ -26,16 +26,64 @@ import { rgbToString } from './care-board-utils';
 
 type ActiveTabView = 'time' | 'user';
 
+interface SelectedStaffData {
+  groupName: string;
+  teamName: string;
+}
+
 export function CareBoard() {
   const [activeView, setActiveView] = useState<ActiveTabView>('time');
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [showFilters, setShowFilters] = useState<boolean>(false);
   const [showBulkRecordModal, setShowBulkRecordModal] = useState<boolean>(false);
+  const [selectedStaffData, setSelectedStaffData] = useState<SelectedStaffData | null>(null);
 
   // Set current date on client side to avoid hydration mismatch
   useEffect(() => {
     setSelectedDate(new Date());
   }, []);
+
+  // Load selected staff data from localStorage
+  useEffect(() => {
+    const loadSelectedStaffData = () => {
+      try {
+        const data = localStorage.getItem('carebase_selected_staff_data');
+        if (data) {
+          setSelectedStaffData(JSON.parse(data));
+        }
+      } catch (error) {
+        console.error('Failed to load selected staff data:', error);
+      }
+    };
+
+    loadSelectedStaffData();
+
+    // Listen for storage changes (when staff selection changes)
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'carebase_selected_staff_data') {
+        loadSelectedStaffData();
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
+  }, []);
+
+  // Filter residents based on group/team
+  const filteredResidents = useMemo(() => {
+    return careBoardData.filter((resident) => {
+      // Filter by group and team if selected staff data exists
+      const matchesGroupTeam =
+        !selectedStaffData ||
+        (resident.floorGroup === selectedStaffData.groupName &&
+          resident.unitTeam === selectedStaffData.teamName);
+
+      return matchesGroupTeam;
+    });
+  }, [selectedStaffData]);
 
   // 一括記録の保存処理
   const handleSaveBulkRecords = (records: { residentId: number; event: CareEvent }[]) => {
@@ -210,13 +258,17 @@ export function CareBoard() {
         </div>
       )}
 
-      {activeView === 'time' ? <TimeBaseView /> : <UserBaseView />}
+      {activeView === 'time' ? (
+        <TimeBaseView residents={filteredResidents} />
+      ) : (
+        <UserBaseView residents={filteredResidents} />
+      )}
 
       {/* 一括記録モーダル */}
       <BulkCareRecordModal
         isOpen={showBulkRecordModal}
         onClose={() => setShowBulkRecordModal(false)}
-        residents={careBoardData.filter((r) => r.admissionStatus === '入居中')}
+        residents={filteredResidents.filter((r) => r.dischargeDate === undefined)}
         onSave={handleSaveBulkRecords}
       />
     </div>

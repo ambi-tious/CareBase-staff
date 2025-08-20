@@ -2,9 +2,15 @@
 
 import { FormField } from '@/components/1_atoms/forms/form-field';
 import { FormSelect } from '@/components/1_atoms/forms/form-select';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/components/ui/accordion';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import {
   Dialog,
   DialogContent,
@@ -14,9 +20,27 @@ import {
 } from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import type { Room, RoomFormData } from '@/types/room';
-import { getAllGroupOptions, getAllTeamOptions } from '@/utils/staff-utils';
+import {
+  getAllGroupOptions,
+  getGroupIdByName,
+  getTeamIdByName,
+  getTeamOptionsByGroup,
+} from '@/utils/staff-utils';
 import { AlertCircle, Building, Edit3, Home, Plus, Trash2 } from 'lucide-react';
 import React, { useCallback, useEffect, useState } from 'react';
+
+// Interface for selected staff data from localStorage
+interface SelectedStaffData {
+  staff: {
+    id: string;
+    name: string;
+    furigana: string;
+    role: string;
+    employeeId: string;
+  };
+  groupName: string;
+  teamName: string;
+}
 
 interface RoomManagementModalProps {
   isOpen: boolean;
@@ -46,17 +70,49 @@ export const RoomManagementModal: React.FC<RoomManagementModalProps> = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<Partial<Record<keyof RoomFormData, string>>>({});
+  const [currentUserTeamId, setCurrentUserTeamId] = useState<string>('');
 
   const groupOptions = getAllGroupOptions();
-  const teamOptions = getAllTeamOptions();
+  const teamOptions = getTeamOptionsByGroup(formData.groupId || '');
 
-  // Reset form when modal opens/closes
+  // Load current logged-in user's group and team information
   useEffect(() => {
+    const loadSelectedStaffData = () => {
+      try {
+        const staffData = localStorage.getItem('carebase_selected_staff_data');
+        if (staffData) {
+          const parsedData: SelectedStaffData = JSON.parse(staffData);
+
+          // Convert group and team names to IDs
+          const groupId = getGroupIdByName(parsedData.groupName);
+          const teamId = groupId ? getTeamIdByName(parsedData.teamName, groupId) : null;
+
+          // Set default values for new room creation
+          if (!editingRoom && groupId && teamId) {
+            setFormData((prev) => ({
+              ...prev,
+              groupId,
+              teamId,
+            }));
+          }
+
+          // Set current user's team ID for accordion default state
+          if (teamId) {
+            setCurrentUserTeamId(teamId);
+          }
+        }
+      } catch (error) {
+        console.error('Failed to load selected staff data:', error);
+      }
+    };
     if (isOpen) {
       setActiveTab('list');
       resetForm();
+      if (!editingRoom) {
+        loadSelectedStaffData();
+      }
     }
-  }, [isOpen]);
+  }, [isOpen, editingRoom]);
 
   const resetForm = useCallback(() => {
     setFormData({
@@ -289,13 +345,29 @@ export const RoomManagementModal: React.FC<RoomManagementModalProps> = ({
                   </CardContent>
                 </Card>
               ) : (
-                <div className="space-y-6">
+                <Accordion
+                  type="multiple"
+                  defaultValue={
+                    currentUserTeamId
+                      ? Object.values(groupedRooms)
+                          .filter((group) => group.teamId === currentUserTeamId)
+                          .map((group) => `${group.groupId}-${group.teamId}`)
+                      : []
+                  }
+                  className="space-y-4"
+                >
                   {Object.values(groupedRooms).map((group) => (
-                    <Card key={`${group.groupId}-${group.teamId}`}>
-                      <CardHeader>
-                        <CardTitle className="text-lg flex items-center gap-2">
+                    <AccordionItem
+                      key={`${group.groupId}-${group.teamId}`}
+                      value={`${group.groupId}-${group.teamId}`}
+                      className="border border-gray-200 rounded-lg"
+                    >
+                      <AccordionTrigger className="px-6 py-4 hover:no-underline">
+                        <div className="flex items-center gap-2">
                           <Building className="h-5 w-5 text-carebase-blue" />
-                          {getGroupName(group.groupId)} - {getTeamName(group.teamId)}
+                          <span className="text-lg font-semibold text-carebase-text-primary">
+                            {getGroupName(group.groupId)} - {getTeamName(group.teamId)}
+                          </span>
                           <div className="flex items-center gap-2 text-sm font-normal text-gray-500">
                             <span>({group.rooms.length}部屋)</span>
                             <span className="text-xs">
@@ -307,9 +379,9 @@ export const RoomManagementModal: React.FC<RoomManagementModalProps> = ({
                               /{group.rooms.reduce((sum, room) => sum + room.capacity, 0)}名
                             </span>
                           </div>
-                        </CardTitle>
-                      </CardHeader>
-                      <CardContent>
+                        </div>
+                      </AccordionTrigger>
+                      <AccordionContent className="px-6 pb-6">
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                           {group.rooms.map((room) => (
                             <Card key={room.id} className="border border-gray-200">
@@ -376,10 +448,10 @@ export const RoomManagementModal: React.FC<RoomManagementModalProps> = ({
                             </Card>
                           ))}
                         </div>
-                      </CardContent>
-                    </Card>
+                      </AccordionContent>
+                    </AccordionItem>
                   ))}
-                </div>
+                </Accordion>
               )}
             </TabsContent>
 
@@ -430,12 +502,7 @@ export const RoomManagementModal: React.FC<RoomManagementModalProps> = ({
                       updateField('teamId', ''); // Reset team when group changes
                     }}
                     options={groupOptions.map((option) => ({
-                      value:
-                        option.value === '介護フロア A'
-                          ? 'group-1'
-                          : option.value === '介護フロア B'
-                            ? 'group-2'
-                            : 'group-3',
+                      value: getGroupIdByName(option.value) || '',
                       label: option.label,
                     }))}
                     required
@@ -448,33 +515,10 @@ export const RoomManagementModal: React.FC<RoomManagementModalProps> = ({
                     id="teamId"
                     value={formData.teamId}
                     onChange={(value) => updateField('teamId', value)}
-                    options={teamOptions
-                      .map((option) => {
-                        // Map team names to IDs based on selected group
-                        let teamId = '';
-                        if (formData.groupId === 'group-1') {
-                          const teamMapping: Record<string, string> = {
-                            朝番チーム: 'team-a1',
-                            日勤チーム: 'team-a2',
-                            夜勤チーム: 'team-a3',
-                          };
-                          teamId = teamMapping[option.value] || '';
-                        } else if (formData.groupId === 'group-2') {
-                          const teamMapping: Record<string, string> = {
-                            朝番チーム: 'team-b1',
-                            日勤チーム: 'team-b2',
-                          };
-                          teamId = teamMapping[option.value] || '';
-                        } else if (formData.groupId === 'group-3') {
-                          teamId = option.value === '管理チーム' ? 'team-m1' : '';
-                        }
-
-                        return {
-                          value: teamId,
-                          label: option.label,
-                        };
-                      })
-                      .filter((option) => option.value !== '')}
+                    options={teamOptions.map((option) => ({
+                      value: getTeamIdByName(option.value, formData.groupId) || '',
+                      label: option.label,
+                    }))}
                     required
                     error={fieldErrors.teamId}
                     disabled={isSubmitting || !formData.groupId}

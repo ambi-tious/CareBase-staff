@@ -199,13 +199,13 @@ interface CareRecord {
 
 ### API エンドポイント
 
-| メソッド | エンドポイント              | 説明             |
-| -------- | --------------------------- | ---------------- |
-| GET      | `/api/v1/care-records`      | 介護記録一覧取得 |
-| GET      | `/api/v1/care-records/{id}` | 介護記録詳細取得 |
-| POST     | `/api/v1/care-records`      | 介護記録新規作成 |
-| PUT      | `/api/v1/care-records/{id}` | 介護記録更新     |
-| DELETE   | `/api/v1/care-records/{id}` | 介護記録削除     |
+| メソッド | エンドポイント          | 説明             |
+| -------- | ----------------------- | ---------------- |
+| GET      | `/v1/care-records`      | 介護記録一覧取得 |
+| GET      | `/v1/care-records/{id}` | 介護記録詳細取得 |
+| POST     | `/v1/care-records`      | 介護記録新規作成 |
+| PUT      | `/v1/care-records/{id}` | 介護記録更新     |
+| DELETE   | `/v1/care-records/{id}` | 介護記録削除     |
 
 ### 状態管理
 

@@ -57,24 +57,24 @@ Issue: [#131 [設計] #006 利用者｜利用者詳細（個別ポイント）](
 
 ### アクション
 
-| 項目名               | 処理内容                         | 対象API                                                               | 遷移先画面                   |
-| -------------------- | -------------------------------- | --------------------------------------------------------------------- | ---------------------------- |
-| 追加ボタン           | 個別ポイント登録モーダルを表示   | -                                                                     | 同一画面（モーダル表示）     |
-| カテゴリ管理ボタン   | カテゴリ管理モーダルを表示       | -                                                                     | 同一画面（モーダル表示）     |
-| 詳細ボタン           | 個別ポイント詳細モーダルを表示   | -                                                                     | 同一画面（モーダル表示）     |
-| 編集ボタン           | 個別ポイント編集モーダルを表示   | -                                                                     | 同一画面（モーダル表示）     |
-| 削除ボタン           | 削除確認モーダルを表示           | -                                                                     | 同一画面（モーダル表示）     |
-| カテゴリクリック     | 該当カテゴリでフィルタリング     | -                                                                     | 同一画面（フィルタ適用）     |
-| 検索入力             | リアルタイム検索フィルタリング   | -                                                                     | 同一画面（フィルタ適用）     |
-| フィルタリセット     | 全フィルタ条件をリセット         | -                                                                     | 同一画面（フィルタリセット） |
-| 登録処理             | 新しい個別ポイントを登録         | `/api/v1/residents/{residentId}/individual-points`                    | 同一画面（モーダル閉じる）   |
-| 更新処理             | 既存の個別ポイントを更新         | `/api/v1/residents/{residentId}/individual-points/{pointId}`          | 同一画面（モーダル閉じる）   |
-| 削除処理             | 既存の個別ポイントを削除         | `/api/v1/residents/{residentId}/individual-points/{pointId}`          | 同一画面（モーダル閉じる）   |
-| 優先度変更           | 個別ポイントの優先度を変更       | `/api/v1/residents/{residentId}/individual-points/{pointId}/priority` | 同一画面（インライン更新）   |
-| メディアファイル表示 | メディアビューアーモーダルを表示 | -                                                                     | 同一画面（モーダル表示）     |
-| カテゴリ作成         | 新しいカテゴリを作成             | `/api/v1/point-categories`                                            | 同一画面（モーダル閉じる）   |
-| カテゴリ更新         | 既存のカテゴリを更新             | `/api/v1/point-categories/{categoryId}`                               | 同一画面（モーダル閉じる）   |
-| カテゴリ削除         | 既存のカテゴリを削除             | `/api/v1/point-categories/{categoryId}`                               | 同一画面（モーダル閉じる）   |
+| 項目名               | 処理内容                         | 対象API                                                           | 遷移先画面                   |
+| -------------------- | -------------------------------- | ----------------------------------------------------------------- | ---------------------------- |
+| 追加ボタン           | 個別ポイント登録モーダルを表示   | -                                                                 | 同一画面（モーダル表示）     |
+| カテゴリ管理ボタン   | カテゴリ管理モーダルを表示       | -                                                                 | 同一画面（モーダル表示）     |
+| 詳細ボタン           | 個別ポイント詳細モーダルを表示   | -                                                                 | 同一画面（モーダル表示）     |
+| 編集ボタン           | 個別ポイント編集モーダルを表示   | -                                                                 | 同一画面（モーダル表示）     |
+| 削除ボタン           | 削除確認モーダルを表示           | -                                                                 | 同一画面（モーダル表示）     |
+| カテゴリクリック     | 該当カテゴリでフィルタリング     | -                                                                 | 同一画面（フィルタ適用）     |
+| 検索入力             | リアルタイム検索フィルタリング   | -                                                                 | 同一画面（フィルタ適用）     |
+| フィルタリセット     | 全フィルタ条件をリセット         | -                                                                 | 同一画面（フィルタリセット） |
+| 登録処理             | 新しい個別ポイントを登録         | `/v1/residents/{residentId}/individual-points`                    | 同一画面（モーダル閉じる）   |
+| 更新処理             | 既存の個別ポイントを更新         | `/v1/residents/{residentId}/individual-points/{pointId}`          | 同一画面（モーダル閉じる）   |
+| 削除処理             | 既存の個別ポイントを削除         | `/v1/residents/{residentId}/individual-points/{pointId}`          | 同一画面（モーダル閉じる）   |
+| 優先度変更           | 個別ポイントの優先度を変更       | `/v1/residents/{residentId}/individual-points/{pointId}/priority` | 同一画面（インライン更新）   |
+| メディアファイル表示 | メディアビューアーモーダルを表示 | -                                                                 | 同一画面（モーダル表示）     |
+| カテゴリ作成         | 新しいカテゴリを作成             | `/v1/point-categories`                                            | 同一画面（モーダル閉じる）   |
+| カテゴリ更新         | 既存のカテゴリを更新             | `/v1/point-categories/{categoryId}`                               | 同一画面（モーダル閉じる）   |
+| カテゴリ削除         | 既存のカテゴリを削除             | `/v1/point-categories/{categoryId}`                               | 同一画面（モーダル閉じる）   |
 
 ### モーダル仕様
 
@@ -395,18 +395,18 @@ Issue: [#131 [設計] #006 利用者｜利用者詳細（個別ポイント）](
 
 ### API エンドポイント
 
-| メソッド | エンドポイント                                                        | 説明                         |
-| -------- | --------------------------------------------------------------------- | ---------------------------- |
-| GET      | `/api/v1/residents/{residentId}/individual-points`                    | 利用者の個別ポイント一覧取得 |
-| POST     | `/api/v1/residents/{residentId}/individual-points`                    | 個別ポイントの新規登録       |
-| GET      | `/api/v1/residents/{residentId}/individual-points/{pointId}`          | 個別ポイントの詳細取得       |
-| PUT      | `/api/v1/residents/{residentId}/individual-points/{pointId}`          | 個別ポイントの更新           |
-| DELETE   | `/api/v1/residents/{residentId}/individual-points/{pointId}`          | 個別ポイントの削除           |
-| PUT      | `/api/v1/residents/{residentId}/individual-points/{pointId}/priority` | 個別ポイントの優先度変更     |
-| GET      | `/api/v1/point-categories`                                            | ポイントカテゴリ一覧取得     |
-| POST     | `/api/v1/point-categories`                                            | ポイントカテゴリの新規作成   |
-| PUT      | `/api/v1/point-categories/{categoryId}`                               | ポイントカテゴリの更新       |
-| DELETE   | `/api/v1/point-categories/{categoryId}`                               | ポイントカテゴリの削除       |
+| メソッド | エンドポイント                                                    | 説明                         |
+| -------- | ----------------------------------------------------------------- | ---------------------------- |
+| GET      | `/v1/residents/{residentId}/individual-points`                    | 利用者の個別ポイント一覧取得 |
+| POST     | `/v1/residents/{residentId}/individual-points`                    | 個別ポイントの新規登録       |
+| GET      | `/v1/residents/{residentId}/individual-points/{pointId}`          | 個別ポイントの詳細取得       |
+| PUT      | `/v1/residents/{residentId}/individual-points/{pointId}`          | 個別ポイントの更新           |
+| DELETE   | `/v1/residents/{residentId}/individual-points/{pointId}`          | 個別ポイントの削除           |
+| PUT      | `/v1/residents/{residentId}/individual-points/{pointId}/priority` | 個別ポイントの優先度変更     |
+| GET      | `/v1/point-categories`                                            | ポイントカテゴリ一覧取得     |
+| POST     | `/v1/point-categories`                                            | ポイントカテゴリの新規作成   |
+| PUT      | `/v1/point-categories/{categoryId}`                               | ポイントカテゴリの更新       |
+| DELETE   | `/v1/point-categories/{categoryId}`                               | ポイントカテゴリの削除       |
 
 ### 状態管理
 

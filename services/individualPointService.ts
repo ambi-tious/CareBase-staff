@@ -6,8 +6,8 @@
 
 import type { IndividualPoint, PointCategory } from '@/types/individual-point';
 import type {
-  CategoryFormData,
-  IndividualPointFormData,
+    CategoryFormData,
+    IndividualPointFormData,
 } from '@/validations/individual-point-validation';
 
 class IndividualPointService {
@@ -18,11 +18,11 @@ class IndividualPointService {
    */
   async getIndividualPoints(residentId: string): Promise<IndividualPoint[]> {
     try {
-      if (process.env.NODE_ENV === 'development') {
+      if (process.env.NODE_ENV) {
         return this.mockGetIndividualPoints(residentId);
       }
 
-      const response = await fetch(`${this.baseUrl}/api/residents/${residentId}/individual-points`);
+      const response = await fetch(`${this.baseUrl}/residents/${residentId}/individual-points`);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -44,7 +44,7 @@ class IndividualPointService {
     mediaFiles?: File[]
   ): Promise<IndividualPoint> {
     try {
-      if (process.env.NODE_ENV === 'development') {
+      if (process.env.NODE_ENV) {
         return this.mockCreateIndividualPoint(residentId, data, mediaFiles);
       }
 
@@ -58,7 +58,7 @@ class IndividualPointService {
       }
 
       const response = await fetch(
-        `${this.baseUrl}/api/residents/${residentId}/individual-points`,
+        `${this.baseUrl}/residents/${residentId}/individual-points`,
         {
           method: 'POST',
           body: formData,
@@ -87,7 +87,7 @@ class IndividualPointService {
     mediaFiles?: File[]
   ): Promise<IndividualPoint> {
     try {
-      if (process.env.NODE_ENV === 'development') {
+      if (process.env.NODE_ENV) {
         return this.mockUpdateIndividualPoint(residentId, pointId, data, mediaFiles);
       }
 
@@ -101,7 +101,7 @@ class IndividualPointService {
       }
 
       const response = await fetch(
-        `${this.baseUrl}/api/residents/${residentId}/individual-points/${pointId}`,
+        `${this.baseUrl}/residents/${residentId}/individual-points/${pointId}`,
         {
           method: 'PUT',
           body: formData,
@@ -125,12 +125,12 @@ class IndividualPointService {
    */
   async deleteIndividualPoint(residentId: string, pointId: string): Promise<void> {
     try {
-      if (process.env.NODE_ENV === 'development') {
+      if (process.env.NODE_ENV) {
         return this.mockDeleteIndividualPoint(residentId, pointId);
       }
 
       const response = await fetch(
-        `${this.baseUrl}/api/residents/${residentId}/individual-points/${pointId}`,
+        `${this.baseUrl}/residents/${residentId}/individual-points/${pointId}`,
         {
           method: 'DELETE',
         }
@@ -150,11 +150,11 @@ class IndividualPointService {
    */
   async getPointCategories(): Promise<PointCategory[]> {
     try {
-      if (process.env.NODE_ENV === 'development') {
+      if (process.env.NODE_ENV) {
         return this.mockGetPointCategories();
       }
 
-      const response = await fetch(`${this.baseUrl}/api/point-categories`);
+      const response = await fetch(`${this.baseUrl}/point-categories`);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -172,11 +172,11 @@ class IndividualPointService {
    */
   async createPointCategory(data: CategoryFormData): Promise<PointCategory> {
     try {
-      if (process.env.NODE_ENV === 'development') {
+      if (process.env.NODE_ENV) {
         return this.mockCreatePointCategory(data);
       }
 
-      const response = await fetch(`${this.baseUrl}/api/point-categories`, {
+      const response = await fetch(`${this.baseUrl}/point-categories`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

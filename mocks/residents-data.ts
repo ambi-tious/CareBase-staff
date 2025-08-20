@@ -87,7 +87,6 @@ export interface Resident {
   lastUpdateDate: string;
   admissionDate: string;
   dischargeDate?: string;
-  admissionStatus: '入居中' | '退所済' | '待機中';
   careLevel: string;
   certificationDate: string;
   certValidityStart: string;
@@ -96,7 +95,7 @@ export interface Resident {
   avatarUrl: string;
   events: CareEvent[];
   contacts?: ContactPerson[];
-  homeCareOffice?: HomeCareOffice;
+  homeCareOffices?: HomeCareOffice[]; // 複数登録対応
   medicalInstitutions?: MedicalInstitution[];
   medicalHistory?: MedicalHistory[];
   medicationInfo?: MedicationInfo[];
@@ -119,7 +118,6 @@ export const careBoardData: Resident[] = [
     registrationDate: '2025/04/15',
     lastUpdateDate: '2025/05/20',
     admissionDate: '2025/04/15',
-    admissionStatus: '入居中',
     careLevel: '要介護1',
     certificationDate: '2025/01/11',
     certValidityStart: '2024/12/28',
@@ -151,15 +149,17 @@ export const careBoardData: Resident[] = [
         notes: '日中連絡可能',
       },
     ],
-    homeCareOffice: {
-      id: 'office-1',
-      businessName: 'こうべケアプランセンター',
-      careManager: '山田太郎',
-      phone: '078-333-4444',
-      fax: '078-333-4445',
-      address: '兵庫県神戸市西区学園西町1-1-1',
-      notes: '毎月第2木曜日訪問予定',
-    },
+    homeCareOffices: [
+      {
+        id: '1',
+        businessName: 'ケアサポートセンター',
+        address: '東京都渋谷区渋谷1-1-1',
+        phone: '03-1234-5678',
+        fax: '03-1234-5679',
+        careManager: '田中太郎',
+        notes: '備考情報1',
+      },
+    ],
     medicalInstitutions: [
       {
         id: 'medical-1-1',
@@ -364,7 +364,6 @@ export const careBoardData: Resident[] = [
     registrationDate: '2025/03/01',
     lastUpdateDate: '2025/05/15',
     admissionDate: '2025/03/01',
-    admissionStatus: '入居中',
     careLevel: '要介護3',
     certificationDate: '2025/02/01',
     certValidityStart: '2025/01/15',
@@ -396,15 +395,17 @@ export const careBoardData: Resident[] = [
         notes: '月2回面会、京都在住',
       },
     ],
-    homeCareOffice: {
-      id: 'office-2',
-      businessName: '大阪中央居宅介護支援センター',
-      careManager: '松本花',
-      phone: '06-7777-8888',
-      fax: '06-7777-8889',
-      address: '大阪府大阪市北区梅田2-3-4',
-      notes: '月1回モニタリング実施',
-    },
+    homeCareOffices: [
+      {
+        id: '2',
+        businessName: 'ライフケアサポート',
+        address: '東京都新宿区新宿2-2-2',
+        phone: '03-2345-6789',
+        fax: '03-2345-6790',
+        careManager: '佐藤花子',
+        notes: '備考情報2',
+      },
+    ],
     medicalInstitutions: [
       {
         id: 'medical-2-1',
@@ -604,7 +605,6 @@ export const careBoardData: Resident[] = [
     registrationDate: '2025/01/20',
     lastUpdateDate: '2025/05/18',
     admissionDate: '2025/01/20',
-    admissionStatus: '入居中',
     careLevel: '要介護2',
     certificationDate: '2025/01/01',
     certValidityStart: '2024/12/15',
@@ -636,15 +636,17 @@ export const careBoardData: Resident[] = [
         notes: '大阪在住、週末面会可能',
       },
     ],
-    homeCareOffice: {
-      id: 'office-3',
-      businessName: '京都在宅支援センター',
-      careManager: '木村和子',
-      phone: '075-8888-9999',
-      fax: '075-8888-9998',
-      address: '京都府京都市中京区河原町通御池下る',
-      notes: '毎月15日頃訪問予定',
-    },
+    homeCareOffices: [
+      {
+        id: '3',
+        businessName: 'ホームケアサービス',
+        address: '東京都港区港3-3-3',
+        phone: '03-3456-7890',
+        fax: '03-3456-7891',
+        careManager: '鈴木一郎',
+        notes: '備考情報3',
+      },
+    ],
     medicalInstitutions: [
       {
         id: 'medical-3-1',
@@ -844,7 +846,6 @@ export const careBoardData: Resident[] = [
     registrationDate: '2025/02/10',
     lastUpdateDate: '2025/05/12',
     admissionDate: '2025/02/10',
-    admissionStatus: '入居中',
     careLevel: '要支援2',
     certificationDate: '2025/01/20',
     certValidityStart: '2025/01/01',
@@ -876,15 +877,17 @@ export const careBoardData: Resident[] = [
         notes: '買い物等のサポート担当',
       },
     ],
-    homeCareOffice: {
-      id: 'office-4',
-      businessName: '新横浜ケアプラン',
-      careManager: '横浜太郎',
-      phone: '045-5555-6666',
-      fax: '045-5555-6667',
-      address: '神奈川県横浜市港北区新横浜2-2-2',
-      notes: '月末にプラン見直し予定',
-    },
+    homeCareOffices: [
+      {
+        id: '4',
+        businessName: 'ケアライフサポート',
+        address: '東京都品川区品川4-4-4',
+        phone: '03-4567-8901',
+        fax: '03-4567-8902',
+        careManager: '高橋美咲',
+        notes: '備考情報4',
+      },
+    ],
     medicalInstitutions: [
       {
         id: 'medical-4-1',
@@ -1084,7 +1087,6 @@ export const careBoardData: Resident[] = [
     admissionDate: '2024/11/10',
     registrationDate: '2024/11/01',
     lastUpdateDate: '2025/05/15',
-    admissionStatus: '入居中',
     careLevel: '要介護2',
     certificationDate: '2024/10/20',
     certValidityStart: '2024/10/20',
@@ -1105,15 +1107,17 @@ export const careBoardData: Resident[] = [
         notes: '最寄りの親族、平日連絡可能',
       },
     ],
-    homeCareOffice: {
-      id: 'office-5',
-      businessName: '世田谷ケアサポート',
-      careManager: '世田谷花子',
-      phone: '03-5555-6666',
-      fax: '03-5555-6667',
-      address: '東京都世田谷区経堂2-2-2',
-      notes: '月2回モニタリング',
-    },
+    homeCareOffices: [
+      {
+        id: '5',
+        businessName: 'サポートケアセンター',
+        address: '東京都目黒区目黒5-5-5',
+        phone: '03-5678-9012',
+        fax: '03-5678-9013',
+        careManager: '渡辺健太',
+        notes: '備考情報5',
+      },
+    ],
     medicalInstitutions: [
       {
         id: 'medical-5-1',
@@ -1198,7 +1202,6 @@ export const careBoardData: Resident[] = [
     admissionDate: '2025/01/01',
     registrationDate: '2025/01/01',
     lastUpdateDate: '2025/03/01',
-    admissionStatus: '入居中',
     careLevel: '要介護2',
     certificationDate: '2024/12/15',
     certValidityStart: '2024/12/15',
@@ -1230,15 +1233,17 @@ export const careBoardData: Resident[] = [
         notes: '月1回面会、東京勤務',
       },
     ],
-    homeCareOffice: {
-      id: 'office-6',
-      businessName: '横浜中央居宅介護支援事業所',
-      careManager: '中央太郎',
-      phone: '045-1010-2020',
-      fax: '045-1010-2021',
-      address: '神奈川県横浜市中区本町2-2-2',
-      notes: '要支援プラン管理',
-    },
+    homeCareOffices: [
+      {
+        id: '1',
+        businessName: 'ケアサポートセンター',
+        address: '東京都渋谷区渋谷1-1-1',
+        phone: '03-1234-5678',
+        fax: '03-1234-5679',
+        careManager: '田中太郎',
+        notes: '備考情報1',
+      },
+    ],
     medicalInstitutions: [
       {
         id: 'medical-6-1',
@@ -1277,7 +1282,6 @@ export const careBoardData: Resident[] = [
     admissionDate: '2025/02/10',
     registrationDate: '2025/02/01',
     lastUpdateDate: '2025/04/01',
-    admissionStatus: '入居中',
     careLevel: '自立',
     certificationDate: '2025/01/20',
     certValidityStart: '2025/01/20',
@@ -1298,15 +1302,17 @@ export const careBoardData: Resident[] = [
         notes: '近距離在住、毎日連絡取り合い',
       },
     ],
-    homeCareOffice: {
-      id: 'office-7',
-      businessName: '梅田在宅支援センター',
-      careManager: '梅田次郎',
-      phone: '06-4444-5555',
-      fax: '06-4444-5556',
-      address: '大阪府大阪市北区梅田3-3-3',
-      notes: '自立支援プログラム参加中',
-    },
+    homeCareOffices: [
+      {
+        id: '2',
+        businessName: 'ライフケアサポート',
+        address: '東京都新宿区新宿2-2-2',
+        phone: '03-2345-6789',
+        fax: '03-2345-6790',
+        careManager: '佐藤花子',
+        notes: '備考情報2',
+      },
+    ],
     medicalInstitutions: [
       {
         id: 'medical-7-1',
@@ -1337,7 +1343,6 @@ export const careBoardData: Resident[] = [
     registrationDate: '2025/01/15',
     lastUpdateDate: '2025/05/10',
     admissionDate: '2025/01/15',
-    admissionStatus: '入居中',
     careLevel: '要介護1',
     certificationDate: '2025/01/01',
     certValidityStart: '2024/12/20',
@@ -1358,6 +1363,17 @@ export const careBoardData: Resident[] = [
         notes: '同居中、日中在宅',
       },
     ],
+    homeCareOffices: [
+      {
+        id: '3',
+        businessName: 'ホームケアサービス',
+        address: '東京都港区港3-3-3',
+        phone: '03-3456-7890',
+        fax: '03-3456-7891',
+        careManager: '鈴木一郎',
+        notes: '備考情報3',
+      },
+    ],
     events: [],
   },
   {
@@ -1373,7 +1389,6 @@ export const careBoardData: Resident[] = [
     registrationDate: '2025/03/01',
     lastUpdateDate: '2025/05/08',
     admissionDate: '2025/03/01',
-    admissionStatus: '入居中',
     careLevel: '要介護2',
     certificationDate: '2025/02/15',
     certValidityStart: '2025/02/15',
@@ -1394,6 +1409,17 @@ export const careBoardData: Resident[] = [
         notes: '近所在住、緊急時対応可能',
       },
     ],
+    homeCareOffices: [
+      {
+        id: '4',
+        businessName: 'ケアライフサポート',
+        address: '東京都品川区品川4-4-4',
+        phone: '03-4567-8901',
+        fax: '03-4567-8902',
+        careManager: '高橋美咲',
+        notes: '備考情報4',
+      },
+    ],
     events: [],
   },
   {
@@ -1409,7 +1435,7 @@ export const careBoardData: Resident[] = [
     registrationDate: '2025/02/20',
     lastUpdateDate: '2025/05/05',
     admissionDate: '2025/02/20',
-    admissionStatus: '入居中',
+    dischargeDate: '2025/05/15',
     careLevel: '要介護3',
     certificationDate: '2025/02/01',
     certValidityStart: '2025/02/01',

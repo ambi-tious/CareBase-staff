@@ -48,7 +48,7 @@ export const residentService = {
       registrationDate: new Date().toISOString().split('T')[0].replace(/-/g, '/'),
       lastUpdateDate: new Date().toISOString().split('T')[0].replace(/-/g, '/'),
       admissionDate: data.admissionDate.replace(/-/g, '/'),
-      admissionStatus: '入居中',
+      dischargeDate: data.dischargeDate ? data.dischargeDate.replace(/-/g, '/') : undefined,
       careLevel: data.careLevel,
       certificationDate: data.admissionDate.replace(/-/g, '/'), // Default to admission date
       certValidityStart: data.admissionDate.replace(/-/g, '/'),

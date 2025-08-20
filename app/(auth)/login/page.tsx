@@ -2,38 +2,24 @@
 
 import { Logo } from '@/components/1_atoms/common/logo';
 import { LoginForm } from '@/components/2_molecules/auth/login-form';
+import { useAuth } from '@/hooks/useAuth';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect } from 'react';
 
 export default function LoginPage() {
   const router = useRouter();
-  const [isLoading, setIsLoading] = useState(false);
+  const { isAuthenticated, isLoading, error, login, clearError } = useAuth();
 
-  const handleLogin = async (credentials: {
-    facilityId: string;
-    password: string;
-  }): Promise<{ success: boolean; error?: string }> => {
-    setIsLoading(true);
-
-    try {
-      // Simulate API call delay
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      // Mock authentication - in production, this would call a real API
-      if (credentials.facilityId === 'admin' && credentials.password === 'password') {
-        router.push('/staff-selection');
-        return { success: true };
-      }
-
-      return { success: false, error: '施設IDまたはパスワードが正しくありません' };
-    } catch (error) {
-      return {
-        success: false,
-        error: 'ログイン中にエラーが発生しました。しばらく経ってからもう一度お試しください。',
-      };
-    } finally {
-      setIsLoading(false);
+  // 既にログイン済みの場合はリダイレクト
+  useEffect(() => {
+    if (isAuthenticated) {
+      router.push('/staff-selection');
     }
+  }, [isAuthenticated, router]);
+
+  const handleLogin = async (credentials: any) => {
+    const response = await login(credentials);
+    return response;
   };
 
   return (
@@ -45,7 +31,12 @@ export default function LoginPage() {
         </div>
 
         {/* Login Form */}
-        <LoginForm onLogin={handleLogin} isLoading={isLoading} />
+        <LoginForm
+          onLogin={handleLogin}
+          isLoading={isLoading}
+          error={error}
+          onClearError={clearError}
+        />
 
         {/* Footer */}
         <div className="text-center text-xs text-gray-500">

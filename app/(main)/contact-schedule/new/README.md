@@ -166,15 +166,15 @@ Issue: [#021 [設計] #021 連絡・予定｜連絡登録](https://github.com/am
 
 ### アクション
 
-| 項目名       | 処理内容                     | 対象API                            | 遷移先画面                                |
-| ------------ | ---------------------------- | ---------------------------------- | ----------------------------------------- |
-| 戻るボタン   | 連絡・予定一覧画面に戻る     | -                                  | 連絡・予定一覧 (`/contact-schedule`)      |
-| 利用者選択   | 利用者選択モーダル表示       | `/api/v1/residents`                | 同一画面（モーダル表示）                  |
-| カテゴリ管理 | カテゴリ管理モーダル表示     | `/api/v1/communication-categories` | 同一画面（モーダル表示）                  |
-| 通知対象選択 | 通知対象選択モーダル表示     | `/api/v1/staff`                    | 同一画面（モーダル表示）                  |
-| 下書き保存   | 下書きとして保存             | `/api/v1/contact-schedule/drafts`  | 同一画面（保存完了メッセージ）            |
-| 登録         | 連絡・予定を正式登録         | `/api/v1/contact-schedule`         | 連絡・予定詳細 (`/contact-schedule/{id}`) |
-| キャンセル   | 入力内容を破棄して一覧に戻る | -                                  | 連絡・予定一覧 (`/contact-schedule`)      |
+| 項目名       | 処理内容                     | 対象API                        | 遷移先画面                                |
+| ------------ | ---------------------------- | ------------------------------ | ----------------------------------------- |
+| 戻るボタン   | 連絡・予定一覧画面に戻る     | -                              | 連絡・予定一覧 (`/contact-schedule`)      |
+| 利用者選択   | 利用者選択モーダル表示       | `/v1/residents`                | 同一画面（モーダル表示）                  |
+| カテゴリ管理 | カテゴリ管理モーダル表示     | `/v1/communication-categories` | 同一画面（モーダル表示）                  |
+| 通知対象選択 | 通知対象選択モーダル表示     | `/v1/staff`                    | 同一画面（モーダル表示）                  |
+| 下書き保存   | 下書きとして保存             | `/v1/contact-schedule/drafts`  | 同一画面（保存完了メッセージ）            |
+| 登録         | 連絡・予定を正式登録         | `/v1/contact-schedule`         | 連絡・予定詳細 (`/contact-schedule/{id}`) |
+| キャンセル   | 入力内容を破棄して一覧に戻る | -                              | 連絡・予定一覧 (`/contact-schedule`)      |
 
 ### 入力チェック
 
@@ -350,17 +350,17 @@ type CommunicationStatus = 'draft' | 'published' | 'archived';
 
 ### API エンドポイント
 
-| メソッド | エンドポイント                          | 説明               |
-| -------- | --------------------------------------- | ------------------ |
-| GET      | `/api/v1/residents`                     | 利用者一覧取得     |
-| GET      | `/api/v1/staff`                         | 職員一覧取得       |
-| GET      | `/api/v1/communication-categories`      | カテゴリ一覧取得   |
-| POST     | `/api/v1/communication-categories`      | カテゴリ新規作成   |
-| PUT      | `/api/v1/communication-categories/{id}` | カテゴリ更新       |
-| DELETE   | `/api/v1/communication-categories/{id}` | カテゴリ削除       |
-| POST     | `/api/v1/contact-schedule`              | 連絡・予定新規作成 |
-| POST     | `/api/v1/contact-schedule/drafts`       | 下書き保存         |
-| GET      | `/api/v1/contact-schedule/drafts`       | 下書き一覧取得     |
+| メソッド | エンドポイント                      | 説明               |
+| -------- | ----------------------------------- | ------------------ |
+| GET      | `/v1/residents`                     | 利用者一覧取得     |
+| GET      | `/v1/staff`                         | 職員一覧取得       |
+| GET      | `/v1/communication-categories`      | カテゴリ一覧取得   |
+| POST     | `/v1/communication-categories`      | カテゴリ新規作成   |
+| PUT      | `/v1/communication-categories/{id}` | カテゴリ更新       |
+| DELETE   | `/v1/communication-categories/{id}` | カテゴリ削除       |
+| POST     | `/v1/contact-schedule`              | 連絡・予定新規作成 |
+| POST     | `/v1/contact-schedule/drafts`       | 下書き保存         |
+| GET      | `/v1/contact-schedule/drafts`       | 下書き一覧取得     |
 
 ## 画面遷移仕様
 

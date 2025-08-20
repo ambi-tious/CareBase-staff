@@ -1,3 +1,4 @@
+import { AuthProvider } from '@/components/providers/AuthProvider';
 import { Toaster } from '@/components/ui/toaster';
 import type { Metadata, Viewport } from 'next';
 import './globals.css';
@@ -48,8 +49,10 @@ export default function RootLayout({
   return (
     <html lang="ja">
       <body>
-        {children}
-        <Toaster />
+        <AuthProvider>
+          {children}
+          <Toaster />
+        </AuthProvider>
       </body>
     </html>
   );

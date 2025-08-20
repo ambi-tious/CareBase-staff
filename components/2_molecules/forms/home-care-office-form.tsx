@@ -76,10 +76,9 @@ export const HomeCareOfficeForm: React.FC<HomeCareOfficeFormProps> = ({
           <FormField
             label="ケアマネージャー"
             id="careManager"
-            value={formData.careManager}
+            value={formData.careManager || ''}
             onChange={(value) => updateField('careManager', value)}
             placeholder="山口恵子"
-            required
             error={fieldErrors.careManager}
             disabled={isSubmitting}
           />
@@ -88,10 +87,9 @@ export const HomeCareOfficeForm: React.FC<HomeCareOfficeFormProps> = ({
             label="電話番号"
             id="phone"
             type="tel"
-            value={formData.phone}
+            value={formData.phone || ''}
             onChange={(value) => updateField('phone', value)}
             placeholder="078-000-0000"
-            required
             error={fieldErrors.phone}
             disabled={isSubmitting}
           />
@@ -114,10 +112,9 @@ export const HomeCareOfficeForm: React.FC<HomeCareOfficeFormProps> = ({
           <FormField
             label="住所"
             id="address"
-            value={formData.address}
+            value={formData.address || ''}
             onChange={(value) => updateField('address', value)}
             placeholder="兵庫県神戸市西区糸井2-14-9"
-            required
             error={fieldErrors.address}
             disabled={isSubmitting}
           />

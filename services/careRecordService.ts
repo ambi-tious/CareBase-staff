@@ -16,11 +16,11 @@ class CareRecordService {
   async createCareRecord(data: CareRecordFormData): Promise<CareRecord> {
     try {
       // For development, use mock creation
-      if (process.env.NODE_ENV === 'development') {
+      if (process.env.NODE_ENV) {
         return this.mockCreateCareRecord(data);
       }
 
-      const response = await fetch(`${this.baseUrl}/api/v1/care-records`, {
+      const response = await fetch(`${this.baseUrl}/v1/care-records`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -46,11 +46,11 @@ class CareRecordService {
   async updateCareRecord(recordId: string, data: CareRecordFormData): Promise<CareRecord> {
     try {
       // For development, use mock update
-      if (process.env.NODE_ENV === 'development') {
+      if (process.env.NODE_ENV) {
         return this.mockUpdateCareRecord(recordId, data);
       }
 
-      const response = await fetch(`${this.baseUrl}/api/v1/care-records/${recordId}`, {
+      const response = await fetch(`${this.baseUrl}/v1/care-records/${recordId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -76,11 +76,11 @@ class CareRecordService {
   async deleteCareRecord(recordId: string): Promise<void> {
     try {
       // For development, use mock deletion
-      if (process.env.NODE_ENV === 'development') {
+      if (process.env.NODE_ENV) {
         return this.mockDeleteCareRecord(recordId);
       }
 
-      const response = await fetch(`${this.baseUrl}/api/v1/care-records/${recordId}`, {
+      const response = await fetch(`${this.baseUrl}/v1/care-records/${recordId}`, {
         method: 'DELETE',
       });
 
@@ -99,11 +99,11 @@ class CareRecordService {
   async getCareRecord(recordId: string): Promise<CareRecord> {
     try {
       // For development, use mock data
-      if (process.env.NODE_ENV === 'development') {
+      if (process.env.NODE_ENV) {
         return this.mockGetCareRecord(recordId);
       }
 
-      const response = await fetch(`${this.baseUrl}/api/v1/care-records/${recordId}`);
+      const response = await fetch(`${this.baseUrl}/v1/care-records/${recordId}`);
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);

@@ -19,11 +19,11 @@ class MedicationService {
   ): Promise<Medication> {
     try {
       // For development, use mock creation
-      if (process.env.NODE_ENV === 'development') {
+      if (process.env.NODE_ENV) {
         return this.mockCreateMedication(residentId, medicationData);
       }
 
-      const response = await fetch(`${this.baseUrl}/api/residents/${residentId}/medications`, {
+      const response = await fetch(`${this.baseUrl}/residents/${residentId}/medications`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -53,12 +53,12 @@ class MedicationService {
   ): Promise<Medication> {
     try {
       // For development, use mock update
-      if (process.env.NODE_ENV === 'development') {
+      if (process.env.NODE_ENV) {
         return this.mockUpdateMedication(residentId, medicationId, medicationData);
       }
 
       const response = await fetch(
-        `${this.baseUrl}/api/residents/${residentId}/medications/${medicationId}`,
+        `${this.baseUrl}/residents/${residentId}/medications/${medicationId}`,
         {
           method: 'PUT',
           headers: {
@@ -86,12 +86,12 @@ class MedicationService {
   async deleteMedication(residentId: number, medicationId: string): Promise<void> {
     try {
       // For development, use mock deletion
-      if (process.env.NODE_ENV === 'development') {
+      if (process.env.NODE_ENV) {
         return this.mockDeleteMedication(residentId, medicationId);
       }
 
       const response = await fetch(
-        `${this.baseUrl}/api/residents/${residentId}/medications/${medicationId}`,
+        `${this.baseUrl}/residents/${residentId}/medications/${medicationId}`,
         {
           method: 'DELETE',
         }

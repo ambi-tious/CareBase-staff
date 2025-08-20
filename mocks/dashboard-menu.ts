@@ -17,22 +17,15 @@ export const dashboardMenu: NavCategory[] = [
     title: '利用者関連',
     icon: 'Users',
     links: [
-      { label: '各種情報(利用者リスト)', href: '/residents', icon: 'User' },
-      { label: 'アラートリスト', href: '#', icon: 'AlertTriangle' },
-    ],
-  },
-  {
-    title: 'ケアボード',
-    icon: 'ClipboardList',
-    links: [
-      { label: '時間ベース', href: '/', icon: 'Clock' },
-      { label: 'ご利用者ベース', href: '/', icon: 'Notebook' },
+      { label: '利用者リスト', href: '/residents', icon: 'User' },
+      { label: 'ケアボード', href: '/', icon: 'Notebook' },
     ],
   },
   {
     title: '連絡・予定',
     icon: 'MessageSquare',
     links: [
+      { label: 'お知らせ一覧', href: '/notifications', icon: 'Bell' },
       { label: '週間表示', href: '/contact-schedule', icon: 'Calendar' },
       { label: '月間表示', href: '/contact-schedule', icon: 'Calendar' },
     ],
@@ -61,10 +54,8 @@ export const dashboardMenu: NavCategory[] = [
     title: '申し送り・介護記録',
     icon: 'FileText',
     links: [
-      { label: 'お知らせ一覧', href: '/notifications', icon: 'Bell' },
       { label: '申し送り一覧', href: '/handovers', icon: 'MessageCircle' },
       { label: '介護記録一覧', href: '/care-records', icon: 'Clipboard' },
-      { label: '各項目毎の記録', href: '#', icon: 'List' },
     ],
   },
 ];

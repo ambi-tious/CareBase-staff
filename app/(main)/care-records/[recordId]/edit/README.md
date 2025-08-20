@@ -219,12 +219,12 @@ interface CareRecordFormData {
 
 ### API仕様
 
-| メソッド | エンドポイント                    | 説明             |
-| -------- | --------------------------------- | ---------------- |
-| GET      | `/api/v1/care-records/{id}`       | 介護記録詳細取得 |
-| PUT      | `/api/v1/care-records/{id}`       | 介護記録更新     |
-| DELETE   | `/api/v1/care-records/{id}`       | 介護記録削除     |
-| POST     | `/api/v1/care-records/{id}/draft` | 下書き保存       |
+| メソッド | エンドポイント                | 説明             |
+| -------- | ----------------------------- | ---------------- |
+| GET      | `/v1/care-records/{id}`       | 介護記録詳細取得 |
+| PUT      | `/v1/care-records/{id}`       | 介護記録更新     |
+| DELETE   | `/v1/care-records/{id}`       | 介護記録削除     |
+| POST     | `/v1/care-records/{id}/draft` | 下書き保存       |
 
 ### 状態管理
 

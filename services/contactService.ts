@@ -16,11 +16,11 @@ class ContactService {
   async createContact(residentId: number, contactData: ContactFormData): Promise<ContactPerson> {
     try {
       // For development, use mock creation
-      if (process.env.NODE_ENV === 'development') {
+      if (process.env.NODE_ENV) {
         return this.mockCreateContact(residentId, contactData);
       }
 
-      const response = await fetch(`${this.baseUrl}/api/residents/${residentId}/contacts`, {
+      const response = await fetch(`${this.baseUrl}/residents/${residentId}/contacts`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -61,8 +61,8 @@ class ContactService {
       type: contactData.type,
       name: contactData.name,
       furigana: contactData.furigana,
-      relationship: contactData.relationship,
-      phone1: contactData.phone1,
+      relationship: contactData.relationship || '',
+      phone1: contactData.phone1 || '',
       phone2: contactData.phone2 || undefined,
       email: contactData.email || undefined,
       address: contactData.address || '',
@@ -83,12 +83,12 @@ class ContactService {
   ): Promise<ContactPerson> {
     try {
       // For development, use mock update
-      if (process.env.NODE_ENV === 'development') {
+      if (process.env.NODE_ENV) {
         return this.mockUpdateContact(residentId, contactId, contactData);
       }
 
       const response = await fetch(
-        `${this.baseUrl}/api/residents/${residentId}/contacts/${contactId}`,
+        `${this.baseUrl}/residents/${residentId}/contacts/${contactId}`,
         {
           method: 'PUT',
           headers: {
@@ -132,8 +132,8 @@ class ContactService {
       type: contactData.type,
       name: contactData.name,
       furigana: contactData.furigana,
-      relationship: contactData.relationship,
-      phone1: contactData.phone1,
+      relationship: contactData.relationship || '',
+      phone1: contactData.phone1 || '',
       phone2: contactData.phone2 || undefined,
       email: contactData.email || undefined,
       address: contactData.address || '',
@@ -150,12 +150,12 @@ class ContactService {
   async deleteContact(residentId: number, contactId: string): Promise<void> {
     try {
       // For development, use mock deletion
-      if (process.env.NODE_ENV === 'development') {
+      if (process.env.NODE_ENV) {
         return this.mockDeleteContact(residentId, contactId);
       }
 
       const response = await fetch(
-        `${this.baseUrl}/api/residents/${residentId}/contacts/${contactId}`,
+        `${this.baseUrl}/residents/${residentId}/contacts/${contactId}`,
         {
           method: 'DELETE',
         }

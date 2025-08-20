@@ -79,7 +79,7 @@ export const CareRecordForm: React.FC<CareRecordFormProps> = ({
   const residentOptions = useMemo(
     () =>
       careBoardData
-        .filter((resident) => resident.admissionStatus === '入居中')
+        .filter((resident) => resident.dischargeDate === undefined)
         .map((resident) => ({
           value: resident.id.toString(),
           label: `${resident.name} (${resident.careLevel})`,
