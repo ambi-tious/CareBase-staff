@@ -511,28 +511,6 @@ export const ResidentBasicInfoForm: React.FC<ResidentBasicInfoFormProps> = ({
           error={errors.sex}
           disabled={disabled}
         />
-
-        <div className="flex gap-3 lg:flex-row flex-col">
-          <FormField
-            label="入所日"
-            id="admissionDate"
-            type="date"
-            value={data.admissionDate}
-            onChange={(value) => updateField('admissionDate', value)}
-            required
-            error={errors.admissionDate}
-            disabled={disabled}
-          />
-
-          <FormField
-            label="退所日"
-            id="dischargeDate"
-            type="date"
-            value={data.dischargeDate || ''}
-            onChange={(value) => updateField('dischargeDate', value)}
-            error={errors.dischargeDate}
-          />
-        </div>
       </div>
 
       {/* 施設情報・認定情報 */}
@@ -669,16 +647,27 @@ export const ResidentBasicInfoForm: React.FC<ResidentBasicInfoFormProps> = ({
             </Button>
           </div>
         </div>
+        <div className="flex gap-3 lg:flex-row flex-col">
+          <FormField
+            label="入所日"
+            id="admissionDate"
+            type="date"
+            value={data.admissionDate}
+            onChange={(value) => updateField('admissionDate', value)}
+            required
+            error={errors.admissionDate}
+            disabled={disabled}
+          />
 
-        <FormField
-          label="住所"
-          id="address"
-          value={data.address}
-          onChange={(value) => updateField('address', value)}
-          placeholder="東京都渋谷区..."
-          error={errors.address}
-          disabled={disabled}
-        />
+          <FormField
+            label="退所日"
+            id="dischargeDate"
+            type="date"
+            value={data.dischargeDate || ''}
+            onChange={(value) => updateField('dischargeDate', value)}
+            error={errors.dischargeDate}
+          />
+        </div>
       </div>
     </div>
   );
