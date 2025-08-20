@@ -40,6 +40,13 @@ export const organizationData: Group[] = [
         name: '朝番チーム',
         description: '早朝・午前担当',
         icon: 'UserCheck',
+        group: {
+          id: 'group-1',
+          name: '介護フロア A',
+          description: '1階 介護フロア',
+          icon: 'Heart',
+          teams: [],
+        },
         staff: [
           {
             id: 'staff-001',
@@ -48,6 +55,20 @@ export const organizationData: Group[] = [
             role: '介護職員',
             employeeId: 'EMP001',
             isActive: true,
+            team: {
+              id: 'team-a1',
+              name: '朝番チーム',
+              description: '早朝・午前担当',
+              icon: 'UserCheck',
+              group: {
+                id: 'group-1',
+                name: '介護フロア A',
+                description: '1階 介護フロア',
+                icon: 'Heart',
+                teams: [],
+              },
+              staff: [],
+            },
           },
           {
             id: 'staff-002',
@@ -56,6 +77,20 @@ export const organizationData: Group[] = [
             role: '看護師',
             employeeId: 'EMP002',
             isActive: true,
+            team: {
+              id: 'team-a1',
+              name: '朝番チーム',
+              description: '早朝・午前担当',
+              icon: 'UserCheck',
+              group: {
+                id: 'group-1',
+                name: '介護フロア A',
+                description: '1階 介護フロア',
+                icon: 'Heart',
+                teams: [],
+              },
+              staff: [],
+            },
           },
           {
             id: 'staff-003',
@@ -64,6 +99,20 @@ export const organizationData: Group[] = [
             role: '介護職員',
             employeeId: 'EMP003',
             isActive: true,
+            team: {
+              id: 'team-a1',
+              name: '朝番チーム',
+              description: '早朝・午前担当',
+              icon: 'UserCheck',
+              group: {
+                id: 'group-1',
+                name: '介護フロア A',
+                description: '1階 介護フロア',
+                icon: 'Heart',
+                teams: [],
+              },
+              staff: [],
+            },
           },
         ],
       },
@@ -72,6 +121,13 @@ export const organizationData: Group[] = [
         name: '日勤チーム',
         description: '日中担当',
         icon: 'Users',
+        group: {
+          id: 'group-1',
+          name: '介護フロア A',
+          description: '1階 介護フロア',
+          icon: 'Heart',
+          teams: [],
+        },
         staff: [
           {
             id: 'staff-004',
@@ -80,6 +136,20 @@ export const organizationData: Group[] = [
             role: '主任介護職員',
             employeeId: 'EMP004',
             isActive: true,
+            team: {
+              id: 'team-a2',
+              name: '日勤チーム',
+              description: '日中担当',
+              icon: 'Users',
+              group: {
+                id: 'group-1',
+                name: '介護フロア A',
+                description: '1階 介護フロア',
+                icon: 'Heart',
+                teams: [],
+              },
+              staff: [],
+            },
           },
           {
             id: 'staff-005',
@@ -88,6 +158,20 @@ export const organizationData: Group[] = [
             role: '看護師',
             employeeId: 'EMP005',
             isActive: true,
+            team: {
+              id: 'team-a2',
+              name: '日勤チーム',
+              description: '日中担当',
+              icon: 'Users',
+              group: {
+                id: 'group-1',
+                name: '介護フロア A',
+                description: '1階 介護フロア',
+                icon: 'Heart',
+                teams: [],
+              },
+              staff: [],
+            },
           },
         ],
       },
@@ -96,6 +180,13 @@ export const organizationData: Group[] = [
         name: '夜勤チーム',
         description: '夜間担当',
         icon: 'Shield',
+        group: {
+          id: 'group-1',
+          name: '介護フロア A',
+          description: '1階 介護フロア',
+          icon: 'Heart',
+          teams: [],
+        },
         staff: [
           {
             id: 'staff-006',
@@ -104,6 +195,20 @@ export const organizationData: Group[] = [
             role: '介護職員',
             employeeId: 'EMP006',
             isActive: true,
+            team: {
+              id: 'team-a3',
+              name: '夜勤チーム',
+              description: '夜間担当',
+              icon: 'Shield',
+              group: {
+                id: 'group-1',
+                name: '介護フロア A',
+                description: '1階 介護フロア',
+                icon: 'Heart',
+                teams: [],
+              },
+              staff: [],
+            },
           },
           {
             id: 'staff-007',
@@ -112,6 +217,20 @@ export const organizationData: Group[] = [
             role: '看護師',
             employeeId: 'EMP007',
             isActive: true,
+            team: {
+              id: 'team-a3',
+              name: '夜勤チーム',
+              description: '夜間担当',
+              icon: 'Shield',
+              group: {
+                id: 'group-1',
+                name: '介護フロア A',
+                description: '1階 介護フロア',
+                icon: 'Heart',
+                teams: [],
+              },
+              staff: [],
+            },
           },
         ],
       },
@@ -128,6 +247,13 @@ export const organizationData: Group[] = [
         name: '朝番チーム',
         description: '早朝・午前担当',
         icon: 'UserCheck',
+        group: {
+          id: 'group-2',
+          name: '介護フロア B',
+          description: '2階 介護フロア',
+          icon: 'Stethoscope',
+          teams: [],
+        },
         staff: [
           {
             id: 'staff-008',
@@ -136,6 +262,20 @@ export const organizationData: Group[] = [
             role: '介護職員',
             employeeId: 'EMP008',
             isActive: true,
+            team: {
+              id: 'team-b1',
+              name: '朝番チーム',
+              description: '早朝・午前担当',
+              icon: 'UserCheck',
+              group: {
+                id: 'group-2',
+                name: '介護フロア B',
+                description: '2階 介護フロア',
+                icon: 'Stethoscope',
+                teams: [],
+              },
+              staff: [],
+            },
           },
           {
             id: 'staff-009',
@@ -144,6 +284,20 @@ export const organizationData: Group[] = [
             role: '看護師',
             employeeId: 'EMP009',
             isActive: true,
+            team: {
+              id: 'team-b1',
+              name: '朝番チーム',
+              description: '早朝・午前担当',
+              icon: 'UserCheck',
+              group: {
+                id: 'group-2',
+                name: '介護フロア B',
+                description: '2階 介護フロア',
+                icon: 'Stethoscope',
+                teams: [],
+              },
+              staff: [],
+            },
           },
         ],
       },
@@ -152,6 +306,13 @@ export const organizationData: Group[] = [
         name: '日勤チーム',
         description: '日中担当',
         icon: 'Users',
+        group: {
+          id: 'group-2',
+          name: '介護フロア B',
+          description: '2階 介護フロア',
+          icon: 'Stethoscope',
+          teams: [],
+        },
         staff: [
           {
             id: 'staff-010',
@@ -160,6 +321,20 @@ export const organizationData: Group[] = [
             role: '主任介護職員',
             employeeId: 'EMP010',
             isActive: true,
+            team: {
+              id: 'team-b2',
+              name: '日勤チーム',
+              description: '日中担当',
+              icon: 'Users',
+              group: {
+                id: 'group-2',
+                name: '介護フロア B',
+                description: '2階 介護フロア',
+                icon: 'Stethoscope',
+                teams: [],
+              },
+              staff: [],
+            },
           },
         ],
       },
@@ -176,6 +351,13 @@ export const organizationData: Group[] = [
         name: '管理チーム',
         description: '施設長・事務',
         icon: 'Shield',
+        group: {
+          id: 'group-3',
+          name: '管理部門',
+          description: '施設管理・事務',
+          icon: 'Clipboard',
+          teams: [],
+        },
         staff: [
           {
             id: 'staff-011',
@@ -184,6 +366,20 @@ export const organizationData: Group[] = [
             role: '施設長',
             employeeId: 'ADM001',
             isActive: true,
+            team: {
+              id: 'team-m1',
+              name: '管理チーム',
+              description: '施設長・事務',
+              icon: 'Shield',
+              group: {
+                id: 'group-3',
+                name: '管理部門',
+                description: '施設管理・事務',
+                icon: 'Clipboard',
+                teams: [],
+              },
+              staff: [],
+            },
           },
           {
             id: 'staff-012',
@@ -192,6 +388,20 @@ export const organizationData: Group[] = [
             role: '事務職員',
             employeeId: 'ADM002',
             isActive: true,
+            team: {
+              id: 'team-m1',
+              name: '管理チーム',
+              description: '施設長・事務',
+              icon: 'Shield',
+              group: {
+                id: 'group-3',
+                name: '管理部門',
+                description: '施設管理・事務',
+                icon: 'Clipboard',
+                teams: [],
+              },
+              staff: [],
+            },
           },
         ],
       },
@@ -211,4 +421,22 @@ export const getTeamById = (groupId: string, teamId: string): Team | undefined =
 
 export const getAllStaff = (): Staff[] => {
   return organizationData.flatMap((group) => group.teams.flatMap((team) => team.staff));
+};
+
+// スタッフIDからグループ名とチーム名を取得するヘルパー関数
+export const getStaffGroupAndTeam = (
+  staffId: string
+): { groupName: string; teamName: string } | null => {
+  for (const group of organizationData) {
+    for (const team of group.teams) {
+      const staff = team.staff.find((s) => s.id === staffId);
+      if (staff) {
+        return {
+          groupName: group.name,
+          teamName: team.name,
+        };
+      }
+    }
+  }
+  return null;
 };

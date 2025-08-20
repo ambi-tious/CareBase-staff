@@ -123,6 +123,13 @@ export function AppHeader() {
       <div className="mx-auto flex h-16 items-center justify-between px-4 md:px-6">
         <Link href="/" className="flex items-center gap-2">
           <Logo />
+          {/* 開発環境表示 */}
+          {process.env.NODE_ENV === 'development' && (
+            <div className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-orange-100 text-orange-800 border border-orange-200">
+              <div className="w-1.5 h-1.5 bg-orange-500 rounded-full mr-1 animate-pulse"></div>
+              DEV
+            </div>
+          )}
         </Link>
         <div className="flex items-center gap-2 tablet:gap-4">
           {selectedStaffData ? (

@@ -17,6 +17,28 @@ interface AuthState {
   selectedStaff: any | null;
 }
 
+// 開発環境用のモックデータ
+const MOCK_AUTH_DATA = {
+  admin: {
+    password: 'password',
+    token: 'mock-jwt-token-admin-12345',
+    facility: {
+      id: 'admin-facility',
+      name: '管理者施設',
+      login_id: 'admin',
+    },
+  },
+  demo: {
+    password: 'demo',
+    token: 'mock-jwt-token-demo-67890',
+    facility: {
+      id: 'demo-facility',
+      name: 'デモ施設',
+      login_id: 'demo',
+    },
+  },
+};
+
 export const useAuth = () => {
   const [state, setState] = useState<AuthState>({
     isAuthenticated: false,
@@ -73,8 +95,73 @@ export const useAuth = () => {
     setError(null);
   }, [setError]);
 
+  // 開発環境用のモック認証関数
+  const mockLogin = useCallback(
+    async (credentials: LoginCredentials): Promise<AuthResponse> => {
+      setLoading(true);
+      setError(null);
+
+      // 開発環境でのモック認証
+      const mockData = MOCK_AUTH_DATA[credentials.login_id as keyof typeof MOCK_AUTH_DATA];
+
+      if (mockData && mockData.password === credentials.password) {
+        // モック認証成功
+        const response = {
+          success: true,
+          token: mockData.token,
+          facility: mockData.facility,
+          message: '開発環境でのモック認証に成功しました',
+        };
+
+        // Store in localStorage
+        if (typeof window !== 'undefined') {
+          localStorage.setItem('auth_token', response.token);
+          localStorage.setItem('auth_facility', JSON.stringify(response.facility));
+        }
+
+        // Update state
+        setState((prev) => ({
+          ...prev,
+          isAuthenticated: true,
+          token: response.token,
+          facility: response.facility,
+          error: null,
+        }));
+
+        console.log('🔧 開発環境: モック認証成功', {
+          login_id: credentials.login_id,
+          facility: response.facility,
+        });
+
+        return response;
+      } else {
+        // モック認証失敗
+        const errorMessage =
+          '開発環境: 無効な認証情報です。admin/password または demo/demo を使用してください。';
+        setError(errorMessage);
+
+        console.warn('🔧 開発環境: モック認証失敗', {
+          login_id: credentials.login_id,
+          providedPassword: credentials.password,
+        });
+
+        return {
+          success: false,
+          error: errorMessage,
+        };
+      }
+    },
+    [setLoading, setError]
+  );
+
   const login = useCallback(
     async (credentials: LoginCredentials): Promise<AuthResponse> => {
+      // 開発環境の場合はモック認証を使用
+      if (process.env.NODE_ENV === 'development') {
+        return mockLogin(credentials);
+      }
+
+      // 本番環境では通常の認証APIを使用
       setLoading(true);
       setError(null);
 
@@ -122,7 +209,7 @@ export const useAuth = () => {
         setLoading(false);
       }
     },
-    [setLoading, setError]
+    [setLoading, setError, mockLogin]
   );
 
   const logout = useCallback(() => {

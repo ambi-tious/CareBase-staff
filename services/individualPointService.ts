@@ -6,8 +6,8 @@
 
 import type { IndividualPoint, PointCategory } from '@/types/individual-point';
 import type {
-    CategoryFormData,
-    IndividualPointFormData,
+  CategoryFormData,
+  IndividualPointFormData,
 } from '@/validations/individual-point-validation';
 
 class IndividualPointService {
@@ -57,13 +57,10 @@ class IndividualPointService {
         });
       }
 
-      const response = await fetch(
-        `${this.baseUrl}/residents/${residentId}/individual-points`,
-        {
-          method: 'POST',
-          body: formData,
-        }
-      );
+      const response = await fetch(`${this.baseUrl}/residents/${residentId}/individual-points`, {
+        method: 'POST',
+        body: formData,
+      });
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);

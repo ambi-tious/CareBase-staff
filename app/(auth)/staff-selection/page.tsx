@@ -3,6 +3,7 @@
 import { StaffSelectionScreen } from '@/components/3_organisms/auth/staff-selection-screen';
 import { useAuth } from '@/hooks/useAuth';
 import type { Staff } from '@/mocks/staff-data';
+import { getStaffGroupAndTeam } from '@/mocks/staff-data';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Suspense, useEffect, useRef, useState } from 'react';
 
@@ -70,11 +71,34 @@ function StaffSelectionContent() {
       // Call API to select staff
       localStorage.setItem('selected_staff', JSON.stringify(staff));
 
+      // 開発環境ではモックデータからグループ名とチーム名を取得
+      let groupName = '';
+      let teamName = '';
+
+      if (process.env.NODE_ENV === 'development') {
+        const groupAndTeam = getStaffGroupAndTeam(staff.id);
+        if (groupAndTeam) {
+          groupName = groupAndTeam.groupName;
+          teamName = groupAndTeam.teamName;
+        }
+      } else {
+        // 本番環境ではstaff.teamから取得
+        groupName = staff.team?.group?.name || '';
+        teamName = staff.team?.name || '';
+      }
+
       const selectedStaffData = {
         staff,
-        groupName: staff.team?.group?.name,
-        teamName: staff.team?.name,
+        groupName,
+        teamName,
       };
+
+      console.log('🔧 開発環境: スタッフ選択データを保存', {
+        staffId: staff.id,
+        staffName: staff.name,
+        groupName,
+        teamName,
+      });
 
       localStorage.setItem('carebase_selected_staff_data', JSON.stringify(selectedStaffData));
       router.push('/');
@@ -106,6 +130,16 @@ function StaffSelectionContent() {
 
   return (
     <div className="min-h-screen bg-carebase-bg p-4">
+      {/* 開発環境表示 */}
+      {process.env.NODE_ENV === 'development' && (
+        <div className="mb-4 flex justify-center">
+          <div className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-800 border border-orange-200">
+            <div className="w-2 h-2 bg-orange-500 rounded-full mr-2 animate-pulse"></div>
+            開発環境 - モックデータ使用中
+          </div>
+        </div>
+      )}
+
       <StaffSelectionScreen
         ref={staffSelectionRef}
         fromHeader={fromHeader}
