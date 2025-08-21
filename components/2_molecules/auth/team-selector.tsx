@@ -46,9 +46,7 @@ export const TeamSelector: React.FC<TeamSelectorProps> = ({
                 disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer hover:shadow-md',
                 isSelected
                   ? 'ring-2 ring-carebase-blue bg-carebase-blue text-white shadow-lg'
-                  : isCurrent
-                    ? 'ring-2 ring-green-500 bg-green-50 border-green-200'
-                    : !disabled && 'hover:ring-1 hover:ring-carebase-blue-light'
+                  : !disabled && 'hover:ring-1 hover:ring-carebase-blue-light'
               )}
               onClick={() => handleTeamClick(team.id)}
             >
@@ -58,11 +56,7 @@ export const TeamSelector: React.FC<TeamSelectorProps> = ({
                     <Icon
                       className={cn(
                         'w-5 h-5 transition-colors',
-                        isSelected
-                          ? 'text-white'
-                          : isCurrent
-                            ? 'text-green-600'
-                            : 'text-carebase-blue'
+                        isSelected ? 'text-white' : 'text-carebase-blue'
                       )}
                     />
                   </div>
@@ -70,11 +64,7 @@ export const TeamSelector: React.FC<TeamSelectorProps> = ({
                     <h4
                       className={cn(
                         'font-semibold transition-colors',
-                        isSelected
-                          ? 'text-white'
-                          : isCurrent
-                            ? 'text-green-800'
-                            : 'text-carebase-text-primary'
+                        isSelected ? 'text-white' : 'text-carebase-text-primary'
                       )}
                     >
                       {team.name}
@@ -82,11 +72,7 @@ export const TeamSelector: React.FC<TeamSelectorProps> = ({
                     <p
                       className={cn(
                         'text-sm transition-colors',
-                        isSelected
-                          ? 'text-blue-100'
-                          : isCurrent
-                            ? 'text-green-600'
-                            : 'text-gray-500'
+                        isSelected ? 'text-blue-100' : 'text-gray-500'
                       )}
                     >
                       {team.description}
@@ -94,11 +80,7 @@ export const TeamSelector: React.FC<TeamSelectorProps> = ({
                     <p
                       className={cn(
                         'text-xs mt-1 transition-colors',
-                        isSelected
-                          ? 'text-blue-200'
-                          : isCurrent
-                            ? 'text-green-500'
-                            : 'text-gray-400'
+                        isSelected ? 'text-blue-200' : 'text-gray-400'
                       )}
                     >
                       {team.staff.length} 名のスタッフ

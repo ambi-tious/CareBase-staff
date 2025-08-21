@@ -77,7 +77,7 @@ const StaffSelectionScreenComponent = forwardRef<HTMLDivElement, StaffSelectionS
     useEffect(() => {
       // Auto-select team if only one exists in selected group
       if (selectedGroupId) {
-        const loadGroupData = async () => {
+        const loadTeamsData = async () => {
           try {
             const teamsData = await organizationService.getTeamsByGroup(selectedGroupId);
             setTeams(teamsData);
@@ -91,14 +91,14 @@ const StaffSelectionScreenComponent = forwardRef<HTMLDivElement, StaffSelectionS
           }
         };
 
-        loadGroupData();
+        loadTeamsData();
       }
     }, [selectedGroupId, selectedTeamId]);
 
     // Load team data when team is selected
     useEffect(() => {
       if (selectedGroupId && selectedTeamId) {
-        const loadTeamData = async () => {
+        const loadStaffData = async () => {
           try {
             const staffData = await organizationService.getStaffByTeam(selectedTeamId);
             setStaff(staffData);
@@ -107,8 +107,7 @@ const StaffSelectionScreenComponent = forwardRef<HTMLDivElement, StaffSelectionS
             setError('スタッフデータの取得に失敗しました');
           }
         };
-
-        loadTeamData();
+        loadStaffData();
       }
     }, [selectedGroupId, selectedTeamId]);
 
@@ -179,8 +178,6 @@ const StaffSelectionScreenComponent = forwardRef<HTMLDivElement, StaffSelectionS
     // Handle selection from header navigation
     useEffect(() => {
       if (fromHeader && selectedStaffData && groups.length > 0) {
-        const currentStaff = selectedStaffData.staff;
-
         // Find the group ID from the group name
         const groupId = groups.find((group) => group.name === selectedStaffData.groupName)?.id;
 
@@ -202,7 +199,7 @@ const StaffSelectionScreenComponent = forwardRef<HTMLDivElement, StaffSelectionS
           }
         }
       }
-    }, [fromHeader, fromStaffClick, selectedStaffData, autoSelectTeam, groups, staff]);
+    }, [fromHeader, fromStaffClick, selectedStaffData, autoSelectTeam, groups]);
 
     // Get current group and team IDs from selected staff data
     const getCurrentGroupTeamIds = () => {
