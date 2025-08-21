@@ -4,7 +4,7 @@ export interface Staff {
   id: string;
   name: string;
   furigana: string;
-  role: string;
+  role: any;
   employeeId: string;
   avatar?: string;
   isActive: boolean;
@@ -52,7 +52,10 @@ export const organizationData: Group[] = [
             id: 'staff-001',
             name: '田中 花子',
             furigana: 'タナカ ハナコ',
-            role: '介護職員',
+            role: {
+              name: '介護職員',
+              color: 'green',
+            },
             employeeId: 'EMP001',
             isActive: true,
             team: {
@@ -74,7 +77,10 @@ export const organizationData: Group[] = [
             id: 'staff-002',
             name: '佐藤 太郎',
             furigana: 'サトウ タロウ',
-            role: '看護師',
+            role: {
+              name: '看護師',
+              color: 'blue',
+            },
             employeeId: 'EMP002',
             isActive: true,
             team: {
@@ -96,7 +102,10 @@ export const organizationData: Group[] = [
             id: 'staff-003',
             name: '山田 美咲',
             furigana: 'ヤマダ ミサキ',
-            role: '介護職員',
+            role: {
+              name: '介護職員',
+              color: 'green',
+            },
             employeeId: 'EMP003',
             isActive: true,
             team: {
@@ -133,7 +142,10 @@ export const organizationData: Group[] = [
             id: 'staff-004',
             name: '鈴木 一郎',
             furigana: 'スズキ イチロウ',
-            role: '主任介護職員',
+            role: {
+              name: '主任介護職員',
+              color: 'green',
+            },
             employeeId: 'EMP004',
             isActive: true,
             team: {
@@ -155,7 +167,10 @@ export const organizationData: Group[] = [
             id: 'staff-005',
             name: '高橋 恵子',
             furigana: 'タカハシ ケイコ',
-            role: '看護師',
+            role: {
+              name: '看護師',
+              color: 'blue',
+            },
             employeeId: 'EMP005',
             isActive: true,
             team: {
@@ -192,7 +207,10 @@ export const organizationData: Group[] = [
             id: 'staff-006',
             name: '伊藤 健太',
             furigana: 'イトウ ケンタ',
-            role: '介護職員',
+            role: {
+              name: '介護職員',
+              color: 'green',
+            },
             employeeId: 'EMP006',
             isActive: true,
             team: {
@@ -214,7 +232,10 @@ export const organizationData: Group[] = [
             id: 'staff-007',
             name: '渡辺 由美',
             furigana: 'ワタナベ ユミ',
-            role: '看護師',
+            role: {
+              name: '看護師',
+              color: 'blue',
+            },
             employeeId: 'EMP007',
             isActive: true,
             team: {
@@ -259,7 +280,10 @@ export const organizationData: Group[] = [
             id: 'staff-008',
             name: '中村 真一',
             furigana: 'ナカムラ シンイチ',
-            role: '介護職員',
+            role: {
+              name: '介護職員',
+              color: 'green',
+            },
             employeeId: 'EMP008',
             isActive: true,
             team: {
@@ -281,7 +305,10 @@ export const organizationData: Group[] = [
             id: 'staff-009',
             name: '小林 さくら',
             furigana: 'コバヤシ サクラ',
-            role: '看護師',
+            role: {
+              name: '看護師',
+              color: 'blue',
+            },
             employeeId: 'EMP009',
             isActive: true,
             team: {
@@ -318,7 +345,10 @@ export const organizationData: Group[] = [
             id: 'staff-010',
             name: '加藤 雄二',
             furigana: 'カトウ ユウジ',
-            role: '主任介護職員',
+            role: {
+              name: '主任介護職員',
+              color: 'green',
+            },
             employeeId: 'EMP010',
             isActive: true,
             team: {
@@ -363,7 +393,10 @@ export const organizationData: Group[] = [
             id: 'staff-011',
             name: '管理者 太郎',
             furigana: 'カンリシャ タロウ',
-            role: '施設長',
+            role: {
+              name: '施設長',
+              color: 'red',
+            },
             employeeId: 'ADM001',
             isActive: true,
             team: {
@@ -385,7 +418,10 @@ export const organizationData: Group[] = [
             id: 'staff-012',
             name: '事務 花子',
             furigana: 'ジム ハナコ',
-            role: '事務職員',
+            role: {
+              name: '事務職員',
+              color: 'gray',
+            },
             employeeId: 'ADM002',
             isActive: true,
             team: {
