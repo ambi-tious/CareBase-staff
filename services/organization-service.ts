@@ -15,7 +15,7 @@ class OrganizationService {
    */
   async getGroups(): Promise<Group[]> {
     // 開発環境の場合はモックデータを使用
-    if (process.env.NODE_ENV === 'development') {
+    if (process.env.NEXT_PUBLIC_USE_MOCK === 'true') {
       console.log('🔧 開発環境: モックグループデータを返却');
       return organizationData;
     }
@@ -39,7 +39,7 @@ class OrganizationService {
    */
   async getTeamsByGroup(groupId: string): Promise<Team[]> {
     // 開発環境の場合はモックデータを使用
-    if (process.env.NODE_ENV === 'development') {
+    if (process.env.NEXT_PUBLIC_USE_MOCK === 'true') {
       const group = getGroupById(groupId);
       if (!group) {
         throw new Error('指定されたグループが見つかりません');
@@ -70,7 +70,7 @@ class OrganizationService {
    */
   async getStaffByTeam(teamId: string): Promise<Staff[]> {
     // 開発環境の場合はモックデータを使用
-    if (process.env.NODE_ENV === 'development') {
+    if (process.env.NEXT_PUBLIC_USE_MOCK === 'true') {
       // 全グループから指定されたチームを検索
       for (const group of organizationData) {
         const team = group.teams.find((t) => t.id === teamId);
@@ -106,7 +106,7 @@ class OrganizationService {
    */
   async getStaffById(staffId: string): Promise<Staff | null> {
     // 開発環境の場合はモックデータを使用
-    if (process.env.NODE_ENV === 'development') {
+    if (process.env.NEXT_PUBLIC_USE_MOCK === 'true') {
       const allStaff = getAllStaff();
       const staff = allStaff.find((s) => s.id === staffId);
       if (staff) {

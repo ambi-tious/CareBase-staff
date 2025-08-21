@@ -157,7 +157,7 @@ export const useAuth = () => {
   const login = useCallback(
     async (credentials: LoginCredentials): Promise<AuthResponse> => {
       // 開発環境の場合はモック認証を使用
-      if (process.env.NODE_ENV === 'development') {
+      if (process.env.NEXT_PUBLIC_USE_MOCK === 'true') {
         return mockLogin(credentials);
       }
 
