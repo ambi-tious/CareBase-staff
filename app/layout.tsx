@@ -1,6 +1,6 @@
 import { AuthProvider } from '@/components/providers/AuthProvider';
-import { Toaster } from '@/components/ui/toaster';
 import type { Metadata, Viewport } from 'next';
+import { Toaster } from 'sonner';
 import './globals.css';
 
 export const metadata: Metadata = {

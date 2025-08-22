@@ -10,6 +10,7 @@ import { ArrowLeft, CheckCircle, FileText } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { toast } from 'sonner';
 
 export default function NewCareRecordPage() {
   const router = useRouter();
@@ -25,9 +26,11 @@ export default function NewCareRecordPage() {
 
       if (isDraft) {
         setSuccessMessage('下書きを保存しました。');
+        toast.success('下書きを保存しました。');
         return true;
       } else {
         setSuccessMessage('介護記録を作成しました。');
+        toast.success('介護記録の作成が完了しました。');
         // Navigate to the new record detail page
         setTimeout(() => {
           router.push(`/care-records/${newRecord.id}`);

@@ -16,6 +16,7 @@ import type {
   IndividualPointFormData,
 } from '@/validations/individual-point-validation';
 import { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
+import { toast } from 'sonner';
 
 interface IndividualPointsTabContentProps {
   residentId: number;
@@ -130,6 +131,10 @@ export const IndividualPointsTabContent = forwardRef<
     try {
       const newCategory = await individualPointService.createPointCategory(data);
       setCategories((prev) => [...prev, newCategory]);
+
+      // Show success toast
+      toast.success('カテゴリの登録が完了しました。');
+
       return true;
     } catch (error) {
       console.error('Failed to create category:', error);
@@ -245,6 +250,10 @@ export const IndividualPointsTabContent = forwardRef<
       );
       setPoints((prev) => [newPoint, ...prev]);
       setIsCreateModalOpen(false);
+
+      // Show success toast
+      toast.success('個別ポイントの登録が完了しました。');
+
       return true;
     } catch (error) {
       console.error('Failed to create individual point:', error);

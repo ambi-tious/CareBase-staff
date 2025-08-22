@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useCallback } from 'react';
-import type { DocumentFolder, DocumentItem } from '@/mocks/documents-data';
-import { useToast } from '@/components/ui/use-toast';
+import type { DocumentFolder } from '@/mocks/documents-data';
+import { useCallback, useState } from 'react';
+import { toast } from 'sonner';
 
 interface UseFolderManagementOptions {
   initialFolders: DocumentFolder[];
@@ -18,7 +18,6 @@ export const useFolderManagement = ({
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [selectedFolder, setSelectedFolder] = useState<DocumentFolder | null>(null);
-  const { toast } = useToast();
 
   // フォルダ名の一覧を取得（重複チェック用）
   const folderNames = folders.map((folder) => folder.name);
@@ -42,18 +41,14 @@ export const useFolderManagement = ({
 
         setFolders((prev) => [...prev, newFolder]);
 
-        toast({
-          title: 'フォルダを作成しました',
-          description: `「${folderName}」フォルダが正常に作成されました`,
-        });
+        toast.success(`「${folderName}」フォルダが正常に作成されました`);
 
         return true;
       } catch (error) {
         console.error('Failed to create folder:', error);
         return false;
       }
-    },
-    [toast]
+    }
   );
 
   // フォルダ更新
@@ -72,18 +67,14 @@ export const useFolderManagement = ({
           )
         );
 
-        toast({
-          title: 'フォルダを更新しました',
-          description: `フォルダ名が「${folderName}」に変更されました`,
-        });
+        toast.success(`フォルダ名が「${folderName}」に変更されました`);
 
         return true;
       } catch (error) {
         console.error('Failed to update folder:', error);
         return false;
       }
-    },
-    [toast]
+    }
   );
 
   // フォルダ削除
@@ -98,10 +89,7 @@ export const useFolderManagement = ({
 
         setFolders((prev) => prev.filter((folder) => folder.id !== folderId));
 
-        toast({
-          title: 'フォルダを削除しました',
-          description: `「${folderToDelete?.name}」フォルダが削除されました`,
-        });
+        toast.success(`「${folderToDelete?.name}」フォルダが削除されました`);
 
         return true;
       } catch (error) {
@@ -109,7 +97,7 @@ export const useFolderManagement = ({
         return false;
       }
     },
-    [folders, toast]
+    [folders]
   );
 
   // フォルダ内のアイテム数を確認
