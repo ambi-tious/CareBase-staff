@@ -31,7 +31,7 @@ export const StaffSelector: React.FC<StaffSelectorProps> = ({
     (staff) =>
       staff.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       staff.furigana.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      staff.role.toLowerCase().includes(searchQuery.toLowerCase())
+      staff.role.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const handleStaffToggle = useCallback(
@@ -158,7 +158,7 @@ export const StaffSelector: React.FC<StaffSelectorProps> = ({
                     <div className="flex items-center gap-2">
                       <span className="text-sm font-medium">{staff.name}</span>
                       <Badge variant="outline" className="text-xs">
-                        {staff.role}
+                        {staff.role.name}
                       </Badge>
                     </div>
                     <div className="text-xs text-gray-500">{staff.furigana}</div>

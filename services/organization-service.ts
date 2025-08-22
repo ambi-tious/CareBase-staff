@@ -7,12 +7,19 @@
 
 import { apiClient } from '@/lib/axios';
 import type { Group, Staff, Team } from '@/mocks/staff-data';
+import { getAllStaff, getGroupById, organizationData } from '@/mocks/staff-data';
 
 class OrganizationService {
   /**
    * Get all organization groups
    */
   async getGroups(): Promise<Group[]> {
+    // 開発環境の場合はモックデータを使用
+    if (process.env.NEXT_PUBLIC_USE_MOCK === 'true') {
+      console.log('🔧 開発環境: モックグループデータを返却');
+      return organizationData;
+    }
+
     try {
       const response = await apiClient.get('/v1/groups');
 
@@ -31,6 +38,19 @@ class OrganizationService {
    * Get teams by group ID
    */
   async getTeamsByGroup(groupId: string): Promise<Team[]> {
+    // 開発環境の場合はモックデータを使用
+    if (process.env.NEXT_PUBLIC_USE_MOCK === 'true') {
+      const group = getGroupById(groupId);
+      if (!group) {
+        throw new Error('指定されたグループが見つかりません');
+      }
+      console.log('🔧 開発環境: モックチームデータを返却', {
+        groupId,
+        teamCount: group.teams.length,
+      });
+      return group.teams;
+    }
+
     try {
       const response = await apiClient.get(`/v1/teams?groupId=${groupId}`);
 
@@ -49,6 +69,24 @@ class OrganizationService {
    * Get staff by group and team
    */
   async getStaffByTeam(teamId: string): Promise<Staff[]> {
+    // 開発環境の場合はモックデータを使用
+    if (process.env.NEXT_PUBLIC_USE_MOCK === 'true') {
+      // 全グループから指定されたチームを検索
+      for (const group of organizationData) {
+        const team = group.teams.find((t) => t.id === teamId);
+        if (team) {
+          console.log('🔧 開発環境: モックスタッフデータを返却', {
+            teamId,
+            groupName: group.name,
+            teamName: team.name,
+            staffCount: team.staff.length,
+          });
+          return team.staff;
+        }
+      }
+      throw new Error('指定されたチームが見つかりません');
+    }
+
     try {
       const response = await apiClient.get(`/v1/staff?teamId=${teamId}`);
 
@@ -67,6 +105,22 @@ class OrganizationService {
    * Get staff by ID
    */
   async getStaffById(staffId: string): Promise<Staff | null> {
+    // 開発環境の場合はモックデータを使用
+    if (process.env.NEXT_PUBLIC_USE_MOCK === 'true') {
+      const allStaff = getAllStaff();
+      const staff = allStaff.find((s) => s.id === staffId);
+      if (staff) {
+        console.log('🔧 開発環境: モックスタッフデータを返却', {
+          staffId,
+          staffName: staff.name,
+          role: staff.role,
+        });
+        return staff;
+      }
+      console.log('🔧 開発環境: 指定されたスタッフが見つかりません', { staffId });
+      return null;
+    }
+
     try {
       const response = await apiClient.get(`/v1/staff/${staffId}`);
 

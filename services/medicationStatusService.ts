@@ -23,16 +23,13 @@ class MedicationStatusService {
         return this.mockCreateMedicationStatus(residentId, statusData);
       }
 
-      const response = await fetch(
-        `${this.baseUrl}/residents/${residentId}/medication-status`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(statusData),
-        }
-      );
+      const response = await fetch(`${this.baseUrl}/residents/${residentId}/medication-status`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(statusData),
+      });
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
