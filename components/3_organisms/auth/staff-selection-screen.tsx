@@ -8,7 +8,8 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import type { Group, Staff, Team } from '@/mocks/staff-data';
 import { organizationService } from '@/services/organization-service';
-import { AlertCircle, LogOut } from 'lucide-react';
+import { AlertCircle, ArrowLeft, LogOut } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import { forwardRef, useEffect, useRef, useState } from 'react';
 
 // Define the type for selected staff data
@@ -41,6 +42,7 @@ const StaffSelectionScreenComponent = forwardRef<HTMLDivElement, StaffSelectionS
     },
     ref
   ) => {
+    const router = useRouter();
     const [groups, setGroups] = useState<Group[]>([]);
     const [teams, setTeams] = useState<Team[]>([]);
     const [staff, setStaff] = useState<Staff[]>([]);
@@ -175,6 +177,10 @@ const StaffSelectionScreenComponent = forwardRef<HTMLDivElement, StaffSelectionS
       }
     };
 
+    const handleBack = () => {
+      router.back();
+    };
+
     // Handle selection from header navigation
     useEffect(() => {
       if (fromHeader && selectedStaffData && groups.length > 0) {
@@ -231,9 +237,21 @@ const StaffSelectionScreenComponent = forwardRef<HTMLDivElement, StaffSelectionS
         <Card>
           <CardHeader>
             <div className="flex items-center justify-between">
-              <CardTitle className="text-xl font-bold text-carebase-text-primary">
-                スタッフ選択
-              </CardTitle>
+              <div className="flex items-center space-x-3">
+                {fromHeader && (
+                  <Button
+                    variant="outline"
+                    onClick={handleBack}
+                    className="text-gray-600 border-gray-300 hover:bg-gray-50"
+                  >
+                    <ArrowLeft className="w-4 h-4 mr-2" />
+                    戻る
+                  </Button>
+                )}
+                <CardTitle className="text-xl font-bold text-carebase-text-primary">
+                  スタッフ選択
+                </CardTitle>
+              </div>
               <Button
                 variant="outline"
                 onClick={handleLogout}

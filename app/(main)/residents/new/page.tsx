@@ -12,6 +12,7 @@ import type { Room, RoomFormData } from '@/types/room';
 import { ArrowLeft, Save, UserPlus } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { toast } from 'sonner';
 
 export default function NewResidentPage() {
   const router = useRouter();
@@ -25,8 +26,11 @@ export default function NewResidentPage() {
         setSubmitError(null);
         const newResident = await residentService.createResident(data);
 
+        // Show success toast
+        toast.success('利用者の登録が完了しました。');
+
         // Navigate to the resident detail page
-        router.push(`/residents/${newResident.id}`);
+        router.replace(`/residents/${newResident.id}`);
       } catch (error) {
         console.error('Failed to create resident:', error);
         setSubmitError('利用者の登録に失敗しました。もう一度お試しください。');
@@ -82,6 +86,10 @@ export default function NewResidentPage() {
       };
 
       setRooms((prev) => [...prev, newRoom]);
+
+      // Show success toast
+      toast.success('部屋の登録が完了しました。');
+
       return true;
     } catch (error) {
       console.error('Failed to create room:', error);
@@ -108,6 +116,10 @@ export default function NewResidentPage() {
             : room
         )
       );
+
+      // Show success toast
+      toast.success('部屋の更新が完了しました。');
+
       return true;
     } catch (error) {
       console.error('Failed to update room:', error);
@@ -121,6 +133,10 @@ export default function NewResidentPage() {
       await new Promise((resolve) => setTimeout(resolve, 800));
 
       setRooms((prev) => prev.filter((room) => room.id !== roomId));
+
+      // Show success toast
+      toast.success('部屋の削除が完了しました。');
+
       return true;
     } catch (error) {
       console.error('Failed to delete room:', error);

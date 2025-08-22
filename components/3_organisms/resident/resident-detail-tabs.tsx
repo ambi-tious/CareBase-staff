@@ -45,6 +45,7 @@ import type {
 import { PlusCircle, Settings } from 'lucide-react';
 import type React from 'react';
 import { useRef, useState } from 'react';
+import { toast } from 'sonner';
 
 interface ResidentDetailTabsProps {
   resident: Resident;
@@ -122,6 +123,10 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
     try {
       const newContact = await contactService.createContact(resident.id, contactData);
       setContacts((prev) => [...prev, newContact]);
+
+      // Show success toast
+      toast.success('連絡先の登録が完了しました。');
+
       return true;
     } catch (error) {
       console.error('Failed to create contact:', error);
@@ -133,6 +138,10 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
     try {
       const newOffice = await residentDataService.createHomeCareOffice(resident.id, data);
       setHomeCareOffices((prev) => [...prev, newOffice]);
+
+      // Show success toast
+      toast.success('居宅介護支援事業所の登録が完了しました。');
+
       // 新規作成後、マスタ管理モーダルを再表示
       setIsHomeCareModalOpen(false);
       setIsHomeCareMasterModalOpen(true);
@@ -166,6 +175,10 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
     try {
       const newInstitution = await residentDataService.createMedicalInstitution(resident.id, data);
       setMedicalInstitutions((prev) => [...prev, newInstitution]);
+
+      // Show success toast
+      toast.success('かかりつけ医療機関の登録が完了しました。');
+
       return true;
     } catch (error) {
       console.error('Failed to create medical institution:', error);
@@ -177,6 +190,10 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
     try {
       const newHistory = await residentDataService.createMedicalHistory(resident.id, data);
       setMedicalHistory((prev) => [...prev, newHistory]);
+
+      // Show success toast
+      toast.success('既往歴の登録が完了しました。');
+
       return true;
     } catch (error) {
       console.error('Failed to create medical history:', error);
@@ -188,6 +205,10 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
     try {
       const newMedication = await medicationService.createMedication(resident.id, data);
       setMedications((prev) => [...prev, newMedication]);
+
+      // Show success toast
+      toast.success('お薬情報の登録が完了しました。');
+
       return true;
     } catch (error) {
       console.error('Failed to create medication:', error);
@@ -199,6 +220,10 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
     try {
       const newStatus = await medicationStatusService.createMedicationStatus(resident.id, data);
       setMedicationStatuses((prev) => [...prev, newStatus]);
+
+      // Show success toast
+      toast.success('服薬状況の登録が完了しました。');
+
       return true;
     } catch (error) {
       console.error('Failed to create medication status:', error);
