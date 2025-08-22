@@ -1,10 +1,15 @@
 import type { IconName } from '@/lib/lucide-icon-registry';
 
+export interface Role {
+  name: string;
+  color: string;
+}
+
 export interface Staff {
   id: string;
   name: string;
   furigana: string;
-  role: any;
+  role: Role;
   employeeId: string;
   avatar?: string;
   isActive: boolean;
