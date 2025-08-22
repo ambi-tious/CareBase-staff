@@ -2,10 +2,13 @@
 
 import { GroupSelector } from '@/components/2_molecules/auth/group-selector';
 import { TeamSelector } from '@/components/2_molecules/auth/team-selector';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import type { Group, Team } from '@/mocks/staff-data';
 import { organizationService } from '@/services/organization-service';
+import { Building2, Users } from 'lucide-react';
 import type React from 'react';
 import { useCallback, useEffect, useState } from 'react';
 
@@ -180,6 +183,9 @@ export const GroupTeamSelectionModal: React.FC<GroupTeamSelectionModalProps> = (
   const { currentGroupId, currentTeamId } = getCurrentGroupTeamIds();
   const showTeamSelector = teams.length > 0;
 
+  // 現在選択中のグループ・チーム情報を取得
+  const currentGroup = groups.find((g) => g.id === currentGroupId);
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto tablet:max-w-[95vw] tablet:max-h-[95vh]">
@@ -190,6 +196,41 @@ export const GroupTeamSelectionModal: React.FC<GroupTeamSelectionModalProps> = (
         </DialogHeader>
 
         <div className="space-y-6 tablet:mt-6">
+          {/* 現在選択中のグループ・チーム表示 */}
+          {selectedStaffData && (
+            <Card className="bg-blue-50 border-blue-200">
+              <CardContent className="p-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-4">
+                    <div className="flex items-center space-x-2">
+                      <Building2 className="h-5 w-5 text-blue-600" />
+                      <span className="font-medium text-blue-900">現在選択中:</span>
+                    </div>
+                    <div className="flex items-center space-x-3">
+                      <Badge
+                        variant="secondary"
+                        className="bg-blue-100 text-blue-800 border-blue-300"
+                      >
+                        <Users className="h-3 w-3 mr-1" />
+                        {selectedStaffData.groupName}
+                      </Badge>
+                      <span className="text-blue-600">-</span>
+                      <Badge
+                        variant="secondary"
+                        className="bg-blue-100 text-blue-800 border-blue-300"
+                      >
+                        {selectedStaffData.teamName}
+                      </Badge>
+                    </div>
+                  </div>
+                  <div className="text-sm text-blue-600">
+                    職員: {selectedStaffData.staff?.name || '不明'}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
           {/* Group Selector */}
           <GroupSelector
             groups={groups}
