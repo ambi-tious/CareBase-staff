@@ -47,7 +47,7 @@ export const useFolderManagement = ({
       console.error('Failed to create folder:', error);
       return false;
     }
-  });
+  }, []);
 
   // フォルダ更新
   const updateFolder = useCallback(
@@ -72,7 +72,8 @@ export const useFolderManagement = ({
         console.error('Failed to update folder:', error);
         return false;
       }
-    }
+    },
+    [folders]
   );
 
   // フォルダ削除
