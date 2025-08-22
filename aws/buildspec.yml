@@ -20,7 +20,7 @@ phases:
       - echo "$(cat .env)"
       - echo build node image
       - echo NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
-      - docker build -build-arg NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL -t $ECR_NAME:$IMAGE_TAG -f ./Dockerfile . # イメージの作成とタグ付け
+      - docker build --build-arg NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL -t $ECR_NAME:$IMAGE_TAG -f ./Dockerfile . # イメージの作成とタグ付け
       - docker tag $ECR_NAME:$IMAGE_TAG $ECR_REPOSITORY_URL:$IMAGE_TAG
   post_build:
     on-failure: ABORT
