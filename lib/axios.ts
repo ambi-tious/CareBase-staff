@@ -7,9 +7,29 @@
 
 import axios from 'axios';
 
+// Function to get the appropriate base URL based on current port
+const getBaseURL = () => {
+  const defaultURL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+
+  // Check if we're running on port 8443
+  if (typeof window !== 'undefined' && window.location.port === '8443') {
+    // For other URLs, try to replace the port
+    const urlParts = defaultURL.split(':');
+    if (urlParts.length >= 3) {
+      // Replace the port part
+      urlParts[2] = urlParts[2].replace(/^\d+/, '8443');
+      return urlParts.join(':');
+    } else {
+      return defaultURL + ':8443';
+    }
+  }
+
+  return defaultURL;
+};
+
 // Create axios instance with default configuration
 export const apiClient = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000',
+  baseURL: getBaseURL(),
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
