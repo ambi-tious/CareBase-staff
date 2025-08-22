@@ -23,33 +23,31 @@ export const useFolderManagement = ({
   const folderNames = folders.map((folder) => folder.name);
 
   // フォルダ作成
-  const createFolder = useCallback(
-    async (folderName: string): Promise<boolean> => {
-      try {
-        // 実際のアプリケーションではAPIを呼び出してフォルダを作成します
-        // ここではモックデータを使用
-        await new Promise((resolve) => setTimeout(resolve, 500));
+  const createFolder = useCallback(async (folderName: string): Promise<boolean> => {
+    try {
+      // 実際のアプリケーションではAPIを呼び出してフォルダを作成します
+      // ここではモックデータを使用
+      await new Promise((resolve) => setTimeout(resolve, 500));
 
-        const newFolder: DocumentFolder = {
-          id: `folder-${Date.now()}`,
-          name: folderName,
-          type: 'folder',
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-          itemCount: 0,
-        };
+      const newFolder: DocumentFolder = {
+        id: `folder-${Date.now()}`,
+        name: folderName,
+        type: 'folder',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        itemCount: 0,
+      };
 
-        setFolders((prev) => [...prev, newFolder]);
+      setFolders((prev) => [...prev, newFolder]);
 
-        toast.success(`「${folderName}」フォルダが正常に作成されました`);
+      toast.success(`「${folderName}」フォルダが正常に作成されました`);
 
-        return true;
-      } catch (error) {
-        console.error('Failed to create folder:', error);
-        return false;
-      }
+      return true;
+    } catch (error) {
+      console.error('Failed to create folder:', error);
+      return false;
     }
-  );
+  });
 
   // フォルダ更新
   const updateFolder = useCallback(
