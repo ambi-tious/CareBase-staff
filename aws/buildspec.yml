@@ -46,11 +46,18 @@ phases:
       # 4. イメージ URI を更新
       # containerDefinitions[0].image に新しい ECR イメージ URI を上書き
       - jq --arg IMAGE "$ECR_REPOSITORY_URL:$IMAGE_TAG" '.containerDefinitions[0].image = $IMAGE' task-def-editable.json > task-def-new.json
-      # 5. 新しいタスク定義を登録
+      # 5 secrets environment を外部ファイルから差し替え
+      - |
+        jq \
+          --slurpfile SECRETS ./aws/secrets.json \
+          --slurpfile ENVS ./aws/environment.json \
+          '.containerDefinitions[0].secrets = $SECRETS | .containerDefinitions[0].environment = $ENVS' \
+          task-def-new.json > task-def-new-with-secrets.json
+      # 6. 新しいタスク定義を登録
       # 編集した JSON を元に ECS にタスク定義を登録
       - |
         echo "Registering new task definition and storing ARN to SSM..."
-        NEW_TASK_DEF_ARN=$(aws ecs register-task-definition --cli-input-json file://task-def-new.json --query "taskDefinition.taskDefinitionArn" --output text)
+        NEW_TASK_DEF_ARN=$(aws ecs register-task-definition --cli-input-json file://task-def-new-with-secrets.json --query "taskDefinition.taskDefinitionArn" --output text)
         echo "New Task Definition ARN: $NEW_TASK_DEF_ARN"
         aws ssm put-parameter --name "/$ENV_NAME/ecs/WEB_STAFF_TASK_DEF_ARN" --value "$NEW_TASK_DEF_ARN" --type String --overwrite
 
