@@ -67,6 +67,8 @@ class ContactService {
       email: contactData.email || undefined,
       address: contactData.address || '',
       notes: contactData.notes || undefined,
+      hasAlert: contactData.hasAlert || false,
+      alertReason: contactData.alertReason || undefined,
     };
 
     // console.log('Mock created contact:', newContact);

@@ -17,6 +17,8 @@ export const contactFormSchema = z.object({
   address: z.string().optional(),
   notes: z.string().optional(),
   type: z.enum(['緊急連絡先', '連絡先', 'その他']),
+  hasAlert: z.boolean().optional(),
+  alertReason: z.string().optional(),
 });
 
 export type ContactFormData = z.infer<typeof contactFormSchema>;

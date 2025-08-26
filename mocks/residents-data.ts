@@ -14,6 +14,8 @@ export interface ContactPerson {
   email?: string;
   address: string;
   notes?: string;
+  hasAlert?: boolean; // アラート（対応注意）フラグ
+  alertReason?: string; // アラート理由（面会NG、連絡NGなど）
 }
 
 export interface HomeCareOffice {
@@ -137,6 +139,8 @@ export const careBoardData: Resident[] = [
         email: 'k.sato@example.com',
         address: '兵庫県神戸市中央区三宮町1-1-1',
         notes: '平日19時以降連絡可能',
+        hasAlert: true,
+        alertReason: '面会NG、連絡は夜間のみ',
       },
       {
         id: 'contact-1-2',

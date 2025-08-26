@@ -24,6 +24,8 @@ const initialFormData: ContactFormData = {
   address: '',
   notes: '',
   type: '連絡先',
+  hasAlert: false,
+  alertReason: '',
 };
 
 export const useContactForm = ({ onSubmit, initialData = {} }: UseContactFormOptions) => {

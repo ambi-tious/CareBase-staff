@@ -2,11 +2,11 @@
 
 import { ContactForm } from '@/components/2_molecules/forms/contact-form';
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
 } from '@/components/ui/dialog';
 import type { ContactPerson } from '@/mocks/care-board-data';
 import type { ContactFormData } from '@/validations/contact-validation';
@@ -38,6 +38,8 @@ export const ContactEditModal: React.FC<ContactEditModalProps> = ({
     address: contact.address,
     notes: contact.notes || '',
     type: contact.type,
+    hasAlert: contact.hasAlert || false,
+    alertReason: contact.alertReason || '',
   };
 
   return (

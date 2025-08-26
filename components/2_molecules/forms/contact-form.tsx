@@ -160,6 +160,45 @@ export const ContactForm: React.FC<ContactFormProps> = ({
           disabled={isSubmitting}
         />
 
+        {/* アラート設定 */}
+        <div className="space-y-3 p-4 border border-orange-200 bg-orange-50 rounded-lg">
+          <div className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              id="hasAlert"
+              checked={formData.hasAlert || false}
+              onChange={(e) => updateField('hasAlert', e.target.checked)}
+              disabled={isSubmitting}
+              className="h-4 w-4 text-orange-600 focus:ring-orange-500 border-gray-300 rounded"
+            />
+            <label htmlFor="hasAlert" className="text-sm font-medium text-orange-800">
+              対応注意の場合はチェックを入れてください
+            </label>
+          </div>
+
+          {formData.hasAlert && (
+            <div className="space-y-2">
+              <label htmlFor="alertReason" className="text-sm font-medium text-orange-800">
+                注意理由
+              </label>
+              <textarea
+                id="alertReason"
+                value={formData.alertReason || ''}
+                onChange={(e) => updateField('alertReason', e.target.value)}
+                placeholder="例：面会NG、連絡NG、特定の時間帯のみ連絡可能など"
+                disabled={isSubmitting}
+                className="w-full px-3 py-2 border border-orange-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 disabled:bg-gray-50 disabled:text-gray-500"
+                rows={2}
+              />
+              {fieldErrors.alertReason && (
+                <p className="text-sm text-red-600" role="alert">
+                  {fieldErrors.alertReason}
+                </p>
+              )}
+            </div>
+          )}
+        </div>
+
         <div className="space-y-2">
           <label htmlFor="notes" className="text-sm font-medium text-gray-700">
             備考

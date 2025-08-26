@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import type { ContactPerson } from '@/mocks/care-board-data';
 import { contactService } from '@/services/contactService';
 import type { ContactFormData } from '@/validations/contact-validation';
-import { Edit3, Mail, MapPin, Phone, Trash2 } from 'lucide-react';
+import { AlertTriangle, Edit3, Mail, MapPin, Phone, Trash2 } from 'lucide-react';
 import type React from 'react';
 import { useState } from 'react';
 
@@ -80,7 +80,7 @@ export const ContactCard: React.FC<ContactCardProps> = ({
   const getTypeColor = (type: string) => {
     switch (type) {
       case '緊急連絡先':
-        return 'bg-red-100 text-red-800 border-red-200';
+        return 'bg-pink-100 text-pink-800 border-pink-200';
       case '連絡先':
         return 'bg-blue-100 text-blue-800 border-blue-200';
       case 'その他':
@@ -90,10 +90,12 @@ export const ContactCard: React.FC<ContactCardProps> = ({
     }
   };
 
+  const shouldEmphasizePhone1 = contact.phone1 && !contact.phone2;
+
   return (
     <>
       <Card className="mb-4">
-        <CardHeader className="flex flex-row items-start justify-between pb-2">
+        <CardHeader className="flex flex-row items-center justify-between pb-2">
           <div className="flex items-center gap-3">
             <div>
               <div className="flex items-center gap-2 mb-1">
@@ -104,8 +106,8 @@ export const ContactCard: React.FC<ContactCardProps> = ({
                     <span className="text-sm text-gray-500 ml-2">({contact.furigana})</span>
                   )}
                 </h3>
+                {contact.hasAlert && <AlertTriangle className="h-4 w-4 text-orange-600" />}
               </div>
-              <p className="text-sm text-gray-500">続柄: {contact.relationship}</p>
             </div>
           </div>
           <div className="flex items-center gap-2">
@@ -128,32 +130,55 @@ export const ContactCard: React.FC<ContactCardProps> = ({
         <CardContent className="text-sm">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-3">
             <div className="space-y-2">
-              <div className="flex items-center gap-1">
-                <Phone className="inline h-4 w-4 mr-1 text-gray-500" />
-                <strong>電話番号1:</strong> {contact.phone1}
-              </div>
-              {contact.phone2 && (
-                <div className="flex items-center gap-1">
-                  <Phone className="inline h-4 w-4 mr-1 text-gray-500" />
-                  <strong>電話番号2:</strong> {contact.phone2}
+              {shouldEmphasizePhone1 ? (
+                <div className="flex items-center gap-2">
+                  <Phone className="h-5 w-5 text-green-600" />
+                  <span className="text-lg font-semibold">{contact.phone1}</span>
                 </div>
+              ) : (
+                <>
+                  {contact.phone1 && (
+                    <div className="flex items-center gap-2">
+                      <Phone className="h-4 w-4 text-gray-500" />
+                      <span className="text-xs text-gray-500 bg-gray-100 px-1 rounded">1</span>
+                      <span>{contact.phone1}</span>
+                    </div>
+                  )}
+                  {contact.phone2 && (
+                    <div className="flex items-center gap-2">
+                      <Phone className="h-4 w-4 text-gray-500" />
+                      <span className="text-xs text-gray-500 bg-gray-100 px-1 rounded">2</span>
+                      <span>{contact.phone2}</span>
+                    </div>
+                  )}
+                </>
               )}
             </div>
             <div className="space-y-2">
-              <div className="flex items-center gap-1">
-                <MapPin className="inline h-4 w-4 mr-1 text-gray-500" />
-                <strong>住所:</strong> {contact.address}
+              <div className="flex items-center gap-2">
+                <MapPin className="h-4 w-4 text-gray-500" />
+                <span>{contact.address}</span>
               </div>
               {contact.email && (
-                <div className="flex items-center gap-1">
-                  <Mail className="inline h-4 w-4 mr-1 text-gray-500" />
-                  <strong>メール:</strong> {contact.email}
+                <div className="flex items-center gap-2">
+                  <Mail className="h-4 w-4 text-gray-500" />
+                  <span>{contact.email}</span>
                 </div>
               )}
             </div>
+            <div className="flex items-center gap-2">
+              <Badge className="bg-gray-100 text-gray-800 border-gray-200">
+                {contact.relationship}
+              </Badge>
+              {contact.hasAlert && contact.alertReason && (
+                <span className="text-xs text-orange-700 bg-orange-50 border border-orange-200 px-2 py-1 rounded">
+                  {contact.alertReason}
+                </span>
+              )}
+            </div>
+
             {contact.notes && (
               <div className="md:col-span-2 pt-2 mt-2 border-t">
-                <strong>備考:</strong>
                 <p className="mt-1 text-gray-700 whitespace-pre-line">{contact.notes}</p>
               </div>
             )}
