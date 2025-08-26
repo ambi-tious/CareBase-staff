@@ -41,7 +41,6 @@ export const ResidentProfileHeader: React.FC<ResidentProfileHeaderProps> = ({ re
                 </div>
                 <InfoRow label="生年月日" value={`${resident.dob} (${resident.age}歳)`} />
                 <InfoRow label="性別" value={resident.sex} />
-                <InfoRow label="住所" value={resident.address} />
               </div>
               <div>
                 <InfoRow label="所属フロア・グループ" value={resident.floorGroup} />
@@ -62,6 +61,13 @@ export const ResidentProfileHeader: React.FC<ResidentProfileHeaderProps> = ({ re
                 <InfoRow label="更新日" value={resident.lastUpdateDate} />
               </div>
             </div>
+
+            {/* 備考セクション */}
+            {resident.notes && (
+              <div className="p-3 bg-gray-50 rounded-lg mt-4">
+                <p className="text-sm text-gray-700 whitespace-pre-line">{resident.notes}</p>
+              </div>
+            )}
           </div>
         </div>
       </CardContent>

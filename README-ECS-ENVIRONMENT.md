@@ -6,6 +6,7 @@
 ここで指定する環境変数は機密情報を含まないものだけを指定してください。
 
 aws/environment.json
+
 ```json
 [
   {
@@ -21,6 +22,7 @@ aws/environment.json
 ここで指定する環境変数はパラメータストアで管理しているものだけを指定してください。
 
 aws/secrets.json
+
 ```json
 [
   {
@@ -31,4 +33,5 @@ aws/secrets.json
 ```
 
 ## NEXT_PUBLICから始まる環境変数
+
 ビルド時に指定が必要なのでインフラ側で対応。

@@ -109,3 +109,21 @@ export function getTeamIdByStaffAndGroup(staff: Staff, groupId: string | null): 
   const teamName = getTeamNameByStaff(staff);
   return teamMapping[groupId]?.[teamName] || null;
 }
+
+/**
+ * 今日が誕生日かどうかを判定する
+ * @param dob 誕生日（YYYY-MM-DD形式）
+ * @returns 今日が誕生日の場合true
+ */
+export const isTodayBirthday = (dob: string): boolean => {
+  try {
+    const today = new Date();
+    const birthday = new Date(dob);
+
+    // 月と日が一致するかチェック
+    return today.getMonth() === birthday.getMonth() && today.getDate() === birthday.getDate();
+  } catch (error) {
+    console.error('誕生日の判定でエラーが発生しました:', error);
+    return false;
+  }
+};

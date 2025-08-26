@@ -511,13 +511,24 @@ export const ResidentBasicInfoForm: React.FC<ResidentBasicInfoFormProps> = ({
           error={errors.sex}
           disabled={disabled}
         />
+
+        {/* 備考フィールド */}
+        <FormField
+          label="備考"
+          id="notes"
+          value={data.notes || ''}
+          onChange={(value) => updateField('notes', value)}
+          placeholder="利用者に関する特記事項や注意点を入力してください"
+          error={errors.notes}
+          disabled={disabled}
+          multiline
+          rows={3}
+        />
       </div>
 
-      {/* 施設情報・認定情報 */}
+      {/* 施設情報 */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-carebase-text-primary border-b pb-2">
-          施設情報・認定情報
-        </h3>
+        <h3 className="text-lg font-semibold text-carebase-text-primary border-b pb-2">施設情報</h3>
 
         <FormSelect
           label="所属フロア・グループ"

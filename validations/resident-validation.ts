@@ -24,13 +24,13 @@ export const residentBasicInfoSchema = z
     floorGroup: z.string().min(1, '所属フロア・グループは必須です'),
     unitTeam: z.string().min(1, '所属ユニット・チームは必須です'),
     roomInfo: z.string().min(1, '部屋情報は必須です'),
-    address: z.string(),
     admissionDate: z.string().min(1, '入所日は必須です'),
     dischargeDate: z.string().optional(),
     profileImage: z.string(),
     certificationDate: z.string(),
     certificationStartDate: z.string(),
     certificationEndDate: z.string(),
+    notes: z.string().optional(), // 備考フィールドを追加
   })
   .refine(
     (data) => {

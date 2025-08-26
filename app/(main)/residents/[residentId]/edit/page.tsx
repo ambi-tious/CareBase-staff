@@ -108,7 +108,6 @@ export default function EditResidentPage({ params }: EditResidentPageProps) {
         floorGroup: resident.floorGroup || '',
         unitTeam: resident.unitTeam || '',
         roomInfo: resident.roomInfo || '',
-        address: resident.address || '',
         admissionDate: toHyphenDate(resident.admissionDate),
         dischargeDate: toHyphenDate(resident.dischargeDate),
         profileImage: resident.avatarUrl || '',
@@ -116,6 +115,7 @@ export default function EditResidentPage({ params }: EditResidentPageProps) {
         certificationStartDate: '', // 表示項目外のため未設定（必要なら certValidityStart を変換）
         certificationEndDate: '', // 同上（必要なら certValidityEnd を変換）
         age: '', // 生年月日から自動計算
+        notes: resident.notes || '', // 備考フィールドを追加
       };
       setFormData(initialData);
     }

@@ -1,6 +1,7 @@
 import { DatePicker } from '@/components/ui/date-picker';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 import { cn } from '@/lib/utils';
 import type React from 'react';
 
@@ -16,6 +17,8 @@ interface FormFieldProps {
   className?: string;
   disabled?: boolean;
   captionLayout?: 'label' | 'dropdown' | 'dropdown-months' | 'dropdown-years';
+  multiline?: boolean;
+  rows?: number;
 }
 
 export const FormField: React.FC<FormFieldProps> = ({
@@ -30,6 +33,8 @@ export const FormField: React.FC<FormFieldProps> = ({
   className = '',
   disabled = false,
   captionLayout,
+  multiline = false,
+  rows = 3,
 }) => {
   return (
     <div className={cn('space-y-2', className)}>
@@ -64,6 +69,19 @@ export const FormField: React.FC<FormFieldProps> = ({
           )}
           mode="month"
           captionLayout={captionLayout}
+        />
+      ) : multiline ? (
+        <Textarea
+          id={id}
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          placeholder={placeholder}
+          disabled={disabled}
+          rows={rows}
+          className={cn(
+            'w-full',
+            error && 'border-red-300 focus:border-red-500 focus:ring-red-500'
+          )}
         />
       ) : (
         <Input

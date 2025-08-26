@@ -91,8 +91,8 @@ export interface Resident {
   certificationDate: string;
   certValidityStart: string;
   certValidityEnd: string;
-  address: string;
   avatarUrl: string;
+  notes?: string; // 備考フィールドを追加
   events: CareEvent[];
   contacts?: ContactPerson[];
   homeCareOffices?: HomeCareOffice[]; // 複数登録対応
@@ -122,8 +122,9 @@ export const careBoardData: Resident[] = [
     certificationDate: '2025/01/11',
     certValidityStart: '2024/12/28',
     certValidityEnd: '2025/12/27',
-    address: '兵庫県神戸市西区樫野台3-408-14',
     avatarUrl: '/elderly-japanese-man.png',
+    notes:
+      '食事の際は必ず介助が必要です。アレルギーはありませんが、食事のペースが遅いため、ゆっくりと見守りながら介助してください。',
     contacts: [
       {
         id: 'contact-1-1',
@@ -368,8 +369,9 @@ export const careBoardData: Resident[] = [
     certificationDate: '2025/02/01',
     certValidityStart: '2025/01/15',
     certValidityEnd: '2026/01/14',
-    address: '大阪府大阪市北区梅田1-1-1',
     avatarUrl: '/elderly-japanese-woman.png',
+    notes:
+      '認知症のため、見守りが必要です。徘徊の可能性があるため、常に声かけを行い、安全確認を徹底してください。歩行器を使用して移動します。',
     contacts: [
       {
         id: 'contact-2-1',
@@ -609,8 +611,9 @@ export const careBoardData: Resident[] = [
     certificationDate: '2025/01/01',
     certValidityStart: '2024/12/15',
     certValidityEnd: '2025/12/14',
-    address: '京都府京都市中京区烏丸通2-3-4',
     avatarUrl: '/elderly-man-avatar.png',
+    notes:
+      '心房細動のため、血圧と脈拍の定期的なチェックが必要です。視力が低下しているため、文字の読み上げや説明を丁寧に行ってください。',
     contacts: [
       {
         id: 'contact-3-1',
@@ -850,7 +853,6 @@ export const careBoardData: Resident[] = [
     certificationDate: '2025/01/20',
     certValidityStart: '2025/01/01',
     certValidityEnd: '2026/01/01',
-    address: '神奈川県横浜市港北区新横浜5-6-7',
     avatarUrl: '/senior-japanese-woman.png',
     contacts: [
       {
@@ -1091,7 +1093,6 @@ export const careBoardData: Resident[] = [
     certificationDate: '2024/10/20',
     certValidityStart: '2024/10/20',
     certValidityEnd: '2025/10/19',
-    address: '東京都世田谷区経堂1-2-3',
     avatarUrl: '/elderly-japanese-woman.png',
     contacts: [
       {
@@ -1206,7 +1207,6 @@ export const careBoardData: Resident[] = [
     certificationDate: '2024/12/15',
     certValidityStart: '2024/12/15',
     certValidityEnd: '2025/12/14',
-    address: '神奈川県横浜市中区山下町1',
     avatarUrl: '/senior-japanese-man.png',
     contacts: [
       {
@@ -1273,7 +1273,7 @@ export const careBoardData: Resident[] = [
     id: 7,
     name: '田中三郎',
     furigana: 'タナカサブロウ',
-    dob: '1950/11/02',
+    dob: '1950/08/26',
     sex: '男',
     age: 74,
     floorGroup: '介護フロア A',
@@ -1286,7 +1286,6 @@ export const careBoardData: Resident[] = [
     certificationDate: '2025/01/20',
     certValidityStart: '2025/01/20',
     certValidityEnd: '2026/01/19',
-    address: '大阪府大阪市北区梅田2',
     avatarUrl: '/old-japanese-man.png',
     contacts: [
       {
@@ -1347,7 +1346,6 @@ export const careBoardData: Resident[] = [
     certificationDate: '2025/01/01',
     certValidityStart: '2024/12/20',
     certValidityEnd: '2025/12/19',
-    address: '兵庫県神戸市東灘区住吉本町1-1-1',
     avatarUrl: '/elderly-japanese-man.png',
     contacts: [
       {
@@ -1393,7 +1391,6 @@ export const careBoardData: Resident[] = [
     certificationDate: '2025/02/15',
     certValidityStart: '2025/02/15',
     certValidityEnd: '2026/02/14',
-    address: '大阪府大阪市住吉区住吉2-2-2',
     avatarUrl: '/elderly-japanese-woman.png',
     contacts: [
       {
@@ -1440,7 +1437,6 @@ export const careBoardData: Resident[] = [
     certificationDate: '2025/02/01',
     certValidityStart: '2025/02/01',
     certValidityEnd: '2026/01/31',
-    address: '京都府京都市右京区嵯峨3-3-3',
     avatarUrl: '/elderly-japanese-man.png',
     contacts: [
       {

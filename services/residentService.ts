@@ -53,7 +53,6 @@ export const residentService = {
       certificationDate: data.admissionDate.replace(/-/g, '/'), // Default to admission date
       certValidityStart: data.admissionDate.replace(/-/g, '/'),
       certValidityEnd: calculateCertValidityEnd(data.admissionDate),
-      address: data.address,
       avatarUrl: '/placeholder.svg', // Default avatar
       events: [],
       contacts: [],
