@@ -663,9 +663,8 @@ export const ResidentBasicInfoForm: React.FC<ResidentBasicInfoFormProps> = ({
             label="入所日"
             id="admissionDate"
             type="date"
-            value={data.admissionDate}
+            value={data.admissionDate || ''}
             onChange={(value) => updateField('admissionDate', value)}
-            required
             error={errors.admissionDate}
             disabled={disabled}
           />

@@ -47,12 +47,12 @@ export const residentService = {
       roomInfo: data.roomInfo || undefined,
       registrationDate: new Date().toISOString().split('T')[0].replace(/-/g, '/'),
       lastUpdateDate: new Date().toISOString().split('T')[0].replace(/-/g, '/'),
-      admissionDate: data.admissionDate.replace(/-/g, '/'),
+      admissionDate: data.admissionDate ? data.admissionDate.replace(/-/g, '/') : '',
       dischargeDate: data.dischargeDate ? data.dischargeDate.replace(/-/g, '/') : undefined,
       careLevel: data.careLevel,
-      certificationDate: data.admissionDate.replace(/-/g, '/'), // Default to admission date
-      certValidityStart: data.admissionDate.replace(/-/g, '/'),
-      certValidityEnd: calculateCertValidityEnd(data.admissionDate),
+      certificationDate: data.admissionDate ? data.admissionDate.replace(/-/g, '/') : '', // Default to admission date if available
+      certValidityStart: data.admissionDate ? data.admissionDate.replace(/-/g, '/') : '',
+      certValidityEnd: data.admissionDate ? calculateCertValidityEnd(data.admissionDate) : '',
       avatarUrl: '/placeholder.svg', // Default avatar
       events: [],
       contacts: [],

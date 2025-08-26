@@ -24,7 +24,7 @@ export const residentBasicInfoSchema = z
     floorGroup: z.string().min(1, '所属フロア・グループは必須です'),
     unitTeam: z.string().min(1, '所属ユニット・チームは必須です'),
     roomInfo: z.string().min(1, '部屋情報は必須です'),
-    admissionDate: z.string().min(1, '入所日は必須です'),
+    admissionDate: z.string().optional(), // 入所日を必須から外す
     dischargeDate: z.string().optional(),
     profileImage: z.string(),
     certificationDate: z.string(),
@@ -64,7 +64,6 @@ export const residentBasicInfoSchema = z
 
 export type ResidentBasicInfo = z.infer<typeof residentBasicInfoSchema>;
 
-// バリデーションヘルパー関数
 export const validateResidentBasicInfo = (data: unknown) => {
   return residentBasicInfoSchema.safeParse(data);
 };
@@ -76,8 +75,6 @@ export const RESIDENT_ERROR_MESSAGES = {
   REQUIRED_SEX: '性別は必須です',
   REQUIRED_FLOOR_GROUP: '所属フロア・グループは必須です',
   REQUIRED_UNIT_TEAM: '所属ユニット・チームは必須です',
-  REQUIRED_ADMISSION_DATE: '入所日は必須です',
-  REQUIRED_DISCHARGE_DATE: '退所済みの場合は退所日を入力してください',
   REQUIRED_ROOM_INFO: '部屋情報は必須です',
   INVALID_FURIGANA: 'フリガナはカタカナで入力してください',
   INVALID_ADMISSION_DATE: '入所日は生年月日より後の日付を入力してください',

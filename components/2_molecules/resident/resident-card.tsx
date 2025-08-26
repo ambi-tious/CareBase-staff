@@ -14,8 +14,41 @@ interface ResidentCardProps {
   className?: string;
 }
 
+// 利用者のステータスを判定する関数
+const getResidentStatus = (resident: Resident): '入所前' | '入所中' | '退所' | null => {
+  // 入所日が登録されていない場合は「ー」
+  if (!resident.admissionDate) {
+    return null;
+  }
+
+  const today = new Date();
+  const admissionDate = new Date(resident.admissionDate.replace(/\//g, '-'));
+  const dischargeDate = resident.dischargeDate
+    ? new Date(resident.dischargeDate.replace(/\//g, '-'))
+    : null;
+
+  // 退所日が設定されている場合
+  if (dischargeDate) {
+    if (today >= dischargeDate) {
+      return '退所';
+    } else if (today >= admissionDate) {
+      return '入所中';
+    } else {
+      return '入所前';
+    }
+  }
+
+  // 退所日が設定されていない場合
+  if (today >= admissionDate) {
+    return '入所中';
+  } else {
+    return '入所前';
+  }
+};
+
 export const ResidentCard: React.FC<ResidentCardProps> = ({ resident, className = '' }) => {
   const isBirthday = isTodayBirthday(resident.dob);
+  const status = getResidentStatus(resident);
 
   return (
     <Link href={`/residents/${resident.id}`}>
@@ -56,9 +89,7 @@ export const ResidentCard: React.FC<ResidentCardProps> = ({ resident, className 
                   </h3>
                 </div>
                 <div className="flex items-center gap-2">
-                  <ResidentStatusBadge
-                    status={resident.dischargeDate === undefined ? '入居中' : '退所済'}
-                  />
+                  {status && <ResidentStatusBadge status={status} />}
                 </div>
               </div>
 
