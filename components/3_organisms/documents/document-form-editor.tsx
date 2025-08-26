@@ -162,7 +162,7 @@ export const DocumentFormEditor: React.FC<DocumentFormEditorProps> = ({
     status: initialDocument?.status || 'draft',
     tags: initialDocument?.tags || '',
     folderId: folderId || undefined,
-    category: initialDocument?.category || autoCategory || '議事録',
+    category: initialDocument?.category || '',
   };
 
   const { formData, updateField, isSubmitting, error, fieldErrors, handleSubmit } = useDocumentForm(
