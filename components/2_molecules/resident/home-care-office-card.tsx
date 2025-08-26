@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import type { HomeCareOffice } from '@/mocks/care-board-data';
 import { residentDataService } from '@/services/residentDataService';
 import type { HomeCareOfficeFormData } from '@/validations/resident-data-validation';
-import { Edit3, MapPin, Phone, Trash2 } from 'lucide-react';
+import { Edit3, MapPin, Phone, Unlink } from 'lucide-react';
 import type React from 'react';
 import { useState } from 'react';
 
@@ -35,7 +35,7 @@ export const HomeCareOfficeCard: React.FC<HomeCareOfficeCardProps> = ({
     setIsEditModalOpen(true);
   };
 
-  const handleDeleteClick = () => {
+  const handleUnlinkClick = () => {
     setDeleteError(null);
     setIsDeleteModalOpen(true);
   };
@@ -88,11 +88,11 @@ export const HomeCareOfficeCard: React.FC<HomeCareOfficeCardProps> = ({
             <Button
               variant="outline"
               size="sm"
-              onClick={handleDeleteClick}
+              onClick={handleUnlinkClick}
               className="border-red-300 text-red-600 hover:bg-red-50 hover:border-red-400"
             >
-              <Trash2 className="h-3 w-3 mr-1" />
-              削除
+              <Unlink className="h-3 w-3 mr-1" />
+              紐付け解除
             </Button>
           </div>
         </CardHeader>
