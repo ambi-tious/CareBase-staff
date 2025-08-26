@@ -3,7 +3,7 @@
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
-import { Download, UserPlus } from 'lucide-react';
+import { UserPlus } from 'lucide-react';
 import type React from 'react';
 import { ResidentSearchBar } from './resident-search-bar';
 
@@ -41,10 +41,6 @@ export const ResidentsToolbar: React.FC<ResidentsToolbarProps> = ({
         </div>
 
         <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm">
-            <Download className="h-4 w-4 mr-2" />
-            エクスポート
-          </Button>
           <Button
             onClick={onCreateResident}
             className="bg-carebase-blue hover:bg-carebase-blue-dark"

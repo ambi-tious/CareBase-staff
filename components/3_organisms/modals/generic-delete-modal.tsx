@@ -9,12 +9,12 @@
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
 } from '@/components/ui/dialog';
 import { AlertTriangle, Trash2 } from 'lucide-react';
 import type React from 'react';
@@ -27,6 +27,7 @@ interface GenericDeleteModalProps {
   itemType: string;
   isDeleting?: boolean;
   error?: string | null;
+  customMessage?: string;
 }
 
 export const GenericDeleteModal: React.FC<GenericDeleteModalProps> = ({
@@ -37,6 +38,7 @@ export const GenericDeleteModal: React.FC<GenericDeleteModalProps> = ({
   itemType,
   isDeleting = false,
   error,
+  customMessage,
 }) => {
   const handleConfirm = async () => {
     const success = await onConfirm();
@@ -65,6 +67,12 @@ export const GenericDeleteModal: React.FC<GenericDeleteModalProps> = ({
               <strong>{itemName}</strong> の{itemType}を削除してもよろしいですか？
               <br />
               削除されたデータは復元できません。
+              {customMessage && (
+                <>
+                  <br />
+                  {customMessage}
+                </>
+              )}
             </AlertDescription>
           </Alert>
 

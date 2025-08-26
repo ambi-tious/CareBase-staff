@@ -2,6 +2,7 @@
 
 import { FormField } from '@/components/1_atoms/forms/form-field';
 import { FormSelect } from '@/components/1_atoms/forms/form-select';
+import { GenericDeleteModal } from '@/components/3_organisms/modals/generic-delete-modal';
 import {
   Accordion,
   AccordionContent,
@@ -71,6 +72,21 @@ export const RoomManagementModal: React.FC<RoomManagementModalProps> = ({
   const [error, setError] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<Partial<Record<keyof RoomFormData, string>>>({});
   const [currentUserTeamId, setCurrentUserTeamId] = useState<string>('');
+  const [deleteConfirmRoom, setDeleteConfirmRoom] = useState<Room | null>(null);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+
+  const resetForm = useCallback(() => {
+    setFormData({
+      name: '',
+      capacity: 1,
+      groupId: '',
+      teamId: '',
+    });
+    setEditingRoom(null);
+    setError(null);
+    setFieldErrors({});
+  }, []);
 
   const groupOptions = getAllGroupOptions();
   const teamOptions = getTeamOptionsByGroup(formData.groupId || '');
@@ -106,25 +122,14 @@ export const RoomManagementModal: React.FC<RoomManagementModalProps> = ({
       }
     };
     if (isOpen) {
-      setActiveTab('list');
-      resetForm();
+      // 編集モードでない場合のみリストタブに設定
       if (!editingRoom) {
+        setActiveTab('list');
+        resetForm();
         loadSelectedStaffData();
       }
     }
-  }, [isOpen, editingRoom]);
-
-  const resetForm = useCallback(() => {
-    setFormData({
-      name: '',
-      capacity: 1,
-      groupId: '',
-      teamId: '',
-    });
-    setEditingRoom(null);
-    setError(null);
-    setFieldErrors({});
-  }, []);
+  }, [isOpen, editingRoom, resetForm]);
 
   const validateForm = useCallback(() => {
     const newFieldErrors: Partial<Record<keyof RoomFormData, string>> = {};
@@ -195,35 +200,51 @@ export const RoomManagementModal: React.FC<RoomManagementModalProps> = ({
   }, [formData, editingRoom, validateForm, onCreateRoom, onUpdateRoom, resetForm]);
 
   const handleEdit = useCallback((room: Room) => {
+    // まず編集対象の部屋を設定
     setEditingRoom(room);
+    // フォームデータを設定
     setFormData({
       name: room.name,
       capacity: room.capacity,
       groupId: room.groupId,
       teamId: room.teamId,
     });
+    // エラーをクリア
+    setError(null);
+    setFieldErrors({});
+    // フォームタブに切り替え
     setActiveTab('form');
   }, []);
 
-  const handleDelete = useCallback(
-    async (room: Room) => {
-      if (window.confirm(`「${room.name}」を削除してもよろしいですか？`)) {
-        setIsSubmitting(true);
-        try {
-          const success = await onDeleteRoom(room.id);
-          if (!success) {
-            setError('部屋の削除に失敗しました。');
-          }
-        } catch (error) {
-          console.error('Room deletion error:', error);
-          setError('ネットワークエラーが発生しました。');
-        } finally {
-          setIsSubmitting(false);
-        }
+  const handleDelete = useCallback((room: Room) => {
+    setDeleteConfirmRoom(room);
+    setIsDeleteModalOpen(true);
+  }, []);
+
+  const handleDeleteConfirm = useCallback(async (): Promise<boolean> => {
+    if (!deleteConfirmRoom) return false;
+
+    try {
+      const success = await onDeleteRoom(deleteConfirmRoom.id);
+      if (!success) {
+        setDeleteError('部屋の削除に失敗しました。');
+        return false;
       }
-    },
-    [onDeleteRoom]
-  );
+      setDeleteError(null);
+      setDeleteConfirmRoom(null);
+      return true;
+    } catch (error) {
+      console.error('Room deletion error:', error);
+      setDeleteError('ネットワークエラーが発生しました。');
+      return false;
+    }
+  }, [deleteConfirmRoom, onDeleteRoom]);
+
+  const handleDeleteModalClose = useCallback(() => {
+    setDeleteConfirmRoom(null);
+    setIsDeleteModalOpen(false);
+    setDeleteError(null);
+  }, []);
 
   const handleCreateNew = useCallback(() => {
     resetForm();
@@ -394,7 +415,11 @@ export const RoomManagementModal: React.FC<RoomManagementModalProps> = ({
                                     <Button
                                       variant="outline"
                                       size="sm"
-                                      onClick={() => handleEdit(room)}
+                                      onClick={(e) => {
+                                        e.preventDefault();
+                                        e.stopPropagation();
+                                        handleEdit(room);
+                                      }}
                                       disabled={isSubmitting}
                                     >
                                       <Edit3 className="h-3 w-3 mr-1" />
@@ -555,6 +580,18 @@ export const RoomManagementModal: React.FC<RoomManagementModalProps> = ({
           </Tabs>
         </div>
       </DialogContent>
+
+      {/* Delete Confirmation Modal */}
+      <GenericDeleteModal
+        isOpen={isDeleteModalOpen}
+        onClose={handleDeleteModalClose}
+        onConfirm={handleDeleteConfirm}
+        itemName={deleteConfirmRoom?.name || ''}
+        itemType="部屋"
+        isDeleting={isSubmitting}
+        error={deleteError}
+        customMessage="部屋に利用者が入居している場合は、先に利用者を他の部屋に移動してください。"
+      />
     </Dialog>
   );
 };
