@@ -46,8 +46,13 @@ phases:
       # 4. イメージ URI を更新
       # containerDefinitions[0].image に新しい ECR イメージ URI を上書き
       - jq --arg IMAGE "$ECR_REPOSITORY_URL:$IMAGE_TAG" '.containerDefinitions[0].image = $IMAGE' task-def-editable.json > task-def-new.json
-      # 5 secrets を外部ファイルから差し替え
-      - jq --slurpfile SECRETS ./aws/taskdef-secrets.json '.containerDefinitions[0].secrets = $SECRETS' task-def-new.json > task-def-new-with-secrets.json
+      # 5 secrets environment を外部ファイルから差し替え
+      - |
+        jq \
+          --slurpfile SECRETS ./aws/secrets.json \
+          --slurpfile ENVS ./aws/environment.json \
+          '.containerDefinitions[0].secrets = $SECRETS | .containerDefinitions[0].environment = $ENVS' \
+          task-def-new.json > task-def-new-with-secrets.json
       # 6. 新しいタスク定義を登録
       # 編集した JSON を元に ECS にタスク定義を登録
       - |
