@@ -51,7 +51,7 @@ phases:
         jq \
           --slurpfile SECRETS ./aws/secrets.json \
           --slurpfile ENVS ./aws/environment.json \
-          '.containerDefinitions[0].secrets = $SECRETS | .containerDefinitions[0].environment = $ENVS' \
+          '.containerDefinitions[0].secrets = $SECRETS[0] | .containerDefinitions[0].environment = $ENVS[0]' \
           task-def-new.json > task-def-new-with-secrets.json
       # 6. 新しいタスク定義を登録
       # 編集した JSON を元に ECS にタスク定義を登録
