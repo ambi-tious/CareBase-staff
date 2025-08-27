@@ -50,12 +50,4 @@ export const dashboardMenu: NavCategory[] = [
       { label: 'その他書類', href: '/documents?category=other-documents', icon: 'FileArchive' },
     ],
   },
-  {
-    title: '申し送り・介護記録',
-    icon: 'FileText',
-    links: [
-      { label: '申し送り一覧', href: '/handovers', icon: 'MessageCircle' },
-      { label: '介護記録一覧', href: '/care-records', icon: 'Clipboard' },
-    ],
-  },
 ];
