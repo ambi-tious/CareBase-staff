@@ -6,12 +6,12 @@ import { StaffDashboard } from '@/components/3_organisms/dashboard/staff-dashboa
 import { GroupTeamSelectionModal } from '@/components/3_organisms/modals/group-team-selection-modal';
 import { Button, buttonVariants } from '@/components/ui/button'; // Import buttonVariants
 import {
-    Sheet,
-    SheetClose,
-    SheetContent,
-    SheetHeader,
-    SheetTitle,
-    SheetTrigger,
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
 } from '@/components/ui/sheet';
 import { useNotifications } from '@/hooks/useNotifications';
 import { cn } from '@/lib/utils'; // Import cn
