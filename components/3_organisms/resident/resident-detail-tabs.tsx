@@ -19,6 +19,7 @@ import { MedicalHistoryModal } from '@/components/3_organisms/modals/medical-his
 import { MedicalInstitutionModal } from '@/components/3_organisms/modals/medical-institution-modal';
 import { MedicationModal } from '@/components/3_organisms/modals/medication-modal';
 import { MedicationStatusModal } from '@/components/3_organisms/modals/medication-status-modal';
+import { ResidentFilesTabContent } from '@/components/3_organisms/resident-files/resident-files-tab-content';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import type {
@@ -93,6 +94,7 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
     { value: 'medicationInfo', label: 'お薬情報' },
     { value: 'medicationStatus', label: '服薬状況' },
     { value: 'individualPoints', label: '個別ポイント' },
+    { value: 'files', label: 'ファイル管理' },
   ];
 
   const handleAddContact = () => {
@@ -306,6 +308,7 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
       'medicationInfo',
       'medicationStatus',
       'individualPoints',
+      'files',
     ].includes(activeTab);
   };
 
@@ -325,6 +328,11 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
         return handleAddMedicationStatus;
       case 'individualPoints':
         return () => individualPointsTabContentRef.current?.openCategoryModal();
+      case 'files':
+        return () => {
+          // ファイルタブの場合は直接アップロードモーダルを開く
+          // この機能はResidentFilesTabContent内で管理される
+        };
       default:
         return undefined;
     }
@@ -506,6 +514,15 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
           <div className="space-y-4">
             <IndividualPointsTabContent
               ref={individualPointsTabContentRef}
+              residentId={resident.id}
+              residentName={resident.name}
+            />
+          </div>
+        </TabsContent>
+
+        <TabsContent value="files">
+          <div className="space-y-4">
+            <ResidentFilesTabContent
               residentId={resident.id}
               residentName={resident.name}
             />
