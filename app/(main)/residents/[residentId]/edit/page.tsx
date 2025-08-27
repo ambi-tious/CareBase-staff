@@ -59,34 +59,8 @@ export default function EditResidentPage({ params }: EditResidentPageProps) {
     loadRooms();
   }, []);
 
-  // 初期フォームデータ状態
-  const [formData, setFormData] = useState<Partial<Record<string, string>>>({});
+  // 基本的な状態管理のみ（フォーム状態はResidentBasicInfoFormで管理）
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  // resident が読み込まれたらフォームの初期値を設定
-  useEffect(() => {
-    if (resident && setFormData) {
-      const initialData = {
-        name: resident.name,
-        furigana: resident.furigana || '',
-        dob: toHyphenDate(resident.dob),
-        sex: resident.sex,
-        careLevel: resident.careLevel || '',
-        floorGroup: resident.floorGroup || '',
-        unitTeam: resident.unitTeam || '',
-        roomInfo: resident.roomInfo || '',
-        admissionDate: toHyphenDate(resident.admissionDate),
-        dischargeDate: toHyphenDate(resident.dischargeDate),
-        profileImage: resident.avatarUrl || '',
-        certificationDate: resident.certificationDate || '',
-        certificationStartDate: '', // 表示項目外のため未設定（必要なら certValidityStart を変換）
-        certificationEndDate: '', // 同上（必要なら certValidityEnd を変換）
-        age: '', // 生年月日から自動計算
-        notes: resident.notes || '', // 備考フィールドを追加
-      };
-      setFormData(initialData);
-    }
-  }, [resident, setFormData]);
 
   const handleCancel = () => {
     if (resident) {
@@ -257,7 +231,28 @@ export default function EditResidentPage({ params }: EditResidentPageProps) {
               }
             }}
             onCancel={handleCancel}
-            initialData={formData}
+            initialData={
+              resident
+                ? {
+                    name: resident.name,
+                    furigana: resident.furigana || '',
+                    dob: toHyphenDate(resident.dob),
+                    sex: resident.sex,
+                    careLevel: resident.careLevel || '',
+                    floorGroup: resident.floorGroup || '',
+                    unitTeam: resident.unitTeam || '',
+                    roomInfo: resident.roomInfo || '',
+                    admissionDate: toHyphenDate(resident.admissionDate),
+                    dischargeDate: toHyphenDate(resident.dischargeDate),
+                    profileImage: resident.avatarUrl || '',
+                    certificationDate: resident.certificationDate || '',
+                    certificationStartDate: '', // 表示項目外のため未設定
+                    certificationEndDate: '', // 同上
+                    age: '', // 生年月日から自動計算
+                    notes: resident.notes || '',
+                  }
+                : {}
+            }
             disabled={isSubmitting}
             handleRoomManagement={handleRoomManagement}
           />

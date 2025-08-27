@@ -78,7 +78,10 @@ export const LoginForm: React.FC<LoginFormProps> = ({
               name="login_id"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>ログインID *</FormLabel>
+                  <FormLabel>
+                    ログインID
+                    <span className="text-red-500">*</span>
+                  </FormLabel>
                   <FormControl>
                     <Input
                       placeholder="ログインIDを入力"
@@ -101,7 +104,10 @@ export const LoginForm: React.FC<LoginFormProps> = ({
               name="password"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>パスワード *</FormLabel>
+                  <FormLabel>
+                    パスワード
+                    <span className="text-red-500">*</span>
+                  </FormLabel>
                   <FormControl>
                     <Input
                       type="password"

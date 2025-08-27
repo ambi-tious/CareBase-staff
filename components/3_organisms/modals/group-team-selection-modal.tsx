@@ -6,11 +6,29 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
+} from '@/components/ui/form';
 import type { Group, Team } from '@/mocks/staff-data';
 import { organizationService } from '@/services/organization-service';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { Building2, Users } from 'lucide-react';
 import type React from 'react';
 import { useCallback, useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+
+// Group Team Selection validation schema
+const groupTeamSelectionSchema = z.object({
+  groupId: z.string().min(1, 'グループを選択してください'),
+  teamId: z.string().min(1, 'チームを選択してください'),
+});
+
+type GroupTeamSelectionFormData = z.infer<typeof groupTeamSelectionSchema>;
 
 interface SelectedStaffData {
   staff: any;
@@ -33,10 +51,22 @@ export const GroupTeamSelectionModal: React.FC<GroupTeamSelectionModalProps> = (
 }) => {
   const [groups, setGroups] = useState<Group[]>([]);
   const [teams, setTeams] = useState<Team[]>([]);
-  const [selectedGroupId, setSelectedGroupId] = useState<string>('');
-  const [selectedTeamId, setSelectedTeamId] = useState<string>('');
   const [error, setError] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  const form = useForm<GroupTeamSelectionFormData>({
+    resolver: zodResolver(groupTeamSelectionSchema),
+    defaultValues: {
+      groupId: '',
+      teamId: '',
+    },
+    mode: 'onChange',
+  });
+
+  const { control, handleSubmit, setValue, watch, formState } = form;
+  const { isValid, isSubmitting } = formState;
+  const watchedGroupId = watch('groupId');
+  const watchedTeamId = watch('teamId');
 
   // Load groups on component mount
   useEffect(() => {
@@ -77,28 +107,28 @@ export const GroupTeamSelectionModal: React.FC<GroupTeamSelectionModalProps> = (
   useEffect(() => {
     if (isOpen && selectedStaffData) {
       const { currentGroupId, currentTeamId } = getCurrentGroupTeamIds();
-      setSelectedGroupId(currentGroupId || '');
-      setSelectedTeamId(currentTeamId || '');
+      setValue('groupId', currentGroupId || '');
+      setValue('teamId', currentTeamId || '');
       setError('');
     }
-  }, [isOpen, selectedStaffData, getCurrentGroupTeamIds]);
+  }, [isOpen, selectedStaffData, getCurrentGroupTeamIds, setValue]);
 
   // Load teams when group is selected
   useEffect(() => {
-    if (selectedGroupId) {
+    if (watchedGroupId) {
       const loadTeams = async () => {
         try {
-          const teamsData = await organizationService.getTeamsByGroup(selectedGroupId);
+          const teamsData = await organizationService.getTeamsByGroup(watchedGroupId);
           setTeams(teamsData);
 
           // Auto-select team if only one exists
           if (teamsData.length === 1) {
-            setSelectedTeamId(teamsData[0].id);
-          } else if (selectedTeamId) {
+            setValue('teamId', teamsData[0].id);
+          } else if (watchedTeamId) {
             // Check if currently selected team exists in the new group
-            const teamExists = teamsData.some((team) => team.id === selectedTeamId);
+            const teamExists = teamsData.some((team) => team.id === watchedTeamId);
             if (!teamExists) {
-              setSelectedTeamId('');
+              setValue('teamId', '');
             }
           }
         } catch (error) {
@@ -110,26 +140,21 @@ export const GroupTeamSelectionModal: React.FC<GroupTeamSelectionModalProps> = (
       loadTeams();
     } else {
       setTeams([]);
-      setSelectedTeamId('');
+      setValue('teamId', '');
     }
-  }, [selectedGroupId, selectedTeamId]);
+  }, [watchedGroupId, watchedTeamId, setValue]);
 
   const handleGroupSelect = (groupId: string) => {
-    setSelectedGroupId(groupId);
+    setValue('groupId', groupId);
     setError('');
   };
 
   const handleTeamSelect = (teamId: string) => {
-    setSelectedTeamId(teamId);
+    setValue('teamId', teamId);
     setError('');
   };
 
-  const handleSubmit = async () => {
-    if (!selectedGroupId || !selectedTeamId) {
-      setError('グループとチームの両方を選択してください。');
-      return;
-    }
-
+  const onSubmit = handleSubmit(async (data: GroupTeamSelectionFormData) => {
     if (!selectedStaffData) {
       setError('スタッフ情報が見つかりません。');
       return;
@@ -140,8 +165,8 @@ export const GroupTeamSelectionModal: React.FC<GroupTeamSelectionModalProps> = (
 
     try {
       // Create updated staff data
-      const selectedGroup = groups.find((g) => g.id === selectedGroupId);
-      const selectedTeam = teams.find((t) => t.id === selectedTeamId);
+      const selectedGroup = groups.find((g) => g.id === data.groupId);
+      const selectedTeam = teams.find((t) => t.id === data.teamId);
 
       const updatedStaffData = {
         staff: selectedStaffData.staff,
@@ -174,7 +199,7 @@ export const GroupTeamSelectionModal: React.FC<GroupTeamSelectionModalProps> = (
     } finally {
       setIsLoading(false);
     }
-  };
+  });
 
   const handleCancel = () => {
     onClose();
@@ -231,51 +256,76 @@ export const GroupTeamSelectionModal: React.FC<GroupTeamSelectionModalProps> = (
             </Card>
           )}
 
-          {/* Group Selector */}
-          <GroupSelector
-            groups={groups}
-            selectedGroupId={selectedGroupId}
-            currentGroupId={currentGroupId || undefined}
-            onGroupSelect={handleGroupSelect}
-          />
+          <Form {...form}>
+            <form onSubmit={onSubmit}>
+              {/* Group Selector */}
+              <FormField
+                control={control}
+                name="groupId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <GroupSelector
+                        groups={groups}
+                        selectedGroupId={field.value}
+                        currentGroupId={currentGroupId || undefined}
+                        onGroupSelect={handleGroupSelect}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-          {/* Team Selector */}
-          {showTeamSelector && (
-            <TeamSelector
-              teams={teams}
-              selectedTeamId={selectedTeamId}
-              currentTeamId={currentTeamId || undefined}
-              onTeamSelect={handleTeamSelect}
-            />
-          )}
+              {/* Team Selector */}
+              {showTeamSelector && (
+                <FormField
+                  control={control}
+                  name="teamId"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <TeamSelector
+                          teams={teams}
+                          selectedTeamId={field.value}
+                          currentTeamId={currentTeamId || undefined}
+                          onTeamSelect={handleTeamSelect}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              )}
 
-          {/* Error Display */}
-          {error && (
-            <div className="bg-red-50 border border-red-200 rounded-md p-3">
-              <p className="text-red-600 text-sm">{error}</p>
-            </div>
-          )}
+              {/* Error Display */}
+              {error && (
+                <div className="bg-red-50 border border-red-200 rounded-md p-3">
+                  <p className="text-red-600 text-sm">{error}</p>
+                </div>
+              )}
 
-          {/* Action Buttons */}
-          <div className="flex justify-end space-x-3 pt-4 border-t">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={handleCancel}
-              disabled={isLoading}
-              className="min-h-touch-target"
-            >
-              キャンセル
-            </Button>
-            <Button
-              type="button"
-              onClick={handleSubmit}
-              disabled={isLoading || !selectedGroupId || !selectedTeamId}
-              className="min-h-touch-target"
-            >
-              {isLoading ? '変更中...' : '変更する'}
-            </Button>
-          </div>
+              {/* Action Buttons */}
+              <div className="flex justify-end space-x-3 pt-4 border-t">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={handleCancel}
+                  disabled={isLoading}
+                  className="min-h-touch-target"
+                >
+                  キャンセル
+                </Button>
+                <Button
+                  type="submit"
+                  disabled={isLoading || !isValid}
+                  className="min-h-touch-target"
+                >
+                  {isLoading ? '変更中...' : '変更する'}
+                </Button>
+              </div>
+            </form>
+          </Form>
         </div>
       </DialogContent>
     </Dialog>
