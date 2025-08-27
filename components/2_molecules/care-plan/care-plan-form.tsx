@@ -3,6 +3,7 @@
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
+import { DatePicker } from '@/components/ui/date-picker';
 import {
   Form,
   FormControl,
@@ -367,11 +368,11 @@ export const CarePlanForm: React.FC<CarePlanFormProps> = ({
                   <Label className="text-sm font-medium text-gray-700">
                     認定日 <span className="text-red-500">*</span>
                   </Label>
-                  <Input
+                  <DatePicker
                     value={formData.certificationDate}
-                    onChange={(e) => updateField('certificationDate', e.target.value)}
-                    type="date"
+                    onChange={(value) => updateField('certificationDate', value)}
                     disabled={isSubmitting || isSavingDraft}
+                    placeholder="認定日を選択してください"
                     className={`${fieldErrors.certificationDate ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : ''}`}
                   />
                   {fieldErrors.certificationDate && (
@@ -387,11 +388,11 @@ export const CarePlanForm: React.FC<CarePlanFormProps> = ({
                   <Label className="text-sm font-medium text-gray-700">
                     認定有効開始日 <span className="text-red-500">*</span>
                   </Label>
-                  <Input
+                  <DatePicker
                     value={formData.certValidityStart}
-                    onChange={(e) => updateField('certValidityStart', e.target.value)}
-                    type="date"
+                    onChange={(value) => updateField('certValidityStart', value)}
                     disabled={isSubmitting || isSavingDraft}
+                    placeholder="認定有効開始日を選択してください"
                     className={`${fieldErrors.certValidityStart ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : ''}`}
                   />
                   {fieldErrors.certValidityStart && (
@@ -405,11 +406,11 @@ export const CarePlanForm: React.FC<CarePlanFormProps> = ({
                   <Label className="text-sm font-medium text-gray-700">
                     認定有効終了日 <span className="text-red-500">*</span>
                   </Label>
-                  <Input
+                  <DatePicker
                     value={formData.certValidityEnd}
-                    onChange={(e) => updateField('certValidityEnd', e.target.value)}
-                    type="date"
+                    onChange={(value) => updateField('certValidityEnd', value)}
                     disabled={isSubmitting || isSavingDraft}
+                    placeholder="認定有効終了日を選択してください"
                     className={`${fieldErrors.certValidityEnd ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : ''}`}
                   />
                   {fieldErrors.certValidityEnd && (
@@ -466,11 +467,11 @@ export const CarePlanForm: React.FC<CarePlanFormProps> = ({
                 <Label className="text-sm font-medium text-gray-700">
                   次回見直し日 <span className="text-red-500">*</span>
                 </Label>
-                <Input
+                <DatePicker
                   value={formData.nextReviewDate}
-                  onChange={(e) => updateField('nextReviewDate', e.target.value)}
-                  type="date"
+                  onChange={(value) => updateField('nextReviewDate', value)}
                   disabled={isSubmitting || isSavingDraft}
+                  placeholder="次回見直し日を選択してください"
                   className={`${fieldErrors.nextReviewDate ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : ''}`}
                 />
                 {fieldErrors.nextReviewDate && (
@@ -872,20 +873,20 @@ export const CarePlanForm: React.FC<CarePlanFormProps> = ({
                           <Label className="text-sm font-medium text-gray-700">
                             開始日 <span className="text-red-500">*</span>
                           </Label>
-                          <Input
-                            type="date"
+                          <DatePicker
                             value={service.startDate}
-                            onChange={(e) => updateService(index, 'startDate', e.target.value)}
+                            onChange={(value) => updateService(index, 'startDate', value)}
                             disabled={isSubmitting || isSavingDraft}
+                            placeholder="開始日を選択してください"
                           />
                         </div>
                         <div className="space-y-2">
                           <Label className="text-sm font-medium text-gray-700">終了日</Label>
-                          <Input
-                            type="date"
+                          <DatePicker
                             value={service.endDate || ''}
-                            onChange={(e) => updateService(index, 'endDate', e.target.value)}
+                            onChange={(value) => updateService(index, 'endDate', value)}
                             disabled={isSubmitting || isSavingDraft}
+                            placeholder="終了日を選択してください"
                           />
                         </div>
                       </div>

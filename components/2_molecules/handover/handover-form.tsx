@@ -2,6 +2,7 @@
 
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
+import { DatePicker } from '@/components/ui/date-picker';
 import {
   Form,
   FormControl,
@@ -267,11 +268,11 @@ export const HandoverForm: React.FC<HandoverFormProps> = ({
                   <FormItem>
                     <FormLabel>実施予定日</FormLabel>
                     <FormControl>
-                      <Input
-                        type="date"
-                        disabled={isSubmitting || isSavingDraft}
-                        {...field}
+                      <DatePicker
                         value={field.value || ''}
+                        onChange={field.onChange}
+                        disabled={isSubmitting || isSavingDraft}
+                        placeholder="実施予定日を選択してください"
                       />
                     </FormControl>
                     <FormMessage />

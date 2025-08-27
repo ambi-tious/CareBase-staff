@@ -2,6 +2,7 @@
 
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
+import { DatePicker } from '@/components/ui/date-picker';
 import {
   Form,
   FormControl,
@@ -142,7 +143,12 @@ export const MedicationForm: React.FC<MedicationFormProps> = ({
                     服用開始日 <span className="text-red-500 ml-1">*</span>
                   </FormLabel>
                   <FormControl>
-                    <Input type="date" {...field} disabled={isSubmitting} />
+                    <DatePicker
+                      value={field.value}
+                      onChange={field.onChange}
+                      disabled={isSubmitting}
+                      placeholder="服用開始日を選択してください"
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -156,7 +162,12 @@ export const MedicationForm: React.FC<MedicationFormProps> = ({
                 <FormItem>
                   <FormLabel>服用終了日</FormLabel>
                   <FormControl>
-                    <Input type="date" {...field} disabled={isSubmitting} />
+                    <DatePicker
+                      value={field.value}
+                      onChange={field.onChange}
+                      disabled={isSubmitting}
+                      placeholder="服用終了日を選択してください"
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

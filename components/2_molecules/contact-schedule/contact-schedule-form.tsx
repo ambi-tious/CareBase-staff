@@ -2,6 +2,7 @@
 
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
+import { DatePicker } from '@/components/ui/date-picker';
 import {
   Form,
   FormControl,
@@ -302,7 +303,12 @@ export const ContactScheduleForm: React.FC<ContactScheduleFormProps> = ({
                     実施日 <span className="text-red-500">*</span>
                   </FormLabel>
                   <FormControl>
-                    <Input {...field} type="date" disabled={isSubmitting || isSavingDraft} />
+                    <DatePicker
+                      value={field.value}
+                      onChange={field.onChange}
+                      disabled={isSubmitting || isSavingDraft}
+                      placeholder="実施日を選択してください"
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

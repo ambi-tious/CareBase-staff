@@ -2,6 +2,7 @@
 
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
+import { DatePicker } from '@/components/ui/date-picker';
 import {
   Form,
   FormControl,
@@ -10,7 +11,6 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { useMedicationStatusForm } from '@/hooks/useMedicationStatusForm';
 import type { MedicationStatusFormData } from '@/validations/medication-status-validation';
@@ -87,7 +87,12 @@ export const MedicationStatusForm: React.FC<MedicationStatusFormProps> = ({
                     登録日 <span className="text-red-500 ml-1">*</span>
                   </FormLabel>
                   <FormControl>
-                    <Input type="date" {...field} disabled={isSubmitting} />
+                    <DatePicker
+                      value={field.value}
+                      onChange={field.onChange}
+                      disabled={isSubmitting}
+                      placeholder="登録日を選択してください"
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

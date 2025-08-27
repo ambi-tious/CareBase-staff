@@ -1,6 +1,7 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
+import { DatePicker } from '@/components/ui/date-picker';
 import {
   Form,
   FormControl,
@@ -577,14 +578,14 @@ export const ResidentBasicInfoForm: React.FC<ResidentBasicInfoFormProps> = ({
                       生年月日 <span className="text-red-500">*</span>
                     </FormLabel>
                     <FormControl>
-                      <Input
-                        {...field}
-                        type="date"
-                        disabled={disabled}
-                        onChange={(e) => {
-                          field.onChange(e.target.value);
-                          handleDobChange(e.target.value);
+                      <DatePicker
+                        value={field.value}
+                        onChange={(value) => {
+                          field.onChange(value);
+                          handleDobChange(value);
                         }}
+                        disabled={disabled}
+                        placeholder="生年月日を選択してください"
                         className={
                           errors.dob ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : ''
                         }
@@ -876,10 +877,11 @@ export const ResidentBasicInfoForm: React.FC<ResidentBasicInfoFormProps> = ({
                   <FormItem>
                     <FormLabel>入所日</FormLabel>
                     <FormControl>
-                      <Input
-                        {...field}
-                        type="date"
+                      <DatePicker
+                        value={field.value}
+                        onChange={field.onChange}
                         disabled={disabled}
+                        placeholder="入所日を選択してください"
                         className={
                           errors.admissionDate
                             ? 'border-red-300 focus:border-red-500 focus:ring-red-500'
@@ -899,10 +901,11 @@ export const ResidentBasicInfoForm: React.FC<ResidentBasicInfoFormProps> = ({
                   <FormItem>
                     <FormLabel>退所日</FormLabel>
                     <FormControl>
-                      <Input
-                        {...field}
-                        type="date"
+                      <DatePicker
+                        value={field.value}
+                        onChange={field.onChange}
                         disabled={disabled}
+                        placeholder="退所日を選択してください"
                         className={
                           errors.dischargeDate
                             ? 'border-red-300 focus:border-red-500 focus:ring-red-500'
