@@ -226,7 +226,7 @@ export const DocumentFormEditor: React.FC<DocumentFormEditorProps> = ({
             if (folderId) {
               router.push(`/documents?folder=${folderId}`);
             } else {
-              router.push('/documents');
+              router.push(`/documents/view/${documentId}`);
             }
           }
         }
