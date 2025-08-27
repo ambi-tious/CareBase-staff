@@ -3,10 +3,11 @@
 import { FormField } from '@/components/1_atoms/forms/form-field';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
+import { Textarea } from '@/components/ui/textarea';
 import { useMedicationForm } from '@/hooks/useMedicationForm';
 import type { MedicationFormData } from '@/validations/medication-validation';
 import { AlertCircle, RefreshCw } from 'lucide-react';
-import type React from 'react';
+import React from 'react';
 
 interface MedicationFormProps {
   onSubmit: (data: MedicationFormData) => Promise<boolean>;
@@ -79,13 +80,12 @@ export const MedicationForm: React.FC<MedicationFormProps> = ({
             <label htmlFor="dosageInstructions" className="text-sm font-medium text-gray-700">
               用法・用量 <span className="text-red-500 ml-1">*</span>
             </label>
-            <textarea
+            <Textarea
               id="dosageInstructions"
               value={formData.dosageInstructions}
               onChange={(e) => updateField('dosageInstructions', e.target.value)}
               placeholder="例：1日1回 朝食後 1錠"
               disabled={isSubmitting}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-carebase-blue focus:border-carebase-blue disabled:bg-gray-50 disabled:text-gray-500"
               rows={3}
             />
             {fieldErrors.dosageInstructions && (
@@ -136,13 +136,12 @@ export const MedicationForm: React.FC<MedicationFormProps> = ({
             <label htmlFor="notes" className="text-sm font-medium text-gray-700">
               メモ
             </label>
-            <textarea
+            <Textarea
               id="notes"
               value={formData.notes || ''}
               onChange={(e) => updateField('notes', e.target.value)}
               placeholder="副作用や注意事項などがあれば記入してください"
               disabled={isSubmitting}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-carebase-blue focus:border-carebase-blue disabled:bg-gray-50 disabled:text-gray-500"
               rows={3}
             />
             {fieldErrors.notes && (

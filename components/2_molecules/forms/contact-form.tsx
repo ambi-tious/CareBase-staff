@@ -4,11 +4,12 @@ import { FormField } from '@/components/1_atoms/forms/form-field';
 import { FormSelect } from '@/components/1_atoms/forms/form-select';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
+import { Textarea } from '@/components/ui/textarea';
 import { useContactForm } from '@/hooks/useContactForm';
 import { contactTypeOptions, relationshipOptions } from '@/types/contact';
 import type { ContactFormData } from '@/validations/contact-validation';
 import { AlertCircle, RefreshCw } from 'lucide-react';
-import type React from 'react';
+import React from 'react';
 
 interface ContactFormProps {
   onSubmit: (data: ContactFormData) => Promise<boolean>;
@@ -181,13 +182,13 @@ export const ContactForm: React.FC<ContactFormProps> = ({
               <label htmlFor="alertReason" className="text-sm font-medium text-orange-800">
                 注意理由
               </label>
-              <textarea
+              <Textarea
                 id="alertReason"
                 value={formData.alertReason || ''}
                 onChange={(e) => updateField('alertReason', e.target.value)}
                 placeholder="例：面会NG、連絡NG、特定の時間帯のみ連絡可能など"
                 disabled={isSubmitting}
-                className="w-full px-3 py-2 border border-orange-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 disabled:bg-gray-50 disabled:text-gray-500"
+                className="border-orange-300 focus:ring-orange-500 focus:border-orange-500"
                 rows={2}
               />
               {fieldErrors.alertReason && (
@@ -203,13 +204,12 @@ export const ContactForm: React.FC<ContactFormProps> = ({
           <label htmlFor="notes" className="text-sm font-medium text-gray-700">
             備考
           </label>
-          <textarea
+          <Textarea
             id="notes"
             value={formData.notes || ''}
             onChange={(e) => updateField('notes', e.target.value)}
             placeholder="その他の情報があれば記入してください"
             disabled={isSubmitting}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-carebase-blue focus:border-carebase-blue disabled:bg-gray-50 disabled:text-gray-500"
             rows={3}
           />
           {fieldErrors.notes && (

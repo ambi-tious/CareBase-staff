@@ -9,6 +9,7 @@ import { residentDataService } from '@/services/residentDataService';
 import type { HomeCareOfficeFormData } from '@/validations/resident-data-validation';
 import { Building2, Check, Edit3, Plus, Search, Trash2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { GenericDeleteModal } from './generic-delete-modal';
 import { HomeCareOfficeModal } from './home-care-office-modal';
 
 interface HomeCareOfficeMasterModalProps {
@@ -39,6 +40,8 @@ export const HomeCareOfficeMasterModal: React.FC<HomeCareOfficeMasterModalProps>
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [editingOffice, setEditingOffice] = useState<HomeCareOffice | null>(null);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [deletingOffice, setDeletingOffice] = useState<HomeCareOffice | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState<string | null>(null);
 
@@ -84,21 +87,29 @@ export const HomeCareOfficeMasterModal: React.FC<HomeCareOfficeMasterModalProps>
     setIsEditModalOpen(true);
   };
 
-  const handleDelete = async (office: HomeCareOffice) => {
-    if (window.confirm(`「${office.businessName}」を削除しますか？\nこの操作は取り消せません。`)) {
-      setIsDeleting(true);
-      setDeleteError(null);
+  const handleDelete = (office: HomeCareOffice) => {
+    setDeletingOffice(office);
+    setDeleteError(null);
+    setIsDeleteModalOpen(true);
+  };
 
-      try {
-        await residentDataService.deleteHomeCareOfficeMaster(office.id);
-        setOffices((prev) => prev.filter((o) => o.id !== office.id));
-        onRefresh();
-      } catch (error) {
-        console.error('Failed to delete home care office:', error);
-        setDeleteError(error instanceof Error ? error.message : '削除に失敗しました。');
-      } finally {
-        setIsDeleting(false);
-      }
+  const handleDeleteConfirm = async (): Promise<boolean> => {
+    if (!deletingOffice) return false;
+
+    setIsDeleting(true);
+    setDeleteError(null);
+
+    try {
+      await residentDataService.deleteHomeCareOfficeMaster(deletingOffice.id);
+      setOffices((prev) => prev.filter((o) => o.id !== deletingOffice.id));
+      onRefresh();
+      return true;
+    } catch (error) {
+      console.error('Failed to delete home care office:', error);
+      setDeleteError(error instanceof Error ? error.message : '削除に失敗しました。');
+      return false;
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -291,6 +302,23 @@ export const HomeCareOfficeMasterModal: React.FC<HomeCareOfficeMasterModalProps>
         onSubmit={handleCreateSubmit}
         mode="create"
       />
+
+      {/* 削除確認モーダル */}
+      {deletingOffice && (
+        <GenericDeleteModal
+          isOpen={isDeleteModalOpen}
+          onClose={() => {
+            setIsDeleteModalOpen(false);
+            setDeletingOffice(null);
+            setDeleteError(null);
+          }}
+          onConfirm={handleDeleteConfirm}
+          itemName={deletingOffice.businessName}
+          itemType="居宅介護支援事業所"
+          isDeleting={isDeleting}
+          error={deleteError}
+        />
+      )}
     </>
   );
 };

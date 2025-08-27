@@ -12,6 +12,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Textarea } from '@/components/ui/textarea';
 import { getLucideIcon } from '@/lib/lucide-icon-registry';
 import type { PointCategory } from '@/types/individual-point';
 import type { CategoryFormData } from '@/validations/individual-point-validation';
@@ -378,13 +379,12 @@ export const CategoryManagementModal: React.FC<CategoryManagementModalProps> = (
                     <label htmlFor="description" className="text-sm font-medium text-gray-700">
                       説明
                     </label>
-                    <textarea
+                    <Textarea
                       id="description"
                       value={formData.description || ''}
                       onChange={(e) => updateField('description', e.target.value)}
                       placeholder="カテゴリの説明を入力してください"
                       disabled={isSubmitting}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-carebase-blue focus:border-carebase-blue disabled:bg-gray-50 disabled:text-gray-500"
                       rows={3}
                     />
                     {fieldErrors.description && (
