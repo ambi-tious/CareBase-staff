@@ -118,8 +118,6 @@ export const medicalHistoryFormSchema = z
 
 export type MedicalHistoryFormData = z.infer<typeof medicalHistoryFormSchema>;
 
-
-
 // バリデーションヘルパー関数
 export const validateHomeCareOfficeForm = (data: unknown) => {
   return homeCareOfficeFormSchema.safeParse(data);
@@ -136,8 +134,6 @@ export const validateMedicationInfoForm = (data: unknown) => {
 export const validateMedicalHistoryForm = (data: unknown) => {
   return medicalHistoryFormSchema.safeParse(data);
 };
-
-
 
 // エラーメッセージ定数
 export const RESIDENT_DATA_ERROR_MESSAGES = {
@@ -179,6 +175,4 @@ export const RESIDENT_DATA_ERROR_MESSAGES = {
   DISEASE_NAME_TOO_LONG: '病名は100文字以内で入力してください',
   INVALID_ONSET_DATE: '有効な年月を入力してください（YYYY-MM）',
   ONSET_DATE_FUTURE: '発症年月は過去の日付を入力してください',
-
-
 } as const;

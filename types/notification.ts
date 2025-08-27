@@ -1,13 +1,11 @@
 /**
  * Notification Types
  *
- * Types for unified notification system including handovers and contact schedules
+ * Types for unified notification system including contact schedules and system notifications
  */
 
-import { z } from 'zod';
-
 // Notification types
-export type NotificationType = 'handover' | 'contact_schedule' | 'system';
+export type NotificationType = 'contact_schedule' | 'system';
 
 // Notification priority levels
 export type NotificationPriority = 'high' | 'medium' | 'low';
@@ -36,14 +34,6 @@ export interface BaseNotification {
   navigationUrl: string;
 }
 
-// Handover notification (extends base)
-export interface HandoverNotification extends BaseNotification {
-  type: 'handover';
-  category: 'medical' | 'care' | 'communication' | 'emergency' | 'family' | 'other';
-  scheduledDate?: string;
-  scheduledTime?: string;
-}
-
 // Contact schedule notification (extends base)
 export interface ContactScheduleNotification extends BaseNotification {
   type: 'contact_schedule';
@@ -62,7 +52,7 @@ export interface SystemNotification extends BaseNotification {
 }
 
 // Union type for all notifications
-export type Notification = HandoverNotification | ContactScheduleNotification | SystemNotification;
+export type Notification = ContactScheduleNotification | SystemNotification;
 
 // Notification search and filter types
 export interface NotificationSearchParams {
@@ -88,12 +78,6 @@ export interface NotificationListResponse {
 
 // Type options for UI
 export const notificationTypeOptions = [
-  {
-    value: 'handover',
-    label: '申し送り',
-    icon: 'MessageSquare',
-    color: 'bg-purple-100 text-purple-700 border-purple-200',
-  },
   {
     value: 'contact_schedule',
     label: '連絡・予定',

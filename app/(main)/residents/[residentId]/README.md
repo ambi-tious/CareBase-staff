@@ -59,7 +59,7 @@ Issue: [#133 [設計] #005 利用者｜利用者詳細（基本情報）](https:
 | 既往歴タブ             | 既往歴情報を表示             | `/v1/residents/[id]/medical-history`      | 同一画面（タブ切り替え） |
 | お薬情報タブ           | お薬情報を表示               | `/v1/residents/[id]/medications`          | 同一画面（タブ切り替え） |
 
-| 個別ポイントタブ       | 個別ポイント情報を表示       | `/v1/residents/[id]/individual-points`    | 同一画面（タブ切り替え） |
+| 個別ポイントタブ | 個別ポイント情報を表示 | `/v1/residents/[id]/individual-points` | 同一画面（タブ切り替え） |
 
 ### 入力チェック
 

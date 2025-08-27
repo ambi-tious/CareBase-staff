@@ -381,8 +381,6 @@ class ResidentDataService {
 
     // console.log('Mock deleted medication info:', { residentId, medicationId });
   }
-
-
 }
 
 export const residentDataService = new ResidentDataService();
