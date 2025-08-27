@@ -117,12 +117,14 @@ export const useDocumentForm = ({ onSubmit, initialData = {} }: UseDocumentFormO
         const success = await onSubmit(formData, isDraft);
 
         if (success) {
-          // Reset form on success
-          setFormData({ ...initialFormData, ...initialData });
+          // 下書き保存時はフォームデータをリセットしない
+          if (!isDraft) {
+            setFormData({ ...initialFormData, ...initialData });
+          }
           setFormState({
             isSubmitting: false,
             isSavingDraft: false,
-            hasUnsavedChanges: false, // 保存成功時は未保存変更フラグをリセット
+            hasUnsavedChanges: isDraft ? formState.hasUnsavedChanges : false, // 下書き保存時は未保存変更フラグを保持
             error: null,
             fieldErrors: {},
           });

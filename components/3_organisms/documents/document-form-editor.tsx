@@ -278,7 +278,6 @@ export const DocumentFormEditor: React.FC<DocumentFormEditorProps> = ({
       if (success) {
         setSaveSuccessMessage('下書きを保存しました。');
         setSaveSuccess(true);
-        reset();
       }
 
       return success;
