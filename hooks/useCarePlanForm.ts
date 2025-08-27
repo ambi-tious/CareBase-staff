@@ -1,12 +1,14 @@
 /**
  * Care Plan Form Hook
  *
- * Manages care plan form state and validation for create/edit operations
+ * React Hook Formベースのケアプランフォーム管理フック
  */
 
 import type { CarePlanFormData } from '@/validations/care-plan-validation';
 import { carePlanFormSchema } from '@/validations/care-plan-validation';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useCallback, useEffect, useState } from 'react';
+import { useForm, type Path } from 'react-hook-form';
 
 interface UseCarePlanFormOptions {
   onSubmit: (data: CarePlanFormData, isDraft?: boolean) => Promise<boolean>;
@@ -15,10 +17,8 @@ interface UseCarePlanFormOptions {
 }
 
 interface CarePlanFormState {
-  isSubmitting: boolean;
   isSavingDraft: boolean;
   error: string | null;
-  fieldErrors: Partial<Record<keyof CarePlanFormData, string>>;
   hasUnsavedChanges: boolean;
 }
 
@@ -45,23 +45,39 @@ const initialFormData: CarePlanFormData = {
 };
 
 export const useCarePlanForm = ({ onSubmit, initialData = {}, mode }: UseCarePlanFormOptions) => {
-  // Initialize form data only once with initial data
-  const [formData, setFormData] = useState<CarePlanFormData>(() => ({
-    ...initialFormData,
-    ...initialData,
-  }));
+  const form = useForm<CarePlanFormData>({
+    resolver: zodResolver(carePlanFormSchema),
+    defaultValues: {
+      ...initialFormData,
+      ...initialData,
+    },
+    mode: 'onChange',
+  });
 
-  const [formState, setFormState] = useState<CarePlanFormState>({
-    isSubmitting: false,
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting, isValid, isDirty },
+    setValue,
+    getValues,
+    watch,
+    reset,
+    trigger,
+    control,
+  } = form;
+
+  const [additionalState, setAdditionalState] = useState<CarePlanFormState>({
     isSavingDraft: false,
     error: null,
-    fieldErrors: {},
     hasUnsavedChanges: false,
   });
 
+  // Watch all form data
+  const formData = watch();
+
   // Set default dates on mount - only run once for create mode
   useEffect(() => {
-    if (mode === 'create' && !formData.certificationDate) {
+    if (mode === 'create' && !getValues('certificationDate')) {
       const today = new Date();
       const todayStr = today.toISOString().split('T')[0];
 
@@ -75,160 +91,162 @@ export const useCarePlanForm = ({ onSubmit, initialData = {}, mode }: UseCarePla
       nextReview.setMonth(nextReview.getMonth() + 3);
       const nextReviewStr = nextReview.toISOString().split('T')[0];
 
-      setFormData((prev) => ({
-        ...prev,
-        certificationDate: todayStr,
-        certValidityStart: todayStr,
-        certValidityEnd: nextYearStr,
-        nextReviewDate: nextReviewStr,
-      }));
+      setValue('certificationDate', todayStr);
+      setValue('certValidityStart', todayStr);
+      setValue('certValidityEnd', nextYearStr);
+      setValue('nextReviewDate', nextReviewStr);
     }
-  }, []); // Run only once on mount
+  }, [mode, setValue, getValues]); // Dependencies updated
 
-  const updateField = useCallback((field: keyof CarePlanFormData, value: any) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
-    setFormState((prev) => ({
-      ...prev,
-      hasUnsavedChanges: true,
-      fieldErrors: prev.fieldErrors[field]
-        ? { ...prev.fieldErrors, [field]: undefined }
-        : prev.fieldErrors,
-    }));
-  }, []);
+  const updateField = useCallback(
+    (field: string, value: unknown) => {
+      setValue(field as Path<CarePlanFormData>, value as any, {
+        shouldValidate: true,
+        shouldDirty: true,
+      });
+      setAdditionalState((prev) => ({
+        ...prev,
+        hasUnsavedChanges: true,
+      }));
+    },
+    [setValue]
+  );
 
   const validateForm = useCallback(
-    (isDraft = false) => {
-      // For drafts, only validate non-empty fields
+    async (isDraft = false) => {
+      // For drafts, skip validation
       if (isDraft) {
-        setFormState((prev) => ({
+        setAdditionalState((prev) => ({
           ...prev,
-          fieldErrors: {},
           error: null,
         }));
         return true;
       }
 
-      const result = carePlanFormSchema.safeParse(formData);
+      // Trigger React Hook Form validation
+      const isValid = await trigger();
 
-      if (!result.success) {
-        const fieldErrors: Partial<Record<keyof CarePlanFormData, string>> = {};
-
-        for (const error of result.error.errors) {
-          if (error.path.length > 0) {
-            const field = error.path[0] as keyof CarePlanFormData;
-            fieldErrors[field] = error.message;
-          }
-        }
-
-        setFormState((prev) => ({
+      if (!isValid) {
+        setAdditionalState((prev) => ({
           ...prev,
-          fieldErrors,
           error: '入力内容に不備があります。必須項目を確認してください。',
         }));
-
         return false;
       }
 
-      setFormState((prev) => ({
+      setAdditionalState((prev) => ({
         ...prev,
-        fieldErrors: {},
         error: null,
       }));
 
       return true;
     },
-    [formData]
+    [trigger]
   );
 
-  const handleSubmit = useCallback(
+  const internalHandleSubmit = useCallback(
     async (isDraft = false) => {
-      if (!validateForm(isDraft)) {
+      const isFormValid = await validateForm(isDraft);
+      if (!isFormValid) {
         return false;
       }
 
-      const stateKey = isDraft ? 'isSavingDraft' : 'isSubmitting';
-      setFormState((prev) => ({
-        ...prev,
-        [stateKey]: true,
-        error: null,
-      }));
+      if (isDraft) {
+        setAdditionalState((prev) => ({
+          ...prev,
+          isSavingDraft: true,
+          error: null,
+        }));
+      }
 
       try {
-        const success = await onSubmit(formData, isDraft);
+        const currentData = getValues();
+        const success = await onSubmit(currentData, isDraft);
 
         if (success) {
-          setFormState((prev) => ({
+          setAdditionalState((prev) => ({
             ...prev,
-            [stateKey]: false,
+            isSavingDraft: false,
             hasUnsavedChanges: false,
           }));
           return true;
         } else {
-          setFormState((prev) => ({
+          setAdditionalState((prev) => ({
             ...prev,
-            [stateKey]: false,
+            isSavingDraft: false,
             error: isDraft ? '下書き保存に失敗しました。' : 'ケアプランの保存に失敗しました。',
           }));
           return false;
         }
       } catch (error) {
         console.error('Care plan form submission error:', error);
-        setFormState((prev) => ({
+        setAdditionalState((prev) => ({
           ...prev,
-          [stateKey]: false,
+          isSavingDraft: false,
           error: 'ネットワークエラーが発生しました。接続を確認してもう一度お試しください。',
         }));
         return false;
       }
     },
-    [formData, validateForm, onSubmit]
+    [validateForm, getValues, onSubmit]
   );
 
   const saveDraft = useCallback(() => {
-    return handleSubmit(true);
-  }, [handleSubmit]);
+    return internalHandleSubmit(true);
+  }, [internalHandleSubmit]);
 
   const submitFinal = useCallback(() => {
-    return handleSubmit(false);
-  }, [handleSubmit]);
+    return internalHandleSubmit(false);
+  }, [internalHandleSubmit]);
 
-  const reset = useCallback(() => {
-    setFormData({
+  const resetForm = useCallback(() => {
+    reset({
       ...initialFormData,
       ...initialData,
     });
-    setFormState({
-      isSubmitting: false,
+    setAdditionalState({
       isSavingDraft: false,
       error: null,
-      fieldErrors: {},
       hasUnsavedChanges: false,
     });
-  }, [initialData]);
+  }, [reset, initialData]);
 
   const clearError = useCallback(() => {
-    setFormState((prev) => ({
+    setAdditionalState((prev) => ({
       ...prev,
       error: null,
     }));
   }, []);
 
+  // React Hook Form submit handler
+  const reactHookFormSubmit = handleSubmit(async (data) => {
+    try {
+      await onSubmit(data, false);
+    } catch (error) {
+      console.error('Form submission error:', error);
+    }
+  });
+
   return {
+    // React Hook Form methods (spread all to maintain compatibility)
+    ...form,
+    control,
+
     // Form data
     formData,
     updateField,
 
-    // Form state
-    isSubmitting: formState.isSubmitting,
-    isSavingDraft: formState.isSavingDraft,
-    error: formState.error,
-    fieldErrors: formState.fieldErrors,
-    hasUnsavedChanges: formState.hasUnsavedChanges,
+    // Form state (combined)
+    isSubmitting,
+    isSavingDraft: additionalState.isSavingDraft,
+    error: additionalState.error,
+    fieldErrors: errors as Partial<Record<keyof CarePlanFormData, { message?: string }>>,
+    hasUnsavedChanges: isDirty || additionalState.hasUnsavedChanges,
 
     // Actions
     submitFinal,
     saveDraft,
-    reset,
+    resetForm,
     clearError,
   };
 };

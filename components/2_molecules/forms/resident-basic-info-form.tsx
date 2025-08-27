@@ -1,8 +1,14 @@
 'use client';
 
-import { FormField } from '@/components/1_atoms/forms/form-field';
-import { FormSelect } from '@/components/1_atoms/forms/form-select';
 import { Button } from '@/components/ui/button';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
@@ -22,18 +28,21 @@ import {
   isSupportedImageFormat,
 } from '@/utils/image-utils';
 import { getAllGroupOptions, getAllTeamOptions } from '@/utils/staff-utils';
-import type { ResidentBasicInfo } from '@/validations/resident-validation';
+import { residentBasicInfoSchema, type ResidentBasicInfo } from '@/validations/resident-validation';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { Settings, Upload, X } from 'lucide-react';
 import Image from 'next/image';
 import type React from 'react';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { useForm } from 'react-hook-form';
 
 interface ResidentBasicInfoFormProps {
-  data: ResidentBasicInfo;
-  onChange: (data: ResidentBasicInfo) => void;
-  errors: Partial<Record<keyof ResidentBasicInfo, string>>;
+  onSubmit: (data: ResidentBasicInfo) => Promise<boolean>;
+  onCancel: () => void;
+  initialData?: Partial<ResidentBasicInfo>;
   disabled?: boolean;
   handleRoomManagement: () => void;
+  className?: string;
 }
 
 // Interface for selected staff data from localStorage
@@ -126,18 +135,65 @@ const calculateBirthdateFromAge = (ageStr: string, existingDob?: string): string
 };
 
 export const ResidentBasicInfoForm: React.FC<ResidentBasicInfoFormProps> = ({
-  data,
-  onChange,
-  errors,
+  onSubmit,
+  onCancel,
+  initialData = {},
   disabled = false,
   handleRoomManagement,
+  className = '',
 }) => {
+  // React Hook Form setup
+  const form = useForm<ResidentBasicInfo>({
+    resolver: zodResolver(residentBasicInfoSchema),
+    defaultValues: {
+      name: '',
+      furigana: '',
+      dob: '',
+      sex: '男',
+      age: '',
+      admissionDate: '',
+      dischargeDate: '',
+      floorGroup: '',
+      unitTeam: '',
+      roomInfo: '',
+      notes: '',
+      profileImage: '',
+      certificationDate: '',
+      certificationStartDate: '',
+      certificationEndDate: '',
+      careLevel: '',
+      ...initialData,
+    },
+    mode: 'onChange',
+  });
+
+  const {
+    control,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+    watch,
+    setValue,
+  } = form;
+  const watchedData = watch();
+
   const hasInitialized = useRef(false);
   const [imagePreview, setImagePreview] = useState<string>('');
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [availableRooms, setAvailableRooms] = useState<Room[]>([]);
   const [isLoadingRooms, setIsLoadingRooms] = useState(false);
   const [imageCompressing, setImageCompressing] = useState(false);
+
+  // Form submission handler
+  const onFormSubmit = handleSubmit(async (data: ResidentBasicInfo) => {
+    try {
+      const success = await onSubmit(data);
+      if (success) {
+        onCancel();
+      }
+    } catch (error) {
+      console.error('Form submission error:', error);
+    }
+  });
 
   // Load current logged-in user's group and team information
   useEffect(() => {
@@ -149,12 +205,13 @@ export const ResidentBasicInfoForm: React.FC<ResidentBasicInfoFormProps> = ({
 
           // Auto-set the group and team fields based on current user only if not already initialized
           // or if the values are different (e.g., user switched staff)
-          if (!hasInitialized.current || data.floorGroup == '' || data.unitTeam == '') {
-            onChange({
-              ...data,
-              floorGroup: parsedData.groupName,
-              unitTeam: parsedData.teamName,
-            });
+          if (
+            !hasInitialized.current ||
+            watchedData.floorGroup == '' ||
+            watchedData.unitTeam == ''
+          ) {
+            setValue('floorGroup', parsedData.groupName);
+            setValue('unitTeam', parsedData.teamName);
             hasInitialized.current = true;
           }
         }
@@ -175,12 +232,12 @@ export const ResidentBasicInfoForm: React.FC<ResidentBasicInfoFormProps> = ({
 
     window.addEventListener('storage', handleStorageChange);
     return () => window.removeEventListener('storage', handleStorageChange);
-  }, [data, onChange]); // Added back dependencies but with proper logic to prevent infinite loop
+  }, [watchedData.floorGroup, watchedData.unitTeam, setValue]); // Added back dependencies but with proper logic to prevent infinite loop
 
   // Load rooms when group and team change
   useEffect(() => {
     const loadRooms = async () => {
-      if (!data.floorGroup || !data.unitTeam) {
+      if (!watchedData.floorGroup || !watchedData.unitTeam) {
         setAvailableRooms([]);
         return;
       }
@@ -188,8 +245,8 @@ export const ResidentBasicInfoForm: React.FC<ResidentBasicInfoFormProps> = ({
       setIsLoadingRooms(true);
       try {
         // Get group and team IDs from names
-        const groupId = getGroupIdByName(data.floorGroup);
-        const teamId = getTeamIdByName(data.unitTeam);
+        const groupId = getGroupIdByName(watchedData.floorGroup);
+        const teamId = getTeamIdByName(watchedData.unitTeam);
 
         if (groupId && teamId) {
           const rooms = await roomService.getRoomsByGroupAndTeam(groupId, teamId);
@@ -206,7 +263,7 @@ export const ResidentBasicInfoForm: React.FC<ResidentBasicInfoFormProps> = ({
     };
 
     loadRooms();
-  }, [data.floorGroup, data.unitTeam]);
+  }, [watchedData.floorGroup, watchedData.unitTeam]);
 
   // 画像アップロード処理
   const handleImageUpload = useCallback(
@@ -216,13 +273,15 @@ export const ResidentBasicInfoForm: React.FC<ResidentBasicInfoFormProps> = ({
 
       // 画像ファイルかチェック
       if (!isImageFile(file)) {
-        alert('画像ファイルを選択してください');
+        // TODO: トースト通知またはエラー表示に変更する
+        console.error('画像ファイルを選択してください');
         return;
       }
 
       // サポートされている画像形式かチェック
       if (!isSupportedImageFormat(file)) {
-        alert(
+        // TODO: トースト通知またはエラー表示に変更する
+        console.error(
           'サポートされていない画像形式です。JPEG、PNG、GIF、WebP、BMPファイルを選択してください'
         );
         return;
@@ -240,89 +299,89 @@ export const ResidentBasicInfoForm: React.FC<ResidentBasicInfoFormProps> = ({
         });
 
         setImagePreview(compressedImage);
-        onChange({ ...data, profileImage: compressedImage });
+        setValue('profileImage', compressedImage);
 
-        // 圧縮結果を表示
+        // 圧縮結果をデバッグ表示
         const originalSize = formatFileSize(file.size);
         const compressedSize = formatFileSize(getBase64Size(compressedImage));
-        console.log(`画像を圧縮しました: ${originalSize} → ${compressedSize}`);
+        // 開発時のデバッグ情報として出力（console.warnは許可されている）
+        if (process.env.NODE_ENV === 'development') {
+          console.warn(`画像を圧縮しました: ${originalSize} → ${compressedSize}`);
+        }
       } catch (error) {
         console.error('Image compression failed:', error);
-        alert('画像の圧縮に失敗しました。別の画像を選択してください。');
+        // TODO: トースト通知またはエラー表示に変更する
+        console.error('画像の圧縮に失敗しました。別の画像を選択してください。');
       } finally {
         setImageCompressing(false);
       }
     },
-    [data, onChange]
+    [setValue]
   );
 
   // 画像削除処理
   const handleImageRemove = useCallback(() => {
     setImagePreview('');
-    onChange({ ...data, profileImage: '' });
+    setValue('profileImage', '');
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
-  }, [data, onChange]);
+  }, [setValue]);
 
   // 既存の画像がある場合のプレビュー設定
   useEffect(() => {
-    if (data.profileImage && !imagePreview) {
-      setImagePreview(data.profileImage);
+    if (watchedData.profileImage && !imagePreview) {
+      setImagePreview(watchedData.profileImage);
     }
-  }, [data.profileImage, imagePreview]);
+  }, [watchedData.profileImage, imagePreview]);
 
   // 生年月日が存在するが年齢が空の場合、年齢を自動計算
   useEffect(() => {
-    if (data.dob && !data.age) {
-      const calculatedAge = calculateAgeFromBirthdate(data.dob);
+    if (watchedData.dob && !watchedData.age) {
+      const calculatedAge = calculateAgeFromBirthdate(watchedData.dob);
       if (calculatedAge) {
-        onChange({ ...data, age: calculatedAge });
+        setValue('age', calculatedAge);
       }
     }
-  }, [data.dob, data.age, onChange]);
+  }, [watchedData.dob, watchedData.age, setValue]);
 
   const updateField = useCallback(
     (field: keyof ResidentBasicInfo, value: string) => {
-      onChange({ ...data, [field]: value });
+      setValue(field, value);
     },
-    [data, onChange]
+    [setValue]
   );
 
   // 年齢変更時の処理
   const handleAgeChange = useCallback(
     (ageValue: string) => {
-      const newData = { ...data, age: ageValue };
+      setValue('age', ageValue);
 
       // 年齢から生年月日を自動計算（既存の生年月日を基準にする）
       if (ageValue && !isNaN(Number(ageValue))) {
-        const calculatedDob = calculateBirthdateFromAge(ageValue, data.dob);
+        const calculatedDob = calculateBirthdateFromAge(ageValue, watchedData.dob);
         if (calculatedDob) {
-          newData.dob = calculatedDob;
+          setValue('dob', calculatedDob);
         }
       }
-
-      onChange(newData);
     },
-    [data, onChange]
+    [setValue, watchedData.dob]
   );
 
   // 生年月日変更時の処理
   const handleDobChange = useCallback(
     (dobValue: string) => {
-      const newData = { ...data, dob: dobValue };
+      setValue('dob', dobValue);
 
       // 生年月日から年齢を自動計算
       if (dobValue) {
         const calculatedAge = calculateAgeFromBirthdate(dobValue);
         if (calculatedAge) {
-          newData.age = calculatedAge;
+          setValue('age', calculatedAge);
         }
       }
-
-      onChange(newData);
     },
-    [data, onChange]
+    [setValue]
   );
 
   // Helper functions to get IDs from names
@@ -344,7 +403,7 @@ export const ResidentBasicInfoForm: React.FC<ResidentBasicInfoFormProps> = ({
     };
 
     // For group-2, adjust team IDs
-    if (data.floorGroup === '介護フロア B') {
+    if (watchedData.floorGroup === '介護フロア B') {
       const group2Mapping: Record<string, string> = {
         朝番チーム: 'team-b1',
         日勤チーム: 'team-b2',
@@ -373,312 +432,506 @@ export const ResidentBasicInfoForm: React.FC<ResidentBasicInfoFormProps> = ({
   const availableRoomOptions = roomOptions.filter((option) => !option.disabled);
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-      {/* 基本情報 */}
-      <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-carebase-text-primary border-b pb-2">基本情報</h3>
+    <Form {...form}>
+      <form onSubmit={onFormSubmit} className={`space-y-6 ${className}`}>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* 基本情報 */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold text-carebase-text-primary border-b pb-2">
+              基本情報
+            </h3>
 
-        <div className="flex gap-3">
-          {/* 利用者画像 */}
-          <div className="space-y-2">
-            <Label className="text-sm font-medium text-gray-700">利用者画像</Label>
-
-            {imagePreview ? (
-              <div className="relative">
-                <div className="w-32 h-32 border-2 border-gray-300 rounded-lg overflow-hidden bg-gray-50">
-                  <Image
-                    src={imagePreview}
-                    alt="利用者画像"
-                    className="w-32 h-32 object-cover rounded-lg"
-                    width={32}
-                    height={32}
-                  />
-                </div>
-                <div className="flex flex-col gap-2 mt-2">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={() => fileInputRef.current?.click()}
-                    disabled={disabled || imageCompressing}
-                  >
-                    <Upload className="h-4 w-4 mr-1" />
-                    画像を変更
-                  </Button>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={handleImageRemove}
-                    disabled={disabled}
-                    className="text-red-600 hover:text-red-700"
-                  >
-                    <X className="h-4 w-4" />
-                    画像を削除
-                  </Button>
-                </div>
-              </div>
-            ) : (
+            <div className="flex gap-3">
+              {/* 利用者画像 */}
               <div className="space-y-2">
-                <div
-                  className="w-32 h-32 border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center cursor-pointer hover:bg-gray-50 transition-colors"
-                  onClick={() => fileInputRef.current?.click()}
-                  style={{ opacity: imageCompressing ? 0.6 : 1 }}
-                >
-                  {imageCompressing ? (
-                    <>
-                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-carebase-blue mb-2"></div>
-                      <span className="text-sm text-gray-500">圧縮中...</span>
-                    </>
-                  ) : (
-                    <>
-                      <Upload className="h-8 w-8 text-gray-400 mb-2" />
-                      <span className="text-sm text-gray-500 text-center">画像を選択</span>
-                    </>
-                  )}
-                </div>
+                <Label className="text-sm font-medium text-gray-700">利用者画像</Label>
+
+                {imagePreview ? (
+                  <div className="relative">
+                    <div className="w-32 h-32 border-2 border-gray-300 rounded-lg overflow-hidden bg-gray-50">
+                      <Image
+                        src={imagePreview}
+                        alt="利用者画像"
+                        className="w-32 h-32 object-cover rounded-lg"
+                        width={32}
+                        height={32}
+                      />
+                    </div>
+                    <div className="flex flex-col gap-2 mt-2">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => fileInputRef.current?.click()}
+                        disabled={disabled || imageCompressing}
+                      >
+                        <Upload className="h-4 w-4 mr-1" />
+                        画像を変更
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={handleImageRemove}
+                        disabled={disabled}
+                        className="text-red-600 hover:text-red-700"
+                      >
+                        <X className="h-4 w-4" />
+                        画像を削除
+                      </Button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="space-y-2">
+                    <div
+                      className="w-32 h-32 border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center cursor-pointer hover:bg-gray-50 transition-colors"
+                      onClick={() => fileInputRef.current?.click()}
+                      style={{ opacity: imageCompressing ? 0.6 : 1 }}
+                    >
+                      {imageCompressing ? (
+                        <>
+                          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-carebase-blue mb-2"></div>
+                          <span className="text-sm text-gray-500">圧縮中...</span>
+                        </>
+                      ) : (
+                        <>
+                          <Upload className="h-8 w-8 text-gray-400 mb-2" />
+                          <span className="text-sm text-gray-500 text-center">画像を選択</span>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                )}
+                <Input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                  disabled={disabled || imageCompressing}
+                  className="hidden"
+                />
+                {errors.profileImage && (
+                  <p className="text-sm text-red-600" role="alert">
+                    {errors.profileImage.message}
+                  </p>
+                )}
               </div>
-            )}
-            <Input
-              ref={fileInputRef}
-              type="file"
-              accept="image/*"
-              onChange={handleImageUpload}
-              disabled={disabled || imageCompressing}
-              className="hidden"
-            />
-            {errors.profileImage && (
-              <p className="text-sm text-red-600" role="alert">
-                {errors.profileImage}
-              </p>
-            )}
-          </div>
-          <div className="flex-1 flex flex-col gap-4">
-            <FormField
-              label="氏名"
-              id="name"
-              value={data.name}
-              onChange={(value) => updateField('name', value)}
-              placeholder="山田 太郎"
-              required
-              error={errors.name}
-              disabled={disabled}
-            />
+              <div className="flex-1 flex flex-col gap-4">
+                <FormField
+                  control={control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>
+                        氏名 <span className="text-red-500">*</span>
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          {...field}
+                          placeholder="山田 太郎"
+                          disabled={disabled}
+                          className={
+                            errors.name
+                              ? 'border-red-300 focus:border-red-500 focus:ring-red-500'
+                              : ''
+                          }
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-            <FormField
-              label="フリガナ"
-              id="furigana"
-              value={data.furigana || ''}
-              onChange={(value) => updateField('furigana', value)}
-              placeholder="ヤマダ タロウ"
-              error={errors.furigana}
-              disabled={disabled}
-            />
-          </div>
-        </div>
+                <FormField
+                  control={control}
+                  name="furigana"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>フリガナ</FormLabel>
+                      <FormControl>
+                        <Input
+                          {...field}
+                          placeholder="ヤマダ タロウ"
+                          disabled={disabled}
+                          className={
+                            errors.furigana
+                              ? 'border-red-300 focus:border-red-500 focus:ring-red-500'
+                              : ''
+                          }
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            </div>
 
-        <div className="flex gap-3 md:flex-row flex-col">
-          <FormField
-            label="生年月日"
-            id="dob"
-            type="date"
-            value={data.dob}
-            onChange={handleDobChange}
-            required
-            error={errors.dob}
-            disabled={disabled}
-            className="w-full md:w-2/3"
-          />
-          <FormSelect
-            label="年齢"
-            id="age"
-            value={data.age || ''}
-            onChange={handleAgeChange}
-            options={ageOptions}
-            error={errors.age}
-            disabled={disabled}
-            className="w-full md:w-1/3"
-          />
-        </div>
-
-        <FormSelect
-          label="性別"
-          id="sex"
-          value={data.sex}
-          onChange={(value) => updateField('sex', value)}
-          options={sexOptions}
-          required
-          error={errors.sex}
-          disabled={disabled}
-        />
-
-        {/* 備考フィールド */}
-        <FormField
-          label="備考"
-          id="notes"
-          value={data.notes || ''}
-          onChange={(value) => updateField('notes', value)}
-          placeholder="利用者に関する特記事項や注意点を入力してください"
-          error={errors.notes}
-          disabled={disabled}
-          multiline
-          rows={3}
-        />
-      </div>
-
-      {/* 施設情報 */}
-      <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-carebase-text-primary border-b pb-2">施設情報</h3>
-
-        <FormSelect
-          label="所属フロア・グループ"
-          id="floorGroup"
-          value={data.floorGroup}
-          onChange={(value) => updateField('floorGroup', value)}
-          options={floorGroupOptions}
-          required
-          error={errors.floorGroup}
-        />
-
-        <FormSelect
-          label="所属ユニット・チーム"
-          id="unitTeam"
-          value={data.unitTeam}
-          onChange={(value) => updateField('unitTeam', value)}
-          options={unitTeamOptions}
-          required
-          error={errors.unitTeam}
-        />
-
-        <div className="space-y-2">
-          <Label className="text-sm font-medium text-gray-700">
-            部屋情報 <span className="text-red-500">*</span>
-          </Label>
-          <div className="flex gap-3">
-            <div className="flex-1 flex flex-col gap-2">
-              {isLoadingRooms ? (
-                <div className="flex items-center gap-2 p-3 border border-gray-300 rounded-md bg-gray-50">
-                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-carebase-blue"></div>
-                  <span className="text-sm text-gray-500">部屋情報を読み込み中...</span>
-                </div>
-              ) : availableRooms.length > 0 ? (
-                <Select
-                  value={data.roomInfo}
-                  onValueChange={(value) => updateField('roomInfo', value)}
-                  disabled={disabled}
-                >
-                  <SelectTrigger
-                    className={
-                      errors.roomInfo
-                        ? 'border-red-300 focus:border-red-500 focus:ring-red-500'
-                        : ''
-                    }
-                  >
-                    <SelectValue placeholder="部屋を選択してください" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {availableRoomOptions.length > 0 ? (
-                      <>
-                        {availableRoomOptions.map((option) => (
+            <div className="flex gap-3 md:flex-row flex-col">
+              <FormField
+                control={control}
+                name="dob"
+                render={({ field }) => (
+                  <FormItem className="w-full md:w-2/3">
+                    <FormLabel>
+                      生年月日 <span className="text-red-500">*</span>
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        type="date"
+                        disabled={disabled}
+                        onChange={(e) => {
+                          field.onChange(e.target.value);
+                          handleDobChange(e.target.value);
+                        }}
+                        className={
+                          errors.dob ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : ''
+                        }
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={control}
+                name="age"
+                render={({ field }) => (
+                  <FormItem className="w-full md:w-1/3">
+                    <FormLabel>年齢</FormLabel>
+                    <Select
+                      value={field.value}
+                      onValueChange={(value) => {
+                        field.onChange(value);
+                        handleAgeChange(value);
+                      }}
+                      disabled={disabled}
+                    >
+                      <FormControl>
+                        <SelectTrigger
+                          className={
+                            errors.age
+                              ? 'border-red-300 focus:border-red-500 focus:ring-red-500'
+                              : ''
+                          }
+                        >
+                          <SelectValue placeholder="年齢を選択" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {ageOptions.map((option) => (
                           <SelectItem key={option.value} value={option.value}>
                             {option.label}
                           </SelectItem>
                         ))}
-                        {roomOptions.length > availableRoomOptions.length && (
-                          <>
-                            <div className="px-2 py-1.5 text-xs text-gray-500 border-t">
-                              満室の部屋
-                            </div>
-                            {roomOptions
-                              .filter((option) => option.disabled)
-                              .map((option) => (
-                                <SelectItem
-                                  key={option.value}
-                                  value={option.value}
-                                  disabled
-                                  className="text-gray-400"
-                                >
-                                  {option.label}
-                                </SelectItem>
-                              ))}
-                          </>
-                        )}
-                      </>
-                    ) : (
-                      <div className="px-2 py-1.5 text-sm text-gray-500">
-                        利用可能な部屋がありません
-                      </div>
-                    )}
-                  </SelectContent>
-                </Select>
-              ) : data.floorGroup && data.unitTeam ? (
-                <div className="p-3 border border-yellow-300 rounded-md bg-yellow-50">
-                  <p className="text-sm text-yellow-700">
-                    選択されたグループ・チームに利用可能な部屋がありません。
-                  </p>
-                </div>
-              ) : (
-                <div className="p-3 border border-gray-300 rounded-md bg-gray-50">
-                  <p className="text-sm text-gray-500">
-                    グループとチームを選択すると、利用可能な部屋が表示されます。
-                  </p>
-                </div>
-              )}
-
-              {/* 部屋の空き状況サマリー */}
-              {availableRooms.length > 0 && (
-                <div className="text-xs text-gray-600 mt-2">
-                  <div className="flex items-center gap-4">
-                    <span className="flex items-center gap-1">
-                      <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                      空きあり: {availableRoomOptions.length}部屋
-                    </span>
-                    {roomOptions.length > availableRoomOptions.length && (
-                      <span className="flex items-center gap-1">
-                        <div className="w-2 h-2 bg-red-500 rounded-full"></div>
-                        満室: {roomOptions.length - availableRoomOptions.length}部屋
-                      </span>
-                    )}
-                  </div>
-                </div>
-              )}
-              {errors.roomInfo && (
-                <p className="text-sm text-red-600" role="alert">
-                  {errors.roomInfo}
-                </p>
-              )}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             </div>
-            <Button
-              variant="outline"
-              onClick={handleRoomManagement}
-              className="flex items-center gap-2 border-purple-300 text-purple-600 hover:bg-purple-50"
-            >
-              <Settings className="h-4 w-4" />
-              部屋管理
-            </Button>
+
+            <FormField
+              control={control}
+              name="sex"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>
+                    性別 <span className="text-red-500">*</span>
+                  </FormLabel>
+                  <Select value={field.value} onValueChange={field.onChange} disabled={disabled}>
+                    <FormControl>
+                      <SelectTrigger
+                        className={
+                          errors.sex ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : ''
+                        }
+                      >
+                        <SelectValue placeholder="性別を選択" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {sexOptions.map((option) => (
+                        <SelectItem key={option.value} value={option.value}>
+                          {option.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* 備考フィールド */}
+            <FormField
+              control={control}
+              name="notes"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>備考</FormLabel>
+                  <FormControl>
+                    <textarea
+                      {...field}
+                      placeholder="利用者に関する特記事項や注意点を入力してください"
+                      disabled={disabled}
+                      rows={3}
+                      className={`flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 ${
+                        errors.notes ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : ''
+                      }`}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+
+          {/* 施設情報 */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold text-carebase-text-primary border-b pb-2">
+              施設情報
+            </h3>
+
+            <FormField
+              control={control}
+              name="floorGroup"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>
+                    所属フロア・グループ <span className="text-red-500">*</span>
+                  </FormLabel>
+                  <Select value={field.value} onValueChange={field.onChange} disabled={disabled}>
+                    <FormControl>
+                      <SelectTrigger
+                        className={
+                          errors.floorGroup
+                            ? 'border-red-300 focus:border-red-500 focus:ring-red-500'
+                            : ''
+                        }
+                      >
+                        <SelectValue placeholder="フロア・グループを選択" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {floorGroupOptions.map((option) => (
+                        <SelectItem key={option.value} value={option.value}>
+                          {option.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={control}
+              name="unitTeam"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>
+                    所属ユニット・チーム <span className="text-red-500">*</span>
+                  </FormLabel>
+                  <Select value={field.value} onValueChange={field.onChange} disabled={disabled}>
+                    <FormControl>
+                      <SelectTrigger
+                        className={
+                          errors.unitTeam
+                            ? 'border-red-300 focus:border-red-500 focus:ring-red-500'
+                            : ''
+                        }
+                      >
+                        <SelectValue placeholder="ユニット・チームを選択" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {unitTeamOptions.map((option) => (
+                        <SelectItem key={option.value} value={option.value}>
+                          {option.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <div className="space-y-2">
+              <Label className="text-sm font-medium text-gray-700">
+                部屋情報 <span className="text-red-500">*</span>
+              </Label>
+              <div className="flex gap-3">
+                <div className="flex-1 flex flex-col gap-2">
+                  {isLoadingRooms ? (
+                    <div className="flex items-center gap-2 p-3 border border-gray-300 rounded-md bg-gray-50">
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-carebase-blue"></div>
+                      <span className="text-sm text-gray-500">部屋情報を読み込み中...</span>
+                    </div>
+                  ) : availableRooms.length > 0 ? (
+                    <Select
+                      value={watchedData.roomInfo}
+                      onValueChange={(value) => updateField('roomInfo', value)}
+                      disabled={disabled}
+                    >
+                      <SelectTrigger
+                        className={
+                          errors.roomInfo
+                            ? 'border-red-300 focus:border-red-500 focus:ring-red-500'
+                            : ''
+                        }
+                      >
+                        <SelectValue placeholder="部屋を選択してください" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {availableRoomOptions.length > 0 ? (
+                          <>
+                            {availableRoomOptions.map((option) => (
+                              <SelectItem key={option.value} value={option.value}>
+                                {option.label}
+                              </SelectItem>
+                            ))}
+                            {roomOptions.length > availableRoomOptions.length && (
+                              <>
+                                <div className="px-2 py-1.5 text-xs text-gray-500 border-t">
+                                  満室の部屋
+                                </div>
+                                {roomOptions
+                                  .filter((option) => option.disabled)
+                                  .map((option) => (
+                                    <SelectItem
+                                      key={option.value}
+                                      value={option.value}
+                                      disabled
+                                      className="text-gray-400"
+                                    >
+                                      {option.label}
+                                    </SelectItem>
+                                  ))}
+                              </>
+                            )}
+                          </>
+                        ) : (
+                          <div className="px-2 py-1.5 text-sm text-gray-500">
+                            利用可能な部屋がありません
+                          </div>
+                        )}
+                      </SelectContent>
+                    </Select>
+                  ) : watchedData.floorGroup && watchedData.unitTeam ? (
+                    <div className="p-3 border border-yellow-300 rounded-md bg-yellow-50">
+                      <p className="text-sm text-yellow-700">
+                        選択されたグループ・チームに利用可能な部屋がありません。
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="p-3 border border-gray-300 rounded-md bg-gray-50">
+                      <p className="text-sm text-gray-500">
+                        グループとチームを選択すると、利用可能な部屋が表示されます。
+                      </p>
+                    </div>
+                  )}
+
+                  {/* 部屋の空き状況サマリー */}
+                  {availableRooms.length > 0 && (
+                    <div className="text-xs text-gray-600 mt-2">
+                      <div className="flex items-center gap-4">
+                        <span className="flex items-center gap-1">
+                          <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                          空きあり: {availableRoomOptions.length}部屋
+                        </span>
+                        {roomOptions.length > availableRoomOptions.length && (
+                          <span className="flex items-center gap-1">
+                            <div className="w-2 h-2 bg-red-500 rounded-full"></div>
+                            満室: {roomOptions.length - availableRoomOptions.length}部屋
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                  {errors.roomInfo && (
+                    <p className="text-sm text-red-600" role="alert">
+                      {errors.roomInfo.message}
+                    </p>
+                  )}
+                </div>
+                <Button
+                  variant="outline"
+                  onClick={handleRoomManagement}
+                  className="flex items-center gap-2 border-purple-300 text-purple-600 hover:bg-purple-50"
+                >
+                  <Settings className="h-4 w-4" />
+                  部屋管理
+                </Button>
+              </div>
+            </div>
+            <div className="flex gap-3 lg:flex-row flex-col">
+              <FormField
+                control={control}
+                name="admissionDate"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>入所日</FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        type="date"
+                        disabled={disabled}
+                        className={
+                          errors.admissionDate
+                            ? 'border-red-300 focus:border-red-500 focus:ring-red-500'
+                            : ''
+                        }
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={control}
+                name="dischargeDate"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>退所日</FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        type="date"
+                        disabled={disabled}
+                        className={
+                          errors.dischargeDate
+                            ? 'border-red-300 focus:border-red-500 focus:ring-red-500'
+                            : ''
+                        }
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            {/* Submit Buttons */}
+            <div className="flex justify-end gap-3 pt-6 border-t">
+              <Button type="button" variant="outline" onClick={onCancel} disabled={isSubmitting}>
+                キャンセル
+              </Button>
+              <Button
+                type="submit"
+                disabled={isSubmitting}
+                className="bg-carebase-blue hover:bg-carebase-blue-dark"
+              >
+                {isSubmitting ? '保存中...' : '保存'}
+              </Button>
+            </div>
           </div>
         </div>
-        <div className="flex gap-3 lg:flex-row flex-col">
-          <FormField
-            label="入所日"
-            id="admissionDate"
-            type="date"
-            value={data.admissionDate || ''}
-            onChange={(value) => updateField('admissionDate', value)}
-            error={errors.admissionDate}
-            disabled={disabled}
-          />
-
-          <FormField
-            label="退所日"
-            id="dischargeDate"
-            type="date"
-            value={data.dischargeDate || ''}
-            onChange={(value) => updateField('dischargeDate', value)}
-            error={errors.dischargeDate}
-          />
-        </div>
-      </div>
-    </div>
+      </form>
+    </Form>
   );
 };

@@ -1,7 +1,5 @@
 'use client';
 
-import { FormField } from '@/components/1_atoms/forms/form-field';
-import { FormSelect } from '@/components/1_atoms/forms/form-select';
 import { GenericDeleteModal } from '@/components/3_organisms/modals/generic-delete-modal';
 import {
   Accordion,
@@ -19,6 +17,15 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import type { Room, RoomFormData } from '@/types/room';
 import {
@@ -488,28 +495,38 @@ export const RoomManagementModal: React.FC<RoomManagementModalProps> = ({
                     基本情報
                   </h3>
 
-                  <FormField
-                    label="部屋名"
-                    id="name"
-                    value={formData.name}
-                    onChange={(value) => updateField('name', value)}
-                    placeholder="101号室"
-                    required
-                    error={fieldErrors.name}
-                    disabled={isSubmitting}
-                  />
+                  <div className="space-y-2">
+                    <Label htmlFor="name" className="text-sm font-medium text-gray-700">
+                      部屋名 <span className="text-red-500">*</span>
+                    </Label>
+                    <Input
+                      id="name"
+                      value={formData.name}
+                      onChange={(e) => updateField('name', e.target.value)}
+                      placeholder="101号室"
+                      disabled={isSubmitting}
+                      className={fieldErrors.name ? 'border-red-300' : ''}
+                    />
+                    {fieldErrors.name && <p className="text-sm text-red-600">{fieldErrors.name}</p>}
+                  </div>
 
-                  <FormField
-                    label="定員"
-                    id="capacity"
-                    type="number"
-                    value={formData.capacity.toString()}
-                    onChange={(value) => updateField('capacity', parseInt(value) || 1)}
-                    placeholder="1"
-                    required
-                    error={fieldErrors.capacity}
-                    disabled={isSubmitting}
-                  />
+                  <div className="space-y-2">
+                    <Label htmlFor="capacity" className="text-sm font-medium text-gray-700">
+                      定員 <span className="text-red-500">*</span>
+                    </Label>
+                    <Input
+                      id="capacity"
+                      type="number"
+                      value={formData.capacity.toString()}
+                      onChange={(e) => updateField('capacity', parseInt(e.target.value) || 1)}
+                      placeholder="1"
+                      disabled={isSubmitting}
+                      className={fieldErrors.capacity ? 'border-red-300' : ''}
+                    />
+                    {fieldErrors.capacity && (
+                      <p className="text-sm text-red-600">{fieldErrors.capacity}</p>
+                    )}
+                  </div>
                 </div>
 
                 {/* Right Column - Assignment */}
@@ -518,41 +535,70 @@ export const RoomManagementModal: React.FC<RoomManagementModalProps> = ({
                     所属設定
                   </h3>
 
-                  <FormSelect
-                    label="所属グループ"
-                    id="groupId"
-                    value={formData.groupId}
-                    onChange={(value) => {
-                      updateField('groupId', value);
-                      updateField('teamId', ''); // Reset team when group changes
-                    }}
-                    options={groupOptions.map((option) => ({
-                      value: getGroupIdByName(option.value) || '',
-                      label: option.label,
-                    }))}
-                    required
-                    error={fieldErrors.groupId}
-                    disabled={isSubmitting}
-                  />
+                  <div className="space-y-2">
+                    <Label htmlFor="groupId" className="text-sm font-medium text-gray-700">
+                      所属グループ <span className="text-red-500">*</span>
+                    </Label>
+                    <Select
+                      value={formData.groupId}
+                      onValueChange={(value) => {
+                        updateField('groupId', value);
+                        updateField('teamId', ''); // Reset team when group changes
+                      }}
+                      disabled={isSubmitting}
+                    >
+                      <SelectTrigger className={fieldErrors.groupId ? 'border-red-300' : ''}>
+                        <SelectValue placeholder="グループを選択" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {groupOptions.map((option) => {
+                          const groupId = getGroupIdByName(option.value) || '';
+                          return (
+                            <SelectItem key={groupId} value={groupId}>
+                              {option.label}
+                            </SelectItem>
+                          );
+                        })}
+                      </SelectContent>
+                    </Select>
+                    {fieldErrors.groupId && (
+                      <p className="text-sm text-red-600">{fieldErrors.groupId}</p>
+                    )}
+                  </div>
 
-                  <FormSelect
-                    label="所属チーム"
-                    id="teamId"
-                    value={formData.teamId}
-                    onChange={(value) => updateField('teamId', value)}
-                    options={teamOptions.map((option) => ({
-                      value: getTeamIdByName(option.value, formData.groupId) || '',
-                      label: option.label,
-                    }))}
-                    required
-                    error={fieldErrors.teamId}
-                    disabled={isSubmitting || !formData.groupId}
-                    placeholder={
-                      !formData.groupId
-                        ? 'まずグループを選択してください'
-                        : 'チームを選択してください'
-                    }
-                  />
+                  <div className="space-y-2">
+                    <Label htmlFor="teamId" className="text-sm font-medium text-gray-700">
+                      所属チーム <span className="text-red-500">*</span>
+                    </Label>
+                    <Select
+                      value={formData.teamId}
+                      onValueChange={(value) => updateField('teamId', value)}
+                      disabled={isSubmitting || !formData.groupId}
+                    >
+                      <SelectTrigger className={fieldErrors.teamId ? 'border-red-300' : ''}>
+                        <SelectValue
+                          placeholder={
+                            !formData.groupId
+                              ? 'まずグループを選択してください'
+                              : 'チームを選択してください'
+                          }
+                        />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {teamOptions.map((option) => {
+                          const teamId = getTeamIdByName(option.value, formData.groupId) || '';
+                          return (
+                            <SelectItem key={teamId} value={teamId}>
+                              {option.label}
+                            </SelectItem>
+                          );
+                        })}
+                      </SelectContent>
+                    </Select>
+                    {fieldErrors.teamId && (
+                      <p className="text-sm text-red-600">{fieldErrors.teamId}</p>
+                    )}
+                  </div>
                 </div>
               </div>
 

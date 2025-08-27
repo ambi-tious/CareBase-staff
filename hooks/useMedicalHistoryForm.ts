@@ -1,32 +1,33 @@
 /**
- * Medication Status Form Hook
+ * Medical History Form Hook
  *
- * React Hook Formベースの服薬状況フォーム管理フック
+ * React Hook Formベースの医療履歴フォーム管理フック
  */
 
-import type { MedicationStatusFormData } from '@/validations/medication-status-validation';
-import { medicationStatusFormSchema } from '@/validations/medication-status-validation';
+import type { MedicalHistoryFormData } from '@/validations/resident-data-validation';
+import { medicalHistoryFormSchema } from '@/validations/resident-data-validation';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useCallback, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
-interface UseMedicationStatusFormOptions {
-  onSubmit: (data: MedicationStatusFormData) => Promise<boolean>;
-  initialData?: Partial<MedicationStatusFormData>;
+interface UseMedicalHistoryFormOptions {
+  onSubmit: (data: MedicalHistoryFormData) => Promise<boolean>;
+  initialData?: Partial<MedicalHistoryFormData>;
 }
 
-const initialFormData: MedicationStatusFormData = {
-  date: new Date().toISOString().split('T')[0], // Default to today
-  content: '',
+const initialFormData: MedicalHistoryFormData = {
+  diseaseName: '',
+  onsetDate: '',
+  treatmentStatus: '治療中',
   notes: '',
 };
 
-export const useMedicationStatusForm = ({
+export const useMedicalHistoryForm = ({
   onSubmit,
   initialData = {},
-}: UseMedicationStatusFormOptions) => {
-  const form = useForm<MedicationStatusFormData>({
-    resolver: zodResolver(medicationStatusFormSchema),
+}: UseMedicalHistoryFormOptions) => {
+  const form = useForm<MedicalHistoryFormData>({
+    resolver: zodResolver(medicalHistoryFormSchema),
     defaultValues: {
       ...initialFormData,
       ...initialData,
@@ -48,24 +49,24 @@ export const useMedicationStatusForm = ({
   });
 
   const updateField = useCallback(
-    (field: keyof MedicationStatusFormData, value: string) => {
+    (field: keyof MedicalHistoryFormData, value: string) => {
       setValue(field, value);
     },
     [setValue]
   );
 
   const handleFormSubmit = useCallback(
-    async (data: MedicationStatusFormData): Promise<void> => {
+    async (data: MedicalHistoryFormData): Promise<void> => {
       try {
         setAdditionalState({ error: null });
 
         const success = await onSubmit(data);
 
         if (!success) {
-          setAdditionalState({ error: '服薬状況の保存に失敗しました。' });
+          setAdditionalState({ error: '医療履歴の保存に失敗しました。' });
         }
       } catch (error) {
-        console.error('Error submitting medication status form:', error);
+        console.error('Error submitting medical history form:', error);
 
         const errorMessage =
           error instanceof Error
@@ -97,7 +98,7 @@ export const useMedicationStatusForm = ({
     // Form state
     isSubmitting,
     error: additionalState.error,
-    fieldErrors: errors as Partial<Record<keyof MedicationStatusFormData, { message?: string }>>,
+    fieldErrors: errors as Partial<Record<keyof MedicalHistoryFormData, { message?: string }>>,
 
     // Actions
     onSubmit: handleSubmit(handleFormSubmit),

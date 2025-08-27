@@ -1,25 +1,19 @@
 /**
  * Care Record Form Hook
  *
- * Manages care record form state and validation for create/edit operations
+ * React Hook Formベースのケア記録フォーム管理フック
  */
 
 import type { CareRecordFormData } from '@/validations/care-record-validation';
 import { careRecordFormSchema } from '@/validations/care-record-validation';
-import { useCallback, useEffect, useState } from 'react';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useCallback, useState } from 'react';
+import { useForm } from 'react-hook-form';
 
 interface UseCareRecordFormOptions {
   onSubmit: (data: CareRecordFormData, isDraft?: boolean) => Promise<boolean>;
   initialData?: Partial<CareRecordFormData>;
   mode: 'create' | 'edit';
-}
-
-interface CareRecordFormState {
-  isSubmitting: boolean;
-  isSavingDraft: boolean;
-  error: string | null;
-  fieldErrors: Partial<Record<keyof CareRecordFormData, string>>;
-  hasUnsavedChanges: boolean;
 }
 
 const initialFormData: CareRecordFormData = {
@@ -29,7 +23,7 @@ const initialFormData: CareRecordFormData = {
   content: '',
   recordedAt: new Date().toISOString().slice(0, 16),
   priority: 'medium',
-  status: 'completed',
+  status: 'draft',
 };
 
 export const useCareRecordForm = ({
@@ -37,177 +31,116 @@ export const useCareRecordForm = ({
   initialData = {},
   mode,
 }: UseCareRecordFormOptions) => {
-  // Initialize form data only once with initial data
-  const [formData, setFormData] = useState<CareRecordFormData>(() => ({
-    ...initialFormData,
-    ...initialData,
-  }));
+  const form = useForm<CareRecordFormData>({
+    resolver: zodResolver(careRecordFormSchema),
+    defaultValues: {
+      ...initialFormData,
+      ...initialData,
+    },
+    mode: 'onChange',
+  });
 
-  const [formState, setFormState] = useState<CareRecordFormState>({
-    isSubmitting: false,
+  const {
+    control,
+    handleSubmit,
+    formState: { isSubmitting, errors },
+    watch,
+    setValue,
+  } = form;
+  const formData = watch();
+
+  const [additionalState, setAdditionalState] = useState({
     isSavingDraft: false,
-    error: null,
-    fieldErrors: {},
+    error: null as string | null,
     hasUnsavedChanges: false,
   });
 
-  // Set default date and time on mount - only run once for create mode
-  useEffect(() => {
-    if (mode === 'create' && !formData.recordedAt) {
-      const now = new Date();
-      const currentDateTime = now.toISOString().slice(0, 16);
-
-      setFormData((prev) => ({
-        ...prev,
-        recordedAt: currentDateTime,
-      }));
-    }
-  }, []); // Run only once on mount
-
-  const updateField = useCallback((field: keyof CareRecordFormData, value: string) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
-    setFormState((prev) => ({
-      ...prev,
-      hasUnsavedChanges: true,
-      fieldErrors: prev.fieldErrors[field]
-        ? { ...prev.fieldErrors, [field]: undefined }
-        : prev.fieldErrors,
-    }));
-  }, []);
-
-  const validateForm = useCallback(
-    (isDraft = false) => {
-      // For drafts, only validate non-empty fields
-      if (isDraft) {
-        setFormState((prev) => ({
-          ...prev,
-          fieldErrors: {},
-          error: null,
-        }));
-        return true;
-      }
-
-      const result = careRecordFormSchema.safeParse(formData);
-
-      if (!result.success) {
-        const fieldErrors: Partial<Record<keyof CareRecordFormData, string>> = {};
-
-        for (const error of result.error.errors) {
-          if (error.path.length > 0) {
-            const field = error.path[0] as keyof CareRecordFormData;
-            fieldErrors[field] = error.message;
-          }
-        }
-
-        setFormState((prev) => ({
-          ...prev,
-          fieldErrors,
-          error: '入力内容に不備があります。必須項目を確認してください。',
-        }));
-
-        return false;
-      }
-
-      setFormState((prev) => ({
-        ...prev,
-        fieldErrors: {},
-        error: null,
-      }));
-
-      return true;
+  const updateField = useCallback(
+    (field: keyof CareRecordFormData, value: string) => {
+      setValue(field, value);
+      setAdditionalState((prev) => ({ ...prev, hasUnsavedChanges: true }));
     },
-    [formData]
+    [setValue]
   );
 
-  const handleSubmit = useCallback(
-    async (isDraft = false) => {
-      if (!validateForm(isDraft)) {
-        return false;
-      }
-
-      const stateKey = isDraft ? 'isSavingDraft' : 'isSubmitting';
-      setFormState((prev) => ({
-        ...prev,
-        [stateKey]: true,
-        error: null,
-      }));
-
+  const handleFormSubmit = useCallback(
+    async (data: CareRecordFormData, isDraft = false): Promise<void> => {
       try {
-        const success = await onSubmit(formData, isDraft);
+        if (isDraft) {
+          setAdditionalState((prev) => ({ ...prev, isSavingDraft: true, error: null }));
+        } else {
+          setAdditionalState((prev) => ({ ...prev, error: null }));
+        }
+
+        const success = await onSubmit(data, isDraft);
 
         if (success) {
-          setFormState((prev) => ({
+          setAdditionalState((prev) => ({
             ...prev,
-            [stateKey]: false,
+            isSavingDraft: false,
             hasUnsavedChanges: false,
           }));
-          return true;
         } else {
-          setFormState((prev) => ({
+          const errorMessage = isDraft
+            ? 'ケア記録の下書き保存に失敗しました。'
+            : 'ケア記録の保存に失敗しました。';
+          setAdditionalState((prev) => ({
             ...prev,
-            [stateKey]: false,
-            error: isDraft ? '下書き保存に失敗しました。' : '記録の保存に失敗しました。',
+            isSavingDraft: false,
+            error: errorMessage,
           }));
-          return false;
         }
       } catch (error) {
-        console.error('Care record form submission error:', error);
-        setFormState((prev) => ({
+        console.error('Error submitting care record form:', error);
+
+        const errorMessage =
+          error instanceof Error
+            ? error.message.includes('Network')
+              ? 'ネットワークエラーが発生しました。接続を確認してください。'
+              : error.message
+            : '予期しないエラーが発生しました。';
+
+        setAdditionalState((prev) => ({
           ...prev,
-          [stateKey]: false,
-          error: 'ネットワークエラーが発生しました。接続を確認してもう一度お試しください。',
+          isSavingDraft: false,
+          error: errorMessage,
         }));
-        return false;
       }
     },
-    [formData, validateForm, onSubmit]
+    [onSubmit]
   );
 
-  const saveDraft = useCallback(() => {
-    return handleSubmit(true);
-  }, [handleSubmit]);
+  const submitFinal = useCallback(async () => {
+    return handleSubmit((data) => handleFormSubmit(data, false))();
+  }, [handleSubmit, handleFormSubmit]);
 
-  const submitFinal = useCallback(() => {
-    return handleSubmit(false);
-  }, [handleSubmit]);
-
-  const reset = useCallback(() => {
-    setFormData({
-      ...initialFormData,
-      ...initialData,
-    });
-    setFormState({
-      isSubmitting: false,
-      isSavingDraft: false,
-      error: null,
-      fieldErrors: {},
-      hasUnsavedChanges: false,
-    });
-  }, [initialData]);
+  const saveDraft = useCallback(async () => {
+    return handleSubmit((data) => handleFormSubmit(data, true))();
+  }, [handleSubmit, handleFormSubmit]);
 
   const clearError = useCallback(() => {
-    setFormState((prev) => ({
-      ...prev,
-      error: null,
-    }));
+    setAdditionalState((prev) => ({ ...prev, error: null }));
   }, []);
 
   return {
+    // React Hook Form methods (spread all to maintain compatibility)
+    ...form,
+    control,
+
     // Form data
     formData,
     updateField,
 
     // Form state
-    isSubmitting: formState.isSubmitting,
-    isSavingDraft: formState.isSavingDraft,
-    error: formState.error,
-    fieldErrors: formState.fieldErrors,
-    hasUnsavedChanges: formState.hasUnsavedChanges,
+    isSubmitting,
+    isSavingDraft: additionalState.isSavingDraft,
+    error: additionalState.error,
+    fieldErrors: errors as Partial<Record<keyof CareRecordFormData, { message?: string }>>,
+    hasUnsavedChanges: additionalState.hasUnsavedChanges,
 
     // Actions
     submitFinal,
     saveDraft,
-    reset,
     clearError,
   };
 };

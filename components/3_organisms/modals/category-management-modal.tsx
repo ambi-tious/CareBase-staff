@@ -1,6 +1,5 @@
 'use client';
 
-import { FormField } from '@/components/1_atoms/forms/form-field';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -11,6 +10,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
 import { getLucideIcon } from '@/lib/lucide-icon-registry';
@@ -364,16 +365,20 @@ export const CategoryManagementModal: React.FC<CategoryManagementModalProps> = (
                     基本情報
                   </h3>
 
-                  <FormField
-                    label="カテゴリ名"
-                    id="name"
-                    value={formData.name}
-                    onChange={(value) => updateField('name', value)}
-                    placeholder="例：リハビリテーション"
-                    required
-                    error={fieldErrors.name}
-                    disabled={isSubmitting}
-                  />
+                  <div className="space-y-2">
+                    <Label htmlFor="name" className="text-sm font-medium text-gray-700">
+                      カテゴリ名 <span className="text-red-500">*</span>
+                    </Label>
+                    <Input
+                      id="name"
+                      value={formData.name}
+                      onChange={(e) => updateField('name', e.target.value)}
+                      placeholder="例：リハビリテーション"
+                      disabled={isSubmitting}
+                      className={fieldErrors.name ? 'border-red-300' : ''}
+                    />
+                    {fieldErrors.name && <p className="text-sm text-red-600">{fieldErrors.name}</p>}
+                  </div>
 
                   <div className="space-y-2">
                     <label htmlFor="description" className="text-sm font-medium text-gray-700">

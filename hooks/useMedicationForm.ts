@@ -1,13 +1,14 @@
 /**
  * Medication Form Hook
  *
- * Manages medication form state and validation
+ * React Hook Formベースの薬剤情報フォーム管理フック
  */
 
-import type { MedicationFormState } from '@/types/medication';
 import type { MedicationFormData } from '@/validations/medication-validation';
 import { medicationFormSchema } from '@/validations/medication-validation';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useCallback, useState } from 'react';
+import { useForm } from 'react-hook-form';
 
 interface UseMedicationFormOptions {
   onSubmit: (data: MedicationFormData) => Promise<boolean>;
@@ -24,143 +25,82 @@ const initialFormData: MedicationFormData = {
 };
 
 export const useMedicationForm = ({ onSubmit, initialData = {} }: UseMedicationFormOptions) => {
-  const [formData, setFormData] = useState<MedicationFormData>({
-    ...initialFormData,
-    ...initialData,
+  const form = useForm<MedicationFormData>({
+    resolver: zodResolver(medicationFormSchema),
+    defaultValues: {
+      ...initialFormData,
+      ...initialData,
+    },
+    mode: 'onChange',
   });
 
-  const [formState, setFormState] = useState<MedicationFormState>({
-    isSubmitting: false,
-    error: null,
-    fieldErrors: {},
+  const {
+    control,
+    handleSubmit,
+    formState: { isSubmitting, errors },
+    watch,
+    setValue,
+  } = form;
+  const formData = watch();
+
+  const [additionalState, setAdditionalState] = useState({
+    error: null as string | null,
   });
 
   const updateField = useCallback(
     (field: keyof MedicationFormData, value: string) => {
-      setFormData((prev) => ({ ...prev, [field]: value }));
-
-      // Clear field error when user starts typing
-      if (formState.fieldErrors[field]) {
-        setFormState((prev) => ({
-          ...prev,
-          fieldErrors: { ...prev.fieldErrors, [field]: undefined },
-        }));
-      }
+      setValue(field, value);
     },
-    [formState.fieldErrors]
+    [setValue]
   );
 
-  const validateForm = useCallback(() => {
-    const result = medicationFormSchema.safeParse(formData);
+  const handleFormSubmit = useCallback(
+    async (data: MedicationFormData): Promise<void> => {
+      try {
+        setAdditionalState({ error: null });
 
-    if (!result.success) {
-      const fieldErrors: Partial<Record<keyof MedicationFormData, string>> = {};
+        const success = await onSubmit(data);
 
-      for (const error of result.error.errors) {
-        if (error.path.length > 0) {
-          const field = error.path[0] as keyof MedicationFormData;
-          fieldErrors[field] = error.message;
+        if (!success) {
+          setAdditionalState({ error: '薬剤情報の保存に失敗しました。' });
         }
+      } catch (error) {
+        console.error('Error submitting medication form:', error);
+
+        const errorMessage =
+          error instanceof Error
+            ? error.message.includes('Network')
+              ? 'ネットワークエラーが発生しました。接続を確認してください。'
+              : error.message
+            : '予期しないエラーが発生しました。';
+
+        setAdditionalState({ error: errorMessage });
       }
-
-      setFormState((prev) => ({
-        ...prev,
-        fieldErrors,
-        error: '入力内容に不備があります。必須項目を確認してください。',
-      }));
-
-      return false;
-    }
-
-    setFormState((prev) => ({
-      ...prev,
-      fieldErrors: {},
-      error: null,
-    }));
-
-    return true;
-  }, [formData]);
-
-  const handleSubmit = useCallback(async () => {
-    if (!validateForm()) {
-      return false;
-    }
-
-    setFormState((prev) => ({
-      ...prev,
-      isSubmitting: true,
-      error: null,
-    }));
-
-    try {
-      const success = await onSubmit(formData);
-
-      if (success) {
-        // Reset form on success
-        setFormData({ ...initialFormData, ...initialData });
-        setFormState({
-          isSubmitting: false,
-          error: null,
-          fieldErrors: {},
-        });
-        return true;
-      } else {
-        setFormState((prev) => ({
-          ...prev,
-          isSubmitting: false,
-          error: '登録に失敗しました。もう一度お試しください。',
-        }));
-        return false;
-      }
-    } catch (error) {
-      console.error('Medication form submission error:', error);
-      setFormState((prev) => ({
-        ...prev,
-        isSubmitting: false,
-        error: 'ネットワークエラーが発生しました。接続を確認してもう一度お試しください。',
-      }));
-      return false;
-    }
-  }, [formData, validateForm, onSubmit, initialData]);
-
-  const reset = useCallback(() => {
-    setFormData({ ...initialFormData, ...initialData });
-    setFormState({
-      isSubmitting: false,
-      error: null,
-      fieldErrors: {},
-    });
-  }, [initialData]);
-
-  const clearError = useCallback(() => {
-    setFormState((prev) => ({
-      ...prev,
-      error: null,
-    }));
-  }, []);
+    },
+    [onSubmit]
+  );
 
   const retry = useCallback(() => {
-    setFormState((prev) => ({
-      ...prev,
-      error: null,
-    }));
-    return handleSubmit();
-  }, [handleSubmit]);
+    setAdditionalState({ error: null });
+    return handleSubmit(handleFormSubmit)();
+  }, [handleSubmit, handleFormSubmit]);
 
   return {
+    // React Hook Form methods (spread all to maintain compatibility)
+    ...form,
+    control,
+
     // Form data
     formData,
     updateField,
 
     // Form state
-    isSubmitting: formState.isSubmitting,
-    error: formState.error,
-    fieldErrors: formState.fieldErrors,
+    isSubmitting,
+    error: additionalState.error,
+    fieldErrors: errors as Partial<Record<keyof MedicationFormData, { message?: string }>>,
 
     // Actions
-    handleSubmit,
-    reset,
-    clearError,
+    onSubmit: handleSubmit(handleFormSubmit),
     retry,
   };
 };

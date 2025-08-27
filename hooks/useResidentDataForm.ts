@@ -1,8 +1,7 @@
 /**
  * Resident Data Form Hooks
  *
- * Custom hooks for managing resident-related form state and validation
- * Now using the generic form hook for consistency
+ * React Hook Formベースの入居者データフォーム管理フック群
  */
 
 import type { FormOptions } from '@/types/resident-data';
@@ -20,7 +19,8 @@ import {
   medicationInfoFormSchema,
   medicationStatusFormSchema,
 } from '@/validations/resident-data-validation';
-import { useGenericForm } from './useGenericForm';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
 
 // Initial form data for each form type
 const initialHomeCareOfficeFormData: HomeCareOfficeFormData = {
@@ -68,45 +68,60 @@ const initialMedicationStatusFormData: MedicationStatusFormData = {
 
 // Home Care Office Form Hook
 export const useHomeCareOfficeForm = (options: FormOptions<HomeCareOfficeFormData>) => {
-  return useGenericForm(initialHomeCareOfficeFormData, {
-    schema: homeCareOfficeFormSchema,
-    initialData: options.initialData,
-    onSubmit: options.onSubmit,
+  return useForm<HomeCareOfficeFormData>({
+    resolver: zodResolver(homeCareOfficeFormSchema),
+    defaultValues: {
+      ...initialHomeCareOfficeFormData,
+      ...options.initialData,
+    },
+    mode: 'onChange',
   });
 };
 
 // Medical Institution Form Hook
 export const useMedicalInstitutionForm = (options: FormOptions<MedicalInstitutionFormData>) => {
-  return useGenericForm(initialMedicalInstitutionFormData, {
-    schema: medicalInstitutionFormSchema,
-    initialData: options.initialData,
-    onSubmit: options.onSubmit,
+  return useForm<MedicalInstitutionFormData>({
+    resolver: zodResolver(medicalInstitutionFormSchema),
+    defaultValues: {
+      ...initialMedicalInstitutionFormData,
+      ...options.initialData,
+    },
+    mode: 'onChange',
   });
 };
 
 // Medical History Form Hook
 export const useMedicalHistoryForm = (options: FormOptions<MedicalHistoryFormDataType>) => {
-  return useGenericForm(initialMedicalHistoryFormData, {
-    schema: medicalHistoryFormSchemaImport,
-    initialData: options.initialData,
-    onSubmit: options.onSubmit,
+  return useForm<MedicalHistoryFormDataType>({
+    resolver: zodResolver(medicalHistoryFormSchemaImport),
+    defaultValues: {
+      ...initialMedicalHistoryFormData,
+      ...options.initialData,
+    },
+    mode: 'onChange',
   });
 };
 
 // Medication Info Form Hook
 export const useMedicationInfoForm = (options: FormOptions<MedicationInfoFormData>) => {
-  return useGenericForm(initialMedicationInfoFormData, {
-    schema: medicationInfoFormSchema,
-    initialData: options.initialData,
-    onSubmit: options.onSubmit,
+  return useForm<MedicationInfoFormData>({
+    resolver: zodResolver(medicationInfoFormSchema),
+    defaultValues: {
+      ...initialMedicationInfoFormData,
+      ...options.initialData,
+    },
+    mode: 'onChange',
   });
 };
 
 // Medication Status Form Hook
 export const useMedicationStatusForm = (options: FormOptions<MedicationStatusFormData>) => {
-  return useGenericForm(initialMedicationStatusFormData, {
-    schema: medicationStatusFormSchema,
-    initialData: options.initialData,
-    onSubmit: options.onSubmit,
+  return useForm<MedicationStatusFormData>({
+    resolver: zodResolver(medicationStatusFormSchema),
+    defaultValues: {
+      ...initialMedicationStatusFormData,
+      ...options.initialData,
+    },
+    mode: 'onChange',
   });
 };

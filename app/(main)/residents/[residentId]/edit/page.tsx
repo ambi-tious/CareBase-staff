@@ -5,12 +5,12 @@ import { RoomManagementModal } from '@/components/3_organisms/modals/room-manage
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { useResidentForm } from '@/hooks/useResidentForm';
+
 import { getResidentById } from '@/mocks/care-board-data';
 import { residentService } from '@/services/residentService';
 import { roomService } from '@/services/roomService';
 import type { Room, RoomFormData } from '@/types/room';
-import { ArrowLeft, Edit3, Save } from 'lucide-react';
+import { ArrowLeft, Edit3 } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
@@ -59,42 +59,9 @@ export default function EditResidentPage({ params }: EditResidentPageProps) {
     loadRooms();
   }, []);
 
-  // 初期値作成（作成画面と同じフォームAPIを使用）
-  const { formData, setFormData, errors, isSubmitting, handleSubmit, resetForm } = useResidentForm({
-    initialData: undefined, // 初期値は後で設定
-    onSubmit: async (data) => {
-      if (!resident) {
-        throw new Error('利用者が見つかりません');
-      }
-
-      try {
-        setSubmitError(null);
-
-        // 更新用に一部フォーマット変換（内部データはスラッシュ区切りが既定）
-        const payload: Record<string, unknown> = {
-          ...data,
-          dob: data.dob ? data.dob.replaceAll('-', '/') : '',
-          admissionDate: data.admissionDate ? data.admissionDate.replaceAll('-', '/') : '',
-          dischargeDate: data.dischargeDate ? data.dischargeDate.replaceAll('-', '/') : undefined,
-        };
-
-        // 画像は Resident の avatarUrl にマップする
-        if (data.profileImage) {
-          payload.avatarUrl = data.profileImage;
-        }
-        delete (payload as any).profileImage;
-
-        await residentService.updateResident(resident.id, payload as any);
-
-        // 編集後は詳細へ戻る
-        router.push(`/residents/${resident.id}`);
-      } catch (error) {
-        console.error('Failed to update resident:', error);
-        setSubmitError('利用者情報の更新に失敗しました。もう一度お試しください。');
-        throw error;
-      }
-    },
-  });
+  // 初期フォームデータ状態
+  const [formData, setFormData] = useState<Partial<Record<string, string>>>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // resident が読み込まれたらフォームの初期値を設定
   useEffect(() => {
@@ -120,13 +87,6 @@ export default function EditResidentPage({ params }: EditResidentPageProps) {
       setFormData(initialData);
     }
   }, [resident, setFormData]);
-
-  const handleSave = async () => {
-    const success = await handleSubmit();
-    if (!success && !submitError) {
-      setSubmitError('入力内容に不備があります。必須項目を確認してください。');
-    }
-  };
 
   const handleCancel = () => {
     if (resident) {
@@ -259,27 +219,48 @@ export default function EditResidentPage({ params }: EditResidentPageProps) {
         </CardHeader>
         <CardContent>
           <ResidentBasicInfoForm
-            data={formData}
-            onChange={setFormData}
-            errors={errors}
+            onSubmit={async (data) => {
+              try {
+                setIsSubmitting(true);
+                setSubmitError(null);
+
+                // 更新用に一部フォーマット変換（内部データはスラッシュ区切りが既定）
+                const payload: Record<string, unknown> = {
+                  ...data,
+                  dob: data.dob ? data.dob.replaceAll('-', '/') : '',
+                  admissionDate: data.admissionDate ? data.admissionDate.replaceAll('-', '/') : '',
+                  dischargeDate: data.dischargeDate
+                    ? data.dischargeDate.replaceAll('-', '/')
+                    : undefined,
+                };
+
+                // 画像は Resident の avatarUrl にマップする
+                if (data.profileImage) {
+                  payload.avatarUrl = data.profileImage;
+                  delete payload.profileImage;
+                }
+
+                const updatePayload = payload as Parameters<
+                  typeof residentService.updateResident
+                >[1];
+                await residentService.updateResident(resident!.id, updatePayload);
+
+                // 編集後は詳細へ戻る
+                router.push(`/residents/${resident!.id}`);
+                return true;
+              } catch (error) {
+                console.error('Failed to update resident:', error);
+                setSubmitError('利用者情報の更新に失敗しました。もう一度お試しください。');
+                return false;
+              } finally {
+                setIsSubmitting(false);
+              }
+            }}
+            onCancel={handleCancel}
+            initialData={formData}
             disabled={isSubmitting}
             handleRoomManagement={handleRoomManagement}
           />
-
-          {/* Action Buttons */}
-          <div className="flex items-center justify-end gap-4 mt-8 pt-6 border-t">
-            <Button variant="outline" onClick={handleCancel} disabled={isSubmitting}>
-              キャンセル
-            </Button>
-            <Button
-              onClick={handleSave}
-              disabled={isSubmitting}
-              className="bg-carebase-blue hover:bg-carebase-blue-dark"
-            >
-              <Save className="h-4 w-4 mr-2" />
-              {isSubmitting ? '更新中...' : '更新'}
-            </Button>
-          </div>
         </CardContent>
       </Card>
 
