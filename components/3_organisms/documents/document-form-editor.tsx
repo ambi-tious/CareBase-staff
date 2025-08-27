@@ -162,7 +162,7 @@ export const DocumentFormEditor: React.FC<DocumentFormEditorProps> = ({
     description: initialDocument?.description || '',
     status: initialDocument?.status || 'draft',
     tags: initialDocument?.tags || '',
-    folderId: folderId || undefined,
+    folderId: folderId || 'root',
     category: initialDocument?.category || autoCategory || '議事録', // デフォルトカテゴリを設定
   };
 
@@ -379,7 +379,6 @@ export const DocumentFormEditor: React.FC<DocumentFormEditorProps> = ({
                   fieldErrors={fieldErrors}
                   onSubmit={handleSubmit}
                   onCancel={handleCancel}
-                  folderId={folderId || undefined}
                   folderName={folderName}
                 />
               </CardContent>

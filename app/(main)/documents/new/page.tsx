@@ -23,7 +23,7 @@ export default function DocumentNewPage() {
 
       // 実際のアプリケーションではAPIに送信
       const saveData = {
-        folderId, // フォルダIDも保存データに含める
+        folderId: data.formData.folderId === 'root' ? null : data.formData.folderId, // フォルダIDも保存データに含める
         createdBy: selectedStaff?.name || '現在のユーザー',
         ...data,
       };
