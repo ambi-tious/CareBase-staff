@@ -72,17 +72,9 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
     resident.medicalHistory || []
   );
   const [medications, setMedications] = useState<Medication[]>(resident.medications || []);
-  const [medicationStatuses, setMedicationStatuses] = useState<MedicationStatus[]>(() => {
-    // Convert old format to new format for backward compatibility
-    if (resident.medicationStatus) {
-      return resident.medicationStatus.map((status) => ({
-        ...status,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      }));
-    }
-    return [];
-  });
+  const [medicationStatuses, setMedicationStatuses] = useState<MedicationStatus[]>(
+    resident.medicationStatus || []
+  );
   const [activeTab, setActiveTab] = useState('family');
   const individualPointsTabContentRef = useRef<IndividualPointsTabContentRef>(null);
 
