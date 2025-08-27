@@ -9,7 +9,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { useResidentFileForm } from '@/hooks/useResidentFileForm';
 import { fileCategoryOptions } from '@/types/resident-file';
 import type { ResidentFileFormData } from '@/validations/resident-file-validation';
-import { AlertCircle, FileText, Image, Upload, X } from 'lucide-react';
+import { AlertCircle, FileText, Image as ImageIcon, Upload, X } from 'lucide-react';
 import Image from 'next/image';
 import type React from 'react';
 import { useRef, useState } from 'react';
