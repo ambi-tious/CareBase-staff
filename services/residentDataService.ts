@@ -10,13 +10,12 @@ import type {
   MedicalInstitution,
   MedicationInfo,
 } from '@/mocks/care-board-data';
-import type { MedicationStatus } from '@/types/medication-status';
+
 import type {
   HomeCareOfficeFormData,
   MedicalHistoryFormData as MedicalHistoryFormDataType,
   MedicalInstitutionFormData,
   MedicationInfoFormData,
-  MedicationStatusFormData,
 } from '@/validations/resident-data-validation';
 
 class ResidentDataService {
@@ -383,63 +382,7 @@ class ResidentDataService {
     // console.log('Mock deleted medication info:', { residentId, medicationId });
   }
 
-  // Medication Status Methods
-  async createMedicationStatus(
-    residentId: number,
-    data: MedicationStatusFormData
-  ): Promise<MedicationStatus> {
-    await new Promise((resolve) => setTimeout(resolve, 1000));
 
-    if (Math.random() < 0.1) {
-      throw new Error('ネットワークエラーが発生しました。');
-    }
-
-    const newStatus: MedicationStatus = {
-      id: `ms-${Date.now()}`,
-      date: data.date,
-      content: data.content,
-      notes: data.notes,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    };
-
-    // console.log('Mock created medication status:', newStatus);
-    return newStatus;
-  }
-
-  async updateMedicationStatus(
-    residentId: number,
-    statusId: string,
-    data: MedicationStatusFormData
-  ): Promise<MedicationStatus> {
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-
-    if (Math.random() < 0.05) {
-      throw new Error('ネットワークエラーが発生しました。');
-    }
-
-    const updatedStatus: MedicationStatus = {
-      id: statusId,
-      date: data.date,
-      content: data.content,
-      notes: data.notes,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    };
-
-    // console.log('Mock updated medication status:', updatedStatus);
-    return updatedStatus;
-  }
-
-  async deleteMedicationStatus(residentId: number, statusId: string): Promise<void> {
-    await new Promise((resolve) => setTimeout(resolve, 800));
-
-    if (Math.random() < 0.05) {
-      throw new Error('ネットワークエラーが発生しました。');
-    }
-
-    // console.log('Mock deleted medication status:', { residentId, statusId });
-  }
 }
 
 export const residentDataService = new ResidentDataService();

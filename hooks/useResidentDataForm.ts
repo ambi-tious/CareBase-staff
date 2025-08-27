@@ -10,14 +10,12 @@ import type {
   MedicalHistoryFormData as MedicalHistoryFormDataType,
   MedicalInstitutionFormData,
   MedicationInfoFormData,
-  MedicationStatusFormData,
 } from '@/validations/resident-data-validation';
 import {
   homeCareOfficeFormSchema,
   medicalHistoryFormSchema as medicalHistoryFormSchemaImport,
   medicalInstitutionFormSchema,
   medicationInfoFormSchema,
-  medicationStatusFormSchema,
 } from '@/validations/resident-data-validation';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
@@ -58,12 +56,6 @@ const initialMedicationInfoFormData: MedicationInfoFormData = {
   prescriptionDate: '',
   notes: '',
   imageUrl: '',
-};
-
-const initialMedicationStatusFormData: MedicationStatusFormData = {
-  date: '',
-  content: '',
-  notes: '',
 };
 
 // Home Care Office Form Hook
@@ -108,18 +100,6 @@ export const useMedicationInfoForm = (options: FormOptions<MedicationInfoFormDat
     resolver: zodResolver(medicationInfoFormSchema),
     defaultValues: {
       ...initialMedicationInfoFormData,
-      ...options.initialData,
-    },
-    mode: 'onChange',
-  });
-};
-
-// Medication Status Form Hook
-export const useMedicationStatusForm = (options: FormOptions<MedicationStatusFormData>) => {
-  return useForm<MedicationStatusFormData>({
-    resolver: zodResolver(medicationStatusFormSchema),
-    defaultValues: {
-      ...initialMedicationStatusFormData,
       ...options.initialData,
     },
     mode: 'onChange',

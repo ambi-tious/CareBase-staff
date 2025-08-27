@@ -1,6 +1,5 @@
 import type { IconName } from '@/lib/lucide-icon-registry';
 import type { Medication } from '@/types/medication';
-import type { MedicationStatus } from '@/types/medication-status';
 import type { CareCategoryKey } from './care-categories';
 
 export interface ContactPerson {
@@ -102,7 +101,7 @@ export interface Resident {
   medicalHistory?: MedicalHistory[];
   medicationInfo?: MedicationInfo[];
   medications?: Medication[];
-  medicationStatus?: MedicationStatus[];
+
   individualPoints?: IndividualPoint[];
 }
 
@@ -233,24 +232,7 @@ export const careBoardData: Resident[] = [
         updatedAt: '2025-01-01T00:00:00Z',
       },
     ],
-    medicationStatus: [
-      {
-        id: 'status-1-1',
-        date: '2025-01-20',
-        content: '朝薬正常服用、血圧安定',
-        notes: '本人より「調子良い」との発言あり',
-        createdAt: '2025-01-20T07:00:00Z',
-        updatedAt: '2025-01-20T07:00:00Z',
-      },
-      {
-        id: 'status-1-2',
-        date: '2025-01-19',
-        content: '夕薬服用時に軽い咳あり',
-        notes: '水分補給後改善、継続観察',
-        createdAt: '2025-01-19T19:00:00Z',
-        updatedAt: '2025-01-19T19:00:00Z',
-      },
-    ],
+
     events: [
       {
         scheduledTime: '07:00',
@@ -490,24 +472,7 @@ export const careBoardData: Resident[] = [
         updatedAt: '2025-01-01T00:00:00Z',
       },
     ],
-    medicationStatus: [
-      {
-        id: 'status-2-1',
-        date: '2025-01-20',
-        content: '朝薬服用済み、認知機能安定',
-        notes: '本日は穏やかで協力的',
-        createdAt: '2025-01-20T08:30:00Z',
-        updatedAt: '2025-01-20T08:30:00Z',
-      },
-      {
-        id: 'status-2-2',
-        date: '2025-01-19',
-        content: '就寝前薬服用、良眠',
-        notes: '夜間の徘徊なし',
-        createdAt: '2025-01-19T21:00:00Z',
-        updatedAt: '2025-01-19T21:00:00Z',
-      },
-    ],
+
     events: [
       {
         scheduledTime: '07:15',
@@ -733,24 +698,7 @@ export const careBoardData: Resident[] = [
         updatedAt: '2025-01-01T00:00:00Z',
       },
     ],
-    medicationStatus: [
-      {
-        id: 'status-3-1',
-        date: '2025-01-20',
-        content: '夕薬服用済み、出血傾向なし',
-        notes: 'PT-INR 2.1で適正範囲内',
-        createdAt: '2025-01-20T19:00:00Z',
-        updatedAt: '2025-01-20T19:00:00Z',
-      },
-      {
-        id: 'status-3-2',
-        date: '2025-01-19',
-        content: '点眼薬使用、眼の充血なし',
-        notes: '本人による点眼確認済み',
-        createdAt: '2025-01-19T21:00:00Z',
-        updatedAt: '2025-01-19T21:00:00Z',
-      },
-    ],
+
     events: [
       {
         scheduledTime: '06:45',
@@ -973,24 +921,7 @@ export const careBoardData: Resident[] = [
         updatedAt: '2025-01-01T00:00:00Z',
       },
     ],
-    medicationStatus: [
-      {
-        id: 'status-4-1',
-        date: '2025-01-20',
-        content: '週1回骨粗鬆症薬服用済み',
-        notes: '起床時30分前服用、水分多めに摂取',
-        createdAt: '2025-01-20T06:30:00Z',
-        updatedAt: '2025-01-20T06:30:00Z',
-      },
-      {
-        id: 'status-4-2',
-        date: '2025-01-19',
-        content: '夕薬服用、副作用なし',
-        notes: '食事摂取良好',
-        createdAt: '2025-01-19T19:00:00Z',
-        updatedAt: '2025-01-19T19:00:00Z',
-      },
-    ],
+
     events: [
       {
         scheduledTime: '07:30',
@@ -1165,16 +1096,7 @@ export const careBoardData: Resident[] = [
         updatedAt: '2025-01-01T00:00:00Z',
       },
     ],
-    medicationStatus: [
-      {
-        id: 'status-5-1',
-        date: '2025-01-18',
-        content: 'EPO注射実施、注射部位異常なし',
-        notes: 'Hb 10.2g/dl、目標範囲内',
-        createdAt: '2025-01-18T10:00:00Z',
-        updatedAt: '2025-01-18T10:00:00Z',
-      },
-    ],
+
     events: [
       {
         scheduledTime: '10:00',
@@ -1271,7 +1193,7 @@ export const careBoardData: Resident[] = [
       },
     ],
     medications: [],
-    medicationStatus: [],
+
     events: [],
   },
   {
@@ -1330,7 +1252,7 @@ export const careBoardData: Resident[] = [
     ],
     medicalHistory: [],
     medications: [],
-    medicationStatus: [],
+
     events: [],
   },
   // 追加の利用者データ（満室状況を作るため）
