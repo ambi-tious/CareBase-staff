@@ -50,7 +50,7 @@ apiClient.interceptors.request.use(
     }
 
     // Debug logging for development
-    if (process.env.NEXT_PUBLIC_USE_MOCK === 'true') {
+    if (!process.env.NEXT_PUBLIC_API_URL) {
       console.log('🚀 API Request:', {
         method: config.method?.toUpperCase(),
         url: config.url,
@@ -73,7 +73,7 @@ apiClient.interceptors.request.use(
 apiClient.interceptors.response.use(
   (response) => {
     // Debug logging for development
-    if (process.env.NEXT_PUBLIC_USE_MOCK === 'true') {
+    if (!process.env.NEXT_PUBLIC_API_URL) {
       console.log('✅ API Response:', {
         status: response.status,
         statusText: response.statusText,
@@ -85,7 +85,7 @@ apiClient.interceptors.response.use(
   },
   (error) => {
     // Debug logging for development
-    if (process.env.NEXT_PUBLIC_USE_MOCK === 'true') {
+    if (!process.env.NEXT_PUBLIC_API_URL) {
       console.error('❌ API Error:', {
         status: error.response?.status,
         statusText: error.response?.statusText,

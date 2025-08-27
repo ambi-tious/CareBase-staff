@@ -30,7 +30,7 @@ export default function LoginPage() {
           <Logo />
 
           {/* 開発環境表示 */}
-          {process.env.NEXT_PUBLIC_USE_MOCK === 'true' && (
+          {!process.env.NEXT_PUBLIC_API_URL && (
             <div className="mt-4">
               <div className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-800 border border-orange-200">
                 <div className="w-2 h-2 bg-orange-500 rounded-full mr-2 animate-pulse"></div>

@@ -6,12 +6,12 @@ import { StaffDashboard } from '@/components/3_organisms/dashboard/staff-dashboa
 import { GroupTeamSelectionModal } from '@/components/3_organisms/modals/group-team-selection-modal';
 import { Button, buttonVariants } from '@/components/ui/button'; // Import buttonVariants
 import {
-  Sheet,
-  SheetClose,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
+    Sheet,
+    SheetClose,
+    SheetContent,
+    SheetHeader,
+    SheetTitle,
+    SheetTrigger,
 } from '@/components/ui/sheet';
 import { useNotifications } from '@/hooks/useNotifications';
 import { cn } from '@/lib/utils'; // Import cn
@@ -124,7 +124,7 @@ export function AppHeader() {
         <Link href="/" className="flex items-center gap-2">
           <Logo />
           {/* 開発環境表示 */}
-          {process.env.NEXT_PUBLIC_USE_MOCK === 'true' && (
+          {!process.env.NEXT_PUBLIC_API_URL && (
             <div className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-orange-100 text-orange-800 border border-orange-200">
               <div className="w-1.5 h-1.5 bg-orange-500 rounded-full mr-1 animate-pulse"></div>
               DEV
