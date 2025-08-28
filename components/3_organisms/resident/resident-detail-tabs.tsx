@@ -100,7 +100,7 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
     { value: 'history', label: '既往歴' },
     { value: 'medicationInfo', label: 'お薬情報' },
     { value: 'individualPoints', label: '個別ポイント' },
-    { value: 'files', label: 'ファイル管理' },
+    { value: 'files', label: 'ファイル' },
     { value: 'absence', label: '不在情報' },
   ];
 
@@ -335,6 +335,29 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
     }
   };
 
+  const getAddButtonText = () => {
+    switch (activeTab) {
+      case 'family':
+        return 'ご家族情報を追加';
+      case 'homeCare':
+        return '居宅介護支援事業所を追加';
+      case 'medical':
+        return 'かかりつけ医療機関を追加';
+      case 'history':
+        return '既往歴を追加';
+      case 'medicationInfo':
+        return 'お薬情報を追加';
+      case 'individualPoints':
+        return 'カテゴリ管理';
+      case 'files':
+        return 'ファイルをアップロード';
+      case 'absence':
+        return '不在情報を追加';
+      default:
+        return '追加';
+    }
+  };
+
   return (
     <>
       <Tabs defaultValue="family" className="w-full" onValueChange={setActiveTab}>
@@ -359,12 +382,12 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
               {activeTab === 'individualPoints' ? (
                 <>
                   <Settings className="h-4 w-4 mr-2 text-carebase-blue" />
-                  <span>カテゴリ管理</span>
+                  <span>{getAddButtonText()}</span>
                 </>
               ) : (
                 <>
                   <PlusCircle className="h-4 w-4 mr-2 text-carebase-blue" />
-                  追加
+                  {getAddButtonText()}
                 </>
               )}
             </Button>

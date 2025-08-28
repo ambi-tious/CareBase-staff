@@ -50,13 +50,15 @@ export const FileThumbnail: React.FC<FileThumbnailProps> = ({
               className="object-contain rounded-lg"
             />
           ) : (
-            <FileText className="h-8 w-8 text-gray-400" />
+            <div className="flex items-center justify-center h-full w-full">
+              <FileText className="h-8 w-8 text-gray-400" />
+            </div>
           )}
         </div>
       </div>
 
       {/* File info */}
-      <div className="mt-1 text-xs text-gray-500 text-center">
+      <div className="mt-2 text-xs text-gray-500 text-center">
         <div className="truncate" title={file.originalFileName}>
           {file.originalFileName}
         </div>
