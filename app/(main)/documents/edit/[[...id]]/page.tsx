@@ -1,9 +1,10 @@
 'use client';
 
 import { DocumentFormEditor } from '@/components/3_organisms/documents/document-form-editor';
+import { useAuth } from '@/hooks/useAuth';
 import type { DocumentFormData } from '@/validations/document-validation';
 import { useSearchParams } from 'next/navigation';
-import React from 'react';
+import React, { useMemo } from 'react';
 
 interface PageProps {
   params: Promise<{
@@ -13,6 +14,7 @@ interface PageProps {
 
 export default function DocumentEditPage({ params }: PageProps) {
   const searchParams = useSearchParams();
+  const { selectedStaff } = useAuth();
 
   // URLパラメータからドキュメントIDを取得
   const resolvedParams = React.use(params);
@@ -23,19 +25,21 @@ export default function DocumentEditPage({ params }: PageProps) {
 
   // 編集モードの場合のモックデータ読み込み
   // 実際のアプリケーションではAPIからデータを取得
-  const initialDocument = documentId
-    ? {
-        id: documentId,
-        title: 'サンプル書類タイトル',
-        content: '<p>ここに書類の内容が入ります。</p>',
-        category: '議事録',
-        description: 'サンプルの説明文です。',
-        status: 'draft' as const,
-        tags: '会議,報告',
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      }
-    : undefined;
+  const initialDocument = useMemo(() => {
+    return documentId
+      ? {
+          id: documentId,
+          title: 'サンプル書類タイトル',
+          content: '<p>ここに書類の内容が入ります。</p>',
+          category: '議事録',
+          description: 'サンプルの説明文です。',
+          status: 'draft' as const,
+          tags: '会議,報告',
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        }
+      : undefined;
+  }, [documentId]);
 
   // 保存処理
   const handleSave = async (data: {
@@ -48,6 +52,7 @@ export default function DocumentEditPage({ params }: PageProps) {
       const saveData = {
         documentId,
         folderId, // フォルダIDも保存データに含める
+        createdBy: selectedStaff?.name || '現在のユーザー',
         ...data,
       };
       // console.log('Saving document:', saveData);

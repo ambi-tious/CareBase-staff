@@ -1,6 +1,5 @@
 import type { IconName } from '@/lib/lucide-icon-registry';
 import type { Medication } from '@/types/medication';
-import type { MedicationStatus } from '@/types/medication-status';
 import type { CareCategoryKey } from './care-categories';
 
 export interface ContactPerson {
@@ -14,6 +13,8 @@ export interface ContactPerson {
   email?: string;
   address: string;
   notes?: string;
+  hasAlert?: boolean; // アラート（対応注意）フラグ
+  alertReason?: string; // アラート理由（面会NG、連絡NGなど）
 }
 
 export interface HomeCareOffice {
@@ -85,23 +86,22 @@ export interface Resident {
   roomInfo?: string;
   registrationDate: string;
   lastUpdateDate: string;
-  admissionDate: string;
+  admissionDate?: string;
   dischargeDate?: string;
-  admissionStatus: '入居中' | '退所済' | '待機中';
   careLevel: string;
   certificationDate: string;
   certValidityStart: string;
   certValidityEnd: string;
-  address: string;
   avatarUrl: string;
+  notes?: string; // 備考フィールドを追加
   events: CareEvent[];
   contacts?: ContactPerson[];
-  homeCareOffice?: HomeCareOffice;
+  homeCareOffices?: HomeCareOffice[]; // 複数登録対応
   medicalInstitutions?: MedicalInstitution[];
   medicalHistory?: MedicalHistory[];
   medicationInfo?: MedicationInfo[];
   medications?: Medication[];
-  medicationStatus?: MedicationStatus[];
+
   individualPoints?: IndividualPoint[];
 }
 
@@ -119,13 +119,13 @@ export const careBoardData: Resident[] = [
     registrationDate: '2025/04/15',
     lastUpdateDate: '2025/05/20',
     admissionDate: '2025/04/15',
-    admissionStatus: '入居中',
     careLevel: '要介護1',
     certificationDate: '2025/01/11',
     certValidityStart: '2024/12/28',
     certValidityEnd: '2025/12/27',
-    address: '兵庫県神戸市西区樫野台3-408-14',
     avatarUrl: '/elderly-japanese-man.png',
+    notes:
+      '食事の際は必ず介助が必要です。アレルギーはありませんが、食事のペースが遅いため、ゆっくりと見守りながら介助してください。',
     contacts: [
       {
         id: 'contact-1-1',
@@ -138,6 +138,8 @@ export const careBoardData: Resident[] = [
         email: 'k.sato@example.com',
         address: '兵庫県神戸市中央区三宮町1-1-1',
         notes: '平日19時以降連絡可能',
+        hasAlert: true,
+        alertReason: '面会NG、連絡は夜間のみ',
       },
       {
         id: 'contact-1-2',
@@ -151,33 +153,35 @@ export const careBoardData: Resident[] = [
         notes: '日中連絡可能',
       },
     ],
-    homeCareOffice: {
-      id: 'office-1',
-      businessName: 'こうべケアプランセンター',
-      careManager: '山田太郎',
-      phone: '078-333-4444',
-      fax: '078-333-4445',
-      address: '兵庫県神戸市西区学園西町1-1-1',
-      notes: '毎月第2木曜日訪問予定',
-    },
+    homeCareOffices: [
+      {
+        id: '1',
+        businessName: '渋谷ケアプランセンター',
+        address: '東京都渋谷区渋谷1-1-1',
+        phone: '03-1234-5678',
+        fax: '03-1234-5679',
+        careManager: '田中太郎',
+        notes: '渋谷エリア専門のケアプランセンター',
+      },
+    ],
     medicalInstitutions: [
       {
-        id: 'medical-1-1',
-        institutionName: '神戸総合病院',
-        doctorName: '田中内科 田中先生',
-        phone: '078-555-6666',
-        fax: '078-555-6667',
+        id: 'mi-1-1',
+        institutionName: '神戸中央病院',
+        doctorName: '田中 太郎',
+        phone: '078-302-4321',
+        fax: '078-302-4322',
         address: '兵庫県神戸市中央区港島中町4-6',
-        notes: '月1回通院、内科・循環器科',
+        notes: '内科・循環器科を担当',
       },
       {
-        id: 'medical-1-2',
-        institutionName: 'みどりクリニック',
-        doctorName: '緑川医師',
-        phone: '078-777-8888',
-        fax: '078-777-8889',
-        address: '兵庫県神戸市西区伊川谷町有瀬1234',
-        notes: '眼科定期受診',
+        id: 'mi-1-2',
+        institutionName: '松本内科クリニック',
+        doctorName: '松本 一郎',
+        phone: '078-123-4567',
+        fax: '078-123-4568',
+        address: '兵庫県神戸市西区新川1-5-1',
+        notes: 'かかりつけ医',
       },
     ],
     medicalHistory: [
@@ -186,7 +190,7 @@ export const careBoardData: Resident[] = [
         date: '2020-03-15',
         diseaseName: '高血圧症',
         treatmentStatus: '治療中',
-        treatmentInstitution: '神戸総合病院',
+        treatmentInstitution: '神戸中央病院',
         notes: 'ACE阻害薬で良好にコントロール中',
       },
       {
@@ -194,7 +198,7 @@ export const careBoardData: Resident[] = [
         date: '2018-07-20',
         diseaseName: '糖尿病',
         treatmentStatus: '治療中',
-        treatmentInstitution: '神戸総合病院',
+        treatmentInstitution: '神戸中央病院',
         notes: 'HbA1c 6.8%で安定',
       },
       {
@@ -202,7 +206,7 @@ export const careBoardData: Resident[] = [
         date: '2019-11-10',
         diseaseName: '白内障',
         treatmentStatus: '完治',
-        treatmentInstitution: 'みどりクリニック',
+        treatmentInstitution: '神戸西眼科クリニック',
         notes: '両眼手術済み、経過良好',
       },
     ],
@@ -212,7 +216,7 @@ export const careBoardData: Resident[] = [
         medicationName: 'アムロジピン錠 5mg',
         dosageInstructions: '1日1回朝食後',
         startDate: '2020-03-15',
-        prescribingInstitution: '神戸総合病院',
+        prescribingInstitution: '神戸中央病院',
         notes: '血圧管理のため',
         createdAt: '2025-01-01T00:00:00Z',
         updatedAt: '2025-01-01T00:00:00Z',
@@ -222,30 +226,13 @@ export const careBoardData: Resident[] = [
         medicationName: 'メトホルミン錠 250mg',
         dosageInstructions: '1日2回朝夕食後',
         startDate: '2018-07-20',
-        prescribingInstitution: '神戸総合病院',
+        prescribingInstitution: '神戸中央病院',
         notes: '糖尿病治療',
         createdAt: '2025-01-01T00:00:00Z',
         updatedAt: '2025-01-01T00:00:00Z',
       },
     ],
-    medicationStatus: [
-      {
-        id: 'status-1-1',
-        date: '2025-01-20',
-        content: '朝薬正常服用、血圧安定',
-        notes: '本人より「調子良い」との発言あり',
-        createdAt: '2025-01-20T07:00:00Z',
-        updatedAt: '2025-01-20T07:00:00Z',
-      },
-      {
-        id: 'status-1-2',
-        date: '2025-01-19',
-        content: '夕薬服用時に軽い咳あり',
-        notes: '水分補給後改善、継続観察',
-        createdAt: '2025-01-19T19:00:00Z',
-        updatedAt: '2025-01-19T19:00:00Z',
-      },
-    ],
+
     events: [
       {
         scheduledTime: '07:00',
@@ -363,14 +350,14 @@ export const careBoardData: Resident[] = [
     roomInfo: '102号室',
     registrationDate: '2025/03/01',
     lastUpdateDate: '2025/05/15',
-    admissionDate: '2025/03/01',
-    admissionStatus: '入居中',
+    admissionDate: '2025/12/01',
     careLevel: '要介護3',
     certificationDate: '2025/02/01',
     certValidityStart: '2025/01/15',
     certValidityEnd: '2026/01/14',
-    address: '大阪府大阪市北区梅田1-1-1',
     avatarUrl: '/elderly-japanese-woman.png',
+    notes:
+      '認知症のため、見守りが必要です。徘徊の可能性があるため、常に声かけを行い、安全確認を徹底してください。歩行器を使用して移動します。',
     contacts: [
       {
         id: 'contact-2-1',
@@ -396,15 +383,17 @@ export const careBoardData: Resident[] = [
         notes: '月2回面会、京都在住',
       },
     ],
-    homeCareOffice: {
-      id: 'office-2',
-      businessName: '大阪中央居宅介護支援センター',
-      careManager: '松本花',
-      phone: '06-7777-8888',
-      fax: '06-7777-8889',
-      address: '大阪府大阪市北区梅田2-3-4',
-      notes: '月1回モニタリング実施',
-    },
+    homeCareOffices: [
+      {
+        id: '2',
+        businessName: '新宿ライフケアサポート',
+        address: '東京都新宿区新宿2-2-2',
+        phone: '03-2345-6789',
+        fax: '03-2345-6790',
+        careManager: '佐藤花子',
+        notes: '新宿区在宅介護支援事業所',
+      },
+    ],
     medicalInstitutions: [
       {
         id: 'medical-2-1',
@@ -483,24 +472,7 @@ export const careBoardData: Resident[] = [
         updatedAt: '2025-01-01T00:00:00Z',
       },
     ],
-    medicationStatus: [
-      {
-        id: 'status-2-1',
-        date: '2025-01-20',
-        content: '朝薬服用済み、認知機能安定',
-        notes: '本日は穏やかで協力的',
-        createdAt: '2025-01-20T08:30:00Z',
-        updatedAt: '2025-01-20T08:30:00Z',
-      },
-      {
-        id: 'status-2-2',
-        date: '2025-01-19',
-        content: '就寝前薬服用、良眠',
-        notes: '夜間の徘徊なし',
-        createdAt: '2025-01-19T21:00:00Z',
-        updatedAt: '2025-01-19T21:00:00Z',
-      },
-    ],
+
     events: [
       {
         scheduledTime: '07:15',
@@ -603,14 +575,15 @@ export const careBoardData: Resident[] = [
     roomInfo: '103号室',
     registrationDate: '2025/01/20',
     lastUpdateDate: '2025/05/18',
-    admissionDate: '2025/01/20',
-    admissionStatus: '入居中',
+    admissionDate: '2020/01/20',
+    dischargeDate: '2025/01/20',
     careLevel: '要介護2',
     certificationDate: '2025/01/01',
     certValidityStart: '2024/12/15',
     certValidityEnd: '2025/12/14',
-    address: '京都府京都市中京区烏丸通2-3-4',
     avatarUrl: '/elderly-man-avatar.png',
+    notes:
+      '心房細動のため、血圧と脈拍の定期的なチェックが必要です。視力が低下しているため、文字の読み上げや説明を丁寧に行ってください。',
     contacts: [
       {
         id: 'contact-3-1',
@@ -636,15 +609,17 @@ export const careBoardData: Resident[] = [
         notes: '大阪在住、週末面会可能',
       },
     ],
-    homeCareOffice: {
-      id: 'office-3',
-      businessName: '京都在宅支援センター',
-      careManager: '木村和子',
-      phone: '075-8888-9999',
-      fax: '075-8888-9998',
-      address: '京都府京都市中京区河原町通御池下る',
-      notes: '毎月15日頃訪問予定',
-    },
+    homeCareOffices: [
+      {
+        id: '3',
+        businessName: '港区ホームケアサービス',
+        address: '東京都港区港3-3-3',
+        phone: '03-3456-7890',
+        fax: '03-3456-7891',
+        careManager: '鈴木一郎',
+        notes: '港区地域密着型ケアサービス',
+      },
+    ],
     medicalInstitutions: [
       {
         id: 'medical-3-1',
@@ -723,24 +698,7 @@ export const careBoardData: Resident[] = [
         updatedAt: '2025-01-01T00:00:00Z',
       },
     ],
-    medicationStatus: [
-      {
-        id: 'status-3-1',
-        date: '2025-01-20',
-        content: '夕薬服用済み、出血傾向なし',
-        notes: 'PT-INR 2.1で適正範囲内',
-        createdAt: '2025-01-20T19:00:00Z',
-        updatedAt: '2025-01-20T19:00:00Z',
-      },
-      {
-        id: 'status-3-2',
-        date: '2025-01-19',
-        content: '点眼薬使用、眼の充血なし',
-        notes: '本人による点眼確認済み',
-        createdAt: '2025-01-19T21:00:00Z',
-        updatedAt: '2025-01-19T21:00:00Z',
-      },
-    ],
+
     events: [
       {
         scheduledTime: '06:45',
@@ -844,12 +802,10 @@ export const careBoardData: Resident[] = [
     registrationDate: '2025/02/10',
     lastUpdateDate: '2025/05/12',
     admissionDate: '2025/02/10',
-    admissionStatus: '入居中',
     careLevel: '要支援2',
     certificationDate: '2025/01/20',
     certValidityStart: '2025/01/01',
     certValidityEnd: '2026/01/01',
-    address: '神奈川県横浜市港北区新横浜5-6-7',
     avatarUrl: '/senior-japanese-woman.png',
     contacts: [
       {
@@ -876,15 +832,17 @@ export const careBoardData: Resident[] = [
         notes: '買い物等のサポート担当',
       },
     ],
-    homeCareOffice: {
-      id: 'office-4',
-      businessName: '新横浜ケアプラン',
-      careManager: '横浜太郎',
-      phone: '045-5555-6666',
-      fax: '045-5555-6667',
-      address: '神奈川県横浜市港北区新横浜2-2-2',
-      notes: '月末にプラン見直し予定',
-    },
+    homeCareOffices: [
+      {
+        id: '4',
+        businessName: '品川ケアライフサポート',
+        address: '東京都品川区品川4-4-4',
+        phone: '03-4567-8901',
+        fax: '03-4567-8902',
+        careManager: '高橋美咲',
+        notes: '品川区在宅介護支援センター',
+      },
+    ],
     medicalInstitutions: [
       {
         id: 'medical-4-1',
@@ -963,24 +921,7 @@ export const careBoardData: Resident[] = [
         updatedAt: '2025-01-01T00:00:00Z',
       },
     ],
-    medicationStatus: [
-      {
-        id: 'status-4-1',
-        date: '2025-01-20',
-        content: '週1回骨粗鬆症薬服用済み',
-        notes: '起床時30分前服用、水分多めに摂取',
-        createdAt: '2025-01-20T06:30:00Z',
-        updatedAt: '2025-01-20T06:30:00Z',
-      },
-      {
-        id: 'status-4-2',
-        date: '2025-01-19',
-        content: '夕薬服用、副作用なし',
-        notes: '食事摂取良好',
-        createdAt: '2025-01-19T19:00:00Z',
-        updatedAt: '2025-01-19T19:00:00Z',
-      },
-    ],
+
     events: [
       {
         scheduledTime: '07:30',
@@ -1084,12 +1025,10 @@ export const careBoardData: Resident[] = [
     admissionDate: '2024/11/10',
     registrationDate: '2024/11/01',
     lastUpdateDate: '2025/05/15',
-    admissionStatus: '入居中',
     careLevel: '要介護2',
     certificationDate: '2024/10/20',
     certValidityStart: '2024/10/20',
     certValidityEnd: '2025/10/19',
-    address: '東京都世田谷区経堂1-2-3',
     avatarUrl: '/elderly-japanese-woman.png',
     contacts: [
       {
@@ -1105,15 +1044,17 @@ export const careBoardData: Resident[] = [
         notes: '最寄りの親族、平日連絡可能',
       },
     ],
-    homeCareOffice: {
-      id: 'office-5',
-      businessName: '世田谷ケアサポート',
-      careManager: '世田谷花子',
-      phone: '03-5555-6666',
-      fax: '03-5555-6667',
-      address: '東京都世田谷区経堂2-2-2',
-      notes: '月2回モニタリング',
-    },
+    homeCareOffices: [
+      {
+        id: '5',
+        businessName: '目黒サポートケアセンター',
+        address: '東京都目黒区目黒5-5-5',
+        phone: '03-5678-9012',
+        fax: '03-5678-9013',
+        careManager: '渡辺健太',
+        notes: '目黒区専門のケアプランセンター',
+      },
+    ],
     medicalInstitutions: [
       {
         id: 'medical-5-1',
@@ -1155,16 +1096,7 @@ export const careBoardData: Resident[] = [
         updatedAt: '2025-01-01T00:00:00Z',
       },
     ],
-    medicationStatus: [
-      {
-        id: 'status-5-1',
-        date: '2025-01-18',
-        content: 'EPO注射実施、注射部位異常なし',
-        notes: 'Hb 10.2g/dl、目標範囲内',
-        createdAt: '2025-01-18T10:00:00Z',
-        updatedAt: '2025-01-18T10:00:00Z',
-      },
-    ],
+
     events: [
       {
         scheduledTime: '10:00',
@@ -1198,12 +1130,10 @@ export const careBoardData: Resident[] = [
     admissionDate: '2025/01/01',
     registrationDate: '2025/01/01',
     lastUpdateDate: '2025/03/01',
-    admissionStatus: '入居中',
     careLevel: '要介護2',
     certificationDate: '2024/12/15',
     certValidityStart: '2024/12/15',
     certValidityEnd: '2025/12/14',
-    address: '神奈川県横浜市中区山下町1',
     avatarUrl: '/senior-japanese-man.png',
     contacts: [
       {
@@ -1230,15 +1160,17 @@ export const careBoardData: Resident[] = [
         notes: '月1回面会、東京勤務',
       },
     ],
-    homeCareOffice: {
-      id: 'office-6',
-      businessName: '横浜中央居宅介護支援事業所',
-      careManager: '中央太郎',
-      phone: '045-1010-2020',
-      fax: '045-1010-2021',
-      address: '神奈川県横浜市中区本町2-2-2',
-      notes: '要支援プラン管理',
-    },
+    homeCareOffices: [
+      {
+        id: '1',
+        businessName: '渋谷ケアプランセンター',
+        address: '東京都渋谷区渋谷1-1-1',
+        phone: '03-1234-5678',
+        fax: '03-1234-5679',
+        careManager: '田中太郎',
+        notes: '渋谷エリア専門のケアプランセンター',
+      },
+    ],
     medicalInstitutions: [
       {
         id: 'medical-6-1',
@@ -1261,14 +1193,14 @@ export const careBoardData: Resident[] = [
       },
     ],
     medications: [],
-    medicationStatus: [],
+
     events: [],
   },
   {
     id: 7,
     name: '田中三郎',
     furigana: 'タナカサブロウ',
-    dob: '1950/11/02',
+    dob: '1950/08/26',
     sex: '男',
     age: 74,
     floorGroup: '介護フロア A',
@@ -1277,12 +1209,10 @@ export const careBoardData: Resident[] = [
     admissionDate: '2025/02/10',
     registrationDate: '2025/02/01',
     lastUpdateDate: '2025/04/01',
-    admissionStatus: '入居中',
     careLevel: '自立',
     certificationDate: '2025/01/20',
     certValidityStart: '2025/01/20',
     certValidityEnd: '2026/01/19',
-    address: '大阪府大阪市北区梅田2',
     avatarUrl: '/old-japanese-man.png',
     contacts: [
       {
@@ -1298,15 +1228,17 @@ export const careBoardData: Resident[] = [
         notes: '近距離在住、毎日連絡取り合い',
       },
     ],
-    homeCareOffice: {
-      id: 'office-7',
-      businessName: '梅田在宅支援センター',
-      careManager: '梅田次郎',
-      phone: '06-4444-5555',
-      fax: '06-4444-5556',
-      address: '大阪府大阪市北区梅田3-3-3',
-      notes: '自立支援プログラム参加中',
-    },
+    homeCareOffices: [
+      {
+        id: '2',
+        businessName: '新宿ライフケアサポート',
+        address: '東京都新宿区新宿2-2-2',
+        phone: '03-2345-6789',
+        fax: '03-2345-6790',
+        careManager: '佐藤花子',
+        notes: '新宿区在宅介護支援事業所',
+      },
+    ],
     medicalInstitutions: [
       {
         id: 'medical-7-1',
@@ -1320,7 +1252,7 @@ export const careBoardData: Resident[] = [
     ],
     medicalHistory: [],
     medications: [],
-    medicationStatus: [],
+
     events: [],
   },
   // 追加の利用者データ（満室状況を作るため）
@@ -1337,12 +1269,10 @@ export const careBoardData: Resident[] = [
     registrationDate: '2025/01/15',
     lastUpdateDate: '2025/05/10',
     admissionDate: '2025/01/15',
-    admissionStatus: '入居中',
     careLevel: '要介護1',
     certificationDate: '2025/01/01',
     certValidityStart: '2024/12/20',
     certValidityEnd: '2025/12/19',
-    address: '兵庫県神戸市東灘区住吉本町1-1-1',
     avatarUrl: '/elderly-japanese-man.png',
     contacts: [
       {
@@ -1356,6 +1286,17 @@ export const careBoardData: Resident[] = [
         email: 'm.sasaki@example.com',
         address: '兵庫県神戸市東灘区住吉本町1-1-1',
         notes: '同居中、日中在宅',
+      },
+    ],
+    homeCareOffices: [
+      {
+        id: '3',
+        businessName: '港区ホームケアサービス',
+        address: '東京都港区港3-3-3',
+        phone: '03-3456-7890',
+        fax: '03-3456-7891',
+        careManager: '鈴木一郎',
+        notes: '港区地域密着型ケアサービス',
       },
     ],
     events: [],
@@ -1373,12 +1314,10 @@ export const careBoardData: Resident[] = [
     registrationDate: '2025/03/01',
     lastUpdateDate: '2025/05/08',
     admissionDate: '2025/03/01',
-    admissionStatus: '入居中',
     careLevel: '要介護2',
     certificationDate: '2025/02/15',
     certValidityStart: '2025/02/15',
     certValidityEnd: '2026/02/14',
-    address: '大阪府大阪市住吉区住吉2-2-2',
     avatarUrl: '/elderly-japanese-woman.png',
     contacts: [
       {
@@ -1392,6 +1331,17 @@ export const careBoardData: Resident[] = [
         email: 'k.ito@example.com',
         address: '大阪府大阪市住吉区住吉1-1-1',
         notes: '近所在住、緊急時対応可能',
+      },
+    ],
+    homeCareOffices: [
+      {
+        id: '4',
+        businessName: '品川ケアライフサポート',
+        address: '東京都品川区品川4-4-4',
+        phone: '03-4567-8901',
+        fax: '03-4567-8902',
+        careManager: '高橋美咲',
+        notes: '品川区在宅介護支援センター',
       },
     ],
     events: [],
@@ -1409,12 +1359,11 @@ export const careBoardData: Resident[] = [
     registrationDate: '2025/02/20',
     lastUpdateDate: '2025/05/05',
     admissionDate: '2025/02/20',
-    admissionStatus: '入居中',
+    dischargeDate: '2025/05/15',
     careLevel: '要介護3',
     certificationDate: '2025/02/01',
     certValidityStart: '2025/02/01',
     certValidityEnd: '2026/01/31',
-    address: '京都府京都市右京区嵯峨3-3-3',
     avatarUrl: '/elderly-japanese-man.png',
     contacts: [
       {
@@ -1428,6 +1377,131 @@ export const careBoardData: Resident[] = [
         email: 'e.watanabe@example.com',
         address: '京都府京都市右京区嵯峨2-2-2',
         notes: '週2回面会、買い物支援',
+      },
+    ],
+    homeCareOffices: [
+      {
+        id: '1',
+        businessName: '渋谷ケアプランセンター',
+        address: '東京都渋谷区渋谷1-1-1',
+        phone: '03-1234-5678',
+        fax: '03-1234-5679',
+        careManager: '田中太郎',
+        notes: '渋谷エリア専門のケアプランセンター',
+      },
+    ],
+    events: [],
+  },
+  {
+    id: 11,
+    name: '田中花子',
+    furigana: 'タナカハナコ',
+    dob: '1950/03/15',
+    sex: '女',
+    age: 74,
+    floorGroup: '介護フロア A',
+    unitTeam: '夜番チーム',
+    roomInfo: '601号室',
+    registrationDate: '2025/05/01',
+    lastUpdateDate: '2025/05/01',
+    // admissionDate: 未設定（入所前の状態）
+    careLevel: '要介護1',
+    certificationDate: '2025/04/20',
+    certValidityStart: '2025/04/20',
+    certValidityEnd: '2026/04/19',
+    avatarUrl: '/elderly-japanese-woman.png',
+    notes: '入所予定の利用者です。入所日は未定です。',
+    contacts: [
+      {
+        id: 'contact-11-1',
+        type: '緊急連絡先',
+        name: '田中太郎',
+        furigana: 'タナカタロウ',
+        relationship: '長男',
+        phone1: '06-8888-9999',
+        phone2: '090-7777-8888',
+        email: 't.tanaka@example.com',
+        address: '大阪府大阪市北区梅田1-1-1',
+        notes: '入所手続き担当',
+      },
+    ],
+    homeCareOffices: [
+      {
+        id: '2',
+        businessName: '新宿ライフケアサポート',
+        address: '東京都新宿区新宿2-2-2',
+        phone: '03-2345-6789',
+        fax: '03-2345-6790',
+        careManager: '佐藤花子',
+        notes: '新宿区在宅介護支援事業所',
+      },
+    ],
+    medicalInstitutions: [
+      {
+        id: 'mi-11-1',
+        institutionName: 'ハートケア整形外科',
+        doctorName: '山田 次郎',
+        phone: '078-234-5678',
+        fax: '078-234-5679',
+        address: '兵庫県神戸市西区糸井2-14-9',
+        notes: '整形外科専門医',
+      },
+    ],
+    events: [],
+  },
+  {
+    id: 12,
+    name: '山田次郎',
+    furigana: 'ヤマダジロウ',
+    dob: '1945/07/10',
+    sex: '男',
+    age: 79,
+    floorGroup: '介護フロア B',
+    unitTeam: '日勤チーム',
+    roomInfo: '602号室',
+    registrationDate: '2025/04/20',
+    lastUpdateDate: '2025/04/20',
+    admissionDate: '2025/06/01', // 未来の入所日（入所前の状態）
+    careLevel: '要介護2',
+    certificationDate: '2025/04/15',
+    certValidityStart: '2025/04/15',
+    certValidityEnd: '2026/04/14',
+    avatarUrl: '/elderly-japanese-man.png',
+    notes: '6月1日に入所予定です。',
+    contacts: [
+      {
+        id: 'contact-12-1',
+        type: '緊急連絡先',
+        name: '山田美咲',
+        furigana: 'ヤマダミサキ',
+        relationship: '長女',
+        phone1: '06-9999-0000',
+        phone2: '080-8888-9999',
+        email: 'm.yamada@example.com',
+        address: '大阪府大阪市西区西本町2-2-2',
+        notes: '入所手続き担当',
+      },
+    ],
+    homeCareOffices: [
+      {
+        id: '3',
+        businessName: '港区ホームケアサービス',
+        address: '東京都港区港3-3-3',
+        phone: '03-3456-7890',
+        fax: '03-3456-7891',
+        careManager: '鈴木一郎',
+        notes: '港区地域密着型ケアサービス',
+      },
+    ],
+    medicalInstitutions: [
+      {
+        id: 'mi-12-1',
+        institutionName: '神戸西眼科クリニック',
+        doctorName: '高橋 三郎',
+        phone: '078-927-1234',
+        fax: '078-927-1235',
+        address: '兵庫県神戸市西区玉津町高津橋174-2',
+        notes: '眼科専門医・院長',
       },
     ],
     events: [],

@@ -10,12 +10,20 @@ import { IndividualPointModal } from '@/components/3_organisms/modals/individual
 import { MediaViewerModal } from '@/components/3_organisms/modals/media-viewer-modal';
 import { getIndividualPointsByResident } from '@/mocks/individual-points-data';
 import { individualPointService } from '@/services/individualPointService';
-import type { IndividualPoint, MediaAttachment, PointCategory } from '@/types/individual-point';
+import type {
+  IndividualPoint,
+  IndividualPointCategory,
+  IndividualPointPriority,
+  IndividualPointStatus,
+  MediaAttachment,
+  PointCategory,
+} from '@/types/individual-point';
 import type {
   CategoryFormData,
   IndividualPointFormData,
 } from '@/validations/individual-point-validation';
 import { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
+import { toast } from 'sonner';
 
 interface IndividualPointsTabContentProps {
   residentId: number;
@@ -35,9 +43,9 @@ export const IndividualPointsTabContent = forwardRef<
   const [points, setPoints] = useState<IndividualPoint[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState<string | undefined>();
-  const [selectedPriority, setSelectedPriority] = useState<string | undefined>();
-  const [selectedStatus, setSelectedStatus] = useState<string | undefined>();
+  const [selectedCategory, setSelectedCategory] = useState<IndividualPointCategory | undefined>();
+  const [selectedPriority, setSelectedPriority] = useState<IndividualPointPriority | undefined>();
+  const [selectedStatus, setSelectedStatus] = useState<IndividualPointStatus | undefined>();
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -114,7 +122,8 @@ export const IndividualPointsTabContent = forwardRef<
   };
 
   const handleCategoryClick = (category: string) => {
-    const newCategory = selectedCategory === category ? undefined : category;
+    const newCategory =
+      selectedCategory === category ? undefined : (category as IndividualPointCategory);
     setSelectedCategory(newCategory);
   };
 
@@ -130,6 +139,10 @@ export const IndividualPointsTabContent = forwardRef<
     try {
       const newCategory = await individualPointService.createPointCategory(data);
       setCategories((prev) => [...prev, newCategory]);
+
+      // Show success toast
+      toast.success('カテゴリの登録が完了しました。');
+
       return true;
     } catch (error) {
       console.error('Failed to create category:', error);
@@ -210,11 +223,11 @@ export const IndividualPointsTabContent = forwardRef<
   };
 
   const handlePriorityChange = (priority?: string) => {
-    setSelectedPriority(priority);
+    setSelectedPriority(priority as IndividualPointPriority | undefined);
   };
 
   const handleStatusChange = (status?: string) => {
-    setSelectedStatus(status);
+    setSelectedStatus(status as IndividualPointStatus | undefined);
   };
 
   const handleTagsChange = (tags: string[]) => {
@@ -245,6 +258,10 @@ export const IndividualPointsTabContent = forwardRef<
       );
       setPoints((prev) => [newPoint, ...prev]);
       setIsCreateModalOpen(false);
+
+      // Show success toast
+      toast.success('個別ポイントの登録が完了しました。');
+
       return true;
     } catch (error) {
       console.error('Failed to create individual point:', error);
@@ -332,14 +349,16 @@ export const IndividualPointsTabContent = forwardRef<
       {/* フィルタ機能 */}
       <IndividualPointsFilters
         searchQuery={searchQuery}
-        selectedCategory={selectedCategory as any}
-        selectedPriority={selectedPriority as any}
-        selectedStatus={selectedStatus as any}
+        selectedCategory={selectedCategory}
+        selectedPriority={selectedPriority}
+        selectedStatus={selectedStatus}
         selectedTags={selectedTags}
         availableTags={availableTags}
         onCreatePoint={handleCreatePoint}
         onSearchChange={handleSearchChange}
-        onCategoryChange={(category) => setSelectedCategory(category)}
+        onCategoryChange={(category) =>
+          setSelectedCategory(category as IndividualPointCategory | undefined)
+        }
         onPriorityChange={handlePriorityChange}
         onStatusChange={handleStatusChange}
         onTagsChange={handleTagsChange}

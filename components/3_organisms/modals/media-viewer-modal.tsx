@@ -3,7 +3,7 @@
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import type { MediaAttachment } from '@/types/individual-point';
-import { Download, X, ZoomIn, ZoomOut } from 'lucide-react';
+import { Download, ZoomIn, ZoomOut } from 'lucide-react';
 import Image from 'next/image';
 import type React from 'react';
 import { useState } from 'react';
@@ -86,9 +86,6 @@ export const MediaViewerModal: React.FC<MediaViewerModalProps> = ({ isOpen, onCl
               <Button variant="outline" size="sm" onClick={handleDownload}>
                 <Download className="h-4 w-4 mr-2" />
                 ダウンロード
-              </Button>
-              <Button variant="ghost" size="sm" onClick={onClose} className="h-8 w-8 p-0">
-                <X className="h-4 w-4" />
               </Button>
             </div>
           </div>

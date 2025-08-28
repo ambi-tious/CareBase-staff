@@ -19,9 +19,7 @@ export const StaffSelector: React.FC<StaffSelectorProps> = ({
   disabled = false,
   className = '',
 }) => {
-  const activeStaff = staff.filter((s) => s.isActive);
-
-  if (activeStaff.length === 0) {
+  if (staff.length === 0) {
     return (
       <div className={`text-center py-8 ${className}`}>
         <p className="text-gray-500">このチームには現在利用可能なスタッフがいません。</p>
@@ -33,7 +31,7 @@ export const StaffSelector: React.FC<StaffSelectorProps> = ({
     <div className={`space-y-3 ${className}`}>
       <h3 className="text-lg font-semibold text-carebase-text-primary mb-3">③ スタッフを選択</h3>
       <div className="grid md:grid-cols-3 lg:grid-cols-4 gap-2">
-        {activeStaff.map((staffMember) => (
+        {staff.map((staffMember) => (
           <StaffCard
             key={staffMember.id}
             staff={staffMember}

@@ -75,6 +75,7 @@ export const DocumentFormEditor: React.FC<DocumentFormEditorProps> = ({
   const [fontSize, setFontSize] = useState('16px');
   const [textColor, setTextColor] = useState('#000000');
   const [saveSuccess, setSaveSuccess] = useState(false);
+  const [saveSuccessMessage, setSaveSuccessMessage] = useState('');
   const [saveError, setSaveError] = useState<string | null>(null);
 
   // 初期化時に既存の添付ファイルがある場合は添付モードに設定
@@ -82,7 +83,7 @@ export const DocumentFormEditor: React.FC<DocumentFormEditorProps> = ({
     if (initialDocument?.attachedFile) {
       setContentInputMode('attachment');
     }
-  }, [initialDocument]);
+  }, [initialDocument?.attachedFile]);
 
   // フォルダIDとカテゴリの自動判定
   const folderId = getFolderIdFromSearchParams(searchParams);
@@ -161,79 +162,80 @@ export const DocumentFormEditor: React.FC<DocumentFormEditorProps> = ({
     description: initialDocument?.description || '',
     status: initialDocument?.status || 'draft',
     tags: initialDocument?.tags || '',
-    folderId: folderId || undefined,
-    category: initialDocument?.category || '',
+    folderId: folderId || 'root',
+    category: initialDocument?.category || autoCategory || '議事録', // デフォルトカテゴリを設定
   };
 
-  const { formData, updateField, isSubmitting, error, fieldErrors, handleSubmit } = useDocumentForm(
-    {
-      initialData: initialFormData,
-      onSubmit: async (data) => {
-        setIsSaving(true);
-        setSaveError(null);
+  const {
+    form,
+    isSubmitting: hookFormIsSubmitting,
+    handleSubmit: hookFormHandleSubmit,
+    isSavingDraft,
+    saveDraft,
+    hasUnsavedChanges,
+  } = useDocumentForm({
+    initialData: initialFormData,
+    onSubmit: async (data) => {
+      setIsSaving(true);
+      setSaveError(null);
 
-        try {
-          let success = false;
+      try {
+        let success = false;
 
-          // 内容の検証
-          if (contentInputMode === 'manual' && !content.trim()) {
-            setSaveError('文書内容を入力してください');
-            setIsSaving(false);
-            return false;
-          }
+        // 内容の検証
+        if (contentInputMode === 'manual' && !content.trim()) {
+          setSaveError('文書内容を入力してください');
+          setIsSaving(false);
+          return false;
+        }
 
-          if (
-            contentInputMode === 'attachment' &&
-            !attachedFile &&
-            !initialDocument?.attachedFile
-          ) {
-            setSaveError('ファイルを添付してください');
-            setIsSaving(false);
-            return false;
-          }
+        if (contentInputMode === 'attachment' && !attachedFile && !initialDocument?.attachedFile) {
+          setSaveError('ファイルを添付してください');
+          setIsSaving(false);
+          return false;
+        }
 
-          if (onSave) {
-            const finalContent = contentInputMode === 'manual' ? content : '';
-            const finalFile =
-              contentInputMode === 'attachment' ? attachedFile || undefined : undefined;
-            success = await onSave({
-              formData: data,
-              content: finalContent,
-              attachedFile: finalFile,
-            });
+        if (onSave) {
+          const finalContent = contentInputMode === 'manual' ? content : '';
+          const finalFile =
+            contentInputMode === 'attachment' ? attachedFile || undefined : undefined;
+          success = await onSave({
+            formData: data,
+            content: finalContent,
+            attachedFile: finalFile,
+          });
+        } else {
+          // デフォルトの保存処理
+          await new Promise((resolve) => setTimeout(resolve, 500));
+          success = true;
+        }
+
+        if (success) {
+          setSaveSuccessMessage(isEditMode ? '書類を更新しました。' : '書類を保存しました。');
+          setSaveSuccess(true);
+
+          // 保存成功後の遷移
+          if (isEditMode) {
+            router.push(`/documents/view/${documentId}`);
           } else {
-            // デフォルトの保存処理
-            await new Promise((resolve) => setTimeout(resolve, 500));
-            success = true;
-          }
-
-          if (success) {
-            setSaveSuccess(true);
-            setTimeout(() => setSaveSuccess(false), 3000);
-
-            // 保存成功後の遷移
-            if (isEditMode) {
-              router.push(`/documents/view/${documentId}`);
+            if (folderId) {
+              router.push(`/documents?folder=${folderId}`);
             } else {
-              if (folderId) {
-                router.push(`/documents?folder=${folderId}`);
-              } else {
-                router.push('/documents');
-              }
+              router.push(`/documents/view/${documentId}`);
             }
           }
-
-          return success;
-        } catch (error) {
-          console.error('Failed to save document:', error);
-          setSaveError('保存に失敗しました。もう一度お試しください。');
-          return false;
-        } finally {
-          setIsSaving(false);
         }
-      },
-    }
-  );
+
+        return success;
+      } catch (error) {
+        console.error('Failed to save document:', error);
+        setSaveError('保存に失敗しました。もう一度お試しください。');
+        return false;
+      } finally {
+        setIsSaving(false);
+      }
+    },
+  });
 
   // 文書フォーマット処理
   const handleFormatText = (command: string, value?: string) => {
@@ -242,8 +244,7 @@ export const DocumentFormEditor: React.FC<DocumentFormEditorProps> = ({
 
   // 統合保存処理
   const handleSaveAll = async () => {
-    const success = await handleSubmit();
-    return success;
+    return hookFormHandleSubmit();
   };
 
   const handleCancel = () => {
@@ -255,11 +256,8 @@ export const DocumentFormEditor: React.FC<DocumentFormEditorProps> = ({
   };
 
   const pageTitle = isEditMode ? '書類編集' : '新規書類作成';
-  const pageDescription = isEditMode
-    ? '書類の情報と内容を編集してください。'
-    : `書類の基本情報を入力してください。必須項目（* ）は必ず入力してください。${isAutoCategory ? ` カテゴリは「${folderName}」フォルダに基づいて自動設定されます。` : ''}`;
 
-  const isProcessing = isSubmitting || isSaving;
+  const isProcessing = hookFormIsSubmitting || isSaving;
 
   const formatFileSize = (bytes: number) => {
     if (bytes === 0) return '0 Bytes';
@@ -268,6 +266,13 @@ export const DocumentFormEditor: React.FC<DocumentFormEditorProps> = ({
     const i = Math.floor(Math.log(bytes) / Math.log(k));
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
   };
+
+  const handleSaveDraft = useCallback(async () => {
+    const success = await saveDraft();
+    if (success) {
+      // console.log('Draft saved successfully');
+    }
+  }, [saveDraft]);
 
   return (
     <div className={`min-h-screen bg-carebase-bg ${className}`}>
@@ -289,16 +294,31 @@ export const DocumentFormEditor: React.FC<DocumentFormEditorProps> = ({
               <h1 className="text-2xl font-bold text-carebase-text-primary">{pageTitle}</h1>
             </div>
           </div>
-          <p className="text-gray-600">{pageDescription}</p>
+          <p className="text-gray-600">
+            {isEditMode ? (
+              <>
+                書類の情報と内容を編集してください。必須項目（
+                <span className="text-red-500">*</span>
+                ）は必ず入力してください。
+              </>
+            ) : (
+              <>
+                書類の基本情報を入力してください。必須項目（
+                <span className="text-red-500">*</span>
+                ）は必ず入力してください。
+                {isAutoCategory && (
+                  <> カテゴリは「{folderName}」フォルダに基づいて自動設定されます。</>
+                )}
+              </>
+            )}
+          </p>
         </div>
 
         {/* アラート表示 */}
         {saveSuccess && (
           <Alert className="mb-6 bg-green-50 border-green-200">
             <CheckCircle2 className="h-4 w-4 text-green-600" />
-            <AlertDescription className="text-green-700">
-              文書が正常に保存されました
-            </AlertDescription>
+            <AlertDescription className="text-green-700">{saveSuccessMessage}</AlertDescription>
           </Alert>
         )}
 
@@ -322,14 +342,14 @@ export const DocumentFormEditor: React.FC<DocumentFormEditorProps> = ({
               </CardHeader>
               <CardContent>
                 <DocumentFormFields
-                  formData={formData}
-                  updateField={updateField}
-                  isSubmitting={isProcessing}
-                  error={error}
-                  fieldErrors={fieldErrors}
-                  onSubmit={handleSubmit}
+                  form={form}
+                  isSubmitting={isSaving}
+                  error={saveError}
+                  onSubmit={async () => {
+                    await hookFormHandleSubmit();
+                    return true;
+                  }}
                   onCancel={handleCancel}
-                  folderId={folderId || undefined}
                   folderName={folderName}
                 />
               </CardContent>
@@ -488,6 +508,16 @@ export const DocumentFormEditor: React.FC<DocumentFormEditorProps> = ({
             </Card>
           </div>
 
+          {/* Unsaved Changes Warning */}
+          {hasUnsavedChanges && (
+            <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+              <div className="flex items-center gap-2">
+                <AlertCircle className="h-4 w-4 text-yellow-600" />
+                <span className="text-sm text-yellow-800">未保存の変更があります</span>
+              </div>
+            </div>
+          )}
+
           {/* アクションボタン */}
           <div className="flex justify-end gap-3 p-4 bg-white rounded-lg border">
             <Button
@@ -499,6 +529,16 @@ export const DocumentFormEditor: React.FC<DocumentFormEditorProps> = ({
             >
               <X className="h-4 w-4" />
               キャンセル
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={handleSaveDraft}
+              disabled={hookFormIsSubmitting || isSavingDraft}
+              className="border-gray-400 text-gray-700 hover:bg-gray-50"
+            >
+              <Save className="h-4 w-4 mr-2" />
+              {isSavingDraft ? '保存中...' : '下書き保存'}
             </Button>
             <Button
               onClick={handleSaveAll}

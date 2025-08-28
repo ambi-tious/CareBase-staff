@@ -16,7 +16,7 @@ Issue: [#75 [設計] #034 書類｜書類編集](https://github.com/ambi-tious/C
 
 ### 画面構成
 
-<img width="1470" height="793" alt="スクリーンショット 2025-07-30 10 29 53" src="https://github.com/user-attachments/assets/e7c4f0dc-3e2f-4fe8-a668-a53ad90d32e0" />
+<img width="1132" height="777" alt="スクリーンショット 2025-08-04 13 01 43（2）" src="https://github.com/user-attachments/assets/45261396-628b-4fe4-bd8c-c02986c4fcd1" />
 
 書類編集のメイン画面として以下の要素で構成：
 
@@ -54,16 +54,16 @@ Issue: [#75 [設計] #034 書類｜書類編集](https://github.com/ambi-tious/C
 
 ### アクション
 
-| 項目名       | 処理内容                         | 対象API                          | 遷移先画面                       |
-| ------------ | -------------------------------- | -------------------------------- | -------------------------------- |
-| 戻るボタン   | 書類一覧画面に戻る               | -                                | 書類一覧画面 (`/documents`)      |
-| 自動保存     | フォーム内容を下書きとして保存   | `PUT /api/v1/documents/{id}`     | 同一画面（状態更新）             |
-| 下書き保存   | 現在の内容を下書きとして保存     | `PUT /api/v1/documents/{id}`     | 同一画面（成功通知）             |
-| 公開         | 書類を公開状態で保存             | `PUT /api/v1/documents/{id}`     | 書類詳細画面 (`/documents/{id}`) |
-| ファイル添付 | 画像・動画ファイルをアップロード | `POST /api/v1/documents/upload`  | 同一画面（プレビュー表示）       |
-| ファイル削除 | 添付ファイルを削除               | `DELETE /api/v1/documents/file`  | 同一画面（プレビュー削除）       |
-| AI要約生成   | コンテンツからAI要約を生成       | `POST /api/v1/documents/summary` | 同一画面（要約フィールド更新）   |
-| 編集履歴表示 | 書類の編集履歴を表示             | `GET /api/v1/documents/history`  | 履歴モーダル表示                 |
+| 項目名       | 処理内容                         | 対象API                      | 遷移先画面                       |
+| ------------ | -------------------------------- | ---------------------------- | -------------------------------- |
+| 戻るボタン   | 書類一覧画面に戻る               | -                            | 書類一覧画面 (`/documents`)      |
+| 自動保存     | フォーム内容を下書きとして保存   | `PUT /v1/documents/{id}`     | 同一画面（状態更新）             |
+| 下書き保存   | 現在の内容を下書きとして保存     | `PUT /v1/documents/{id}`     | 同一画面（成功通知）             |
+| 公開         | 書類を公開状態で保存             | `PUT /v1/documents/{id}`     | 書類詳細画面 (`/documents/{id}`) |
+| ファイル添付 | 画像・動画ファイルをアップロード | `POST /v1/documents/upload`  | 同一画面（プレビュー表示）       |
+| ファイル削除 | 添付ファイルを削除               | `DELETE /v1/documents/file`  | 同一画面（プレビュー削除）       |
+| AI要約生成   | コンテンツからAI要約を生成       | `POST /v1/documents/summary` | 同一画面（要約フィールド更新）   |
+| 編集履歴表示 | 書類の編集履歴を表示             | `GET /v1/documents/history`  | 履歴モーダル表示                 |
 
 ### 入力チェック
 
@@ -300,15 +300,15 @@ interface DocumentFormData {
 
 ### API エンドポイント
 
-| メソッド | エンドポイント                         | 説明                 |
-| -------- | -------------------------------------- | -------------------- |
-| GET      | `/api/v1/documents/{id}`               | 書類詳細取得         |
-| PUT      | `/api/v1/documents/{id}`               | 書類更新             |
-| POST     | `/api/v1/documents/{id}/upload`        | ファイルアップロード |
-| DELETE   | `/api/v1/documents/{id}/file/{fileId}` | 添付ファイル削除     |
-| POST     | `/api/v1/documents/{id}/summary`       | AI要約生成           |
-| GET      | `/api/v1/documents/{id}/history`       | 編集履歴取得         |
-| POST     | `/api/v1/documents/{id}/autosave`      | 自動保存             |
+| メソッド | エンドポイント                     | 説明                 |
+| -------- | ---------------------------------- | -------------------- |
+| GET      | `/v1/documents/{id}`               | 書類詳細取得         |
+| PUT      | `/v1/documents/{id}`               | 書類更新             |
+| POST     | `/v1/documents/{id}/upload`        | ファイルアップロード |
+| DELETE   | `/v1/documents/{id}/file/{fileId}` | 添付ファイル削除     |
+| POST     | `/v1/documents/{id}/summary`       | AI要約生成           |
+| GET      | `/v1/documents/{id}/history`       | 編集履歴取得         |
+| POST     | `/v1/documents/{id}/autosave`      | 自動保存             |
 
 ### 状態管理
 

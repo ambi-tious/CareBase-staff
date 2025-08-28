@@ -16,11 +16,11 @@ class CarePlanService {
   async createCarePlan(residentId: string, data: CarePlanFormData): Promise<CarePlan> {
     try {
       // For development, use mock creation
-      if (process.env.NODE_ENV === 'development') {
+      if (process.env.NODE_ENV) {
         return this.mockCreateCarePlan(residentId, data);
       }
 
-      const response = await fetch(`${this.baseUrl}/api/v1/residents/${residentId}/care-plans`, {
+      const response = await fetch(`${this.baseUrl}/v1/residents/${residentId}/care-plans`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -50,12 +50,12 @@ class CarePlanService {
   ): Promise<CarePlan> {
     try {
       // For development, use mock update
-      if (process.env.NODE_ENV === 'development') {
+      if (process.env.NODE_ENV) {
         return this.mockUpdateCarePlan(residentId, planId, data);
       }
 
       const response = await fetch(
-        `${this.baseUrl}/api/v1/residents/${residentId}/care-plans/${planId}`,
+        `${this.baseUrl}/v1/residents/${residentId}/care-plans/${planId}`,
         {
           method: 'PUT',
           headers: {
@@ -83,12 +83,12 @@ class CarePlanService {
   async getCarePlan(residentId: string, planId: string): Promise<CarePlan> {
     try {
       // For development, use mock data
-      if (process.env.NODE_ENV === 'development') {
+      if (process.env.NODE_ENV) {
         return this.mockGetCarePlan(residentId, planId);
       }
 
       const response = await fetch(
-        `${this.baseUrl}/api/v1/residents/${residentId}/care-plans/${planId}`
+        `${this.baseUrl}/v1/residents/${residentId}/care-plans/${planId}`
       );
 
       if (!response.ok) {
@@ -109,12 +109,12 @@ class CarePlanService {
   async deleteCarePlan(residentId: string, planId: string): Promise<void> {
     try {
       // For development, use mock deletion
-      if (process.env.NODE_ENV === 'development') {
+      if (process.env.NODE_ENV) {
         return this.mockDeleteCarePlan(residentId, planId);
       }
 
       const response = await fetch(
-        `${this.baseUrl}/api/v1/residents/${residentId}/care-plans/${planId}`,
+        `${this.baseUrl}/v1/residents/${residentId}/care-plans/${planId}`,
         {
           method: 'DELETE',
         }
@@ -135,11 +135,6 @@ class CarePlanService {
   private async mockCreateCarePlan(residentId: string, data: CarePlanFormData): Promise<CarePlan> {
     // Simulate network delay
     await new Promise((resolve) => setTimeout(resolve, 1000));
-
-    // Simulate occasional network errors for testing
-    if (Math.random() < 0.1) {
-      throw new Error('ネットワークエラーが発生しました。');
-    }
 
     // Get current staff info
     let staffName = '田中 花子';
@@ -206,11 +201,6 @@ class CarePlanService {
   ): Promise<CarePlan> {
     // Simulate network delay
     await new Promise((resolve) => setTimeout(resolve, 1000));
-
-    // Simulate occasional network errors for testing
-    if (Math.random() < 0.05) {
-      throw new Error('ネットワークエラーが発生しました。');
-    }
 
     // Get current staff info
     let staffName = '田中 花子';
@@ -292,11 +282,6 @@ class CarePlanService {
   private async mockDeleteCarePlan(residentId: string, planId: string): Promise<void> {
     // Simulate network delay
     await new Promise((resolve) => setTimeout(resolve, 800));
-
-    // Simulate occasional network errors for testing
-    if (Math.random() < 0.05) {
-      throw new Error('ネットワークエラーが発生しました。');
-    }
 
     // console.log('Mock deleted care plan:', { residentId, planId });
   }

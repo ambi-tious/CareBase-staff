@@ -23,21 +23,8 @@ export const StaffCard: React.FC<StaffCardProps> = ({
   disabled = false,
   className = '',
 }) => {
-  const getRoleBadgeColor = (role: string) => {
-    switch (role) {
-      case '施設長':
-        return isSelected ? 'bg-purple-200 text-purple-900' : 'bg-purple-100 text-purple-700';
-      case '主任介護職員':
-        return isSelected ? 'bg-blue-200 text-blue-900' : 'bg-blue-100 text-blue-700';
-      case '看護師':
-        return isSelected ? 'bg-green-200 text-green-900' : 'bg-green-100 text-green-700';
-      case '介護職員':
-        return isSelected ? 'bg-orange-200 text-orange-900' : 'bg-orange-100 text-orange-700';
-      case '事務職員':
-        return isSelected ? 'bg-gray-200 text-gray-900' : 'bg-gray-100 text-gray-700';
-      default:
-        return isSelected ? 'bg-gray-200 text-gray-900' : 'bg-gray-100 text-gray-700';
-    }
+  const getRoleBadgeColor = (color: string) => {
+    return isSelected ? `bg-${color}-200 text-${color}-900` : `bg-${color}-100 text-${color}-700`;
   };
 
   const handleClick = () => {
@@ -75,7 +62,9 @@ export const StaffCard: React.FC<StaffCardProps> = ({
             </div>
           </div>
           <div className="flex-1 min-w-0 space-y-1">
-            <Badge className={`text-xs ${getRoleBadgeColor(staff.role)}`}>{staff.role}</Badge>
+            <Badge className={`text-xs ${getRoleBadgeColor(staff.role.color)}`}>
+              {staff.role.name}
+            </Badge>
             <div className="flex items-center gap-2">
               <h3
                 className={cn(

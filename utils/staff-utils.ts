@@ -1,4 +1,5 @@
 import type { Staff } from '@/mocks/staff-data';
+import { organizationData } from '@/mocks/staff-data';
 
 // Helper functions to get group and team names
 export function getGroupNameByStaff(staff: Staff): string {
@@ -44,9 +45,7 @@ export function getTeamNameByStaff(staff: Staff): string {
 
 // Get all unique group names for form options
 export function getAllGroupOptions() {
-  const groupNames = ['介護フロア A', '介護フロア B', '管理部門'];
-
-  return groupNames.map((name) => ({ value: name, label: name }));
+  return organizationData.map((group) => ({ value: group.name, label: group.name }));
 }
 
 // Get all unique team names for form options
@@ -56,7 +55,30 @@ export function getAllTeamOptions() {
   return teamNames.map((name) => ({ value: name, label: name }));
 }
 
+// Get team options based on selected group
+export function getTeamOptionsByGroup(groupId: string) {
+  if (!groupId) return [];
+
+  const group = organizationData.find((g) => g.id === groupId);
+  if (!group) return [];
+
+  return group.teams.map((team) => ({ value: team.name, label: team.name }));
+}
+
 // Helper functions for reverse lookup
+export function getGroupIdByName(groupName: string): string | null {
+  const group = organizationData.find((g) => g.name === groupName);
+  return group?.id || null;
+}
+
+export function getTeamIdByName(teamName: string, groupId: string): string | null {
+  const group = organizationData.find((g) => g.id === groupId);
+  if (!group) return null;
+
+  const team = group.teams.find((t) => t.name === teamName);
+  return team?.id || null;
+}
+
 export function getGroupIdByStaffName(groupName: string): string | null {
   const groupMapping: Record<string, string> = {
     '介護フロア A': 'group-1',
@@ -87,3 +109,21 @@ export function getTeamIdByStaffAndGroup(staff: Staff, groupId: string | null): 
   const teamName = getTeamNameByStaff(staff);
   return teamMapping[groupId]?.[teamName] || null;
 }
+
+/**
+ * 今日が誕生日かどうかを判定する
+ * @param dob 誕生日（YYYY-MM-DD形式）
+ * @returns 今日が誕生日の場合true
+ */
+export const isTodayBirthday = (dob: string): boolean => {
+  try {
+    const today = new Date();
+    const birthday = new Date(dob);
+
+    // 月と日が一致するかチェック
+    return today.getMonth() === birthday.getMonth() && today.getDate() === birthday.getDate();
+  } catch (error) {
+    console.error('誕生日の判定でエラーが発生しました:', error);
+    return false;
+  }
+};

@@ -1,12 +1,14 @@
 /**
  * Individual Point Form Hook
  *
- * Manages individual point form state and validation for create/edit operations
+ * React Hook Formベースの個別記録フォーム管理フック
  */
 
 import type { IndividualPointFormData } from '@/validations/individual-point-validation';
 import { individualPointFormSchema } from '@/validations/individual-point-validation';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useCallback, useState } from 'react';
+import { useForm } from 'react-hook-form';
 
 interface UseIndividualPointFormOptions {
   onSubmit: (data: IndividualPointFormData, mediaFiles?: File[]) => Promise<boolean>;
@@ -14,21 +16,13 @@ interface UseIndividualPointFormOptions {
   mode: 'create' | 'edit';
 }
 
-interface IndividualPointFormState {
-  isSubmitting: boolean;
-  error: string | null;
-  fieldErrors: Partial<Record<keyof IndividualPointFormData, string>>;
-  hasUnsavedChanges: boolean;
-}
-
 const initialFormData: IndividualPointFormData = {
+  category: 'communication',
   title: '',
   content: '',
-  category: 'meal',
   priority: 'medium',
   status: 'active',
   tags: [],
-  notes: '',
 };
 
 export const useIndividualPointForm = ({
@@ -36,173 +30,102 @@ export const useIndividualPointForm = ({
   initialData = {},
   mode,
 }: UseIndividualPointFormOptions) => {
-  const [formData, setFormData] = useState<IndividualPointFormData>(() => ({
-    ...initialFormData,
-    ...initialData,
-  }));
+  const form = useForm<IndividualPointFormData>({
+    resolver: zodResolver(individualPointFormSchema),
+    defaultValues: {
+      ...initialFormData,
+      ...initialData,
+    },
+    mode: 'onChange',
+  });
 
-  const [formState, setFormState] = useState<IndividualPointFormState>({
-    isSubmitting: false,
-    error: null,
-    fieldErrors: {},
+  const {
+    control,
+    handleSubmit,
+    formState: { isSubmitting, errors },
+    watch,
+    setValue,
+  } = form;
+  const formData = watch();
+
+  const [additionalState, setAdditionalState] = useState({
+    error: null as string | null,
     hasUnsavedChanges: false,
   });
 
-  const [mediaFiles, setMediaFiles] = useState<File[]>([]);
-
-  const updateField = useCallback((field: keyof IndividualPointFormData, value: any) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
-    setFormState((prev) => ({
-      ...prev,
-      hasUnsavedChanges: true,
-      fieldErrors: prev.fieldErrors[field]
-        ? { ...prev.fieldErrors, [field]: undefined }
-        : prev.fieldErrors,
-    }));
-  }, []);
-
-  const addTag = useCallback(
-    (tag: string) => {
-      if (tag.trim() && !formData.tags.includes(tag.trim())) {
-        updateField('tags', [...formData.tags, tag.trim()]);
-      }
+  const updateField = useCallback(
+    (field: keyof IndividualPointFormData, value: any) => {
+      setValue(field as any, value);
+      setAdditionalState((prev) => ({ ...prev, hasUnsavedChanges: true }));
     },
-    [formData.tags, updateField]
+    [setValue]
   );
 
-  const removeTag = useCallback(
-    (tagToRemove: string) => {
-      updateField(
-        'tags',
-        formData.tags.filter((tag) => tag !== tagToRemove)
-      );
-    },
-    [formData.tags, updateField]
-  );
+  const handleFormSubmit = useCallback(
+    async (data: IndividualPointFormData, mediaFiles?: File[]): Promise<void> => {
+      try {
+        setAdditionalState((prev) => ({ ...prev, error: null }));
 
-  const addMediaFile = useCallback((file: File) => {
-    setMediaFiles((prev) => [...prev, file]);
-    setFormState((prev) => ({ ...prev, hasUnsavedChanges: true }));
-  }, []);
+        const success = await onSubmit(data, mediaFiles);
 
-  const removeMediaFile = useCallback((index: number) => {
-    setMediaFiles((prev) => prev.filter((_, i) => i !== index));
-    setFormState((prev) => ({ ...prev, hasUnsavedChanges: true }));
-  }, []);
-
-  const validateForm = useCallback(() => {
-    const result = individualPointFormSchema.safeParse(formData);
-
-    if (!result.success) {
-      const fieldErrors: Partial<Record<keyof IndividualPointFormData, string>> = {};
-
-      for (const error of result.error.errors) {
-        if (error.path.length > 0) {
-          const field = error.path[0] as keyof IndividualPointFormData;
-          fieldErrors[field] = error.message;
+        if (success) {
+          setAdditionalState((prev) => ({
+            ...prev,
+            hasUnsavedChanges: false,
+          }));
+        } else {
+          setAdditionalState((prev) => ({
+            ...prev,
+            error: '個別記録の保存に失敗しました。',
+          }));
         }
-      }
+      } catch (error) {
+        console.error('Error submitting individual point form:', error);
 
-      setFormState((prev) => ({
-        ...prev,
-        fieldErrors,
-        error: '入力内容に不備があります。必須項目を確認してください。',
-      }));
+        const errorMessage =
+          error instanceof Error
+            ? error.message.includes('Network')
+              ? 'ネットワークエラーが発生しました。接続を確認してください。'
+              : error.message
+            : '予期しないエラーが発生しました。';
 
-      return false;
-    }
-
-    setFormState((prev) => ({
-      ...prev,
-      fieldErrors: {},
-      error: null,
-    }));
-
-    return true;
-  }, [formData]);
-
-  const handleSubmit = useCallback(async () => {
-    if (!validateForm()) {
-      return false;
-    }
-
-    setFormState((prev) => ({
-      ...prev,
-      isSubmitting: true,
-      error: null,
-    }));
-
-    try {
-      const success = await onSubmit(formData, mediaFiles);
-
-      if (success) {
-        setFormState((prev) => ({
+        setAdditionalState((prev) => ({
           ...prev,
-          isSubmitting: false,
-          hasUnsavedChanges: false,
+          error: errorMessage,
         }));
-        return true;
-      } else {
-        setFormState((prev) => ({
-          ...prev,
-          isSubmitting: false,
-          error: '個別ポイントの保存に失敗しました。',
-        }));
-        return false;
       }
-    } catch (error) {
-      console.error('Individual point form submission error:', error);
-      setFormState((prev) => ({
-        ...prev,
-        isSubmitting: false,
-        error: 'ネットワークエラーが発生しました。接続を確認してもう一度お試しください。',
-      }));
-      return false;
-    }
-  }, [formData, mediaFiles, validateForm, onSubmit]);
+    },
+    [onSubmit]
+  );
 
-  const reset = useCallback(() => {
-    setFormData({
-      ...initialFormData,
-      ...initialData,
-    });
-    setMediaFiles([]);
-    setFormState({
-      isSubmitting: false,
-      error: null,
-      fieldErrors: {},
-      hasUnsavedChanges: false,
-    });
-  }, [initialData]);
+  const submitForm = useCallback(
+    async (mediaFiles?: File[]) => {
+      return handleSubmit((data) => handleFormSubmit(data, mediaFiles))();
+    },
+    [handleSubmit, handleFormSubmit]
+  );
 
   const clearError = useCallback(() => {
-    setFormState((prev) => ({
-      ...prev,
-      error: null,
-    }));
+    setAdditionalState((prev) => ({ ...prev, error: null }));
   }, []);
 
   return {
+    // React Hook Form methods (spread all to maintain compatibility)
+    ...form,
+    control,
+
     // Form data
     formData,
     updateField,
-    mediaFiles,
-    addMediaFile,
-    removeMediaFile,
-
-    // Tag management
-    addTag,
-    removeTag,
 
     // Form state
-    isSubmitting: formState.isSubmitting,
-    error: formState.error,
-    fieldErrors: formState.fieldErrors,
-    hasUnsavedChanges: formState.hasUnsavedChanges,
+    isSubmitting,
+    error: additionalState.error,
+    fieldErrors: errors as Partial<Record<keyof IndividualPointFormData, { message?: string }>>,
+    hasUnsavedChanges: additionalState.hasUnsavedChanges,
 
     // Actions
-    handleSubmit,
-    reset,
+    submitForm,
     clearError,
   };
 };

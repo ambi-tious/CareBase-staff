@@ -1,12 +1,14 @@
 'use client';
 
+import { PushNotificationToggle } from '@/components/2_molecules/push-notification-toggle';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
-import { ArrowLeft, Bell, Save, Settings } from 'lucide-react';
+import { ArrowLeft, Bell, Save, Settings, TestTube } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
+import { toast } from 'sonner';
 
 export default function NotificationSettingsPage() {
   const [settings, setSettings] = useState({
@@ -27,6 +29,33 @@ export default function NotificationSettingsPage() {
     // 実際のアプリケーションではAPIに設定を保存
     // console.log('Saving notification settings:', settings);
     // TODO: API呼び出しの実装
+    toast.success('設定を保存しました');
+  };
+
+  const handleTestNotification = async () => {
+    try {
+      const response = await fetch('/api/push/send', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          title: 'テスト通知',
+          body: 'プッシュ通知のテストです。正常に動作しています！',
+          url: '/notifications',
+          icon: '/icons/icon-192x192.png',
+        }),
+      });
+
+      if (response.ok) {
+        toast.success('テスト通知を送信しました');
+      } else {
+        toast.error('テスト通知の送信に失敗しました');
+      }
+    } catch (error) {
+      console.error('Test notification error:', error);
+      toast.error('テスト通知の送信エラーが発生しました');
+    }
   };
 
   return (
@@ -110,16 +139,25 @@ export default function NotificationSettingsPage() {
             <CardTitle>通知方法設定</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
+            <PushNotificationToggle />
+
+            {/* プッシュ通知テストボタン */}
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
-                <Label htmlFor="push-notifications">プッシュ通知</Label>
-                <p className="text-sm text-gray-500">ブラウザでプッシュ通知を受信します</p>
+                <Label>プッシュ通知テスト</Label>
+                <p className="text-sm text-gray-500">
+                  テスト通知を送信してプッシュ通知が正常に動作するか確認します
+                </p>
               </div>
-              <Switch
-                id="push-notifications"
-                checked={settings.pushNotifications}
-                onCheckedChange={(checked) => handleSettingChange('pushNotifications', checked)}
-              />
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleTestNotification}
+                className="flex items-center gap-2"
+              >
+                <TestTube className="h-4 w-4" />
+                テスト送信
+              </Button>
             </div>
 
             <div className="flex items-center justify-between">

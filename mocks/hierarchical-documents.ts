@@ -304,7 +304,7 @@ export const getFolder = (folderId: string | null): Folder | null => {
 };
 
 // フォルダ作成関数
-export const createFolder = (name: string, parentId: string | null): Folder => {
+export const createFolder = (name: string, parentId: string | null, createdBy?: string): Folder => {
   const newFolderId = `folder-${Date.now()}`;
   const parentFolder = parentId ? getFolder(parentId) : null;
   const path = parentFolder ? [...parentFolder.path, newFolderId] : [newFolderId];
@@ -317,7 +317,7 @@ export const createFolder = (name: string, parentId: string | null): Folder => {
     path,
     createdAt: new Date().toISOString().split('T')[0],
     updatedAt: new Date().toISOString().split('T')[0],
-    createdBy: '現在のユーザー',
+    createdBy: createdBy || '現在のユーザー',
   };
 
   // 親フォルダに応じて適切な配列に追加

@@ -51,11 +51,6 @@ export default function EditContactSchedulePage({ params }: EditContactScheduleP
       // Mock API call - in production, this would call the actual API
       // console.log('Updating contact schedule:', { ...data, isDraft, itemId: item.id });
 
-      // Simulate occasional errors for testing
-      if (Math.random() < 0.1) {
-        throw new Error('ネットワークエラーが発生しました。');
-      }
-
       if (isDraft) {
         setSuccessMessage('下書きを保存しました。');
         return true;

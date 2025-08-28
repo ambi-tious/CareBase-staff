@@ -1,33 +1,5 @@
-import type {
-  Notification,
-  HandoverNotification,
-  ContactScheduleNotification,
-} from '@/types/notification';
-import { handoverData } from './handover-data';
+import type { ContactScheduleNotification, Notification } from '@/types/notification';
 import { contactScheduleData } from './contact-schedule-data';
-
-// Convert handover data to notifications
-const handoverNotifications: HandoverNotification[] = handoverData.map((handover) => ({
-  id: `handover-${handover.id}`,
-  type: 'handover' as const,
-  title: handover.title,
-  content: handover.content,
-  priority: handover.priority,
-  status: handover.status,
-  createdAt: handover.createdAt,
-  updatedAt: handover.updatedAt,
-  createdBy: handover.createdBy,
-  createdByName: handover.createdByName,
-  targetStaffIds: handover.targetStaffIds,
-  relatedResidentId: handover.residentId,
-  relatedResidentName: handover.residentName,
-  readAt: handover.readAt,
-  completedAt: handover.completedAt,
-  navigationUrl: `/handovers/${handover.id}`,
-  category: handover.category,
-  scheduledDate: handover.scheduledDate,
-  scheduledTime: handover.scheduledTime,
-}));
 
 // Convert contact schedule data to notifications
 const contactScheduleNotifications: ContactScheduleNotification[] = contactScheduleData.map(
@@ -56,10 +28,9 @@ const contactScheduleNotifications: ContactScheduleNotification[] = contactSched
 );
 
 // Combine all notifications
-export const notificationData: Notification[] = [
-  ...handoverNotifications,
-  ...contactScheduleNotifications,
-].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+export const notificationData: Notification[] = [...contactScheduleNotifications].sort(
+  (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+);
 
 // Helper functions
 export const getNotificationById = (id: string): Notification | undefined => {

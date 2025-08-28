@@ -9,6 +9,7 @@ import type React from 'react';
 interface TeamSelectorProps {
   teams: Team[];
   selectedTeamId?: string;
+  currentTeamId?: string; // 現在所属しているチームID
   onTeamSelect: (teamId: string) => void;
   disabled?: boolean;
   className?: string;
@@ -17,6 +18,7 @@ interface TeamSelectorProps {
 export const TeamSelector: React.FC<TeamSelectorProps> = ({
   teams,
   selectedTeamId,
+  currentTeamId,
   onTeamSelect,
   disabled = false,
   className = '',
@@ -36,6 +38,7 @@ export const TeamSelector: React.FC<TeamSelectorProps> = ({
         {teams.map((team) => {
           const Icon = getLucideIcon(team.icon);
           const isSelected = selectedTeamId === team.id;
+          const isCurrent = currentTeamId === team.id;
           return (
             <Card
               key={team.id}
@@ -82,6 +85,13 @@ export const TeamSelector: React.FC<TeamSelectorProps> = ({
                     >
                       {team.staff.length} 名のスタッフ
                     </p>
+                    {isCurrent && (
+                      <div className="mt-2">
+                        <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full border border-green-300">
+                          選択中
+                        </span>
+                      </div>
+                    )}
                   </div>
                 </div>
               </CardContent>

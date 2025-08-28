@@ -1,0 +1,299 @@
+'use client';
+
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Button } from '@/components/ui/button';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
+import { useResidentFileForm } from '@/hooks/useResidentFileForm';
+import { fileCategoryOptions } from '@/types/resident-file';
+import type { ResidentFileFormData } from '@/validations/resident-file-validation';
+import { AlertCircle, FileText, Upload, X } from 'lucide-react';
+import Image from 'next/image';
+import type React from 'react';
+import { useRef, useState } from 'react';
+
+interface FileUploadFormProps {
+  onSubmit: (data: ResidentFileFormData, file: File) => Promise<boolean>;
+  onCancel: () => void;
+  className?: string;
+}
+
+export const FileUploadForm: React.FC<FileUploadFormProps> = ({
+  onSubmit,
+  onCancel,
+  className = '',
+}) => {
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [filePreview, setFilePreview] = useState<string>('');
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const { form, isSubmitting, error, fieldErrors, handleSubmit } = useResidentFileForm({
+    onSubmit: async (data) => {
+      if (!selectedFile) {
+        throw new Error('ファイルを選択してください');
+      }
+      return onSubmit(data, selectedFile);
+    },
+  });
+
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // File size validation (10MB)
+    if (file.size > 10 * 1024 * 1024) {
+      // TODO: Replace with toast notification
+      console.error('ファイルサイズは10MB以下にしてください');
+      return;
+    }
+
+    setSelectedFile(file);
+
+    // Generate preview for images
+    if (file.type.startsWith('image/')) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setFilePreview(e.target?.result as string);
+      };
+      reader.readAsDataURL(file);
+    } else {
+      setFilePreview('');
+    }
+
+    // Auto-set category based on file type
+    if (file.type.startsWith('image/')) {
+      form.setValue('category', 'photo');
+    } else if (file.type === 'application/pdf' || file.type.includes('document')) {
+      form.setValue('category', 'medical_record');
+    }
+  };
+
+  const handleRemoveFile = () => {
+    setSelectedFile(null);
+    setFilePreview('');
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
+  const onFormSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedFile) {
+      // TODO: Replace with toast notification
+      console.error('ファイルを選択してください');
+      return;
+    }
+    const success = await handleSubmit();
+    if (success) {
+      onCancel();
+    }
+  };
+
+  const formatFileSize = (bytes: number) => {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  };
+
+  return (
+    <Form {...form}>
+      <form onSubmit={onFormSubmit} className={`space-y-6 ${className}`}>
+        {/* Error Alert */}
+        {error && (
+          <Alert className="border-red-200 bg-red-50">
+            <AlertCircle className="h-4 w-4 text-red-600" />
+            <AlertDescription className="text-red-700">{error}</AlertDescription>
+          </Alert>
+        )}
+
+        {/* File Upload Section */}
+        <div className="space-y-4">
+          <h3 className="text-lg font-semibold text-carebase-text-primary border-b pb-2">
+            ファイル選択
+          </h3>
+
+          {!selectedFile ? (
+            <div
+              className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center cursor-pointer hover:bg-gray-50 transition-colors"
+              onClick={() => fileInputRef.current?.click()}
+            >
+              <Upload className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+              <p className="text-sm text-gray-600 mb-2">
+                ファイルをドラッグ＆ドロップするか、クリックして選択してください
+              </p>
+              <p className="text-xs text-gray-500">
+                対応形式: 画像ファイル（JPG, PNG, GIF）、PDFファイル、Word文書 | 最大10MB
+              </p>
+            </div>
+          ) : (
+            <div className="border border-gray-200 rounded-lg p-4 bg-gray-50">
+              <div className="flex items-start gap-4">
+                {/* File preview */}
+                <div className="flex-shrink-0">
+                  {filePreview ? (
+                    <div className="w-24 h-24 rounded-lg overflow-hidden border">
+                      <Image
+                        src={filePreview}
+                        alt="プレビュー"
+                        width={96}
+                        height={96}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  ) : (
+                    <div className="w-24 h-24 rounded-lg border bg-white flex items-center justify-center">
+                      <FileText className="h-8 w-8 text-gray-400" />
+                    </div>
+                  )}
+                </div>
+
+                {/* File info */}
+                <div className="flex-1 min-w-0">
+                  <h4 className="font-medium text-gray-900 truncate">{selectedFile.name}</h4>
+                  <div className="text-sm text-gray-500 space-y-1">
+                    <p>サイズ: {formatFileSize(selectedFile.size)}</p>
+                    <p>形式: {selectedFile.type}</p>
+                    <p>
+                      種類:{' '}
+                      {selectedFile.type.startsWith('image/') ? '画像ファイル' : '文書ファイル'}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Remove button */}
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={handleRemoveFile}
+                  className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+          )}
+
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*,.pdf,.doc,.docx,.txt"
+            onChange={handleFileSelect}
+            className="hidden"
+            disabled={isSubmitting}
+          />
+        </div>
+
+        {/* File Metadata Section */}
+        <div className="space-y-4">
+          <h3 className="text-lg font-semibold text-carebase-text-primary border-b pb-2">
+            ファイル情報
+          </h3>
+
+          <FormField
+            control={form.control}
+            name="category"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>
+                  カテゴリ <span className="text-red-500 ml-1">*</span>
+                </FormLabel>
+                <Select
+                  value={field.value || ''}
+                  onValueChange={field.onChange}
+                  disabled={isSubmitting}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="カテゴリを選択してください" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {fileCategoryOptions.map((option) => (
+                      <SelectItem key={option.value} value={option.value}>
+                        {option.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="fileName"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>
+                  ファイル名 <span className="text-red-500 ml-1">*</span>
+                </FormLabel>
+                <FormControl>
+                  <Input
+                    {...field}
+                    placeholder="ファイル名を入力してください"
+                    disabled={isSubmitting}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="description"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>説明</FormLabel>
+                <FormControl>
+                  <Textarea
+                    {...field}
+                    value={field.value || ''}
+                    placeholder="ファイルの内容や用途について説明してください"
+                    disabled={isSubmitting}
+                    rows={3}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+
+        {/* Action Buttons */}
+        <div className="flex justify-end gap-3 pt-6 border-t">
+          <Button type="button" variant="outline" onClick={onCancel} disabled={isSubmitting}>
+            キャンセル
+          </Button>
+          <Button
+            type="submit"
+            disabled={isSubmitting || !selectedFile}
+            className="bg-carebase-blue hover:bg-carebase-blue-dark"
+          >
+            <Upload className="h-4 w-4 mr-2" />
+            {isSubmitting ? 'アップロード中...' : 'アップロード'}
+          </Button>
+        </div>
+      </form>
+    </Form>
+  );
+};

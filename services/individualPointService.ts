@@ -18,11 +18,11 @@ class IndividualPointService {
    */
   async getIndividualPoints(residentId: string): Promise<IndividualPoint[]> {
     try {
-      if (process.env.NODE_ENV === 'development') {
+      if (process.env.NODE_ENV) {
         return this.mockGetIndividualPoints(residentId);
       }
 
-      const response = await fetch(`${this.baseUrl}/api/residents/${residentId}/individual-points`);
+      const response = await fetch(`${this.baseUrl}/residents/${residentId}/individual-points`);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -44,7 +44,7 @@ class IndividualPointService {
     mediaFiles?: File[]
   ): Promise<IndividualPoint> {
     try {
-      if (process.env.NODE_ENV === 'development') {
+      if (process.env.NODE_ENV) {
         return this.mockCreateIndividualPoint(residentId, data, mediaFiles);
       }
 
@@ -57,13 +57,10 @@ class IndividualPointService {
         });
       }
 
-      const response = await fetch(
-        `${this.baseUrl}/api/residents/${residentId}/individual-points`,
-        {
-          method: 'POST',
-          body: formData,
-        }
-      );
+      const response = await fetch(`${this.baseUrl}/residents/${residentId}/individual-points`, {
+        method: 'POST',
+        body: formData,
+      });
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -87,7 +84,7 @@ class IndividualPointService {
     mediaFiles?: File[]
   ): Promise<IndividualPoint> {
     try {
-      if (process.env.NODE_ENV === 'development') {
+      if (process.env.NODE_ENV) {
         return this.mockUpdateIndividualPoint(residentId, pointId, data, mediaFiles);
       }
 
@@ -101,7 +98,7 @@ class IndividualPointService {
       }
 
       const response = await fetch(
-        `${this.baseUrl}/api/residents/${residentId}/individual-points/${pointId}`,
+        `${this.baseUrl}/residents/${residentId}/individual-points/${pointId}`,
         {
           method: 'PUT',
           body: formData,
@@ -125,12 +122,12 @@ class IndividualPointService {
    */
   async deleteIndividualPoint(residentId: string, pointId: string): Promise<void> {
     try {
-      if (process.env.NODE_ENV === 'development') {
+      if (process.env.NODE_ENV) {
         return this.mockDeleteIndividualPoint(residentId, pointId);
       }
 
       const response = await fetch(
-        `${this.baseUrl}/api/residents/${residentId}/individual-points/${pointId}`,
+        `${this.baseUrl}/residents/${residentId}/individual-points/${pointId}`,
         {
           method: 'DELETE',
         }
@@ -150,11 +147,11 @@ class IndividualPointService {
    */
   async getPointCategories(): Promise<PointCategory[]> {
     try {
-      if (process.env.NODE_ENV === 'development') {
+      if (process.env.NODE_ENV) {
         return this.mockGetPointCategories();
       }
 
-      const response = await fetch(`${this.baseUrl}/api/point-categories`);
+      const response = await fetch(`${this.baseUrl}/point-categories`);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -172,11 +169,11 @@ class IndividualPointService {
    */
   async createPointCategory(data: CategoryFormData): Promise<PointCategory> {
     try {
-      if (process.env.NODE_ENV === 'development') {
+      if (process.env.NODE_ENV) {
         return this.mockCreatePointCategory(data);
       }
 
-      const response = await fetch(`${this.baseUrl}/api/point-categories`, {
+      const response = await fetch(`${this.baseUrl}/point-categories`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -212,10 +209,6 @@ class IndividualPointService {
     mediaFiles?: File[]
   ): Promise<IndividualPoint> {
     await new Promise((resolve) => setTimeout(resolve, 1000));
-
-    if (Math.random() < 0.1) {
-      throw new Error('ネットワークエラーが発生しました。');
-    }
 
     // Get current staff info
     let staffName = '田中 花子';
@@ -278,10 +271,6 @@ class IndividualPointService {
   ): Promise<IndividualPoint> {
     await new Promise((resolve) => setTimeout(resolve, 1000));
 
-    if (Math.random() < 0.05) {
-      throw new Error('ネットワークエラーが発生しました。');
-    }
-
     // Get current staff info
     let staffName = '田中 花子';
     let staffId = 'staff-001';
@@ -338,10 +327,6 @@ class IndividualPointService {
   private async mockDeleteIndividualPoint(residentId: string, pointId: string): Promise<void> {
     await new Promise((resolve) => setTimeout(resolve, 800));
 
-    if (Math.random() < 0.05) {
-      throw new Error('ネットワークエラーが発生しました。');
-    }
-
     // console.log('Mock deleted individual point:', { residentId, pointId });
   }
 
@@ -354,10 +339,6 @@ class IndividualPointService {
 
   private async mockCreatePointCategory(data: CategoryFormData): Promise<PointCategory> {
     await new Promise((resolve) => setTimeout(resolve, 1000));
-
-    if (Math.random() < 0.1) {
-      throw new Error('ネットワークエラーが発生しました。');
-    }
 
     const newCategory: PointCategory = {
       id: `cat-${Date.now()}`,

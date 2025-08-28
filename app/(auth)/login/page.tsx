@@ -2,38 +2,25 @@
 
 import { Logo } from '@/components/1_atoms/common/logo';
 import { LoginForm } from '@/components/2_molecules/auth/login-form';
+import { useAuth } from '@/hooks/useAuth';
+import type { LoginCredentials } from '@/types/auth';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect } from 'react';
 
 export default function LoginPage() {
   const router = useRouter();
-  const [isLoading, setIsLoading] = useState(false);
+  const { isAuthenticated, isLoading, error, login, clearError } = useAuth();
 
-  const handleLogin = async (credentials: {
-    facilityId: string;
-    password: string;
-  }): Promise<{ success: boolean; error?: string }> => {
-    setIsLoading(true);
-
-    try {
-      // Simulate API call delay
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      // Mock authentication - in production, this would call a real API
-      if (credentials.facilityId === 'admin' && credentials.password === 'password') {
-        router.push('/staff-selection');
-        return { success: true };
-      }
-
-      return { success: false, error: '施設IDまたはパスワードが正しくありません' };
-    } catch (error) {
-      return {
-        success: false,
-        error: 'ログイン中にエラーが発生しました。しばらく経ってからもう一度お試しください。',
-      };
-    } finally {
-      setIsLoading(false);
+  // 既にログイン済みの場合はリダイレクト
+  useEffect(() => {
+    if (isAuthenticated) {
+      router.push('/staff-selection');
     }
+  }, [isAuthenticated, router]);
+
+  const handleLogin = async (credentials: LoginCredentials) => {
+    const response = await login(credentials);
+    return response;
   };
 
   return (
@@ -42,10 +29,28 @@ export default function LoginPage() {
         {/* Logo */}
         <div className="text-center">
           <Logo />
+
+          {/* 開発環境表示 */}
+          {!process.env.NEXT_PUBLIC_API_URL && (
+            <div className="mt-4">
+              <div className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-800 border border-orange-200">
+                <div className="w-2 h-2 bg-orange-500 rounded-full mr-2 animate-pulse"></div>
+                開発環境 - モックデータ使用中
+              </div>
+              <div className="mt-2 text-xs text-orange-600">
+                認証情報: admin/password または demo/demo
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Login Form */}
-        <LoginForm onLogin={handleLogin} isLoading={isLoading} />
+        <LoginForm
+          onLogin={handleLogin}
+          isLoading={isLoading}
+          error={error}
+          onClearError={clearError}
+        />
 
         {/* Footer */}
         <div className="text-center text-xs text-gray-500">

@@ -176,7 +176,7 @@ export const roomData: Room[] = [
 // 入居者データから部屋の入居状況を計算する関数
 export const calculateRoomOccupancy = (roomName: string): number => {
   return careBoardData.filter(
-    (resident) => resident.roomInfo === roomName && resident.admissionStatus === '入居中'
+    (resident) => resident.roomInfo === roomName && resident.dischargeDate === undefined
   ).length;
 };
 
