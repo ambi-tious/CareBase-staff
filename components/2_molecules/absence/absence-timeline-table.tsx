@@ -34,7 +34,7 @@ import {
   User,
   X,
 } from 'lucide-react';
-import type React from 'react';
+import React from 'react';
 import { useState } from 'react';
 import { toast } from 'sonner';
 

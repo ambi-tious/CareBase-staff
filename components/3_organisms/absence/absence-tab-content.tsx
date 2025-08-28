@@ -5,7 +5,7 @@ import { getAbsencesByResident } from '@/mocks/absence-data';
 import { absenceService } from '@/services/absenceService';
 import type { Absence } from '@/types/absence';
 import type { AbsenceFormData } from '@/validations/absence-validation';
-import type React from 'react';
+import React from 'react';
 import { useEffect, useState } from 'react';
 
 interface AbsenceTabContentProps {

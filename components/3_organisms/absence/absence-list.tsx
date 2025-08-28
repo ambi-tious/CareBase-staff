@@ -10,7 +10,7 @@ import { absenceService } from '@/services/absenceService';
 import type { Absence, AbsenceReason, AbsenceStatus } from '@/types/absence';
 import type { AbsenceFormData } from '@/validations/absence-validation';
 import { Calendar, CalendarPlus, MapPin } from 'lucide-react';
-import type React from 'react';
+import React from 'react';
 import { useMemo, useState } from 'react';
 import { toast } from 'sonner';
 
