@@ -256,9 +256,6 @@ export const ResidentFilesTabContent: React.FC<ResidentFilesTabContentProps> = (
         <FileGridView
           files={filteredFiles}
           onFileView={handleFileView}
-          onFileEdit={handleFileEdit}
-          onFileDelete={handleFileDelete}
-          onFileDownload={handleFileDownload}
         />
       )}
 
@@ -276,7 +273,6 @@ export const ResidentFilesTabContent: React.FC<ResidentFilesTabContentProps> = (
         file={selectedFile}
         onEdit={handleFileEdit}
         onDelete={handleFileDelete}
-        onDownload={handleFileDownload}
       />
 
       <ResidentFileEditModal

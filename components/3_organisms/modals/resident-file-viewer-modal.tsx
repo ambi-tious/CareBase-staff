@@ -1,13 +1,12 @@
 'use client';
 
 import { FileCategoryBadge } from '@/components/1_atoms/resident-files/file-category-badge';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import type { ResidentFile } from '@/types/resident-file';
 import { format } from 'date-fns';
 import { ja } from 'date-fns/locale';
-import { Calendar, Download, Edit3, Trash2, User, X, ZoomIn, ZoomOut } from 'lucide-react';
+import { Calendar, Download, Edit3, Trash2, User, X, ZoomIn, ZoomOut, FileText } from 'lucide-react';
 import Image from 'next/image';
 import type React from 'react';
 import { useState } from 'react';
@@ -86,7 +85,7 @@ export const ResidentFileViewerModal: React.FC<ResidentFileViewerModalProps> = (
           <div className="flex items-center justify-between">
             <div className="flex-1 min-w-0">
               <DialogTitle className="text-lg font-semibold truncate">
-                {file.originalFileName}
+                {file.fileName}
               </DialogTitle>
               <div className="flex items-center gap-4 text-sm text-gray-500 mt-1">
                 <span>{formatFileSize(file.fileSize)}</span>
@@ -150,19 +149,6 @@ export const ResidentFileViewerModal: React.FC<ResidentFileViewerModalProps> = (
           <div className="mb-4 space-y-2">
             <div className="flex items-center gap-2">
               <FileCategoryBadge category={file.category} />
-              {file.tags && file.tags.length > 0 && (
-                <div className="flex flex-wrap gap-1">
-                  {file.tags.map((tag) => (
-                    <Badge
-                      key={tag}
-                      variant="outline"
-                      className="text-xs bg-blue-50 text-blue-700 border-blue-200"
-                    >
-                      {tag}
-                    </Badge>
-                  ))}
-                </div>
-              )}
             </div>
 
             {file.description && (
