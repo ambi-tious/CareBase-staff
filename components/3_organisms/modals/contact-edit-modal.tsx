@@ -38,6 +38,8 @@ export const ContactEditModal: React.FC<ContactEditModalProps> = ({
     address: contact.address,
     notes: contact.notes || '',
     type: contact.type,
+    hasAlert: contact.hasAlert || false,
+    alertReason: contact.alertReason || '',
   };
 
   return (

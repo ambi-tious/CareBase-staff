@@ -1,13 +1,29 @@
 'use client';
 
-import { FormField } from '@/components/1_atoms/forms/form-field';
-import { FormSelect } from '@/components/1_atoms/forms/form-select';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
-import { useMedicalHistoryForm } from '@/hooks/useResidentDataForm';
+import { DatePicker } from '@/components/ui/date-picker';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
+import { useMedicalHistoryForm } from '@/hooks/useMedicalHistoryForm';
 import type { MedicalHistoryFormData } from '@/validations/resident-data-validation';
 import { AlertCircle, RefreshCw } from 'lucide-react';
-import type React from 'react';
+import React from 'react';
 
 interface MedicalHistoryFormProps {
   onSubmit: (data: MedicalHistoryFormData) => Promise<boolean>;
@@ -29,128 +45,172 @@ export const MedicalHistoryForm: React.FC<MedicalHistoryFormProps> = ({
   initialData,
   className = '',
 }) => {
-  const { formData, updateField, isSubmitting, error, fieldErrors, handleSubmit } =
-    useMedicalHistoryForm({ onSubmit, initialData });
+  const form = useMedicalHistoryForm({ onSubmit, initialData });
+  const { isSubmitting, error, retry, control, handleSubmit } = form;
 
-  const onFormSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const success = await handleSubmit();
-    if (success) {
-      onCancel();
+  const onFormSubmit = handleSubmit(async (data: MedicalHistoryFormData) => {
+    try {
+      const success = await onSubmit(data);
+      if (success) {
+        onCancel();
+      }
+    } catch (error) {
+      console.error('Form submission error:', error);
     }
-  };
+  });
 
   const isNetworkError = error?.includes('ネットワークエラー');
 
   return (
-    <form onSubmit={onFormSubmit} className={`space-y-4 ${className}`}>
-      {error && (
-        <Alert className="border-red-200 bg-red-50">
-          <AlertCircle className="h-4 w-4 text-red-600" />
-          <AlertDescription className="text-red-700 flex items-center justify-between">
-            <span>{error}</span>
-            {isNetworkError && (
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={handleSubmit}
-                disabled={isSubmitting}
-                className="ml-2"
-              >
-                <RefreshCw className="h-3 w-3 mr-1" />
-                リトライ
-              </Button>
-            )}
-          </AlertDescription>
-        </Alert>
-      )}
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="space-y-4">
-          <h3 className="text-sm font-semibold text-gray-700 border-b pb-1">基本情報</h3>
-
-          <FormField
-            label="病名"
-            id="diseaseName"
-            value={formData.diseaseName}
-            onChange={(value) => updateField('diseaseName', value)}
-            placeholder="高血圧症"
-            required
-            error={fieldErrors.diseaseName}
-            disabled={isSubmitting}
-          />
-
-          <FormField
-            label="発症年月"
-            id="onsetDate"
-            type="month"
-            value={formData.onsetDate}
-            onChange={(value) => updateField('onsetDate', value)}
-            required
-            error={fieldErrors.onsetDate}
-            disabled={isSubmitting}
-          />
-
-          <FormSelect
-            label="治療状況"
-            id="treatmentStatus"
-            value={formData.treatmentStatus}
-            onChange={(value) => updateField('treatmentStatus', value)}
-            options={treatmentStatusOptions}
-            required
-            error={fieldErrors.treatmentStatus}
-            disabled={isSubmitting}
-          />
-        </div>
-
-        <div className="space-y-4">
-          <h3 className="text-sm font-semibold text-gray-700 border-b pb-1">治療情報</h3>
-
-          <FormField
-            label="治療機関名"
-            id="treatmentInstitution"
-            value={formData.treatmentInstitution || ''}
-            onChange={(value) => updateField('treatmentInstitution', value)}
-            placeholder="○○病院"
-            error={fieldErrors.treatmentInstitution}
-            disabled={isSubmitting}
-          />
-        </div>
-      </div>
-
-      <div className="space-y-2">
-        <label htmlFor="notes" className="text-sm font-medium text-gray-700">
-          備考
-        </label>
-        <textarea
-          id="notes"
-          value={formData.notes || ''}
-          onChange={(e) => updateField('notes', e.target.value)}
-          placeholder="症状の詳細や治療経過などがあれば記入してください"
-          disabled={isSubmitting}
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-carebase-blue focus:border-carebase-blue disabled:bg-gray-50 disabled:text-gray-500"
-          rows={3}
-        />
-        {fieldErrors.notes && (
-          <p className="text-sm text-red-600" role="alert">
-            {fieldErrors.notes}
-          </p>
+    <Form {...form}>
+      <form onSubmit={onFormSubmit} className={`space-y-4 ${className}`}>
+        {error && (
+          <Alert className="border-red-200 bg-red-50">
+            <AlertCircle className="h-4 w-4 text-red-600" />
+            <AlertDescription className="text-red-700 flex items-center justify-between">
+              <span>{error}</span>
+              {isNetworkError && (
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={retry}
+                  disabled={isSubmitting}
+                  className="ml-2"
+                >
+                  <RefreshCw className="h-3 w-3 mr-1" />
+                  リトライ
+                </Button>
+              )}
+            </AlertDescription>
+          </Alert>
         )}
-      </div>
 
-      <div className="flex justify-end gap-3 pt-4 border-t">
-        <Button type="button" variant="outline" onClick={onCancel} disabled={isSubmitting}>
-          キャンセル
-        </Button>
-        <Button
-          type="submit"
-          disabled={isSubmitting}
-          className="bg-carebase-blue hover:bg-carebase-blue-dark"
-        >
-          {isSubmitting ? '登録中...' : '登録'}
-        </Button>
-      </div>
-    </form>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="space-y-4">
+            <h3 className="text-sm font-semibold text-gray-700 border-b pb-1">基本情報</h3>
+
+            <FormField
+              control={control}
+              name="diseaseName"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>
+                    病名 <span className="text-red-500">*</span>
+                  </FormLabel>
+                  <FormControl>
+                    <Input {...field} placeholder="高血圧症" disabled={isSubmitting} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={control}
+              name="onsetDate"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>
+                    発症年月 <span className="text-red-500">*</span>
+                  </FormLabel>
+                  <FormControl>
+                    <DatePicker
+                      value={field.value}
+                      onChange={field.onChange}
+                      disabled={isSubmitting}
+                      mode="month"
+                      placeholder="発症年月を選択してください"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={control}
+              name="treatmentStatus"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>
+                    治療状況 <span className="text-red-500">*</span>
+                  </FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    value={field.value}
+                    disabled={isSubmitting}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="治療状況を選択" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {treatmentStatusOptions.map((option) => (
+                        <SelectItem key={option.value} value={option.value}>
+                          {option.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+
+          <div className="space-y-4">
+            <h3 className="text-sm font-semibold text-gray-700 border-b pb-1">治療情報</h3>
+
+            <FormField
+              control={control}
+              name="treatmentInstitution"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>治療機関名</FormLabel>
+                  <FormControl>
+                    <Input {...field} placeholder="○○病院" disabled={isSubmitting} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+        </div>
+
+        <FormField
+          control={control}
+          name="notes"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>備考</FormLabel>
+              <FormControl>
+                <Textarea
+                  {...field}
+                  placeholder="症状の詳細や治療経過などがあれば記入してください"
+                  disabled={isSubmitting}
+                  rows={3}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <div className="flex justify-end gap-3 pt-4 border-t">
+          <Button type="button" variant="outline" onClick={onCancel} disabled={isSubmitting}>
+            キャンセル
+          </Button>
+          <Button
+            type="submit"
+            disabled={isSubmitting}
+            className="bg-carebase-blue hover:bg-carebase-blue-dark"
+          >
+            {isSubmitting ? '登録中...' : '登録'}
+          </Button>
+        </div>
+      </form>
+    </Form>
   );
 };

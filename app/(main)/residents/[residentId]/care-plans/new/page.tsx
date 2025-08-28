@@ -11,6 +11,7 @@ import { ArrowLeft, CheckCircle, FileText } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { toast } from 'sonner';
 
 interface NewCarePlanPageProps {
   params: Promise<{ residentId: string }>;
@@ -48,9 +49,11 @@ export default function NewCarePlanPage({ params }: NewCarePlanPageProps) {
 
       if (isDraft) {
         setSuccessMessage('下書きを保存しました。');
+        toast.success('下書きを保存しました。');
         return true;
       } else {
         setSuccessMessage('ケアプランを作成しました。');
+        toast.success('ケアプランの作成が完了しました。');
         // Navigate to the new care plan detail page
         setTimeout(() => {
           router.push(`/residents/${residentId}/care-plans/${newCarePlan.id}`);

@@ -7,7 +7,7 @@
 
 // Base authentication credentials
 export interface LoginCredentials {
-  facilityId: string;
+  login_id: string;
   password: string;
 }
 
@@ -19,20 +19,28 @@ export interface LoginResult {
 
 // Authentication request/response types (RPC compatible)
 export interface AuthRequest {
-  facilityId: string;
+  login_id: string;
   password: string;
 }
 
 export interface AuthResponse {
   success: boolean;
   token?: string;
-  user?: AuthUser;
+  facility?: Facility;
+  message?: string;
   error?: string;
+}
+
+export interface Facility {
+  id: string;
+  name: string;
+  login_id: string;
 }
 
 export interface AuthUser {
   id: string;
   facilityId: string;
+  login_id?: string;
   role: 'staff' | 'admin';
   permissions: string[];
 }
@@ -62,21 +70,21 @@ export interface SelectedStaff {
 
 // Form state types
 export interface LoginFormState {
-  facilityId: string;
+  login_id: string;
   password: string;
   isLoading: boolean;
   error: string | null;
   success: boolean;
 }
 
-// Authentication state
+// Unified authentication state
 export interface AuthState {
   isAuthenticated: boolean;
-  token: string | null;
-  user: AuthUser | null;
-  selectedStaff: SelectedStaff | null;
   isLoading: boolean;
   error: string | null;
+  token: string | null;
+  facility: Facility | null;
+  selectedStaff: SelectedStaff | null;
 }
 
 // Error types
@@ -88,27 +96,19 @@ export interface AuthError {
 
 // API endpoints (matching CareBase-api structure)
 export const AUTH_ENDPOINTS = {
-  STAFF_LOGIN: '/api/v1/auth/staff/login',
-  STAFF_LOGOUT: '/api/v1/auth/staff/logout',
-  PASSWORD_REMINDER: '/api/v1/auth/staff/password-reminder',
-  PASSWORD_RESET: '/api/v1/auth/staff/password-reset',
+  FACILITY_LOGIN: '/v1/auth/facility/login',
+  STAFF_SELECTION: '/v1/auth/staff/select',
 } as const;
 
-// Authentication events
-export type AuthEvent =
-  | { type: 'LOGIN_START' }
-  | { type: 'LOGIN_SUCCESS'; payload: AuthResponse }
-  | { type: 'LOGIN_FAILURE'; payload: AuthError }
-  | { type: 'LOGOUT' }
-  | { type: 'STAFF_SELECT'; payload: SelectedStaff }
-  | { type: 'CLEAR_ERROR' };
+// Validation error type
+export interface ValidationError {
+  path: string[];
+  message: string;
+}
 
-// Error codes
-export const AUTH_ERROR_CODES = {
-  INVALID_CREDENTIALS: 'INVALID_CREDENTIALS',
-  NETWORK_ERROR: 'NETWORK_ERROR',
-  STAFF_NOT_FOUND: 'STAFF_NOT_FOUND',
-  TOKEN_EXPIRED: 'TOKEN_EXPIRED',
-  UNAUTHORIZED: 'UNAUTHORIZED',
-  SERVER_ERROR: 'SERVER_ERROR',
-} as const;
+export interface ValidationResult {
+  success: boolean;
+  error?: {
+    errors: ValidationError[];
+  };
+}

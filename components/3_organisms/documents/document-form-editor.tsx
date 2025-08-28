@@ -9,7 +9,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { useDocumentForm } from '@/hooks/useDocumentForm';
 import { getFolder } from '@/mocks/hierarchical-documents';
 import { getCategoryFromFolderId, getFolderIdFromSearchParams } from '@/utils/folder-utils';
 import type { DocumentFormData } from '@/validations/document-validation';
@@ -249,8 +248,7 @@ export const DocumentFormEditor: React.FC<DocumentFormEditorProps> = ({
 
   // 統合保存処理
   const handleSaveAll = async () => {
-    const success = await handleSubmit();
-    return success;
+    return hookFormHandleSubmit(handleFormSubmit)();
   };
 
   // 下書き保存処理（バリデーションスキップ）
@@ -299,11 +297,8 @@ export const DocumentFormEditor: React.FC<DocumentFormEditorProps> = ({
   };
 
   const pageTitle = isEditMode ? '書類編集' : '新規書類作成';
-  const pageDescription = isEditMode
-    ? '書類の情報と内容を編集してください。'
-    : `書類の基本情報を入力してください。必須項目（* ）は必ず入力してください。${isAutoCategory ? ` カテゴリは「${folderName}」フォルダに基づいて自動設定されます。` : ''}`;
 
-  const isProcessing = isSubmitting || isSaving;
+  const isProcessing = hookFormIsSubmitting || isSaving;
 
   const formatFileSize = (bytes: number) => {
     if (bytes === 0) return '0 Bytes';
@@ -340,7 +335,24 @@ export const DocumentFormEditor: React.FC<DocumentFormEditorProps> = ({
               <h1 className="text-2xl font-bold text-carebase-text-primary">{pageTitle}</h1>
             </div>
           </div>
-          <p className="text-gray-600">{pageDescription}</p>
+          <p className="text-gray-600">
+            {isEditMode ? (
+              <>
+                書類の情報と内容を編集してください。必須項目（
+                <span className="text-red-500">*</span>
+                ）は必ず入力してください。
+              </>
+            ) : (
+              <>
+                書類の基本情報を入力してください。必須項目（
+                <span className="text-red-500">*</span>
+                ）は必ず入力してください。
+                {isAutoCategory && (
+                  <> カテゴリは「{folderName}」フォルダに基づいて自動設定されます。</>
+                )}
+              </>
+            )}
+          </p>
         </div>
 
         {/* アラート表示 */}
@@ -371,12 +383,13 @@ export const DocumentFormEditor: React.FC<DocumentFormEditorProps> = ({
               </CardHeader>
               <CardContent>
                 <DocumentFormFields
-                  formData={formData}
-                  updateField={updateField}
-                  isSubmitting={isProcessing}
-                  error={error}
-                  fieldErrors={fieldErrors}
-                  onSubmit={handleSubmit}
+                  control={control}
+                  isSubmitting={isSaving}
+                  error={saveError}
+                  onSubmit={async () => {
+                    await hookFormHandleSubmit(handleFormSubmit)();
+                    return true;
+                  }}
                   onCancel={handleCancel}
                   folderName={folderName}
                 />

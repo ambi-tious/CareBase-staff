@@ -9,6 +9,7 @@ import type React from 'react';
 interface GroupSelectorProps {
   groups: Group[];
   selectedGroupId?: string;
+  currentGroupId?: string; // 現在所属しているグループID
   onGroupSelect: (groupId: string) => void;
   disabled?: boolean;
   className?: string;
@@ -17,6 +18,7 @@ interface GroupSelectorProps {
 export const GroupSelector: React.FC<GroupSelectorProps> = ({
   groups,
   selectedGroupId,
+  currentGroupId,
   onGroupSelect,
   disabled = false,
   className = '',
@@ -36,6 +38,7 @@ export const GroupSelector: React.FC<GroupSelectorProps> = ({
         {groups.map((group) => {
           const Icon = getLucideIcon(group.icon);
           const isSelected = selectedGroupId === group.id;
+          const isCurrent = currentGroupId === group.id;
           return (
             <Card
               key={group.id}
@@ -82,6 +85,13 @@ export const GroupSelector: React.FC<GroupSelectorProps> = ({
                     >
                       {group.teams.length} チーム
                     </p>
+                    {isCurrent && (
+                      <div className="mt-2">
+                        <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full border border-green-300">
+                          選択中
+                        </span>
+                      </div>
+                    )}
                   </div>
                 </div>
               </CardContent>

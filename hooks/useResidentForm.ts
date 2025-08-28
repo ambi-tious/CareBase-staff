@@ -17,12 +17,13 @@ const initialFormData: ResidentBasicInfo = {
   floorGroup: '',
   unitTeam: '',
   roomInfo: '',
-  address: '',
   admissionDate: '',
+  dischargeDate: '',
   profileImage: '',
   certificationDate: '',
   certificationStartDate: '',
   certificationEndDate: '',
+  notes: '', // 備考フィールドの初期値を追加
 };
 
 export const useResidentForm = ({ initialData, onSubmit }: UseResidentFormOptions) => {

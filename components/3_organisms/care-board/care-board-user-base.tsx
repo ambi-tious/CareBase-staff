@@ -1,13 +1,14 @@
 import { getLucideIcon } from '@/lib/lucide-icon-registry';
 import {
-  careBoardData,
   CareCategoryGroupKey,
   careCategoryGroups,
   CareCategoryKey,
   CareEvent,
   getCategoriesByGroup,
+  type Resident,
 } from '@/mocks/care-board-data';
 import React, { useCallback, useEffect, useState } from 'react';
+import { CareBoardEmptyState } from './care-board-empty-state';
 import {
   CareEventStatusComponent as CareEventStatus,
   CareRecordModal,
@@ -17,8 +18,7 @@ import {
   type CareEventStatus as CareEventStatusType,
 } from './care-board-utils';
 
-export function UserBaseView() {
-  const [isClient, setIsClient] = useState(false);
+export function UserBaseView({ residents }: { residents: Resident[] }) {
   const [selectedEvent, setSelectedEvent] = useState<{
     event: CareEvent;
     residentId: number;
@@ -30,15 +30,13 @@ export function UserBaseView() {
 
   // Set client-side flag to avoid hydration mismatch
   useEffect(() => {
-    setIsClient(true);
-
-    // Initialize care events from careBoardData
+    // Initialize care events from residents data
     const initialEvents: Record<number, CareEvent[]> = {};
-    careBoardData.forEach((resident) => {
+    residents.forEach((resident) => {
       initialEvents[resident.id] = [...resident.events];
     });
     setCareEvents(initialEvents);
-  }, []);
+  }, [residents]);
 
   const handleEventClick = useCallback(
     (event: CareEvent, residentId: number, residentName: string) => {
@@ -121,6 +119,13 @@ export function UserBaseView() {
     );
   };
 
+  // 利用者がいない場合の表示
+  if (residents.length === 0) {
+    return (
+      <CareBoardEmptyState description="利用者の登録が完了すると、ここにケアカテゴリ別のスケジュールが表示されます。" />
+    );
+  }
+
   return (
     <>
       <div className="overflow-x-auto bg-white rounded-lg shadow-md max-h-[calc(100vh-180px)]">
@@ -150,7 +155,7 @@ export function UserBaseView() {
           ))}
 
           {/* 利用者行 */}
-          {careBoardData.map((resident) => (
+          {residents.map((resident) => (
             <div key={resident.id} className="contents">
               <div className="flex items-center gap-3 p-3 border-b border-r border-gray-200 bg-gray-50 sticky left-0 z-[5] hover:bg-gray-100 transition-colors">
                 <ResidentInfoCell resident={resident} />
