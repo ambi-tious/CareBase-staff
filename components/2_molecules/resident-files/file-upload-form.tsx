@@ -9,7 +9,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { useResidentFileForm } from '@/hooks/useResidentFileForm';
 import { fileCategoryOptions } from '@/types/resident-file';
 import type { ResidentFileFormData } from '@/validations/resident-file-validation';
-import { AlertCircle, FileText, Image as ImageIcon, Upload, X } from 'lucide-react';
+import { AlertCircle, FileText, Upload, X } from 'lucide-react';
 import Image from 'next/image';
 import type React from 'react';
 import { useRef, useState } from 'react';
@@ -208,6 +208,26 @@ export const FileUploadForm: React.FC<FileUploadFormProps> = ({
         />
 
         <div className="space-y-2">
+          <label htmlFor="fileName" className="text-sm font-medium text-gray-700">
+            ファイル名 <span className="text-red-500 ml-1">*</span>
+          </label>
+          <input
+            id="fileName"
+            type="text"
+            value={formData.fileName}
+            onChange={(e) => updateField('fileName', e.target.value)}
+            placeholder="ファイル名を入力してください"
+            disabled={isSubmitting}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-carebase-blue focus:border-carebase-blue"
+          />
+          {fieldErrors.fileName && (
+            <p className="text-sm text-red-600" role="alert">
+              {fieldErrors.fileName}
+            </p>
+          )}
+        </div>
+
+        <div className="space-y-2">
           <Label htmlFor="description" className="text-sm font-medium text-gray-700">
             説明
           </Label>
@@ -222,24 +242,6 @@ export const FileUploadForm: React.FC<FileUploadFormProps> = ({
           {fieldErrors.description && (
             <p className="text-sm text-red-600" role="alert">
               {fieldErrors.description}
-            </p>
-          )}
-        </div>
-
-        <div className="space-y-2">
-          <Label htmlFor="tags" className="text-sm font-medium text-gray-700">
-            タグ
-          </Label>
-          <Input
-            id="tags"
-            value={formData.tags || ''}
-            onChange={(e) => updateField('tags', e.target.value)}
-            placeholder="カンマ区切りでタグを入力（例: 医療記録,2019年度,重要）"
-            disabled={isSubmitting}
-          />
-          {fieldErrors.tags && (
-            <p className="text-sm text-red-600" role="alert">
-              {fieldErrors.tags}
             </p>
           )}
         </div>

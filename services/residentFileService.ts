@@ -51,8 +51,8 @@ class ResidentFileService {
       const formData = new FormData();
       formData.append('file', file);
       formData.append('category', data.category);
+      if (data.fileName) formData.append('fileName', data.fileName);
       if (data.description) formData.append('description', data.description);
-      if (data.tags) formData.append('tags', data.tags);
 
       const response = await fetch(`${this.baseUrl}/residents/${residentId}/files`, {
         method: 'POST',
@@ -174,14 +174,13 @@ class ResidentFileService {
     const newFile: ResidentFile = {
       id: `file-${Date.now()}`,
       residentId,
-      fileName: `${Date.now()}_${file.name}`,
-      originalFileName: file.name,
+      fileName: data.fileName || file.name,
+      originalFileName: data.fileName || file.name,
       fileType: file.type,
       fileSize: file.size,
       category: data.category,
       status: 'active',
       description: data.description || '',
-      tags: data.tags ? data.tags.split(',').map((tag) => tag.trim()).filter(Boolean) : [],
       uploadedAt: new Date().toISOString(),
       uploadedBy: staffId,
       uploadedByName: staffName,
@@ -219,8 +218,9 @@ class ResidentFileService {
     const updatedFile: ResidentFile = {
       ...existingFile,
       category: data.category,
+      fileName: data.fileName || existingFile.fileName,
+      originalFileName: data.fileName || existingFile.originalFileName,
       description: data.description || '',
-      tags: data.tags ? data.tags.split(',').map((tag) => tag.trim()).filter(Boolean) : [],
     };
 
     return updatedFile;

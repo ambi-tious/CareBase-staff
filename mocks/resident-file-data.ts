@@ -11,7 +11,6 @@ export const residentFileData: ResidentFile[] = [
     category: 'care_plan',
     status: 'active',
     description: '個別機能訓練計画書（2019年7月作成）',
-    tags: ['機能訓練', 'リハビリ', '2019年度'],
     uploadedAt: '2019-07-01T10:00:00.000Z',
     uploadedBy: 'staff-001',
     uploadedByName: '田中 花子',
@@ -30,7 +29,6 @@ export const residentFileData: ResidentFile[] = [
     category: 'care_plan',
     status: 'active',
     description: '居宅サービス計画書',
-    tags: ['ケアプラン', '居宅サービス'],
     uploadedAt: '2019-07-10T14:30:00.000Z',
     uploadedBy: 'staff-002',
     uploadedByName: '佐藤 太郎',
@@ -49,7 +47,6 @@ export const residentFileData: ResidentFile[] = [
     category: 'medical_record',
     status: 'active',
     description: '気管支炎診療記録（山田クリニック）',
-    tags: ['医療記録', '気管支炎', '山田クリニック'],
     uploadedAt: '2019-05-18T16:45:00.000Z',
     uploadedBy: 'staff-005',
     uploadedByName: '高橋 恵子',
@@ -68,7 +65,6 @@ export const residentFileData: ResidentFile[] = [
     category: 'assessment',
     status: 'active',
     description: '居宅訪問時のチェックシート',
-    tags: ['アセスメント', '居宅訪問'],
     uploadedAt: '2019-07-01T09:15:00.000Z',
     uploadedBy: 'staff-003',
     uploadedByName: '山田 美咲',
@@ -87,7 +83,6 @@ export const residentFileData: ResidentFile[] = [
     category: 'photo',
     status: 'active',
     description: '居宅環境写真（マンション4階、エレベーター）',
-    tags: ['居宅環境', 'バリアフリー', 'エレベーター'],
     uploadedAt: '2019-07-01T11:20:00.000Z',
     uploadedBy: 'staff-003',
     uploadedByName: '山田 美咲',
@@ -106,7 +101,6 @@ export const residentFileData: ResidentFile[] = [
     category: 'assessment',
     status: 'active',
     description: 'フェイスシート（基本情報）',
-    tags: ['フェイスシート', '基本情報'],
     uploadedAt: '2019-07-01T08:00:00.000Z',
     uploadedBy: 'staff-001',
     uploadedByName: '田中 花子',
@@ -125,7 +119,6 @@ export const residentFileData: ResidentFile[] = [
     category: 'photo',
     status: 'active',
     description: '居宅環境写真（玄関スロープ、手すりなし）',
-    tags: ['居宅環境', 'スロープ', '手すり'],
     uploadedAt: '2019-07-01T11:25:00.000Z',
     uploadedBy: 'staff-003',
     uploadedByName: '山田 美咲',
@@ -144,7 +137,6 @@ export const residentFileData: ResidentFile[] = [
     category: 'care_plan',
     status: 'active',
     description: 'サービス担当者会議結論',
-    tags: ['サービス担当者会議', '結論'],
     uploadedAt: '2019-07-09T15:30:00.000Z',
     uploadedBy: 'staff-004',
     uploadedByName: '鈴木 一郎',
@@ -177,7 +169,6 @@ export const searchResidentFiles = (residentId: string, query: string): Resident
       file.residentId === residentId &&
       file.status === 'active' &&
       (file.originalFileName.toLowerCase().includes(lowercaseQuery) ||
-        file.description?.toLowerCase().includes(lowercaseQuery) ||
-        file.tags?.some((tag) => tag.toLowerCase().includes(lowercaseQuery)))
+        file.description?.toLowerCase().includes(lowercaseQuery))
   );
 };

@@ -15,8 +15,8 @@ interface UseResidentFileFormOptions {
 
 const initialFormData: ResidentFileFormData = {
   category: 'other',
+  fileName: '',
   description: '',
-  tags: '',
 };
 
 export const useResidentFileForm = ({ onSubmit, initialData = {} }: UseResidentFileFormOptions) => {

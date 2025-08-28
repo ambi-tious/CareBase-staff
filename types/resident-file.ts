@@ -28,7 +28,6 @@ export interface ResidentFile {
   category: ResidentFileCategory;
   status: ResidentFileStatus;
   description?: string;
-  tags?: string[];
   uploadedAt: string;
   uploadedBy: string;
   uploadedByName: string;

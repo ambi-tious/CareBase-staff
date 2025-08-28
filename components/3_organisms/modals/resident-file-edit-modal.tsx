@@ -39,8 +39,8 @@ export const ResidentFileEditModal: React.FC<ResidentFileEditModalProps> = ({
 
   const initialData: Partial<ResidentFileFormData> = {
     category: file.category,
+    fileName: file.fileName,
     description: file.description || '',
-    tags: file.tags?.join(', ') || '',
   };
 
   const { formData, updateField, isSubmitting, error, fieldErrors, handleSubmit } =
@@ -106,6 +106,24 @@ export const ResidentFileEditModal: React.FC<ResidentFileEditModalProps> = ({
           />
 
           <div className="space-y-2">
+            <Label htmlFor="fileName" className="text-sm font-medium text-gray-700">
+              ファイル名 <span className="text-red-500 ml-1">*</span>
+            </Label>
+            <Input
+              id="fileName"
+              value={formData.fileName}
+              onChange={(e) => updateField('fileName', e.target.value)}
+              placeholder="ファイル名を入力してください"
+              disabled={isSubmitting}
+            />
+            {fieldErrors.fileName && (
+              <p className="text-sm text-red-600" role="alert">
+                {fieldErrors.fileName}
+              </p>
+            )}
+          </div>
+
+          <div className="space-y-2">
             <Label htmlFor="description" className="text-sm font-medium text-gray-700">
               説明
             </Label>
@@ -120,24 +138,6 @@ export const ResidentFileEditModal: React.FC<ResidentFileEditModalProps> = ({
             {fieldErrors.description && (
               <p className="text-sm text-red-600" role="alert">
                 {fieldErrors.description}
-              </p>
-            )}
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="tags" className="text-sm font-medium text-gray-700">
-              タグ
-            </Label>
-            <Input
-              id="tags"
-              value={formData.tags || ''}
-              onChange={(e) => updateField('tags', e.target.value)}
-              placeholder="カンマ区切りでタグを入力（例: 医療記録,2019年度,重要）"
-              disabled={isSubmitting}
-            />
-            {fieldErrors.tags && (
-              <p className="text-sm text-red-600" role="alert">
-                {fieldErrors.tags}
               </p>
             )}
           </div>

@@ -6,27 +6,25 @@ import type React from 'react';
 
 interface FileThumbnailProps {
   file: ResidentFile;
-  onView?: () => void;
-  onDownload?: () => void;
+  onClick?: () => void;
   className?: string;
   size?: 'sm' | 'md' | 'lg';
 }
 
 export const FileThumbnail: React.FC<FileThumbnailProps> = ({
   file,
-  onView,
-  onDownload,
+  onClick,
   className = '',
   size = 'md',
 }) => {
   const getSizeClasses = () => {
     switch (size) {
       case 'sm':
-        return 'w-16 h-16';
-      case 'lg':
-        return 'w-32 h-32';
-      default:
         return 'w-24 h-24';
+      case 'lg':
+        return 'w-40 h-40';
+      default:
+        return 'w-32 h-32';
     }
   };
 
@@ -39,7 +37,7 @@ export const FileThumbnail: React.FC<FileThumbnailProps> = ({
   };
 
   return (
-    <div className={`relative group ${className}`}>
+    <div className={`relative group cursor-pointer ${className}`} onClick={onClick}>
       <div
         className={`${getSizeClasses()} rounded-lg border border-gray-200 overflow-hidden bg-gray-50 flex items-center justify-center`}
       >
@@ -47,37 +45,11 @@ export const FileThumbnail: React.FC<FileThumbnailProps> = ({
           <Image
             src={file.thumbnailUrl}
             alt={file.originalFileName}
-            fill
+            width={128} height={128}
             className="object-cover rounded-lg"
           />
         ) : (
           <FileText className="h-8 w-8 text-gray-400" />
-        )}
-      </div>
-
-      {/* Hover overlay with actions */}
-      <div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg flex items-center justify-center gap-1">
-        {onView && (
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={onView}
-            className="h-8 w-8 p-0 text-white hover:bg-white hover:bg-opacity-20"
-            aria-label="プレビュー"
-          >
-            <Eye className="h-4 w-4" />
-          </Button>
-        )}
-        {onDownload && (
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={onDownload}
-            className="h-8 w-8 p-0 text-white hover:bg-white hover:bg-opacity-20"
-            aria-label="ダウンロード"
-          >
-            <Download className="h-4 w-4" />
-          </Button>
         )}
       </div>
 
@@ -90,4 +62,3 @@ export const FileThumbnail: React.FC<FileThumbnailProps> = ({
       </div>
     </div>
   );
-};
