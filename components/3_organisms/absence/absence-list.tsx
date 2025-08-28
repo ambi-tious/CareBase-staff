@@ -1,8 +1,9 @@
 'use client';
 
-import { AbsenceCard } from '@/components/2_molecules/absence/absence-card';
 import { AbsenceFilters } from '@/components/2_molecules/absence/absence-filters';
+import { AbsenceTimelineTable } from '@/components/2_molecules/absence/absence-timeline-table';
 import { AbsenceModal } from '@/components/3_organisms/modals/absence-modal';
+import { GenericDeleteModal } from '@/components/3_organisms/modals/generic-delete-modal';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { absenceService } from '@/services/absenceService';
@@ -38,6 +39,10 @@ export const AbsenceList: React.FC<AbsenceListProps> = ({
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [editingAbsence, setEditingAbsence] = useState<Absence | null>(null);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [deletingAbsence, setDeletingAbsence] = useState<Absence | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
 
   // Filter and search absences
   const filteredAbsences = useMemo(() => {
@@ -74,6 +79,35 @@ export const AbsenceList: React.FC<AbsenceListProps> = ({
     setIsEditModalOpen(true);
   };
 
+  const handleDeleteAbsence = (absenceId: string) => {
+    const absence = absences.find(a => a.id === absenceId);
+    if (absence) {
+      setDeletingAbsence(absence);
+      setDeleteError(null);
+      setIsDeleteModalOpen(true);
+    }
+  };
+
+  const handleDeleteConfirm = async (): Promise<boolean> => {
+    if (!deletingAbsence) return false;
+
+    setIsDeleting(true);
+    setDeleteError(null);
+
+    try {
+      await absenceService.deleteAbsence(residentId, deletingAbsence.id);
+      onAbsenceDelete?.(deletingAbsence.id);
+      
+      toast.success('不在記録の削除が完了しました。');
+      return true;
+    } catch (error) {
+      console.error('Failed to delete absence:', error);
+      setDeleteError(error instanceof Error ? error.message : '削除に失敗しました。');
+      return false;
+    } finally {
+      setIsDeleting(false);
+    }
+  };
   const handleCreateSubmit = async (data: AbsenceFormData): Promise<boolean> => {
     try {
       const newAbsence = await absenceService.createAbsence(residentId, data);
@@ -116,7 +150,10 @@ export const AbsenceList: React.FC<AbsenceListProps> = ({
   const handleCloseModals = () => {
     setIsCreateModalOpen(false);
     setIsEditModalOpen(false);
+    setIsDeleteModalOpen(false);
     setEditingAbsence(null);
+    setDeletingAbsence(null);
+    setDeleteError(null);
   };
 
   // Statistics
@@ -192,19 +229,14 @@ export const AbsenceList: React.FC<AbsenceListProps> = ({
           </CardContent>
         </Card>
       ) : (
-        <div className="space-y-4">
-          {filteredAbsences.map((absence) => (
-            <AbsenceCard
-              key={absence.id}
-              absence={absence}
-              residentId={residentId}
-              residentName={residentName}
-              onAbsenceUpdate={onAbsenceUpdate}
-              onAbsenceDelete={onAbsenceDelete}
-              onEdit={handleEditAbsence}
-            />
-          ))}
-        </div>
+        <AbsenceTimelineTable
+          absences={filteredAbsences}
+          residentId={residentId}
+          residentName={residentName}
+          onAbsenceUpdate={onAbsenceUpdate}
+          onAbsenceDelete={handleDeleteAbsence}
+          onEdit={handleEditAbsence}
+        />
       )}
 
       {/* Modals */}
@@ -223,6 +255,16 @@ export const AbsenceList: React.FC<AbsenceListProps> = ({
         absence={editingAbsence || undefined}
         residentName={residentName}
         mode="edit"
+      />
+
+      <GenericDeleteModal
+        isOpen={isDeleteModalOpen}
+        onClose={handleCloseModals}
+        onConfirm={handleDeleteConfirm}
+        itemName={deletingAbsence ? `${format(new Date(deletingAbsence.startDateTime), 'MM/dd HH:mm', { locale: ja })}の不在記録` : ''}
+        itemType="不在情報"
+        isDeleting={isDeleting}
+        error={deleteError}
       />
     </div>
   );
