@@ -210,10 +210,6 @@ class IndividualPointService {
   ): Promise<IndividualPoint> {
     await new Promise((resolve) => setTimeout(resolve, 1000));
 
-    if (Math.random() < 0.1) {
-      throw new Error('ネットワークエラーが発生しました。');
-    }
-
     // Get current staff info
     let staffName = '田中 花子';
     let staffId = 'staff-001';
@@ -275,10 +271,6 @@ class IndividualPointService {
   ): Promise<IndividualPoint> {
     await new Promise((resolve) => setTimeout(resolve, 1000));
 
-    if (Math.random() < 0.05) {
-      throw new Error('ネットワークエラーが発生しました。');
-    }
-
     // Get current staff info
     let staffName = '田中 花子';
     let staffId = 'staff-001';
@@ -335,10 +327,6 @@ class IndividualPointService {
   private async mockDeleteIndividualPoint(residentId: string, pointId: string): Promise<void> {
     await new Promise((resolve) => setTimeout(resolve, 800));
 
-    if (Math.random() < 0.05) {
-      throw new Error('ネットワークエラーが発生しました。');
-    }
-
     // console.log('Mock deleted individual point:', { residentId, pointId });
   }
 
@@ -351,10 +339,6 @@ class IndividualPointService {
 
   private async mockCreatePointCategory(data: CategoryFormData): Promise<PointCategory> {
     await new Promise((resolve) => setTimeout(resolve, 1000));
-
-    if (Math.random() < 0.1) {
-      throw new Error('ネットワークエラーが発生しました。');
-    }
 
     const newCategory: PointCategory = {
       id: `cat-${Date.now()}`,

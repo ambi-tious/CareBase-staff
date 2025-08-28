@@ -116,11 +116,6 @@ class MedicationService {
     // Simulate network delay
     await new Promise((resolve) => setTimeout(resolve, 1000));
 
-    // Simulate occasional network errors for testing
-    if (Math.random() < 0.1) {
-      throw new Error('ネットワークエラーが発生しました。');
-    }
-
     // Generate new medication
     const newMedication: Medication = {
       id: `medication-${Date.now()}`,
@@ -149,11 +144,6 @@ class MedicationService {
     // Simulate network delay
     await new Promise((resolve) => setTimeout(resolve, 1000));
 
-    // Simulate occasional network errors for testing
-    if (Math.random() < 0.05) {
-      throw new Error('ネットワークエラーが発生しました。');
-    }
-
     // Update medication
     const updatedMedication: Medication = {
       id: medicationId,
@@ -177,11 +167,6 @@ class MedicationService {
   private async mockDeleteMedication(residentId: number, medicationId: string): Promise<void> {
     // Simulate network delay
     await new Promise((resolve) => setTimeout(resolve, 800));
-
-    // Simulate occasional network errors for testing
-    if (Math.random() < 0.05) {
-      throw new Error('ネットワークエラーが発生しました。');
-    }
 
     // console.log('Mock deleted medication:', { residentId, medicationId });
   }

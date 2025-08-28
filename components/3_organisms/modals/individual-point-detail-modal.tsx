@@ -16,7 +16,7 @@ import {
 import type { IndividualPoint } from '@/types/individual-point';
 import { format } from 'date-fns';
 import { ja } from 'date-fns/locale';
-import { Calendar, Edit3, Paperclip, Trash2, User, X } from 'lucide-react';
+import { Calendar, Edit3, Paperclip, Trash2, User } from 'lucide-react';
 import type React from 'react';
 
 interface IndividualPointDetailModalProps {
@@ -69,14 +69,6 @@ export const IndividualPointDetailModal: React.FC<IndividualPointDetailModalProp
                 {residentName && `${residentName}様の`}個別ポイントの詳細情報です。
               </DialogDescription>
             </div>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={onClose}
-              className="h-8 w-8 p-0 tablet:h-10 tablet:w-10"
-            >
-              <X className="h-4 w-4 tablet:h-5 tablet:w-5" />
-            </Button>
           </div>
         </DialogHeader>
 
