@@ -7,31 +7,31 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import type { HomeCareOffice } from '@/mocks/care-board-data';
 import { residentDataService } from '@/services/residentDataService';
 import type { HomeCareOfficeFormData } from '@/validations/resident-data-validation';
-import { Building2, Check, Edit3, Plus, Search, Trash2 } from 'lucide-react';
+import {
+  Building2,
+  Edit3,
+  FileText,
+  MapPin,
+  Phone,
+  Plus,
+  Printer,
+  Search,
+  Trash2,
+} from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { GenericDeleteModal } from './generic-delete-modal';
-import { HomeCareOfficeModal } from './home-care-office-modal';
+import { HomeCareOfficeMasterFormModal } from './home-care-office-master-form-modal';
 
 interface HomeCareOfficeMasterModalProps {
   isOpen: boolean;
   onClose: () => void;
   onRefresh: () => void;
-  onSelect?: (office: HomeCareOffice) => void; // 選択機能を追加
-  isSelectionMode?: boolean; // 選択モードかどうか
-  residentName?: string; // 利用者名（選択モード時）
-  onCreateNew?: () => void; // 新規作成ハンドラー
-  selectedOfficeIds?: string[]; // 選択済みの事業所IDリスト
 }
 
 export const HomeCareOfficeMasterModal: React.FC<HomeCareOfficeMasterModalProps> = ({
   isOpen,
   onClose,
   onRefresh,
-  onSelect,
-  isSelectionMode = false,
-  residentName,
-  onCreateNew,
-  selectedOfficeIds = [],
 }) => {
   const [offices, setOffices] = useState<HomeCareOffice[]>([]);
   const [filteredOffices, setFilteredOffices] = useState<HomeCareOffice[]>([]);
@@ -75,8 +75,10 @@ export const HomeCareOfficeMasterModal: React.FC<HomeCareOfficeMasterModalProps>
       const filtered = offices.filter(
         (office) =>
           office.businessName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          office.address.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          office.careManager.toLowerCase().includes(searchTerm.toLowerCase())
+          (office.address && office.address.toLowerCase().includes(searchTerm.toLowerCase())) ||
+          (office.phone && office.phone.toLowerCase().includes(searchTerm.toLowerCase())) ||
+          (office.careManager &&
+            office.careManager.toLowerCase().includes(searchTerm.toLowerCase()))
       );
       setFilteredOffices(filtered);
     }
@@ -113,13 +115,6 @@ export const HomeCareOfficeMasterModal: React.FC<HomeCareOfficeMasterModalProps>
     }
   };
 
-  const handleSelect = (office: HomeCareOffice) => {
-    if (onSelect) {
-      onSelect(office);
-      onClose();
-    }
-  };
-
   const handleEditSubmit = async (data: HomeCareOfficeFormData): Promise<boolean> => {
     if (!editingOffice) return false;
 
@@ -148,11 +143,8 @@ export const HomeCareOfficeMasterModal: React.FC<HomeCareOfficeMasterModalProps>
       setIsCreateModalOpen(false);
       onRefresh();
 
-      // 選択モードの場合は、新規作成した事業所を自動選択
-      if (isSelectionMode && onSelect) {
-        onSelect(newOffice);
-        onClose();
-      }
+      // 登録時はマスタのみ保存し、このモーダル（フォームモーダル）だけを閉じる
+      // 親モーダル（マスタ一覧モーダル）は開いたまま保持
       return true;
     } catch (error) {
       console.error('Failed to create home care office:', error);
@@ -166,9 +158,7 @@ export const HomeCareOfficeMasterModal: React.FC<HomeCareOfficeMasterModalProps>
         <DialogContent className="max-w-4xl max-h-[90vh]">
           <DialogHeader>
             <DialogTitle className="text-lg font-semibold py-3">
-              {isSelectionMode
-                ? `${residentName}さんの居宅介護支援事業所を選択`
-                : '居宅介護支援事業所マスタ管理'}
+              居宅介護支援事業所マスタ管理
             </DialogTitle>
           </DialogHeader>
 
@@ -178,7 +168,7 @@ export const HomeCareOfficeMasterModal: React.FC<HomeCareOfficeMasterModalProps>
               <div className="relative flex-1">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
                 <Input
-                  placeholder="事業所名、住所、担当者名で検索..."
+                  placeholder="事業所名、住所、電話番号で検索..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="pl-10"
@@ -186,11 +176,7 @@ export const HomeCareOfficeMasterModal: React.FC<HomeCareOfficeMasterModalProps>
               </div>
               <Button
                 onClick={() => {
-                  if (onCreateNew) {
-                    onCreateNew();
-                  } else {
-                    setIsCreateModalOpen(true);
-                  }
+                  setIsCreateModalOpen(true);
                 }}
                 className="bg-carebase-blue hover:bg-carebase-blue-dark"
               >
@@ -223,48 +209,49 @@ export const HomeCareOfficeMasterModal: React.FC<HomeCareOfficeMasterModalProps>
                             <Building2 className="h-5 w-5 text-carebase-blue mt-0.5 flex-shrink-0" />
                             <div className="flex-1 min-w-0">
                               <div className="font-medium text-gray-900">{office.businessName}</div>
-                              <div className="text-sm text-gray-600 mt-1">
-                                <div>住所: {office.address}</div>
-                                <div>電話: {office.phone}</div>
-                                <div>担当者: {office.careManager}</div>
-                                {office.notes && <div>備考: {office.notes}</div>}
+                              <div className="text-sm text-gray-600 mt-1 grid grid-cols-2 gap-2">
+                                {office.address && (
+                                  <div className="flex items-center gap-1">
+                                    <MapPin className="h-4 w-4 text-gray-400" />
+                                    <span className="truncate">{office.address}</span>
+                                  </div>
+                                )}
+                                {office.phone && (
+                                  <div className="flex items-center gap-1">
+                                    <Phone className="h-4 w-4 text-gray-400" />
+                                    <span>{office.phone}</span>
+                                  </div>
+                                )}
+                                {office.fax && (
+                                  <div className="flex items-center gap-1">
+                                    <Printer className="h-4 w-4 text-gray-400" />
+                                    <span>{office.fax}</span>
+                                  </div>
+                                )}
+                                {office.notes && (
+                                  <div className="flex items-center gap-1">
+                                    <FileText className="h-4 w-4 text-gray-400" />
+                                    <span className="truncate">{office.notes}</span>
+                                  </div>
+                                )}
                               </div>
                             </div>
                           </div>
-                          <div className="flex flex-col items-center gap-2 ml-4">
-                            <Button
-                              onClick={() => handleSelect(office)}
-                              className={`w-full ${
-                                selectedOfficeIds.includes(office.id)
-                                  ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                                  : 'bg-carebase-blue hover:bg-carebase-blue-dark'
-                              }`}
-                              size="sm"
-                              disabled={selectedOfficeIds.includes(office.id)}
-                            >
-                              <Check className="h-3 w-3 mr-1" />
-                              {selectedOfficeIds.includes(office.id) ? '選択済み' : '選択'}
+                          <div className="flex flex-col items-center gap-1 ml-4">
+                            <Button variant="outline" size="sm" onClick={() => handleEdit(office)}>
+                              <Edit3 className="h-3 w-3 mr-1" />
+                              編集
                             </Button>
-                            <div className="flex items-center gap-2">
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={() => handleEdit(office)}
-                              >
-                                <Edit3 className="h-3 w-3 mr-1" />
-                                編集
-                              </Button>
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={() => handleDelete(office)}
-                                disabled={isDeleting}
-                                className="border-red-300 text-red-600 hover:bg-red-50 hover:border-red-400"
-                              >
-                                <Trash2 className="h-3 w-3 mr-1" />
-                                削除
-                              </Button>
-                            </div>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => handleDelete(office)}
+                              disabled={isDeleting}
+                              className="border-red-300 text-red-600 hover:bg-red-50 hover:border-red-400"
+                            >
+                              <Trash2 className="h-3 w-3 mr-1" />
+                              削除
+                            </Button>
                           </div>
                         </div>
                       </div>
@@ -283,7 +270,7 @@ export const HomeCareOfficeMasterModal: React.FC<HomeCareOfficeMasterModalProps>
 
       {/* 編集モーダル */}
       {editingOffice && (
-        <HomeCareOfficeModal
+        <HomeCareOfficeMasterFormModal
           isOpen={isEditModalOpen}
           onClose={() => {
             setIsEditModalOpen(false);
@@ -296,7 +283,7 @@ export const HomeCareOfficeMasterModal: React.FC<HomeCareOfficeMasterModalProps>
       )}
 
       {/* 新規作成モーダル */}
-      <HomeCareOfficeModal
+      <HomeCareOfficeMasterFormModal
         isOpen={isCreateModalOpen}
         onClose={() => setIsCreateModalOpen(false)}
         onSubmit={handleCreateSubmit}

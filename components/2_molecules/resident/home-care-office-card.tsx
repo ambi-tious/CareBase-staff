@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import type { HomeCareOffice } from '@/mocks/care-board-data';
 import { residentDataService } from '@/services/residentDataService';
 import type { HomeCareOfficeFormData } from '@/validations/resident-data-validation';
-import { Edit3, MapPin, Phone, Printer, Unlink, User } from 'lucide-react';
+import { Edit3, MapPin, Phone, Printer, Unlink } from 'lucide-react';
 import type React from 'react';
 import { useState } from 'react';
 
@@ -76,9 +76,14 @@ export const HomeCareOfficeCard: React.FC<HomeCareOfficeCardProps> = ({
   return (
     <>
       <Card className="mb-4">
-        <CardHeader className="flex flex-row items-center justify-between pb-2">
-          <div className="flex items-center gap-3">
-            <h3 className="text-lg font-semibold">{office.businessName}</h3>
+        <CardHeader className="flex flex-row items-start justify-between pb-2 space-y-0">
+          <div className="flex flex-col items-start">
+            <h3 className="text-lg font-semibold text-carebase-blue">{office.businessName}</h3>
+            <div className="flex items-center gap-2">
+              <strong className="text-sm text-gray-500">
+                ケアマネージャー: {office.careManager}
+              </strong>
+            </div>
           </div>
           <div className="flex items-center gap-2">
             <Button variant="outline" size="sm" onClick={handleEditClick}>
@@ -109,10 +114,6 @@ export const HomeCareOfficeCard: React.FC<HomeCareOfficeCardProps> = ({
               </div>
             </div>
             <div className="space-y-2">
-              <div className="flex items-center gap-2">
-                <User className="h-4 w-4 text-gray-500" />
-                {office.careManager}
-              </div>
               <div className="flex items-center gap-2">
                 <MapPin className="h-4 w-4 text-gray-500" />
                 <span>{office.address}</span>

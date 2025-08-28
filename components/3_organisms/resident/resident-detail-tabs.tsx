@@ -121,7 +121,7 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
   };
 
   const handleAddHomeCareOffice = () => {
-    setIsHomeCareMasterModalOpen(true);
+    setIsHomeCareModalOpen(true);
   };
 
   const handleAddMedicalInstitution = () => {
@@ -572,11 +572,6 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
         isOpen={isHomeCareMasterModalOpen}
         onClose={() => setIsHomeCareMasterModalOpen(false)}
         onRefresh={handleHomeCareOfficeMasterRefresh}
-        onSelect={handleHomeCareOfficeSelect}
-        isSelectionMode={true}
-        residentName={resident.name}
-        onCreateNew={handleHomeCareOfficeCreateNew}
-        selectedOfficeIds={homeCareOffices.map((office) => office.id)}
       />
 
       <HomeCareOfficeModal

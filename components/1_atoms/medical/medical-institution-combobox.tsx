@@ -96,7 +96,7 @@ export const MedicalInstitutionCombobox: React.FC<MedicalInstitutionComboboxProp
             <CommandInput placeholder="医療機関を検索..." disabled={loading} />
             <CommandList>
               <CommandEmpty>
-                <div className="py-6 text-center text-sm">
+                <div className="px-6 text-center text-sm">
                   <p className="mb-2">該当する医療機関が見つかりません</p>
                   {onCreateNew && (
                     <Button

@@ -150,8 +150,6 @@ export const MedicalInstitutionMasterModal: React.FC<MedicalInstitutionMasterMod
       setIsCreateModalOpen(false);
       onRefresh();
 
-      // 登録時はマスタのみ保存し、このモーダル（フォームモーダル）だけを閉じる
-      // 親モーダル（マスタ一覧モーダル）は開いたまま保持
       return true;
     } catch (error) {
       console.error('Failed to create medical institution:', error);

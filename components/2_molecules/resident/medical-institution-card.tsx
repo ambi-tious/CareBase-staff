@@ -1,3 +1,5 @@
+'use client';
+
 import { GenericDeleteModal } from '@/components/3_organisms/modals/generic-delete-modal';
 import { MedicalInstitutionModal } from '@/components/3_organisms/modals/medical-institution-modal';
 import { Button } from '@/components/ui/button';
@@ -5,7 +7,7 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import type { MedicalInstitution } from '@/mocks/care-board-data';
 import { residentDataService } from '@/services/residentDataService';
 import type { MedicalInstitutionFormData } from '@/validations/resident-data-validation';
-import { Edit3, MapPin, Phone, Printer, Unlink, User } from 'lucide-react';
+import { Edit3, MapPin, Phone, Printer, Unlink } from 'lucide-react';
 import type React from 'react';
 import { useState } from 'react';
 
@@ -77,11 +79,14 @@ export const MedicalInstitutionCard: React.FC<MedicalInstitutionCardProps> = ({
   return (
     <>
       <Card className="mb-4">
-        <CardHeader className="flex flex-row items-center justify-between pb-2">
-          <div className="flex items-center gap-3">
+        <CardHeader className="flex flex-row items-start justify-between pb-2 space-y-0">
+          <div className="flex flex-col items-start">
             <h3 className="text-lg font-semibold text-carebase-blue">
               {institution.institutionName}
             </h3>
+            <div className="flex items-center gap-2">
+              <strong className="text-sm text-gray-500">医師: {institution.doctorName}</strong>
+            </div>
           </div>
           <div className="flex items-center gap-2">
             <Button variant="outline" size="sm" onClick={handleEditClick}>
@@ -112,10 +117,6 @@ export const MedicalInstitutionCard: React.FC<MedicalInstitutionCardProps> = ({
               </div>
             </div>
             <div className="space-y-2">
-              <div className="flex items-center gap-2">
-                <User className="h-4 w-4 text-gray-500" />
-                <span>{institution.doctorName}</span>
-              </div>
               <div className="flex items-center gap-2">
                 <MapPin className="h-4 w-4 text-gray-500" />
                 <span>{institution.address}</span>

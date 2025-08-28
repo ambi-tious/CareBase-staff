@@ -24,6 +24,7 @@ export interface CareManagerOption {
 interface CareManagerComboboxProps {
   value?: string;
   onValueChange?: (value: string) => void;
+  homeCareOfficeName?: string; // 居宅介護支援事業所名でフィルタリング
   placeholder?: string;
   disabled?: boolean;
   allowCustomValue?: boolean;
@@ -33,6 +34,7 @@ interface CareManagerComboboxProps {
 export const CareManagerCombobox: React.FC<CareManagerComboboxProps> = ({
   value = '',
   onValueChange,
+  homeCareOfficeName,
   placeholder = 'ケアマネージャーを選択してください',
   disabled = false,
   allowCustomValue = true,
@@ -49,7 +51,11 @@ export const CareManagerCombobox: React.FC<CareManagerComboboxProps> = ({
       setIsLoading(true);
       try {
         const careManagerOptions = await careManagerService.getCareManagerOptions();
-        setOptions(careManagerOptions);
+        // 居宅介護支援事業所名でフィルタリング
+        const filteredOptions = homeCareOfficeName
+          ? careManagerOptions.filter((option) => option.officeName === homeCareOfficeName)
+          : careManagerOptions;
+        setOptions(filteredOptions);
       } catch (error) {
         console.error('Failed to load care manager options:', error);
       } finally {
@@ -58,7 +64,7 @@ export const CareManagerCombobox: React.FC<CareManagerComboboxProps> = ({
     };
 
     loadOptions();
-  }, []);
+  }, [homeCareOfficeName]);
 
   // valueが変更されたときにinputValueを更新
   React.useEffect(() => {
