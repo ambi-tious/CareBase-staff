@@ -98,11 +98,36 @@ class ResidentDataService {
   private getResidentOfficesAssociations(): Record<number, string[]> {
     try {
       const stored = localStorage.getItem(this.RESIDENT_OFFICES_KEY);
-      return stored ? JSON.parse(stored) : {};
+      if (stored) {
+        return JSON.parse(stored);
+      }
     } catch (error) {
       console.error('Failed to load resident office associations:', error);
-      return {};
     }
+
+    // 初回の場合、モックデータから関連付けを生成
+    const defaultAssociations = this.generateDefaultAssociations();
+    this.storeResidentOfficesAssociations(defaultAssociations);
+    return defaultAssociations;
+  }
+
+  private generateDefaultAssociations(): Record<number, string[]> {
+    // モックデータから居宅介護支援事業所の関連付けを生成
+    const associations = {
+      1: ['1'], // 佐藤清 -> 渋谷ケアプランセンター
+      2: ['2'], // 田中花子 -> 新宿ライフケアサポート
+      3: ['3'], // 鈴木太郎 -> 港区ホームケアサービス
+      4: ['4'], // 山田みどり -> 品川ケアライフサポート
+      5: ['5'], // 鈴木幸子 -> 目黒サポートケアセンター
+      6: ['1'], // 高橋茂 -> 渋谷ケアプランセンター
+      7: ['2'], // 田中三郎 -> 新宿ライフケアサポート
+      8: ['3'], // 佐々木一郎 -> 港区ホームケアサービス
+      9: ['4'], // 伊藤和子 -> 品川ケアライフサポート
+      10: ['1'], // 渡辺正夫 -> 渋谷ケアプランセンター
+      11: ['2'], // 田中花子（11） -> 新宿ライフケアサポート
+      12: ['3'], // 山田次郎 -> 港区ホームケアサービス
+    };
+    return associations;
   }
 
   private storeResidentOfficesAssociations(associations: Record<number, string[]>): void {
@@ -127,7 +152,9 @@ class ResidentDataService {
     const officeIds = associations[residentId] || [];
     const allOffices = this.getStoredMasterOffices();
 
-    return allOffices.filter((office) => officeIds.includes(office.id));
+    const result = allOffices.filter((office) => officeIds.includes(office.id));
+
+    return result;
   }
 
   // 利用者に居宅介護支援事業所を紐付け

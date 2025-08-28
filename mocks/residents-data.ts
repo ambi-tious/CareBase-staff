@@ -1336,12 +1336,12 @@ export const careBoardData: Resident[] = [
     homeCareOffices: [
       {
         id: '4',
-        businessName: 'ケアライフサポート',
+        businessName: '品川ケアライフサポート',
         address: '東京都品川区品川4-4-4',
         phone: '03-4567-8901',
         fax: '03-4567-8902',
         careManager: '高橋美咲',
-        notes: '備考情報4',
+        notes: '品川区在宅介護支援センター',
       },
     ],
     events: [],
@@ -1379,6 +1379,17 @@ export const careBoardData: Resident[] = [
         notes: '週2回面会、買い物支援',
       },
     ],
+    homeCareOffices: [
+      {
+        id: '1',
+        businessName: '渋谷ケアプランセンター',
+        address: '東京都渋谷区渋谷1-1-1',
+        phone: '03-1234-5678',
+        fax: '03-1234-5679',
+        careManager: '田中太郎',
+        notes: '渋谷エリア専門のケアプランセンター',
+      },
+    ],
     events: [],
   },
   {
@@ -1414,6 +1425,17 @@ export const careBoardData: Resident[] = [
         notes: '入所手続き担当',
       },
     ],
+    homeCareOffices: [
+      {
+        id: '2',
+        businessName: '新宿ライフケアサポート',
+        address: '東京都新宿区新宿2-2-2',
+        phone: '03-2345-6789',
+        fax: '03-2345-6790',
+        careManager: '佐藤花子',
+        notes: '新宿区在宅介護支援事業所',
+      },
+    ],
     events: [],
   },
   {
@@ -1447,6 +1469,17 @@ export const careBoardData: Resident[] = [
         email: 'm.yamada@example.com',
         address: '大阪府大阪市西区西本町2-2-2',
         notes: '入所手続き担当',
+      },
+    ],
+    homeCareOffices: [
+      {
+        id: '3',
+        businessName: '港区ホームケアサービス',
+        address: '東京都港区港3-3-3',
+        phone: '03-3456-7890',
+        fax: '03-3456-7891',
+        careManager: '鈴木一郎',
+        notes: '港区地域密着型ケアサービス',
       },
     ],
     events: [],

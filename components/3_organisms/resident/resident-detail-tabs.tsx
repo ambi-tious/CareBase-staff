@@ -75,7 +75,17 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
     const fetchHomeCareOffices = async () => {
       try {
         const offices = await residentDataService.getResidentHomeCareOffices(resident.id);
-        setHomeCareOffices(offices);
+
+        // サービスから空の配列が返された場合、residentデータを使用
+        if (
+          offices.length === 0 &&
+          resident.homeCareOffices &&
+          resident.homeCareOffices.length > 0
+        ) {
+          setHomeCareOffices(resident.homeCareOffices);
+        } else {
+          setHomeCareOffices(offices);
+        }
       } catch (error) {
         console.error('Failed to fetch home care offices:', error);
         // フォールバックとして既存のデータを使用
