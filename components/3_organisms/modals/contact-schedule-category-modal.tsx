@@ -1,6 +1,5 @@
 'use client';
 
-import { FormField } from '@/components/1_atoms/forms/form-field';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import {
@@ -10,6 +9,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { AlertCircle, Edit, Edit3, Plus, Settings, Trash2 } from 'lucide-react';
 import { useCallback, useState } from 'react';
@@ -118,6 +119,7 @@ export const ContactScheduleCategoryModal: React.FC<ContactScheduleCategoryModal
         return;
       }
 
+      // eslint-disable-next-line no-alert
       if (window.confirm(`「${category.name}」カテゴリを削除してもよろしいですか？`)) {
         try {
           let success = true;
@@ -235,11 +237,10 @@ export const ContactScheduleCategoryModal: React.FC<ContactScheduleCategoryModal
                         >
                           <div className="flex items-center gap-2">
                             {editingCategory?.id === category.id ? (
-                              <FormField
-                                label=""
+                              <Input
                                 id="editCategoryName"
                                 value={editCategoryName}
-                                onChange={setEditCategoryName}
+                                onChange={(e) => setEditCategoryName(e.target.value)}
                                 placeholder="カテゴリ名を入力"
                                 className="w-32"
                               />
@@ -322,14 +323,18 @@ export const ContactScheduleCategoryModal: React.FC<ContactScheduleCategoryModal
               <div className="space-y-6">
                 <div className="max-w-ld">
                   <div className="space-y-4">
-                    <FormField
-                      label="カテゴリ名"
-                      id="newCategoryName"
-                      value={newCategoryName}
-                      onChange={setNewCategoryName}
-                      placeholder="カテゴリ名を入力"
-                      required
-                    />
+                    <div className="space-y-2">
+                      <Label htmlFor="newCategoryName">
+                        カテゴリ名 <span className="text-red-500">*</span>
+                      </Label>
+                      <Input
+                        id="newCategoryName"
+                        value={newCategoryName}
+                        onChange={(e) => setNewCategoryName(e.target.value)}
+                        placeholder="カテゴリ名を入力"
+                        required
+                      />
+                    </div>
 
                     <div className="flex flex-col sm:flex-row justify-end gap-3 pt-6 border-t">
                       <Button type="button" variant="outline" onClick={() => setActiveTab('list')}>
