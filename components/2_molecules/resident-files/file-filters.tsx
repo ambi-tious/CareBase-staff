@@ -11,7 +11,7 @@ import {
 } from '@/components/ui/select';
 import type { ResidentFileCategory } from '@/types/resident-file';
 import { fileCategoryOptions } from '@/types/resident-file';
-import { Filter, RotateCcw, Search, X } from 'lucide-react';
+import { Filter, RotateCcw, Search, X, Upload } from 'lucide-react';
 import type React from 'react';
 import { useState } from 'react';
 
@@ -105,10 +105,7 @@ export const FileFilters: React.FC<FileFiltersProps> = ({
             アップロード
           </Button>
         )}
-      </div>
-    </div>
-  );
-};
+
         <Button
           variant="outline"
           onClick={() => setIsExpanded(!isExpanded)}
