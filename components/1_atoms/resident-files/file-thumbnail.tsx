@@ -62,3 +62,4 @@ export const FileThumbnail: React.FC<FileThumbnailProps> = ({
       </div>
     </div>
   );
+};
