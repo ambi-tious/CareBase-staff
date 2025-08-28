@@ -14,7 +14,10 @@ export const residentFileFormSchema = z.object({
       required_error: 'カテゴリは必須です',
     }
   ),
-  fileName: z.string().min(1, 'ファイル名は必須です').max(100, 'ファイル名は100文字以内で入力してください'),
+  fileName: z
+    .string()
+    .min(1, 'ファイル名は必須です')
+    .max(100, 'ファイル名は100文字以内で入力してください'),
   description: z.string().max(500, '説明は500文字以内で入力してください').optional(),
 });
 

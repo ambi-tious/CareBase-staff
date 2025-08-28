@@ -11,7 +11,7 @@ import {
 } from '@/components/ui/select';
 import type { ResidentFileCategory } from '@/types/resident-file';
 import { fileCategoryOptions } from '@/types/resident-file';
-import { RotateCcw, Search, X, Upload } from 'lucide-react';
+import { RotateCcw, Search, Upload, X } from 'lucide-react';
 import type React from 'react';
 
 interface FileFiltersProps {
@@ -94,28 +94,11 @@ export const FileFilters: React.FC<FileFiltersProps> = ({
 
         {/* Upload button */}
         {onUploadFile && (
-          <Button
-            onClick={onUploadFile}
-            className="bg-carebase-blue hover:bg-carebase-blue-dark"
-          >
+          <Button onClick={onUploadFile} className="bg-carebase-blue hover:bg-carebase-blue-dark">
             <Upload className="h-4 w-4 mr-2" />
             アップロード
           </Button>
         )}
-
-        <Button
-          variant="outline"
-          onClick={() => setIsExpanded(!isExpanded)}
-          className="flex items-center gap-2"
-        >
-          <Filter className="h-4 w-4" />
-          フィルタ
-          {hasActiveFilters && (
-            <span className="bg-carebase-blue text-white text-xs px-1.5 py-0.5 rounded-full">
-              ON
-            </span>
-          )}
-        </Button>
 
         {hasActiveFilters && (
           <Button variant="outline" size="sm" onClick={onReset}>

@@ -282,10 +282,6 @@ Issue: [#113 [設計] #015 利用者｜ケアプラン登録](https://github.com
 
 #### 1_atoms層
 
-- **FormField**: 基本入力フィールド
-  - パス: `components/1_atoms/forms/form-field.tsx`
-- **FormSelect**: 選択フィールド
-  - パス: `components/1_atoms/forms/form-select.tsx`
 - **Textarea**: テキストエリア（shadcn/ui）
 - **Checkbox**: チェックボックス（shadcn/ui）
 - **Button**: アクションボタン（shadcn/ui）

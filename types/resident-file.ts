@@ -5,7 +5,7 @@
  */
 
 // File category types
-export type ResidentFileCategory = 
+export type ResidentFileCategory =
   | 'medical_record'
   | 'care_plan'
   | 'assessment'

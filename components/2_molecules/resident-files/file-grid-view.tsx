@@ -1,14 +1,7 @@
 'use client';
 
-import { FileCategoryBadge } from '@/components/1_atoms/resident-files/file-category-badge';
 import { FileThumbnail } from '@/components/1_atoms/resident-files/file-thumbnail';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
 import type { ResidentFile } from '@/types/resident-file';
-import { format } from 'date-fns';
-import { ja } from 'date-fns/locale';
-import { Calendar, Edit3, Trash2, User } from 'lucide-react';
 import type React from 'react';
 
 interface FileGridViewProps {
@@ -30,12 +23,7 @@ export const FileGridView: React.FC<FileGridViewProps> = ({
     return (
       <div className={`text-center py-12 ${className}`}>
         <div className="text-gray-400 mb-4">
-          <svg
-            className="w-16 h-16 mx-auto"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
+          <svg className="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -45,29 +33,18 @@ export const FileGridView: React.FC<FileGridViewProps> = ({
           </svg>
         </div>
         <h3 className="text-lg font-medium text-gray-900 mb-2">ファイルがありません</h3>
-        <p className="text-gray-500">
-          利用者様に関するファイルをアップロードしてください。
-        </p>
+        <p className="text-gray-500">利用者様に関するファイルをアップロードしてください。</p>
       </div>
     );
   }
 
   return (
-    <div className={`grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 ${className}`}>
+    <div
+      className={`grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 ${className}`}
+    >
       {files.map((file) => (
-        <div
-          key={file.id}
-          className="text-center"
-          onClick={() => handleView(file)}
-        >
-          <FileThumbnail
-            file={file}
-            onClick={() => handleView(file)}
-            size="md"
-          />
-          <p className="mt-2 text-sm font-medium text-gray-900 line-clamp-2" title={file.originalFileName}>
-            {file.originalFileName}
-          </p>
+        <div key={file.id} className="text-center" onClick={() => handleView(file)}>
+          <FileThumbnail file={file} onClick={() => handleView(file)} size="md" />
         </div>
       ))}
     </div>

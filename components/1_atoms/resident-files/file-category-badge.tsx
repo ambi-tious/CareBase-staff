@@ -9,7 +9,10 @@ interface FileCategoryBadgeProps {
   className?: string;
 }
 
-export const FileCategoryBadge: React.FC<FileCategoryBadgeProps> = ({ category, className = '' }) => {
+export const FileCategoryBadge: React.FC<FileCategoryBadgeProps> = ({
+  category,
+  className = '',
+}) => {
   const categoryConfig = fileCategoryOptions.find((option) => option.value === category);
 
   if (!categoryConfig) {

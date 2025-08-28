@@ -34,8 +34,8 @@ export const ResidentFileUploadModal: React.FC<ResidentFileUploadModalProps> = (
             ファイルのアップロード
           </DialogTitle>
           <DialogDescription className="text-gray-600">
-            {residentName}様のファイルをアップロードしてください。
-            必須項目（<span className="text-red-500">*</span>）は必ず入力してください。
+            {residentName}様のファイルをアップロードしてください。 必須項目（
+            <span className="text-red-500">*</span>）は必ず入力してください。
           </DialogDescription>
         </DialogHeader>
 

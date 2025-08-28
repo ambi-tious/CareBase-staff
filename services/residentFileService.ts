@@ -147,11 +147,6 @@ class ResidentFileService {
     // Simulate network delay
     await new Promise((resolve) => setTimeout(resolve, 1500));
 
-    // Simulate occasional network errors for testing
-    if (Math.random() < 0.1) {
-      throw new Error('ネットワークエラーが発生しました。');
-    }
-
     // Get current staff info
     let staffName = '田中 花子';
     let staffId = 'staff-001';
@@ -201,11 +196,6 @@ class ResidentFileService {
     // Simulate network delay
     await new Promise((resolve) => setTimeout(resolve, 800));
 
-    // Simulate occasional network errors for testing
-    if (Math.random() < 0.05) {
-      throw new Error('ネットワークエラーが発生しました。');
-    }
-
     // Get existing file from mock data
     const { getResidentFileById } = await import('@/mocks/resident-file-data');
     const existingFile = getResidentFileById(fileId);
@@ -229,11 +219,6 @@ class ResidentFileService {
   private async mockDeleteResidentFile(residentId: string, fileId: string): Promise<void> {
     // Simulate network delay
     await new Promise((resolve) => setTimeout(resolve, 800));
-
-    // Simulate occasional network errors for testing
-    if (Math.random() < 0.05) {
-      throw new Error('ネットワークエラーが発生しました。');
-    }
 
     // In a real implementation, this would delete the file from storage
     // console.log('Mock deleted resident file:', { residentId, fileId });

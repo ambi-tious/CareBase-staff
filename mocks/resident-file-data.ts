@@ -149,16 +149,22 @@ export const residentFileData: ResidentFile[] = [
 
 // Helper functions
 export const getResidentFilesByResidentId = (residentId: string): ResidentFile[] => {
-  return residentFileData.filter((file) => file.residentId === residentId && file.status === 'active');
+  return residentFileData.filter(
+    (file) => file.residentId === residentId && file.status === 'active'
+  );
 };
 
 export const getResidentFileById = (fileId: string): ResidentFile | undefined => {
   return residentFileData.find((file) => file.id === fileId);
 };
 
-export const getResidentFilesByCategory = (residentId: string, category: string): ResidentFile[] => {
+export const getResidentFilesByCategory = (
+  residentId: string,
+  category: string
+): ResidentFile[] => {
   return residentFileData.filter(
-    (file) => file.residentId === residentId && file.category === category && file.status === 'active'
+    (file) =>
+      file.residentId === residentId && file.category === category && file.status === 'active'
   );
 };
 

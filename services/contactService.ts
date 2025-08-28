@@ -50,11 +50,6 @@ class ContactService {
     // Simulate network delay
     await new Promise((resolve) => setTimeout(resolve, 1000));
 
-    // Simulate occasional network errors for testing
-    if (Math.random() < 0.1) {
-      throw new Error('ネットワークエラーが発生しました。');
-    }
-
     // Generate new contact
     const newContact: ContactPerson = {
       id: `contact-${Date.now()}`,
@@ -123,11 +118,6 @@ class ContactService {
     // Simulate network delay
     await new Promise((resolve) => setTimeout(resolve, 1000));
 
-    // Simulate occasional network errors for testing
-    if (Math.random() < 0.05) {
-      throw new Error('ネットワークエラーが発生しました。');
-    }
-
     // Update contact
     const updatedContact: ContactPerson = {
       id: contactId,
@@ -178,11 +168,6 @@ class ContactService {
   private async mockDeleteContact(residentId: number, contactId: string): Promise<void> {
     // Simulate network delay
     await new Promise((resolve) => setTimeout(resolve, 800));
-
-    // Simulate occasional network errors for testing
-    if (Math.random() < 0.05) {
-      throw new Error('ネットワークエラーが発生しました。');
-    }
 
     // console.log('Mock deleted contact:', { residentId, contactId });
   }

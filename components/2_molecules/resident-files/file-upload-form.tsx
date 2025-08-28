@@ -1,10 +1,16 @@
 'use client';
 
-import { FormSelect } from '@/components/1_atoms/forms/form-select';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { useResidentFileForm } from '@/hooks/useResidentFileForm';
 import { fileCategoryOptions } from '@/types/resident-file';
@@ -29,20 +35,16 @@ export const FileUploadForm: React.FC<FileUploadFormProps> = ({
   const [filePreview, setFilePreview] = useState<string>('');
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const { formData, updateField, isSubmitting, error, fieldErrors, handleSubmit } =
-    useResidentFileForm({
-      onSubmit: async (data) => {
-        if (!selectedFile) {
-          throw new Error('ファイルを選択してください');
-        }
-        return onSubmit(data, selectedFile);
-      },
-    });
+  const { form, isSubmitting, error, fieldErrors, handleSubmit } = useResidentFileForm({
+    onSubmit: async (data) => {
+      if (!selectedFile) {
+        throw new Error('ファイルを選択してください');
+      }
+      return onSubmit(data, selectedFile);
+    },
+  });
 
-  const categorySelectOptions = fileCategoryOptions.map((cat) => ({
-    value: cat.value,
-    label: cat.label,
-  }));
+  const formData = form.watch();
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -50,7 +52,7 @@ export const FileUploadForm: React.FC<FileUploadFormProps> = ({
 
     // File size validation (10MB)
     if (file.size > 10 * 1024 * 1024) {
-      alert('ファイルサイズは10MB以下にしてください');
+      window.alert('ファイルサイズは10MB以下にしてください');
       return;
     }
 
@@ -69,9 +71,9 @@ export const FileUploadForm: React.FC<FileUploadFormProps> = ({
 
     // Auto-set category based on file type
     if (file.type.startsWith('image/')) {
-      updateField('category', 'photo');
+      form.setValue('category', 'photo');
     } else if (file.type === 'application/pdf' || file.type.includes('document')) {
-      updateField('category', 'medical_record');
+      form.setValue('category', 'medical_record');
     }
   };
 
@@ -86,7 +88,7 @@ export const FileUploadForm: React.FC<FileUploadFormProps> = ({
   const onFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedFile) {
-      alert('ファイルを選択してください');
+      window.alert('ファイルを選択してください');
       return;
     }
     const success = await handleSubmit();
@@ -196,33 +198,49 @@ export const FileUploadForm: React.FC<FileUploadFormProps> = ({
           ファイル情報
         </h3>
 
-        <FormSelect
-          label="カテゴリ"
-          id="category"
-          value={formData.category}
-          onChange={(value) => updateField('category', value)}
-          options={categorySelectOptions}
-          required
-          error={fieldErrors.category}
-          disabled={isSubmitting}
-        />
+        <div className="space-y-2">
+          <Label htmlFor="category" className="text-sm font-medium text-gray-700">
+            カテゴリ <span className="text-red-500 ml-1">*</span>
+          </Label>
+          <Select
+            value={formData.category}
+            onValueChange={(value) =>
+              form.setValue('category', value as ResidentFileFormData['category'])
+            }
+            disabled={isSubmitting}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="カテゴリを選択してください" />
+            </SelectTrigger>
+            <SelectContent>
+              {fileCategoryOptions.map((option) => (
+                <SelectItem key={option.value} value={option.value}>
+                  {option.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          {fieldErrors.category && (
+            <p className="text-sm text-red-600" role="alert">
+              {fieldErrors.category.message}
+            </p>
+          )}
+        </div>
 
         <div className="space-y-2">
-          <label htmlFor="fileName" className="text-sm font-medium text-gray-700">
+          <Label htmlFor="fileName" className="text-sm font-medium text-gray-700">
             ファイル名 <span className="text-red-500 ml-1">*</span>
-          </label>
-          <input
+          </Label>
+          <Input
             id="fileName"
-            type="text"
             value={formData.fileName}
-            onChange={(e) => updateField('fileName', e.target.value)}
+            onChange={(e) => form.setValue('fileName', e.target.value)}
             placeholder="ファイル名を入力してください"
             disabled={isSubmitting}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-carebase-blue focus:border-carebase-blue"
           />
           {fieldErrors.fileName && (
             <p className="text-sm text-red-600" role="alert">
-              {fieldErrors.fileName}
+              {fieldErrors.fileName.message}
             </p>
           )}
         </div>
@@ -234,14 +252,14 @@ export const FileUploadForm: React.FC<FileUploadFormProps> = ({
           <Textarea
             id="description"
             value={formData.description || ''}
-            onChange={(e) => updateField('description', e.target.value)}
+            onChange={(e) => form.setValue('description', e.target.value)}
             placeholder="ファイルの内容や用途について説明してください"
             disabled={isSubmitting}
             rows={3}
           />
           {fieldErrors.description && (
             <p className="text-sm text-red-600" role="alert">
-              {fieldErrors.description}
+              {fieldErrors.description.message}
             </p>
           )}
         </div>

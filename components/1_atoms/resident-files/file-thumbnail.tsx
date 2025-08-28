@@ -1,6 +1,5 @@
-import { Button } from '@/components/ui/button';
 import type { ResidentFile } from '@/types/resident-file';
-import { Download, Eye, FileText, Image as ImageIcon } from 'lucide-react';
+import { FileText } from 'lucide-react';
 import Image from 'next/image';
 import type React from 'react';
 
@@ -45,8 +44,9 @@ export const FileThumbnail: React.FC<FileThumbnailProps> = ({
           <Image
             src={file.thumbnailUrl}
             alt={file.originalFileName}
-            width={128} height={128}
-            className="object-cover rounded-lg"
+            width={128}
+            height={128}
+            className="object-contain rounded-lg"
           />
         ) : (
           <FileText className="h-8 w-8 text-gray-400" />

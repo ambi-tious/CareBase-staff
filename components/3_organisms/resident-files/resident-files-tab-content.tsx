@@ -66,8 +66,7 @@ export const ResidentFilesTabContent: React.FC<ResidentFilesTabContentProps> = (
     const matchesSearch =
       searchQuery === '' ||
       file.originalFileName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      file.description?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      file.tags?.some((tag) => tag.toLowerCase().includes(searchQuery.toLowerCase()));
+      file.description?.toLowerCase().includes(searchQuery.toLowerCase());
 
     // Category filter
     const matchesCategory = !selectedCategory || file.category === selectedCategory;
@@ -232,10 +231,7 @@ export const ResidentFilesTabContent: React.FC<ResidentFilesTabContentProps> = (
           </CardContent>
         </Card>
       ) : (
-        <FileGridView
-          files={filteredFiles}
-          onFileView={handleFileView}
-        />
+        <FileGridView files={filteredFiles} onFileView={handleFileView} />
       )}
 
       {/* Modals */}

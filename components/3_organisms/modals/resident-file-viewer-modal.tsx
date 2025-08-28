@@ -3,10 +3,27 @@
 import { FileCategoryBadge } from '@/components/1_atoms/resident-files/file-category-badge';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import type { ResidentFile } from '@/types/resident-file';
 import { format } from 'date-fns';
 import { ja } from 'date-fns/locale';
-import { Calendar, Download, Edit3, Trash2, User, X, ZoomIn, ZoomOut, FileText } from 'lucide-react';
+import {
+  Calendar,
+  Download,
+  Edit3,
+  File,
+  MoreVertical,
+  Trash2,
+  User,
+  ZoomIn,
+  ZoomOut,
+} from 'lucide-react';
 import Image from 'next/image';
 import type React from 'react';
 import { useState } from 'react';
@@ -85,14 +102,31 @@ export const ResidentFileViewerModal: React.FC<ResidentFileViewerModalProps> = (
           <div className="flex items-center justify-between">
             <div className="flex-1 min-w-0">
               <DialogTitle className="text-lg font-semibold truncate">
-                {file.fileName}
+                <div className="flex items-center gap-2">
+                  {file.fileName}
+                  <FileCategoryBadge category={file.category} />
+                </div>
               </DialogTitle>
               <div className="flex items-center gap-4 text-sm text-gray-500 mt-1">
-                <span>{formatFileSize(file.fileSize)}</span>
-                <span>アップロード日時: {formatDate(file.uploadedAt)}</span>
+                {file.description && <p className="text-sm text-gray-700">{file.description}</p>}
+
+                <div className="flex items-center gap-4 text-xs text-gray-500">
+                  <div className="flex items-center gap-1">
+                    <File className="h-3 w-3" />
+                    <span>{formatFileSize(file.fileSize)}</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <User className="h-3 w-3" />
+                    <span>{file.uploadedByName}</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <Calendar className="h-3 w-3" />
+                    <span>{formatDate(file.uploadedAt)}</span>
+                  </div>
+                </div>
               </div>
             </div>
-            <div className="flex items-center gap-2 ml-4">
+            <div className="flex items-center gap-2 ml-4 mr-[60px]">
               {file.isImage && (
                 <>
                   <Button
@@ -111,62 +145,45 @@ export const ResidentFileViewerModal: React.FC<ResidentFileViewerModalProps> = (
                   </Button>
                 </>
               )}
-              {onEdit && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={handleEdit}
-                  className="border-carebase-blue text-carebase-blue hover:bg-carebase-blue-light"
-                >
-                  <Edit3 className="h-4 w-4 mr-2" />
-                  編集
-                </Button>
-              )}
-              {onDelete && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={handleDelete}
-                  className="border-red-300 text-red-600 hover:bg-red-50"
-                >
-                  <Trash2 className="h-4 w-4 mr-2" />
-                  削除
-                </Button>
-              )}
-              <Button variant="outline" size="sm" onClick={handleDownload}>
-                <Download className="h-4 w-4 mr-2" />
-                ダウンロード
-              </Button>
-              <Button variant="ghost" size="sm" onClick={onClose} className="h-8 w-8 p-0">
-                <X className="h-4 w-4" />
-              </Button>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size="sm">
+                    <MoreVertical className="h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-48">
+                  <DropdownMenuItem onClick={handleDownload} className="cursor-pointer">
+                    <Download className="h-4 w-4 mr-2" />
+                    ダウンロード
+                  </DropdownMenuItem>
+                  {onEdit && (
+                    <>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem onClick={handleEdit} className="cursor-pointer">
+                        <Edit3 className="h-4 w-4 mr-2" />
+                        編集
+                      </DropdownMenuItem>
+                    </>
+                  )}
+                  {onDelete && (
+                    <>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem
+                        onClick={handleDelete}
+                        className="cursor-pointer text-red-600 focus:text-red-600 focus:bg-red-50"
+                      >
+                        <Trash2 className="h-4 w-4 mr-2" />
+                        削除
+                      </DropdownMenuItem>
+                    </>
+                  )}
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
           </div>
         </DialogHeader>
 
-        <div className="p-6 pt-4">
-          {/* File metadata */}
-          <div className="mb-4 space-y-2">
-            <div className="flex items-center gap-2">
-              <FileCategoryBadge category={file.category} />
-            </div>
-
-            {file.description && (
-              <p className="text-sm text-gray-700">{file.description}</p>
-            )}
-
-            <div className="flex items-center gap-4 text-xs text-gray-500">
-              <div className="flex items-center gap-1">
-                <User className="h-3 w-3" />
-                <span>アップロード者: {file.uploadedByName}</span>
-              </div>
-              <div className="flex items-center gap-1">
-                <Calendar className="h-3 w-3" />
-                <span>アップロード日時: {formatDate(file.uploadedAt)}</span>
-              </div>
-            </div>
-          </div>
-
+        <div className="p-6 pt-0">
           {/* File content */}
           <div className="bg-gray-50 rounded-lg overflow-hidden">
             {file.isImage ? (
