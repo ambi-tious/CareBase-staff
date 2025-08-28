@@ -175,7 +175,7 @@ export const DocumentFormEditor: React.FC<DocumentFormEditorProps> = ({
     hasUnsavedChanges,
   } = useDocumentForm({
     initialData: initialFormData,
-    onSubmit: async (data) => {
+    onSubmit: async (data, isDraft) => {
       setIsSaving(true);
       setSaveError(null);
 
@@ -210,10 +210,11 @@ export const DocumentFormEditor: React.FC<DocumentFormEditorProps> = ({
           success = true;
         }
 
-        if (success) {
-          setSaveSuccessMessage(isEditMode ? '書類を更新しました。' : '書類を保存しました。');
+        if (isDraft) {
+          setSaveSuccessMessage('下書きを保存しました。');
           setSaveSuccess(true);
-
+        } else if (success) {
+          setSaveSuccessMessage('書類を保存しました。');
           // 保存成功後の遷移
           if (isEditMode) {
             router.push(`/documents/view/${documentId}`);
