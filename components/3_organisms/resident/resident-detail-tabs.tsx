@@ -11,6 +11,7 @@ import {
   IndividualPointsTabContent,
   type IndividualPointsTabContentRef,
 } from '@/components/3_organisms/individual-points/individual-points-tab-content';
+import { AbsenceTabContent } from '@/components/3_organisms/absence/absence-tab-content';
 import { ContactEditModal } from '@/components/3_organisms/modals/contact-edit-modal';
 import { HomeCareOfficeMasterModal } from '@/components/3_organisms/modals/home-care-office-master-modal';
 import { HomeCareOfficeModal } from '@/components/3_organisms/modals/home-care-office-modal';
@@ -95,6 +96,7 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
     { value: 'medical', label: 'かかりつけ医療機関' },
     { value: 'history', label: '既往歴' },
     { value: 'medicationInfo', label: 'お薬情報' },
+    { value: 'absence', label: '不在情報' },
 
     { value: 'individualPoints', label: '個別ポイント' },
     { value: 'files', label: 'ファイル管理' },
@@ -302,6 +304,7 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
       'medical',
       'history',
       'medicationInfo',
+      'absence',
 
       'individualPoints',
       'files',
@@ -320,6 +323,11 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
         return handleAddMedicalHistory;
       case 'medicationInfo':
         return handleAddMedication;
+      case 'absence':
+        return () => {
+          // 不在情報タブの場合は直接新規作成モーダルを開く
+          // この機能はAbsenceTabContent内で管理される
+        };
 
       case 'individualPoints':
         return () => individualPointsTabContentRef.current?.openCategoryModal();
@@ -477,11 +485,7 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
 
         <TabsContent value="individualPoints">
           <div className="space-y-4">
-            <IndividualPointsTabContent
-              ref={individualPointsTabContentRef}
-              residentId={resident.id}
-              residentName={resident.name}
-            />
+            <AbsenceTabContent residentId={resident.id} residentName={resident.name} />
           </div>
         </TabsContent>
 
