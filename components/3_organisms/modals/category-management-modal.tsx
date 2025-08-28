@@ -1,5 +1,6 @@
 'use client';
 
+import { GenericDeleteModal } from '@/components/3_organisms/modals/generic-delete-modal';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -75,6 +76,11 @@ export const CategoryManagementModal: React.FC<CategoryManagementModalProps> = (
   const [editingCategory, setEditingCategory] = useState<PointCategory | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [deleteConfirmDialog, setDeleteConfirmDialog] = useState<{
+    isOpen: boolean;
+    category: PointCategory | null;
+  }>({ isOpen: false, category: null });
+  const [deleteError, setDeleteError] = useState<string | null>(null);
 
   const form = useForm<CategoryFormData>({
     resolver: zodResolver(categoryFormSchema),
@@ -153,30 +159,41 @@ export const CategoryManagementModal: React.FC<CategoryManagementModalProps> = (
     [reset]
   );
 
-  const handleDelete = useCallback(
-    async (category: PointCategory) => {
-      if (category.isSystemDefault) {
-        setError('システム標準のカテゴリは削除できません。');
-        return;
-      }
+  const handleDelete = useCallback((category: PointCategory) => {
+    if (category.isSystemDefault) {
+      setError('システム標準のカテゴリは削除できません。');
+      return;
+    }
+    setDeleteConfirmDialog({ isOpen: true, category });
+  }, []);
 
-      if (window.confirm(`「${category.name}」カテゴリを削除してもよろしいですか？`)) {
-        setIsSubmitting(true);
-        try {
-          const success = await onDeleteCategory(category.id);
-          if (!success) {
-            setError('カテゴリの削除に失敗しました。');
-          }
-        } catch (error) {
-          console.error('Category deletion error:', error);
-          setError('ネットワークエラーが発生しました。');
-        } finally {
-          setIsSubmitting(false);
-        }
+  const handleConfirmDelete = useCallback(async (): Promise<boolean> => {
+    const { category } = deleteConfirmDialog;
+    if (!category) return false;
+
+    setIsSubmitting(true);
+    setDeleteError(null);
+
+    try {
+      const success = await onDeleteCategory(category.id);
+      if (!success) {
+        setDeleteError('カテゴリの削除に失敗しました。');
+        return false;
       }
-    },
-    [onDeleteCategory]
-  );
+      return true;
+    } catch (error) {
+      console.error('Category deletion error:', error);
+      setDeleteError('ネットワークエラーが発生しました。');
+      return false;
+    } finally {
+      setIsSubmitting(false);
+    }
+  }, [deleteConfirmDialog, onDeleteCategory]);
+
+  const handleCancelDelete = useCallback(() => {
+    setDeleteConfirmDialog({ isOpen: false, category: null });
+    setDeleteError(null);
+  }, []);
 
   const handleCreateNew = useCallback(() => {
     resetForm();
@@ -528,6 +545,17 @@ export const CategoryManagementModal: React.FC<CategoryManagementModalProps> = (
           </Tabs>
         </div>
       </DialogContent>
+
+      {/* Delete Confirmation Modal */}
+      <GenericDeleteModal
+        isOpen={deleteConfirmDialog.isOpen}
+        onClose={handleCancelDelete}
+        onConfirm={handleConfirmDelete}
+        itemName={deleteConfirmDialog.category?.name || ''}
+        itemType="カテゴリ"
+        isDeleting={isSubmitting}
+        error={deleteError}
+      />
     </Dialog>
   );
 };

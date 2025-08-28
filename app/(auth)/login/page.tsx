@@ -3,6 +3,7 @@
 import { Logo } from '@/components/1_atoms/common/logo';
 import { LoginForm } from '@/components/2_molecules/auth/login-form';
 import { useAuth } from '@/hooks/useAuth';
+import type { LoginCredentials } from '@/types/auth';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
@@ -17,7 +18,7 @@ export default function LoginPage() {
     }
   }, [isAuthenticated, router]);
 
-  const handleLogin = async (credentials: any) => {
+  const handleLogin = async (credentials: LoginCredentials) => {
     const response = await login(credentials);
     return response;
   };

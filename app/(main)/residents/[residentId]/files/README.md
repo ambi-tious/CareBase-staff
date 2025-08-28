@@ -201,42 +201,46 @@ Issue: [#TBD [設計] 利用者｜利用者ファイル管理](https://github.co
 
 ```typescript
 interface ResidentFile {
-  id: string;                    // ファイルID
-  residentId: string;            // 利用者ID
-  fileName: string;              // 表示用ファイル名
-  originalFileName: string;      // 元のファイル名
-  fileType: string;              // MIMEタイプ
-  fileSize: number;              // ファイルサイズ（バイト）
+  id: string; // ファイルID
+  residentId: string; // 利用者ID
+  fileName: string; // 表示用ファイル名
+  originalFileName: string; // 元のファイル名
+  fileType: string; // MIMEタイプ
+  fileSize: number; // ファイルサイズ（バイト）
   category: ResidentFileCategory; // カテゴリ
-  status: ResidentFileStatus;    // ステータス（active/archived）
-  description?: string;          // 説明
-  uploadedAt: string;            // アップロード日時（ISO 8601）
-  uploadedBy: string;            // アップロード者ID
-  uploadedByName: string;        // アップロード者名
-  url: string;                   // ファイルURL
-  thumbnailUrl?: string;         // サムネイルURL（画像の場合）
-  isImage: boolean;              // 画像ファイルか
-  isDocument: boolean;           // 文書ファイルか
+  status: ResidentFileStatus; // ステータス（active/archived）
+  description?: string; // 説明
+  uploadedAt: string; // アップロード日時（ISO 8601）
+  uploadedBy: string; // アップロード者ID
+  uploadedByName: string; // アップロード者名
+  url: string; // ファイルURL
+  thumbnailUrl?: string; // サムネイルURL（画像の場合）
+  isImage: boolean; // 画像ファイルか
+  isDocument: boolean; // 文書ファイルか
 }
 ```
 
 ### API仕様
 
 #### ファイル一覧取得
+
 - **エンドポイント**: `GET /v1/residents/{residentId}/files`
 - **レスポンス**: `ResidentFile[]`
 
 #### ファイルアップロード
+
 - **エンドポイント**: `POST /v1/residents/{residentId}/files`
 - **リクエスト**: `FormData` (file, category, fileName, description)
 - **レスポンス**: `ResidentFile`
 
 #### ファイル更新
+
 - **エンドポイント**: `PUT /v1/residents/{residentId}/files/{fileId}`
 - **リクエスト**: `ResidentFileFormData`
 - **レスポンス**: `ResidentFile`
 
 #### ファイル削除
+
 - **エンドポイント**: `DELETE /v1/residents/{residentId}/files/{fileId}`
 - **レスポンス**: `void`
 

@@ -93,12 +93,15 @@ function StaffSelectionContent() {
         teamName,
       };
 
-      console.log('🔧 開発環境: スタッフ選択データを保存', {
-        staffId: staff.id,
-        staffName: staff.name,
-        groupName,
-        teamName,
-      });
+      // 開発環境: スタッフ選択データを保存
+      if (process.env.NODE_ENV === 'development') {
+        console.log('🔧 開発環境: スタッフ選択データを保存', {
+          staffId: staff.id,
+          staffName: staff.name,
+          groupName,
+          teamName,
+        });
+      }
 
       localStorage.setItem('carebase_selected_staff_data', JSON.stringify(selectedStaffData));
       router.push('/');

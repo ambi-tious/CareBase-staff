@@ -2,8 +2,15 @@
 
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import {
   Select,
   SelectContent,
@@ -44,15 +51,14 @@ export const FileUploadForm: React.FC<FileUploadFormProps> = ({
     },
   });
 
-  const formData = form.watch();
-
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
     // File size validation (10MB)
     if (file.size > 10 * 1024 * 1024) {
-      window.alert('ファイルサイズは10MB以下にしてください');
+      // TODO: Replace with toast notification
+      console.error('ファイルサイズは10MB以下にしてください');
       return;
     }
 
@@ -88,7 +94,8 @@ export const FileUploadForm: React.FC<FileUploadFormProps> = ({
   const onFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedFile) {
-      window.alert('ファイルを選択してください');
+      // TODO: Replace with toast notification
+      console.error('ファイルを選択してください');
       return;
     }
     const success = await handleSubmit();
@@ -106,179 +113,187 @@ export const FileUploadForm: React.FC<FileUploadFormProps> = ({
   };
 
   return (
-    <form onSubmit={onFormSubmit} className={`space-y-6 ${className}`}>
-      {/* Error Alert */}
-      {error && (
-        <Alert className="border-red-200 bg-red-50">
-          <AlertCircle className="h-4 w-4 text-red-600" />
-          <AlertDescription className="text-red-700">{error}</AlertDescription>
-        </Alert>
-      )}
-
-      {/* File Upload Section */}
-      <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-carebase-text-primary border-b pb-2">
-          ファイル選択
-        </h3>
-
-        {!selectedFile ? (
-          <div
-            className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center cursor-pointer hover:bg-gray-50 transition-colors"
-            onClick={() => fileInputRef.current?.click()}
-          >
-            <Upload className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-            <p className="text-sm text-gray-600 mb-2">
-              ファイルをドラッグ＆ドロップするか、クリックして選択してください
-            </p>
-            <p className="text-xs text-gray-500">
-              対応形式: 画像ファイル（JPG, PNG, GIF）、PDFファイル、Word文書 | 最大10MB
-            </p>
-          </div>
-        ) : (
-          <div className="border border-gray-200 rounded-lg p-4 bg-gray-50">
-            <div className="flex items-start gap-4">
-              {/* File preview */}
-              <div className="flex-shrink-0">
-                {filePreview ? (
-                  <div className="w-24 h-24 rounded-lg overflow-hidden border">
-                    <Image
-                      src={filePreview}
-                      alt="プレビュー"
-                      width={96}
-                      height={96}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                ) : (
-                  <div className="w-24 h-24 rounded-lg border bg-white flex items-center justify-center">
-                    <FileText className="h-8 w-8 text-gray-400" />
-                  </div>
-                )}
-              </div>
-
-              {/* File info */}
-              <div className="flex-1 min-w-0">
-                <h4 className="font-medium text-gray-900 truncate">{selectedFile.name}</h4>
-                <div className="text-sm text-gray-500 space-y-1">
-                  <p>サイズ: {formatFileSize(selectedFile.size)}</p>
-                  <p>形式: {selectedFile.type}</p>
-                  <p>
-                    種類: {selectedFile.type.startsWith('image/') ? '画像ファイル' : '文書ファイル'}
-                  </p>
-                </div>
-              </div>
-
-              {/* Remove button */}
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={handleRemoveFile}
-                className="text-red-600 hover:text-red-700 hover:bg-red-50"
-              >
-                <X className="h-4 w-4" />
-              </Button>
-            </div>
-          </div>
+    <Form {...form}>
+      <form onSubmit={onFormSubmit} className={`space-y-6 ${className}`}>
+        {/* Error Alert */}
+        {error && (
+          <Alert className="border-red-200 bg-red-50">
+            <AlertCircle className="h-4 w-4 text-red-600" />
+            <AlertDescription className="text-red-700">{error}</AlertDescription>
+          </Alert>
         )}
 
-        <input
-          ref={fileInputRef}
-          type="file"
-          accept="image/*,.pdf,.doc,.docx,.txt"
-          onChange={handleFileSelect}
-          className="hidden"
-          disabled={isSubmitting}
-        />
-      </div>
+        {/* File Upload Section */}
+        <div className="space-y-4">
+          <h3 className="text-lg font-semibold text-carebase-text-primary border-b pb-2">
+            ファイル選択
+          </h3>
 
-      {/* File Metadata Section */}
-      <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-carebase-text-primary border-b pb-2">
-          ファイル情報
-        </h3>
+          {!selectedFile ? (
+            <div
+              className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center cursor-pointer hover:bg-gray-50 transition-colors"
+              onClick={() => fileInputRef.current?.click()}
+            >
+              <Upload className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+              <p className="text-sm text-gray-600 mb-2">
+                ファイルをドラッグ＆ドロップするか、クリックして選択してください
+              </p>
+              <p className="text-xs text-gray-500">
+                対応形式: 画像ファイル（JPG, PNG, GIF）、PDFファイル、Word文書 | 最大10MB
+              </p>
+            </div>
+          ) : (
+            <div className="border border-gray-200 rounded-lg p-4 bg-gray-50">
+              <div className="flex items-start gap-4">
+                {/* File preview */}
+                <div className="flex-shrink-0">
+                  {filePreview ? (
+                    <div className="w-24 h-24 rounded-lg overflow-hidden border">
+                      <Image
+                        src={filePreview}
+                        alt="プレビュー"
+                        width={96}
+                        height={96}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  ) : (
+                    <div className="w-24 h-24 rounded-lg border bg-white flex items-center justify-center">
+                      <FileText className="h-8 w-8 text-gray-400" />
+                    </div>
+                  )}
+                </div>
 
-        <div className="space-y-2">
-          <Label htmlFor="category" className="text-sm font-medium text-gray-700">
-            カテゴリ <span className="text-red-500 ml-1">*</span>
-          </Label>
-          <Select
-            value={formData.category}
-            onValueChange={(value) =>
-              form.setValue('category', value as ResidentFileFormData['category'])
-            }
+                {/* File info */}
+                <div className="flex-1 min-w-0">
+                  <h4 className="font-medium text-gray-900 truncate">{selectedFile.name}</h4>
+                  <div className="text-sm text-gray-500 space-y-1">
+                    <p>サイズ: {formatFileSize(selectedFile.size)}</p>
+                    <p>形式: {selectedFile.type}</p>
+                    <p>
+                      種類:{' '}
+                      {selectedFile.type.startsWith('image/') ? '画像ファイル' : '文書ファイル'}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Remove button */}
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={handleRemoveFile}
+                  className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+          )}
+
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*,.pdf,.doc,.docx,.txt"
+            onChange={handleFileSelect}
+            className="hidden"
             disabled={isSubmitting}
+          />
+        </div>
+
+        {/* File Metadata Section */}
+        <div className="space-y-4">
+          <h3 className="text-lg font-semibold text-carebase-text-primary border-b pb-2">
+            ファイル情報
+          </h3>
+
+          <FormField
+            control={form.control}
+            name="category"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>
+                  カテゴリ <span className="text-red-500 ml-1">*</span>
+                </FormLabel>
+                <Select
+                  value={field.value || ''}
+                  onValueChange={field.onChange}
+                  disabled={isSubmitting}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="カテゴリを選択してください" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {fileCategoryOptions.map((option) => (
+                      <SelectItem key={option.value} value={option.value}>
+                        {option.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="fileName"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>
+                  ファイル名 <span className="text-red-500 ml-1">*</span>
+                </FormLabel>
+                <FormControl>
+                  <Input
+                    {...field}
+                    placeholder="ファイル名を入力してください"
+                    disabled={isSubmitting}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="description"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>説明</FormLabel>
+                <FormControl>
+                  <Textarea
+                    {...field}
+                    value={field.value || ''}
+                    placeholder="ファイルの内容や用途について説明してください"
+                    disabled={isSubmitting}
+                    rows={3}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+
+        {/* Action Buttons */}
+        <div className="flex justify-end gap-3 pt-6 border-t">
+          <Button type="button" variant="outline" onClick={onCancel} disabled={isSubmitting}>
+            キャンセル
+          </Button>
+          <Button
+            type="submit"
+            disabled={isSubmitting || !selectedFile}
+            className="bg-carebase-blue hover:bg-carebase-blue-dark"
           >
-            <SelectTrigger>
-              <SelectValue placeholder="カテゴリを選択してください" />
-            </SelectTrigger>
-            <SelectContent>
-              {fileCategoryOptions.map((option) => (
-                <SelectItem key={option.value} value={option.value}>
-                  {option.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          {fieldErrors.category && (
-            <p className="text-sm text-red-600" role="alert">
-              {fieldErrors.category.message}
-            </p>
-          )}
+            <Upload className="h-4 w-4 mr-2" />
+            {isSubmitting ? 'アップロード中...' : 'アップロード'}
+          </Button>
         </div>
-
-        <div className="space-y-2">
-          <Label htmlFor="fileName" className="text-sm font-medium text-gray-700">
-            ファイル名 <span className="text-red-500 ml-1">*</span>
-          </Label>
-          <Input
-            id="fileName"
-            value={formData.fileName}
-            onChange={(e) => form.setValue('fileName', e.target.value)}
-            placeholder="ファイル名を入力してください"
-            disabled={isSubmitting}
-          />
-          {fieldErrors.fileName && (
-            <p className="text-sm text-red-600" role="alert">
-              {fieldErrors.fileName.message}
-            </p>
-          )}
-        </div>
-
-        <div className="space-y-2">
-          <Label htmlFor="description" className="text-sm font-medium text-gray-700">
-            説明
-          </Label>
-          <Textarea
-            id="description"
-            value={formData.description || ''}
-            onChange={(e) => form.setValue('description', e.target.value)}
-            placeholder="ファイルの内容や用途について説明してください"
-            disabled={isSubmitting}
-            rows={3}
-          />
-          {fieldErrors.description && (
-            <p className="text-sm text-red-600" role="alert">
-              {fieldErrors.description.message}
-            </p>
-          )}
-        </div>
-      </div>
-
-      {/* Action Buttons */}
-      <div className="flex justify-end gap-3 pt-6 border-t">
-        <Button type="button" variant="outline" onClick={onCancel} disabled={isSubmitting}>
-          キャンセル
-        </Button>
-        <Button
-          type="submit"
-          disabled={isSubmitting || !selectedFile}
-          className="bg-carebase-blue hover:bg-carebase-blue-dark"
-        >
-          <Upload className="h-4 w-4 mr-2" />
-          {isSubmitting ? 'アップロード中...' : 'アップロード'}
-        </Button>
-      </div>
-    </form>
+      </form>
+    </Form>
   );
 };

@@ -50,7 +50,7 @@ apiClient.interceptors.request.use(
     }
 
     // Debug logging for development
-    if (!process.env.NEXT_PUBLIC_API_URL) {
+    if (!process.env.NEXT_PUBLIC_API_URL && process.env.NODE_ENV === 'development') {
       console.log('🚀 API Request:', {
         method: config.method?.toUpperCase(),
         url: config.url,
@@ -73,7 +73,7 @@ apiClient.interceptors.request.use(
 apiClient.interceptors.response.use(
   (response) => {
     // Debug logging for development
-    if (!process.env.NEXT_PUBLIC_API_URL) {
+    if (!process.env.NEXT_PUBLIC_API_URL && process.env.NODE_ENV === 'development') {
       console.log('✅ API Response:', {
         status: response.status,
         statusText: response.statusText,
