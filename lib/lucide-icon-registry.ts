@@ -55,6 +55,8 @@ import {
   Users,
   Utensils,
   Wind,
+  Home,
+  MapPin,
   type LucideIcon,
 } from 'lucide-react';
 
@@ -121,6 +123,8 @@ const iconRegistry: Record<string, LucideIcon> = {
   Settings,
   FolderPlus,
   Palette,
+  Home,
+  MapPin,
 };
 
 // Helper function to get icon component by string name

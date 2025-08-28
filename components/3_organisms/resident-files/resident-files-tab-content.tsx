@@ -13,8 +13,7 @@ import { residentFileService } from '@/services/residentFileService';
 import type { ResidentFile, ResidentFileCategory } from '@/types/resident-file';
 import type { ResidentFileFormData } from '@/validations/resident-file-validation';
 import { FileText, Upload } from 'lucide-react';
-import type React from 'react';
-import { useEffect, useState } from 'react';
+import { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
 import { toast } from 'sonner';
 
 interface ResidentFilesTabContentProps {
@@ -23,11 +22,14 @@ interface ResidentFilesTabContentProps {
   className?: string;
 }
 
-export const ResidentFilesTabContent: React.FC<ResidentFilesTabContentProps> = ({
-  residentId,
-  residentName,
-  className = '',
-}) => {
+export interface ResidentFilesTabContentRef {
+  openUploadModal: () => void;
+}
+
+export const ResidentFilesTabContent = forwardRef<
+  ResidentFilesTabContentRef,
+  ResidentFilesTabContentProps
+>(({ residentId, residentName, className = '' }, ref) => {
   const [files, setFiles] = useState<ResidentFile[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
@@ -39,6 +41,17 @@ export const ResidentFilesTabContent: React.FC<ResidentFilesTabContentProps> = (
   const [selectedFile, setSelectedFile] = useState<ResidentFile | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState<string | null>(null);
+
+  // Expose methods to parent component via ref
+  useImperativeHandle(
+    ref,
+    () => ({
+      openUploadModal: () => {
+        setIsUploadModalOpen(true);
+      },
+    }),
+    []
+  );
 
   // Load resident files
   useEffect(() => {
@@ -203,7 +216,6 @@ export const ResidentFilesTabContent: React.FC<ResidentFilesTabContentProps> = (
         onSearchChange={setSearchQuery}
         onCategoryChange={setSelectedCategory}
         onReset={handleResetFilters}
-        onUploadFile={handleUploadFile}
       />
 
       {/* File grid */}
@@ -269,4 +281,6 @@ export const ResidentFilesTabContent: React.FC<ResidentFilesTabContentProps> = (
       />
     </div>
   );
-};
+});
+
+ResidentFilesTabContent.displayName = 'ResidentFilesTabContent';
