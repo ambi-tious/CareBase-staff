@@ -9,6 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { useDocumentForm } from '@/hooks/useDocumentForm';
 import { getFolder } from '@/mocks/hierarchical-documents';
 import { getCategoryFromFolderId, getFolderIdFromSearchParams } from '@/utils/folder-utils';
 import type { DocumentFormData } from '@/validations/document-validation';
@@ -82,7 +83,7 @@ export const DocumentFormEditor: React.FC<DocumentFormEditorProps> = ({
     if (initialDocument?.attachedFile) {
       setContentInputMode('attachment');
     }
-  }, [initialDocument]);
+  }, [initialDocument?.attachedFile]);
 
   // フォルダIDとカテゴリの自動判定
   const folderId = getFolderIdFromSearchParams(searchParams);
@@ -166,17 +167,12 @@ export const DocumentFormEditor: React.FC<DocumentFormEditorProps> = ({
   };
 
   const {
-    formData,
-    updateField,
-    isSubmitting,
-    error,
-    fieldErrors,
-    handleSubmit,
+    form,
+    isSubmitting: hookFormIsSubmitting,
+    handleSubmit: hookFormHandleSubmit,
     isSavingDraft,
     saveDraft,
     hasUnsavedChanges,
-    reset,
-    clearError,
   } = useDocumentForm({
     initialData: initialFormData,
     onSubmit: async (data) => {
@@ -248,44 +244,7 @@ export const DocumentFormEditor: React.FC<DocumentFormEditorProps> = ({
 
   // 統合保存処理
   const handleSaveAll = async () => {
-    return hookFormHandleSubmit(handleFormSubmit)();
-  };
-
-  // 下書き保存処理（バリデーションスキップ）
-  const handleSaveDraftWithValidationSkip = async () => {
-    setIsSaving(true);
-    setSaveError(null);
-
-    try {
-      let success = false;
-
-      if (onSave) {
-        const finalContent = contentInputMode === 'manual' ? content : '';
-        const finalFile = contentInputMode === 'attachment' ? attachedFile || undefined : undefined;
-        success = await onSave({
-          formData: formData,
-          content: finalContent,
-          attachedFile: finalFile,
-        });
-      } else {
-        // デフォルトの保存処理
-        await new Promise((resolve) => setTimeout(resolve, 500));
-        success = true;
-      }
-
-      if (success) {
-        setSaveSuccessMessage('下書きを保存しました。');
-        setSaveSuccess(true);
-      }
-
-      return success;
-    } catch (error) {
-      console.error('Failed to save draft:', error);
-      setSaveError('下書き保存に失敗しました。もう一度お試しください。');
-      return false;
-    } finally {
-      setIsSaving(false);
-    }
+    return hookFormHandleSubmit();
   };
 
   const handleCancel = () => {
@@ -309,11 +268,11 @@ export const DocumentFormEditor: React.FC<DocumentFormEditorProps> = ({
   };
 
   const handleSaveDraft = useCallback(async () => {
-    const success = await handleSaveDraftWithValidationSkip();
+    const success = await saveDraft();
     if (success) {
       // console.log('Draft saved successfully');
     }
-  }, [handleSaveDraftWithValidationSkip]);
+  }, [saveDraft]);
 
   return (
     <div className={`min-h-screen bg-carebase-bg ${className}`}>
@@ -383,11 +342,11 @@ export const DocumentFormEditor: React.FC<DocumentFormEditorProps> = ({
               </CardHeader>
               <CardContent>
                 <DocumentFormFields
-                  control={control}
+                  form={form}
                   isSubmitting={isSaving}
                   error={saveError}
                   onSubmit={async () => {
-                    await hookFormHandleSubmit(handleFormSubmit)();
+                    await hookFormHandleSubmit();
                     return true;
                   }}
                   onCancel={handleCancel}
@@ -575,7 +534,7 @@ export const DocumentFormEditor: React.FC<DocumentFormEditorProps> = ({
               type="button"
               variant="outline"
               onClick={handleSaveDraft}
-              disabled={isSubmitting || isSavingDraft}
+              disabled={hookFormIsSubmitting || isSavingDraft}
               className="border-gray-400 text-gray-700 hover:bg-gray-50"
             >
               <Save className="h-4 w-4 mr-2" />

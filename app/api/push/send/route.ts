@@ -40,10 +40,14 @@ export async function POST(request: NextRequest) {
 
     // メモリ内のサブスクリプションを使用（開発用）
 
-    console.log(`送信対象サブスクリプション数: ${subscriptions.length}`);
+    if (process.env.NODE_ENV === 'development') {
+      console.log(`送信対象サブスクリプション数: ${subscriptions.length}`);
+    }
 
     if (subscriptions.length === 0) {
-      console.log('アクティブなプッシュ通知サブスクリプションが見つかりません');
+      if (process.env.NODE_ENV === 'development') {
+        console.log('アクティブなプッシュ通知サブスクリプションが見つかりません');
+      }
       return NextResponse.json({
         success: true,
         message: 'No active subscriptions found',
@@ -84,7 +88,9 @@ export async function POST(request: NextRequest) {
       (result) => result.status === 'fulfilled' && result.value.success
     ).length;
 
-    console.log(`プッシュ通知送信完了: ${successful}/${subscriptions.length} 成功`);
+    if (process.env.NODE_ENV === 'development') {
+      console.log(`プッシュ通知送信完了: ${successful}/${subscriptions.length} 成功`);
+    }
 
     return NextResponse.json({
       success: true,

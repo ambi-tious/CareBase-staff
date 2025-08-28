@@ -4,8 +4,9 @@ import { DocumentFormEditor } from '@/components/3_organisms/documents/document-
 import { useAuth } from '@/hooks/useAuth';
 import type { DocumentFormData } from '@/validations/document-validation';
 import { useSearchParams } from 'next/navigation';
+import { Suspense } from 'react';
 
-export default function DocumentNewPage() {
+function DocumentNewContent() {
   const searchParams = useSearchParams();
   const { selectedStaff } = useAuth();
 
@@ -19,20 +20,16 @@ export default function DocumentNewPage() {
     attachedFile?: File;
   }) => {
     try {
-      console.log('Saving new document with data:', data);
-
       // 実際のアプリケーションではAPIに送信
       const saveData = {
         folderId: data.formData.folderId === 'root' ? null : data.formData.folderId, // フォルダIDも保存データに含める
         createdBy: selectedStaff?.name || '現在のユーザー',
         ...data,
       };
-      console.log('Saving new document:', saveData);
 
       // 保存処理をシミュレート
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      console.log('New document saved successfully');
       return true;
     } catch (error) {
       console.error('Save failed:', error);
@@ -41,4 +38,12 @@ export default function DocumentNewPage() {
   };
 
   return <DocumentFormEditor onSave={handleSave} />;
+}
+
+export default function DocumentNewPage() {
+  return (
+    <Suspense fallback={<div>読み込み中...</div>}>
+      <DocumentNewContent />
+    </Suspense>
+  );
 }

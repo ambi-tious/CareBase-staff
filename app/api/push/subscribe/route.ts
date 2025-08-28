@@ -23,14 +23,20 @@ export async function POST(request: NextRequest) {
     if (existingIndex >= 0) {
       // 既存のサブスクリプションを更新
       subscriptions[existingIndex] = subscriptionData;
-      console.log('プッシュ通知サブスクリプション更新:', subscriptionData);
+      if (process.env.NODE_ENV === 'development') {
+        console.log('プッシュ通知サブスクリプション更新:', subscriptionData);
+      }
     } else {
       // 新しいサブスクリプションを追加
       subscriptions.push(subscriptionData);
-      console.log('新しいプッシュ通知サブスクリプション:', subscriptionData);
+      if (process.env.NODE_ENV === 'development') {
+        console.log('新しいプッシュ通知サブスクリプション:', subscriptionData);
+      }
     }
 
-    console.log(`現在のサブスクリプション数: ${subscriptions.length}`);
+    if (process.env.NODE_ENV === 'development') {
+      console.log(`現在のサブスクリプション数: ${subscriptions.length}`);
+    }
 
     return NextResponse.json({ success: true });
   } catch (error) {

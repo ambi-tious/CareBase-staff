@@ -5,11 +5,11 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { useResidentFileForm } from '@/hooks/useResidentFileForm';
@@ -52,7 +52,8 @@ export const FileUploadForm: React.FC<FileUploadFormProps> = ({
 
     // File size validation (10MB)
     if (file.size > 10 * 1024 * 1024) {
-      window.alert('ファイルサイズは10MB以下にしてください');
+      // TODO: Replace with toast notification
+      console.error('ファイルサイズは10MB以下にしてください');
       return;
     }
 
@@ -88,7 +89,8 @@ export const FileUploadForm: React.FC<FileUploadFormProps> = ({
   const onFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedFile) {
-      window.alert('ファイルを選択してください');
+      // TODO: Replace with toast notification
+      console.error('ファイルを選択してください');
       return;
     }
     const success = await handleSubmit();

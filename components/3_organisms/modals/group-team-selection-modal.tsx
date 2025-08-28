@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
-import type { Group, Team } from '@/mocks/staff-data';
+import type { Group, Staff, Team } from '@/mocks/staff-data';
 import { organizationService } from '@/services/organization-service';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Building2, Users } from 'lucide-react';
@@ -25,7 +25,7 @@ const groupTeamSelectionSchema = z.object({
 type GroupTeamSelectionFormData = z.infer<typeof groupTeamSelectionSchema>;
 
 interface SelectedStaffData {
-  staff: any;
+  staff: Staff;
   groupName: string;
   teamName: string;
 }

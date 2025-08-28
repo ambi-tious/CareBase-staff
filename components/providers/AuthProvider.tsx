@@ -7,12 +7,13 @@
 'use client';
 
 import { useAuth } from '@/hooks/useAuth';
+import type { Facility, SelectedStaff } from '@/types/auth';
 import { createContext, useContext } from 'react';
 
 interface AuthContextType {
   isAuthenticated: boolean;
-  facility: any | null;
-  selectedStaff: any | null;
+  facility: Facility | null;
+  selectedStaff: SelectedStaff | null;
   isLoading: boolean;
   error: string | null;
   login: ReturnType<typeof useAuth>['login'];

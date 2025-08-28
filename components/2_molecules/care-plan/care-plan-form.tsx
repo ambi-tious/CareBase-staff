@@ -1,5 +1,6 @@
 'use client';
 
+import { CareManagerCombobox } from '@/components/1_atoms/care-manager/care-manager-combobox';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -22,7 +23,6 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
-import { CareManagerCombobox } from '@/components/1_atoms/care-manager/care-manager-combobox';
 import { useCarePlanForm } from '@/hooks/useCarePlanForm';
 import { certificationStatusOptions, planTypeOptions, serviceTypeOptions } from '@/types/care-plan';
 import type { CarePlanFormData, CarePlanServiceFormData } from '@/validations/care-plan-validation';
@@ -229,197 +229,224 @@ export const CarePlanForm: React.FC<CarePlanFormProps> = ({
                 基本情報
               </h3>
 
-              <div className="space-y-2">
-                <Label className="text-sm font-medium text-gray-700">
-                  プラン名 <span className="text-red-500">*</span>
-                </Label>
-                <Input
-                  value={formData.planTitle}
-                  onChange={(e) => updateField('planTitle', e.target.value)}
-                  placeholder="例：2025年度 第1期ケアプラン"
-                  disabled={isSubmitting || isSavingDraft}
-                  className={`${fieldErrors.planTitle ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : ''}`}
+              <FormField
+                control={control}
+                name="planTitle"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      プラン名 <span className="text-red-500">*</span>
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        placeholder="例：2025年度 第1期ケアプラン"
+                        disabled={isSubmitting || isSavingDraft}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <FormField
+                  control={control}
+                  name="planType"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>
+                        プラン種別 <span className="text-red-500">*</span>
+                      </FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        value={field.value}
+                        disabled={isSubmitting || isSavingDraft}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="プラン種別を選択" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {planTypeSelectOptions.map((option) => (
+                            <SelectItem key={option.value} value={option.value}>
+                              {option.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
-                {fieldErrors.planTitle && (
-                  <p className="text-sm text-red-600" role="alert">
-                    {fieldErrors.planTitle.message}
-                  </p>
+                <FormField
+                  control={control}
+                  name="isReferral"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>
+                        紹介 <span className="text-red-500 ml-1">*</span>
+                      </FormLabel>
+                      <FormControl>
+                        <div className="flex items-center space-x-4 p-3 h-10 border border-gray-200 rounded-lg bg-gray-50">
+                          <div className="flex items-center space-x-2">
+                            <Checkbox
+                              id="isReferral-true"
+                              checked={field.value === true}
+                              onCheckedChange={() => field.onChange(true)}
+                              disabled={isSubmitting || isSavingDraft}
+                            />
+                            <Label htmlFor="isReferral-true" className="cursor-pointer">
+                              紹介あり
+                            </Label>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <Checkbox
+                              id="isReferral-false"
+                              checked={field.value === false}
+                              onCheckedChange={() => field.onChange(false)}
+                              disabled={isSubmitting || isSavingDraft}
+                            />
+                            <Label htmlFor="isReferral-false" className="cursor-pointer">
+                              紹介なし
+                            </Label>
+                          </div>
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <FormField
+                control={control}
+                name="careLevel"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      要介護度 <span className="text-red-500">*</span>
+                    </FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      value={field.value}
+                      disabled={isSubmitting || isSavingDraft}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="要介護度を選択" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {careLevelOptions.map((option) => (
+                          <SelectItem key={option.value} value={option.value}>
+                            {option.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
                 )}
-              </div>
+              />
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label className="text-sm font-medium text-gray-700">
-                    プラン種別 <span className="text-red-500">*</span>
-                  </Label>
-                  <Select
-                    onValueChange={(value) => updateField('planType', value)}
-                    value={formData.planType}
-                    disabled={isSubmitting || isSavingDraft}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="プラン種別を選択" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {planTypeSelectOptions.map((option) => (
-                        <SelectItem key={option.value} value={option.value}>
-                          {option.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  {fieldErrors.planType && (
-                    <p className="text-sm text-red-600" role="alert">
-                      {fieldErrors.planType.message}
-                    </p>
-                  )}
-                </div>
-                <div className="space-y-2">
-                  <Label className="text-sm font-medium text-gray-700">
-                    紹介 <span className="text-red-500 ml-1">*</span>
-                  </Label>
-                  <div className="flex items-center space-x-4 p-3 h-10 border border-gray-200 rounded-lg bg-gray-50">
-                    <div className="flex items-center space-x-2">
-                      <Checkbox
-                        id="isReferral-true"
-                        checked={formData.isReferral === true}
-                        onCheckedChange={() => updateField('isReferral', true)}
+                <FormField
+                  control={control}
+                  name="certificationStatus"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>
+                        認定状況 <span className="text-red-500">*</span>
+                      </FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        value={field.value}
                         disabled={isSubmitting || isSavingDraft}
-                      />
-                      <Label htmlFor="isReferral-true" className="cursor-pointer">
-                        紹介あり
-                      </Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <Checkbox
-                        id="isReferral-false"
-                        checked={formData.isReferral === false}
-                        onCheckedChange={() => updateField('isReferral', false)}
-                        disabled={isSubmitting || isSavingDraft}
-                      />
-                      <Label htmlFor="isReferral-false" className="cursor-pointer">
-                        紹介なし
-                      </Label>
-                    </div>
-                  </div>
-                  {fieldErrors.isReferral && (
-                    <p className="text-sm text-red-600" role="alert">
-                      {fieldErrors.isReferral?.message}
-                    </p>
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="認定状況を選択" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {certificationStatusSelectOptions.map((option) => (
+                            <SelectItem key={option.value} value={option.value}>
+                              {option.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
                   )}
-                </div>
-              </div>
+                />
 
-              <div className="space-y-2">
-                <Label className="text-sm font-medium text-gray-700">
-                  要介護度 <span className="text-red-500">*</span>
-                </Label>
-                <Select
-                  onValueChange={(value) => updateField('careLevel', value)}
-                  value={formData.careLevel}
-                  disabled={isSubmitting || isSavingDraft}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="要介護度を選択" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {careLevelOptions.map((option) => (
-                      <SelectItem key={option.value} value={option.value}>
-                        {option.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                {fieldErrors.careLevel && (
-                  <p className="text-sm text-red-600" role="alert">
-                    {fieldErrors.careLevel.message}
-                  </p>
-                )}
+                <FormField
+                  control={control}
+                  name="certificationDate"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>
+                        認定日 <span className="text-red-500">*</span>
+                      </FormLabel>
+                      <FormControl>
+                        <DatePicker
+                          value={field.value}
+                          onChange={field.onChange}
+                          disabled={isSubmitting || isSavingDraft}
+                          placeholder="認定日を選択してください"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label className="text-sm font-medium text-gray-700">
-                    認定状況 <span className="text-red-500">*</span>
-                  </Label>
-                  <Select
-                    onValueChange={(value) => updateField('certificationStatus', value)}
-                    value={formData.certificationStatus}
-                    disabled={isSubmitting || isSavingDraft}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="認定状況を選択" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {certificationStatusSelectOptions.map((option) => (
-                        <SelectItem key={option.value} value={option.value}>
-                          {option.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  {fieldErrors.certificationStatus && (
-                    <p className="text-sm text-red-600" role="alert">
-                      {fieldErrors.certificationStatus.message}
-                    </p>
+                <FormField
+                  control={control}
+                  name="certValidityStart"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>
+                        認定有効開始日 <span className="text-red-500">*</span>
+                      </FormLabel>
+                      <FormControl>
+                        <DatePicker
+                          value={field.value}
+                          onChange={field.onChange}
+                          disabled={isSubmitting || isSavingDraft}
+                          placeholder="認定有効開始日を選択してください"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
                   )}
-                </div>
+                />
 
-                <div className="space-y-2">
-                  <Label className="text-sm font-medium text-gray-700">
-                    認定日 <span className="text-red-500">*</span>
-                  </Label>
-                  <DatePicker
-                    value={formData.certificationDate}
-                    onChange={(value) => updateField('certificationDate', value)}
-                    disabled={isSubmitting || isSavingDraft}
-                    placeholder="認定日を選択してください"
-                    className={`${fieldErrors.certificationDate ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : ''}`}
-                  />
-                  {fieldErrors.certificationDate && (
-                    <p className="text-sm text-red-600" role="alert">
-                      {fieldErrors.certificationDate.message}
-                    </p>
+                <FormField
+                  control={control}
+                  name="certValidityEnd"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>
+                        認定有効終了日 <span className="text-red-500">*</span>
+                      </FormLabel>
+                      <FormControl>
+                        <DatePicker
+                          value={field.value}
+                          onChange={field.onChange}
+                          disabled={isSubmitting || isSavingDraft}
+                          placeholder="認定有効終了日を選択してください"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
                   )}
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label className="text-sm font-medium text-gray-700">
-                    認定有効開始日 <span className="text-red-500">*</span>
-                  </Label>
-                  <DatePicker
-                    value={formData.certValidityStart}
-                    onChange={(value) => updateField('certValidityStart', value)}
-                    disabled={isSubmitting || isSavingDraft}
-                    placeholder="認定有効開始日を選択してください"
-                    className={`${fieldErrors.certValidityStart ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : ''}`}
-                  />
-                  {fieldErrors.certValidityStart && (
-                    <p className="text-sm text-red-600" role="alert">
-                      {fieldErrors.certValidityStart.message}
-                    </p>
-                  )}
-                </div>
-
-                <div className="space-y-2">
-                  <Label className="text-sm font-medium text-gray-700">
-                    認定有効終了日 <span className="text-red-500">*</span>
-                  </Label>
-                  <DatePicker
-                    value={formData.certValidityEnd}
-                    onChange={(value) => updateField('certValidityEnd', value)}
-                    disabled={isSubmitting || isSavingDraft}
-                    placeholder="認定有効終了日を選択してください"
-                    className={`${fieldErrors.certValidityEnd ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : ''}`}
-                  />
-                  {fieldErrors.certValidityEnd && (
-                    <p className="text-sm text-red-600" role="alert">
-                      {fieldErrors.certValidityEnd.message}
-                    </p>
-                  )}
-                </div>
+                />
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -466,23 +493,26 @@ export const CarePlanForm: React.FC<CarePlanFormProps> = ({
                 />
               </div>
 
-              <div className="space-y-2">
-                <Label className="text-sm font-medium text-gray-700">
-                  次回見直し日 <span className="text-red-500">*</span>
-                </Label>
-                <DatePicker
-                  value={formData.nextReviewDate}
-                  onChange={(value) => updateField('nextReviewDate', value)}
-                  disabled={isSubmitting || isSavingDraft}
-                  placeholder="次回見直し日を選択してください"
-                  className={`${fieldErrors.nextReviewDate ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : ''}`}
-                />
-                {fieldErrors.nextReviewDate && (
-                  <p className="text-sm text-red-600" role="alert">
-                    {fieldErrors.nextReviewDate.message}
-                  </p>
+              <FormField
+                control={control}
+                name="nextReviewDate"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      次回見直し日 <span className="text-red-500">*</span>
+                    </FormLabel>
+                    <FormControl>
+                      <DatePicker
+                        value={field.value}
+                        onChange={field.onChange}
+                        disabled={isSubmitting || isSavingDraft}
+                        placeholder="次回見直し日を選択してください"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
                 )}
-              </div>
+              />
             </div>
 
             {/* Right Column - Goals and Notes */}
@@ -492,55 +522,58 @@ export const CarePlanForm: React.FC<CarePlanFormProps> = ({
               </h3>
 
               {/* Goals */}
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <Label className="text-sm font-medium text-gray-700">
-                    ケア目標 <span className="text-red-500 ml-1">*</span>
-                  </Label>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={addGoal}
-                    disabled={isSubmitting || isSavingDraft}
-                    className="flex items-center gap-1"
-                  >
-                    <Plus className="h-3 w-3" />
-                    目標を追加
-                  </Button>
-                </div>
-
-                <div className="space-y-2">
-                  {formData.goals.map((goal, index) => (
-                    <div key={index} className="flex gap-2">
-                      <Input
-                        value={goal}
-                        onChange={(e) => updateGoal(index, e.target.value)}
-                        placeholder={`ケア目標 ${index + 1}`}
+              <FormField
+                control={control}
+                name="goals"
+                render={({ field }) => (
+                  <FormItem>
+                    <div className="flex items-center justify-between">
+                      <FormLabel>
+                        ケア目標 <span className="text-red-500 ml-1">*</span>
+                      </FormLabel>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={addGoal}
                         disabled={isSubmitting || isSavingDraft}
-                        className="flex-1"
-                      />
-                      {formData.goals.length > 1 && (
-                        <Button
-                          type="button"
-                          variant="outline"
-                          size="sm"
-                          onClick={() => removeGoal(index)}
-                          disabled={isSubmitting || isSavingDraft}
-                          className="px-2 text-red-600 hover:bg-red-50"
-                        >
-                          <X className="h-3 w-3" />
-                        </Button>
-                      )}
+                        className="flex items-center gap-1"
+                      >
+                        <Plus className="h-3 w-3" />
+                        目標を追加
+                      </Button>
                     </div>
-                  ))}
-                </div>
-                {fieldErrors.goals && (
-                  <p className="text-sm text-red-600" role="alert">
-                    {fieldErrors.goals.message}
-                  </p>
+                    <FormControl>
+                      <div className="space-y-2">
+                        {formData.goals.map((goal, index) => (
+                          <div key={index} className="flex gap-2">
+                            <Input
+                              value={goal}
+                              onChange={(e) => updateGoal(index, e.target.value)}
+                              placeholder={`ケア目標 ${index + 1}`}
+                              disabled={isSubmitting || isSavingDraft}
+                              className="flex-1"
+                            />
+                            {formData.goals.length > 1 && (
+                              <Button
+                                type="button"
+                                variant="outline"
+                                size="sm"
+                                onClick={() => removeGoal(index)}
+                                disabled={isSubmitting || isSavingDraft}
+                                className="px-2 text-red-600 hover:bg-red-50"
+                              >
+                                <X className="h-3 w-3" />
+                              </Button>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
                 )}
-              </div>
+              />
             </div>
           </div>
 
@@ -553,107 +586,109 @@ export const CarePlanForm: React.FC<CarePlanFormProps> = ({
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {/* Left Column - Intentions */}
               <div className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="residentIntention" className="text-sm font-medium text-gray-700">
-                    利用者の生活に対する意向 <span className="text-red-500 ml-1">*</span>
-                  </Label>
-                  <Textarea
-                    id="residentIntention"
-                    value={formData.residentIntention}
-                    onChange={(e) => updateField('residentIntention', e.target.value)}
-                    placeholder="利用者様ご本人の生活に対する希望や意向を記入してください"
-                    disabled={isSubmitting || isSavingDraft}
-                    className={`min-h-24 ${fieldErrors.residentIntention ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : ''}`}
-                    rows={4}
-                  />
-                  {fieldErrors.residentIntention && (
-                    <p className="text-sm text-red-600" role="alert">
-                      {fieldErrors.residentIntention.message}
-                    </p>
+                <FormField
+                  control={control}
+                  name="residentIntention"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>
+                        利用者の生活に対する意向 <span className="text-red-500 ml-1">*</span>
+                      </FormLabel>
+                      <FormControl>
+                        <Textarea
+                          {...field}
+                          placeholder="利用者様ご本人の生活に対する希望や意向を記入してください"
+                          disabled={isSubmitting || isSavingDraft}
+                          className="min-h-24"
+                          rows={4}
+                        />
+                      </FormControl>
+                      <div className="text-xs text-gray-500 mt-1">
+                        {field.value.length}/1000文字
+                      </div>
+                      <FormMessage />
+                    </FormItem>
                   )}
-                  <div className="text-xs text-gray-500 mt-1">
-                    {formData.residentIntention.length}/1000文字
-                  </div>
-                </div>
+                />
 
-                <div className="space-y-2">
-                  <Label htmlFor="familyIntention" className="text-sm font-medium text-gray-700">
-                    家族の生活に対する意向 <span className="text-red-500 ml-1">*</span>
-                  </Label>
-                  <Textarea
-                    id="familyIntention"
-                    value={formData.familyIntention}
-                    onChange={(e) => updateField('familyIntention', e.target.value)}
-                    placeholder="ご家族の生活に対する希望や意向を記入してください"
-                    disabled={isSubmitting || isSavingDraft}
-                    className={`min-h-24 ${fieldErrors.familyIntention ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : ''}`}
-                    rows={4}
-                  />
-                  {fieldErrors.familyIntention && (
-                    <p className="text-sm text-red-600" role="alert">
-                      {fieldErrors.familyIntention.message}
-                    </p>
+                <FormField
+                  control={control}
+                  name="familyIntention"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>
+                        家族の生活に対する意向 <span className="text-red-500 ml-1">*</span>
+                      </FormLabel>
+                      <FormControl>
+                        <Textarea
+                          {...field}
+                          placeholder="ご家族の生活に対する希望や意向を記入してください"
+                          disabled={isSubmitting || isSavingDraft}
+                          className="min-h-24"
+                          rows={4}
+                        />
+                      </FormControl>
+                      <div className="text-xs text-gray-500 mt-1">
+                        {field.value.length}/1000文字
+                      </div>
+                      <FormMessage />
+                    </FormItem>
                   )}
-                  <div className="text-xs text-gray-500 mt-1">
-                    {formData.familyIntention.length}/1000文字
-                  </div>
-                </div>
+                />
               </div>
 
               {/* Right Column - Opinions and Guidance */}
               <div className="space-y-4">
-                <div className="space-y-2">
-                  <Label
-                    htmlFor="assessmentCommitteeOpinion"
-                    className="text-sm font-medium text-gray-700"
-                  >
-                    介護認定審査会の意見及びサービスの種類の指定{' '}
-                    <span className="text-red-500 ml-1">*</span>
-                  </Label>
-                  <Textarea
-                    id="assessmentCommitteeOpinion"
-                    value={formData.assessmentCommitteeOpinion}
-                    onChange={(e) => updateField('assessmentCommitteeOpinion', e.target.value)}
-                    placeholder="介護認定審査会からの意見やサービス種類の指定について記入してください"
-                    disabled={isSubmitting || isSavingDraft}
-                    className={`min-h-24 ${fieldErrors.assessmentCommitteeOpinion ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : ''}`}
-                    rows={4}
-                  />
-                  {fieldErrors.assessmentCommitteeOpinion && (
-                    <p className="text-sm text-red-600" role="alert">
-                      {fieldErrors.assessmentCommitteeOpinion.message}
-                    </p>
+                <FormField
+                  control={control}
+                  name="assessmentCommitteeOpinion"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>
+                        介護認定審査会の意見及びサービスの種類の指定{' '}
+                        <span className="text-red-500 ml-1">*</span>
+                      </FormLabel>
+                      <FormControl>
+                        <Textarea
+                          {...field}
+                          placeholder="介護認定審査会からの意見やサービス種類の指定について記入してください"
+                          disabled={isSubmitting || isSavingDraft}
+                          className="min-h-24"
+                          rows={4}
+                        />
+                      </FormControl>
+                      <div className="text-xs text-gray-500 mt-1">
+                        {field.value.length}/1000文字
+                      </div>
+                      <FormMessage />
+                    </FormItem>
                   )}
-                  <div className="text-xs text-gray-500 mt-1">
-                    {formData.assessmentCommitteeOpinion.length}/1000文字
-                  </div>
-                </div>
+                />
 
-                <div className="space-y-2">
-                  <Label
-                    htmlFor="comprehensiveGuidance"
-                    className="text-sm font-medium text-gray-700"
-                  >
-                    総合的な援助の指針 <span className="text-red-500 ml-1">*</span>
-                  </Label>
-                  <Textarea
-                    id="comprehensiveGuidance"
-                    value={formData.comprehensiveGuidance}
-                    onChange={(e) => updateField('comprehensiveGuidance', e.target.value)}
-                    placeholder="総合的な援助方針について記入してください"
-                    disabled={isSubmitting || isSavingDraft}
-                    className={`min-h-24 ${fieldErrors.comprehensiveGuidance ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : ''}`}
-                    rows={4}
-                  />
-                  {fieldErrors.comprehensiveGuidance && (
-                    <p className="text-sm text-red-600" role="alert">
-                      {fieldErrors.comprehensiveGuidance.message}
-                    </p>
+                <FormField
+                  control={control}
+                  name="comprehensiveGuidance"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>
+                        総合的な援助の指針 <span className="text-red-500 ml-1">*</span>
+                      </FormLabel>
+                      <FormControl>
+                        <Textarea
+                          {...field}
+                          placeholder="総合的な援助方針について記入してください"
+                          disabled={isSubmitting || isSavingDraft}
+                          className="min-h-24"
+                          rows={4}
+                        />
+                      </FormControl>
+                      <div className="text-xs text-gray-500 mt-1">
+                        {field.value.length}/1000文字
+                      </div>
+                      <FormMessage />
+                    </FormItem>
                   )}
-                  <div className="text-xs text-gray-500 mt-1">
-                    {formData.comprehensiveGuidance.length}/1000文字
-                  </div>
-                </div>
+                />
               </div>
             </div>
           </div>
@@ -667,65 +702,68 @@ export const CarePlanForm: React.FC<CarePlanFormProps> = ({
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <div className="space-y-4">
                 {/* Notes */}
-                <div className="space-y-2">
-                  <Label htmlFor="notes" className="text-sm font-medium text-gray-700">
-                    備考
-                  </Label>
-                  <Textarea
-                    id="notes"
-                    value={formData.notes || ''}
-                    onChange={(e) => updateField('notes', e.target.value)}
-                    placeholder="特記事項や注意点があれば記入してください"
-                    disabled={isSubmitting || isSavingDraft}
-                    className="min-h-24"
-                    rows={4}
-                  />
-                  {fieldErrors.notes && (
-                    <p className="text-sm text-red-600" role="alert">
-                      {fieldErrors.notes.message}
-                    </p>
+                <FormField
+                  control={control}
+                  name="notes"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>備考</FormLabel>
+                      <FormControl>
+                        <Textarea
+                          {...field}
+                          value={field.value || ''}
+                          placeholder="特記事項や注意点があれば記入してください"
+                          disabled={isSubmitting || isSavingDraft}
+                          className="min-h-24"
+                          rows={4}
+                        />
+                      </FormControl>
+                      <div className="text-xs text-gray-500 mt-1">
+                        {(field.value || '').length}/1000文字
+                      </div>
+                      <FormMessage />
+                    </FormItem>
                   )}
-                  <div className="text-xs text-gray-500 mt-1">
-                    {(formData.notes || '').length}/1000文字
-                  </div>
-                </div>
+                />
               </div>
 
               <div className="space-y-4">
                 {/* Consent */}
-                <div className="space-y-2">
-                  <Label className="text-sm font-medium text-gray-700">
-                    同意確認 <span className="text-red-500 ml-1">*</span>
-                  </Label>
-                  <div className="flex items-start space-x-3 p-4 border border-gray-200 rounded-lg bg-gray-50">
-                    <Checkbox
-                      id="consentObtained"
-                      checked={formData.consentObtained}
-                      onCheckedChange={(checked) =>
-                        updateField('consentObtained', checked === true)
-                      }
-                      disabled={isSubmitting || isSavingDraft}
-                      className="mt-1"
-                    />
-                    <div className="space-y-1">
-                      <Label
-                        htmlFor="consentObtained"
-                        className="text-sm font-medium text-gray-700 cursor-pointer"
-                      >
-                        施設サービス計画について説明を行い同意を得た
-                      </Label>
-                      <p className="text-xs text-gray-500">
-                        利用者様及びご家族に対してケアプランの内容について十分に説明し、
-                        同意を得た場合にチェックしてください。
-                      </p>
-                    </div>
-                  </div>
-                  {fieldErrors.consentObtained && (
-                    <p className="text-sm text-red-600" role="alert">
-                      {fieldErrors.consentObtained.message}
-                    </p>
+                <FormField
+                  control={control}
+                  name="consentObtained"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>
+                        同意確認 <span className="text-red-500 ml-1">*</span>
+                      </FormLabel>
+                      <FormControl>
+                        <div className="flex items-start space-x-3 p-4 border border-gray-200 rounded-lg bg-gray-50">
+                          <Checkbox
+                            id="consentObtained"
+                            checked={field.value}
+                            onCheckedChange={(checked) => field.onChange(checked === true)}
+                            disabled={isSubmitting || isSavingDraft}
+                            className="mt-1"
+                          />
+                          <div className="space-y-1">
+                            <Label
+                              htmlFor="consentObtained"
+                              className="text-sm font-medium text-gray-700 cursor-pointer"
+                            >
+                              施設サービス計画について説明を行い同意を得た
+                            </Label>
+                            <p className="text-xs text-gray-500">
+                              利用者様及びご家族に対してケアプランの内容について十分に説明し、
+                              同意を得た場合にチェックしてください。
+                            </p>
+                          </div>
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
                   )}
-                </div>
+                />
               </div>
             </div>
           </div>
@@ -733,28 +771,29 @@ export const CarePlanForm: React.FC<CarePlanFormProps> = ({
           {/* Notes Section (moved) */}
           <div className="space-y-4 hidden">
             <div className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="notes" className="text-sm font-medium text-gray-700">
-                  備考
-                </Label>
-                <Textarea
-                  id="notes"
-                  value={formData.notes || ''}
-                  onChange={(e) => updateField('notes', e.target.value)}
-                  placeholder="特記事項や注意点があれば記入してください"
-                  disabled={isSubmitting || isSavingDraft}
-                  className="min-h-24"
-                  rows={4}
-                />
-                {fieldErrors.notes && (
-                  <p className="text-sm text-red-600" role="alert">
-                    {fieldErrors.notes.message}
-                  </p>
+              <FormField
+                control={control}
+                name="notes"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>備考</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        {...field}
+                        value={field.value || ''}
+                        placeholder="特記事項や注意点があれば記入してください"
+                        disabled={isSubmitting || isSavingDraft}
+                        className="min-h-24"
+                        rows={4}
+                      />
+                    </FormControl>
+                    <div className="text-xs text-gray-500 mt-1">
+                      {(field.value || '').length}/1000文字
+                    </div>
+                    <FormMessage />
+                  </FormItem>
                 )}
-                <div className="text-xs text-gray-500 mt-1">
-                  {(formData.notes || '').length}/1000文字
-                </div>
-              </div>
+              />
             </div>
           </div>
 
@@ -910,11 +949,15 @@ export const CarePlanForm: React.FC<CarePlanFormProps> = ({
               ))}
             </div>
 
-            {fieldErrors.services && (
-              <p className="text-sm text-red-600" role="alert">
-                {fieldErrors.services.message}
-              </p>
-            )}
+            <FormField
+              control={control}
+              name="services"
+              render={() => (
+                <FormItem>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
           </div>
 
           {/* Unsaved Changes Warning */}

@@ -1,20 +1,28 @@
 'use client';
 
-import { FormField } from '@/components/1_atoms/forms/form-field';
 import { DocumentLocationRegisterModal } from '@/components/2_molecules/documents/document-location-register-modal';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { getFolderPath, rootFolders, subFolders } from '@/mocks/hierarchical-documents';
+import { Button } from '@/components/ui/button';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { getFolderPath } from '@/mocks/hierarchical-documents';
 import type { DocumentFormData } from '@/validations/document-validation';
 import { Folder } from 'lucide-react';
 import type React from 'react';
 import { useState } from 'react';
+import { type UseFormReturn } from 'react-hook-form';
 
 interface DocumentFormFieldsProps {
-  formData: DocumentFormData;
-  updateField: (field: keyof DocumentFormData, value: string) => void;
+  form: UseFormReturn<DocumentFormData>;
   isSubmitting: boolean;
   error: string | null;
-  fieldErrors: Partial<Record<keyof DocumentFormData, string>>;
   onSubmit: () => Promise<boolean>;
   onCancel: () => void;
   className?: string;
@@ -22,11 +30,9 @@ interface DocumentFormFieldsProps {
 }
 
 export const DocumentFormFields: React.FC<DocumentFormFieldsProps> = ({
-  formData,
-  updateField,
+  form,
   isSubmitting,
   error,
-  fieldErrors,
   onSubmit,
   onCancel,
   className = '',
@@ -38,33 +44,6 @@ export const DocumentFormFields: React.FC<DocumentFormFieldsProps> = ({
   const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     await onSubmit();
-  };
-
-  // 全てのフォルダを取得
-  const getAllFolders = () => {
-    const folders: { id: string; name: string; type: 'folder'; parentId: string | null }[] = [];
-
-    // ルートフォルダを追加
-    rootFolders.forEach((folder) => {
-      folders.push({
-        id: folder.id,
-        name: folder.name,
-        type: 'folder',
-        parentId: folder.parentId,
-      });
-    });
-
-    // サブフォルダを追加
-    subFolders.forEach((folder) => {
-      folders.push({
-        id: folder.id,
-        name: folder.name,
-        type: 'folder',
-        parentId: folder.parentId,
-      });
-    });
-
-    return folders;
   };
 
   // フォルダパス表示用
@@ -85,13 +64,6 @@ export const DocumentFormFields: React.FC<DocumentFormFieldsProps> = ({
     }
   };
 
-  const folders = getAllFolders();
-
-  // 現在選択されているフォルダのパスを取得
-  const selectedFolderPath = getFolderDisplayPath(
-    formData.folderId === 'root' ? null : formData.folderId || null
-  );
-
   // モーダルを開く
   const handleOpenModal = () => {
     setIsModalOpen(true);
@@ -105,77 +77,120 @@ export const DocumentFormFields: React.FC<DocumentFormFieldsProps> = ({
   // フォルダ選択完了時の処理
   const handleSelectFolder = (folderId: string | null) => {
     const selectedId = folderId === 'root' ? 'root' : folderId || 'root';
-    updateField('folderId' as keyof DocumentFormData, selectedId);
+    form.setValue('folderId', selectedId, { shouldDirty: true });
   };
 
   return (
     <>
-      <form onSubmit={handleFormSubmit} className={`space-y-4 ${className}`}>
-        {/* Folder Location Info */}
-        {formData.folderId && formData.folderId !== 'root' && (
-          <Alert className="border-blue-200 bg-blue-50">
-            <Folder className="h-4 w-4 text-blue-600" />
-            <AlertDescription className="text-blue-700">
-              保存場所: {selectedFolderPath}
-            </AlertDescription>
-          </Alert>
-        )}
-
-        {/* 基本情報 */}
-        <div className="space-y-4">
+      <Form {...form}>
+        <form onSubmit={handleFormSubmit} className={`space-y-4 ${className}`}>
+          {/* Folder Location Info */}
           <FormField
-            label="書類タイトル"
-            id="title"
-            value={formData.title}
-            onChange={(value) => updateField('title', value)}
-            placeholder="書類のタイトルを入力してください"
-            required
-            error={fieldErrors.title}
-            disabled={isSubmitting}
+            control={form.control}
+            name="folderId"
+            render={({ field }) => {
+              const currentFolderId = field.value;
+              const selectedFolderPath = getFolderDisplayPath(
+                currentFolderId === 'root' ? null : currentFolderId || null
+              );
+
+              if (currentFolderId && currentFolderId !== 'root') {
+                return (
+                  <Alert className="border-blue-200 bg-blue-50">
+                    <Folder className="h-4 w-4 text-blue-600" />
+                    <AlertDescription className="text-blue-700">
+                      保存場所: {selectedFolderPath}
+                    </AlertDescription>
+                  </Alert>
+                );
+              }
+              return <div></div>;
+            }}
           />
 
-          {/* 保存場所フォーム */}
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-700">保存場所</label>
-            <div className="flex items-center gap-2">
-              <input
-                type="text"
-                value={getFolderDisplayPath(
-                  formData.folderId === 'root' ? null : formData.folderId || null
-                )}
-                disabled
-                className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50 text-gray-600"
-              />
-              <button
-                type="button"
-                onClick={handleOpenModal}
-                disabled={isSubmitting}
-                className="p-2 hover:bg-gray-100 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                title="保存場所を選択"
-              >
-                <Folder className="h-4 w-4 text-blue-500" />
-              </button>
-            </div>
-            <p className="text-xs text-gray-500">書類が保存されるフォルダの場所です</p>
+          {/* 基本情報 */}
+          <div className="space-y-4">
+            <FormField
+              control={form.control}
+              name="title"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>
+                    書類タイトル <span className="text-red-500">*</span>
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="書類のタイトルを入力してください"
+                      disabled={isSubmitting}
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* 保存場所フォーム */}
+            <FormField
+              control={form.control}
+              name="folderId"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>保存場所</FormLabel>
+                  <div className="flex items-center gap-2">
+                    <FormControl>
+                      <Input
+                        value={getFolderDisplayPath(
+                          field.value === 'root' ? null : field.value || null
+                        )}
+                        disabled
+                        className="bg-gray-50 text-gray-600"
+                      />
+                    </FormControl>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="icon"
+                      onClick={handleOpenModal}
+                      disabled={isSubmitting}
+                      className="shrink-0"
+                      title="保存場所を選択"
+                    >
+                      <Folder className="h-4 w-4 text-blue-500" />
+                    </Button>
+                  </div>
+                  <p className="text-xs text-gray-500">書類が保存されるフォルダの場所です</p>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="tags"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>タグ</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="カンマ区切りでタグを入力（例: 会議,報告,2025年度）"
+                      disabled={isSubmitting}
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
           </div>
-
-          <FormField
-            label="タグ"
-            id="tags"
-            value={formData.tags}
-            onChange={(value) => updateField('tags', value)}
-            placeholder="カンマ区切りでタグを入力（例: 会議,報告,2025年度）"
-            error={fieldErrors.tags}
-            disabled={isSubmitting}
-          />
-        </div>
-      </form>
+        </form>
+      </Form>
 
       {/* 保存場所選択モーダル */}
       <DocumentLocationRegisterModal
         isOpen={isModalOpen}
         onClose={handleCloseModal}
-        currentFolderId={formData.folderId === 'root' ? null : formData.folderId || null}
+        currentFolderId={form.watch('folderId') === 'root' ? null : form.watch('folderId') || null}
         onSelectFolder={handleSelectFolder}
       />
     </>

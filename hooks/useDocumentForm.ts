@@ -1,11 +1,13 @@
 /**
  * Document Form Hook
  *
- * Manages document form state and validation
+ * Manages document form state and validation using React Hook Form
  */
 
 import { documentFormSchema, type DocumentFormData } from '@/validations/document-validation';
-import { useCallback, useState } from 'react';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useCallback, useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
 
 interface UseDocumentFormOptions {
   onSubmit: (data: DocumentFormData, isDraft?: boolean) => Promise<boolean>;
@@ -18,94 +20,38 @@ const initialFormData: DocumentFormData = {
   description: '',
   status: 'draft',
   tags: '',
+  folderId: 'root',
 };
 
 export const useDocumentForm = ({ onSubmit, initialData = {} }: UseDocumentFormOptions) => {
-  const [formData, setFormData] = useState<DocumentFormData>({
-    ...initialFormData,
-    ...initialData,
-  });
-
   const [formState, setFormState] = useState({
     isSubmitting: false,
     isSavingDraft: false,
     hasUnsavedChanges: false,
     error: null as string | null,
-    fieldErrors: {} as Partial<Record<keyof DocumentFormData, string>>,
   });
 
-  const updateField = useCallback(
-    (field: keyof DocumentFormData, value: string) => {
-      setFormData((prev) => ({ ...prev, [field]: value }));
-      setFormState((prev) => ({
-        ...prev,
-        hasUnsavedChanges: true,
-        fieldErrors: prev.fieldErrors[field]
-          ? { ...prev.fieldErrors, [field]: undefined }
-          : prev.fieldErrors,
-      }));
-
-      // Clear field error when user starts typing
-      if (formState.fieldErrors[field]) {
-        setFormState((prev) => ({
-          ...prev,
-          fieldErrors: { ...prev.fieldErrors, [field]: undefined },
-        }));
-      }
+  const form = useForm<DocumentFormData>({
+    resolver: zodResolver(documentFormSchema),
+    defaultValues: {
+      ...initialFormData,
+      ...initialData,
     },
-    [formState.fieldErrors]
-  );
+    mode: 'onChange',
+  });
 
-  const validateForm = useCallback(
-    (isDraft = false) => {
-      // 下書き保存の場合はバリデーションをスキップ
-      if (isDraft) {
-        setFormState((prev) => ({
-          ...prev,
-          fieldErrors: {},
-          error: null,
-        }));
-        return true;
-      }
+  const { handleSubmit, reset, formState: rhfFormState, watch } = form;
 
-      const result = documentFormSchema.safeParse(formData);
+  // フォームの変更を監視
+  useEffect(() => {
+    setFormState((prev) => ({
+      ...prev,
+      hasUnsavedChanges: rhfFormState.isDirty,
+    }));
+  }, [rhfFormState.isDirty]);
 
-      if (!result.success) {
-        const fieldErrors: Partial<Record<keyof DocumentFormData, string>> = {};
-
-        for (const error of result.error.errors) {
-          if (error.path.length > 0) {
-            const field = error.path[0] as keyof DocumentFormData;
-            fieldErrors[field] = error.message;
-          }
-        }
-
-        setFormState((prev) => ({
-          ...prev,
-          fieldErrors,
-          error: '入力内容に不備があります。必須項目を確認してください。',
-        }));
-
-        return false;
-      }
-
-      setFormState((prev) => ({
-        ...prev,
-        fieldErrors: {},
-        error: null,
-      }));
-
-      return true;
-    },
-    [formData]
-  );
-
-  const handleSubmit = useCallback(
-    async (isDraft = false) => {
-      if (!validateForm(isDraft)) {
-        return false;
-      }
-
+  const submitHandler = useCallback(
+    async (data: DocumentFormData, isDraft = false) => {
       const stateKey = isDraft ? 'isSavingDraft' : 'isSubmitting';
       setFormState((prev) => ({
         ...prev,
@@ -114,20 +60,19 @@ export const useDocumentForm = ({ onSubmit, initialData = {} }: UseDocumentFormO
       }));
 
       try {
-        const success = await onSubmit(formData, isDraft);
+        const success = await onSubmit(data, isDraft);
 
         if (success) {
           // 下書き保存時はフォームデータをリセットしない
           if (!isDraft) {
-            setFormData({ ...initialFormData, ...initialData });
+            reset({ ...initialFormData, ...initialData });
           }
-          setFormState({
+          setFormState((prev) => ({
             isSubmitting: false,
             isSavingDraft: false,
-            hasUnsavedChanges: isDraft ? formState.hasUnsavedChanges : false, // 下書き保存時は未保存変更フラグを保持
+            hasUnsavedChanges: isDraft ? prev.hasUnsavedChanges : false,
             error: null,
-            fieldErrors: {},
-          });
+          }));
           return true;
         } else {
           setFormState((prev) => ({
@@ -141,29 +86,36 @@ export const useDocumentForm = ({ onSubmit, initialData = {} }: UseDocumentFormO
         console.error('Document form submission error:', error);
         setFormState((prev) => ({
           ...prev,
-          isSubmitting: false,
+          [stateKey]: false,
           error: 'ネットワークエラーが発生しました。接続を確認してもう一度お試しください。',
         }));
         return false;
       }
     },
-    [formData, validateForm, onSubmit, initialData]
+    [onSubmit, initialData, reset]
   );
 
-  const saveDraft = useCallback(() => {
-    return handleSubmit(true);
-  }, [handleSubmit]);
+  const onValidSubmit = useCallback(
+    (data: DocumentFormData) => {
+      return submitHandler(data, false);
+    },
+    [submitHandler]
+  );
 
-  const reset = useCallback(() => {
-    setFormData({ ...initialFormData, ...initialData });
+  const saveDraft = useCallback(async () => {
+    const data = form.getValues();
+    return submitHandler(data, true);
+  }, [form, submitHandler]);
+
+  const resetForm = useCallback(() => {
+    reset({ ...initialFormData, ...initialData });
     setFormState({
       isSubmitting: false,
       isSavingDraft: false,
       hasUnsavedChanges: false,
       error: null,
-      fieldErrors: {},
     });
-  }, [initialData]);
+  }, [initialData, reset]);
 
   const clearError = useCallback(() => {
     setFormState((prev) => ({
@@ -173,15 +125,13 @@ export const useDocumentForm = ({ onSubmit, initialData = {} }: UseDocumentFormO
   }, []);
 
   return {
-    formData,
-    updateField,
+    form,
     isSubmitting: formState.isSubmitting,
     isSavingDraft: formState.isSavingDraft,
     hasUnsavedChanges: formState.hasUnsavedChanges,
     error: formState.error,
-    fieldErrors: formState.fieldErrors,
-    handleSubmit,
-    reset,
+    handleSubmit: handleSubmit(onValidSubmit),
+    reset: resetForm,
     clearError,
     saveDraft,
   };

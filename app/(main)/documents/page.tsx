@@ -319,49 +319,43 @@ function DocumentsContent() {
 
   return (
     <div className="p-4 md:p-6 bg-carebase-bg min-h-screen">
-      <div className="mb-6">
+      <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
         {/* パンくずリスト */}
-        <FolderBreadcrumb path={breadcrumbPath} className="mb-4" />
+        <FolderBreadcrumb path={breadcrumbPath} />
 
-        <div className="flex flex-wrap items-center justify-between gap-4">
-          <p className="text-gray-600">
-            {documents.length}個のアイテム
-            {isFolderView && folder?.updatedAt && ` • 最終更新: ${folder.updatedAt}`}
-          </p>
-          <div className="flex items-center gap-2">
-            <Link href="/documents/new">
-              <Button className="bg-carebase-blue hover:bg-carebase-blue-dark">
-                <FileText className="h-4 w-4 mr-2" />
-                新規書類
-              </Button>
-            </Link>
-            <Button
-              onClick={handleCreateFolder}
-              className="bg-carebase-blue hover:bg-carebase-blue-dark"
-            >
-              <FolderPlus className="h-4 w-4 mr-2" />
-              新しいフォルダ
+        <div className="flex items-center gap-2">
+          <Link href="/documents/new">
+            <Button className="bg-carebase-blue hover:bg-carebase-blue-dark">
+              <FileText className="h-4 w-4 mr-2" />
+              新規書類
             </Button>
-            <Button
-              onClick={() => setIsUploadModalOpen(true)}
-              variant="outline"
-              className="border-carebase-blue text-carebase-blue hover:bg-carebase-blue-light"
-            >
-              <Upload className="h-4 w-4 mr-2" />
-              ファイルをアップロード
-            </Button>
-            <Button
-              variant="outline"
-              onClick={handleDeleteSelected}
-              disabled={selectedItems.length === 0}
-              className={
-                selectedItems.length > 0 ? 'border-red-300 text-red-600 hover:bg-red-50' : ''
-              }
-            >
-              <Trash2 className="h-4 w-4 mr-2" />
-              選択したアイテムを削除
-            </Button>
-          </div>
+          </Link>
+          <Button
+            onClick={handleCreateFolder}
+            className="bg-carebase-blue hover:bg-carebase-blue-dark"
+          >
+            <FolderPlus className="h-4 w-4 mr-2" />
+            新しいフォルダ
+          </Button>
+          <Button
+            onClick={() => setIsUploadModalOpen(true)}
+            variant="outline"
+            className="border-carebase-blue text-carebase-blue hover:bg-carebase-blue-light"
+          >
+            <Upload className="h-4 w-4 mr-2" />
+            ファイルをアップロード
+          </Button>
+          <Button
+            variant="outline"
+            onClick={handleDeleteSelected}
+            disabled={selectedItems.length === 0}
+            className={
+              selectedItems.length > 0 ? 'border-red-300 text-red-600 hover:bg-red-50' : ''
+            }
+          >
+            <Trash2 className="h-4 w-4 mr-2" />
+            選択したアイテムを削除
+          </Button>
         </div>
       </div>
 
