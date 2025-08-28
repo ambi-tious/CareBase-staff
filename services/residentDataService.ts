@@ -320,11 +320,11 @@ class ResidentDataService {
     const newInstitution: MedicalInstitution = {
       id: `mi-${Date.now()}`,
       institutionName: data.institutionName,
-      doctorName: data.doctorName,
-      phone: data.phone,
+      doctorName: data.doctorName || '',
+      phone: data.phone || '',
       fax: data.fax || '',
-      address: data.address,
-      notes: data.notes,
+      address: data.address || '',
+      notes: data.notes || '',
     };
 
     // console.log('Mock created medical institution:', newInstitution);
@@ -341,11 +341,11 @@ class ResidentDataService {
     const updatedInstitution: MedicalInstitution = {
       id: institutionId,
       institutionName: data.institutionName,
-      doctorName: data.doctorName,
-      phone: data.phone,
+      doctorName: data.doctorName || '',
+      phone: data.phone || '',
       fax: data.fax || '',
-      address: data.address,
-      notes: data.notes,
+      address: data.address || '',
+      notes: data.notes || '',
     };
 
     // console.log('Mock updated medical institution:', updatedInstitution);
@@ -356,6 +356,16 @@ class ResidentDataService {
     await new Promise((resolve) => setTimeout(resolve, 800));
 
     // console.log('Mock deleted medical institution:', { residentId, institutionId });
+  }
+
+  async dissociateMedicalInstitutionFromResident(
+    residentId: number,
+    institutionId: string
+  ): Promise<void> {
+    await new Promise((resolve) => setTimeout(resolve, 800));
+
+    // 利用者からの医療機関の紐付けを解除（マスタからは削除しない）
+    // console.log('Mock dissociated medical institution from resident:', { residentId, institutionId });
   }
 
   // Medical History Methods

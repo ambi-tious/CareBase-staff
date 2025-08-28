@@ -37,17 +37,18 @@ export const medicalInstitutionFormSchema = z.object({
     .string()
     .min(1, '医療機関名は必須です')
     .max(100, '医療機関名は100文字以内で入力してください'),
-  doctorName: z.string().min(1, '医師名は必須です').max(50, '医師名は50文字以内で入力してください'),
+  doctorName: z.string().max(50, '医師名は50文字以内で入力してください').optional(),
   phone: z
     .string()
-    .min(1, '電話番号は必須です')
-    .regex(/^[0-9\-\+\(\)\s]+$/, '有効な電話番号を入力してください'),
+    .regex(/^[0-9\-\+\(\)\s]*$/, '有効な電話番号を入力してください')
+    .optional()
+    .or(z.literal('')),
   fax: z
     .string()
     .regex(/^[0-9\-\+\(\)\s]*$/, '有効なFAX番号を入力してください')
     .optional()
     .or(z.literal('')),
-  address: z.string().min(1, '住所は必須です').max(200, '住所は200文字以内で入力してください'),
+  address: z.string().max(200, '住所は200文字以内で入力してください').optional(),
   notes: z.string().optional(),
 });
 

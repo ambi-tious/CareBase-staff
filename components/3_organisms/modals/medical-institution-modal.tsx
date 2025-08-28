@@ -16,6 +16,7 @@ interface MedicalInstitutionModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSubmit: (data: MedicalInstitutionFormData) => Promise<boolean>;
+  onCreateNew?: () => void;
   institution?: MedicalInstitution;
   residentName?: string;
   mode: 'create' | 'edit';
@@ -25,6 +26,7 @@ export const MedicalInstitutionModal: React.FC<MedicalInstitutionModalProps> = (
   isOpen,
   onClose,
   onSubmit,
+  onCreateNew,
   institution,
   residentName,
   mode,
@@ -54,7 +56,12 @@ export const MedicalInstitutionModal: React.FC<MedicalInstitutionModalProps> = (
           </DialogDescription>
         </DialogHeader>
 
-        <MedicalInstitutionForm onSubmit={onSubmit} onCancel={onClose} initialData={initialData} />
+        <MedicalInstitutionForm
+          onSubmit={onSubmit}
+          onCancel={onClose}
+          onCreateNew={onCreateNew}
+          initialData={initialData}
+        />
       </DialogContent>
     </Dialog>
   );

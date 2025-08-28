@@ -18,6 +18,7 @@ import { ContactEditModal } from '@/components/3_organisms/modals/contact-edit-m
 import { HomeCareOfficeMasterModal } from '@/components/3_organisms/modals/home-care-office-master-modal';
 import { HomeCareOfficeModal } from '@/components/3_organisms/modals/home-care-office-modal';
 import { MedicalHistoryModal } from '@/components/3_organisms/modals/medical-history-modal';
+import { MedicalInstitutionMasterModal } from '@/components/3_organisms/modals/medical-institution-master-modal';
 import { MedicalInstitutionModal } from '@/components/3_organisms/modals/medical-institution-modal';
 import { MedicationModal } from '@/components/3_organisms/modals/medication-modal';
 import {
@@ -59,6 +60,7 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
 
   const [isHomeCareMasterModalOpen, setIsHomeCareMasterModalOpen] = useState(false);
   const [isMedicalModalOpen, setIsMedicalModalOpen] = useState(false);
+  const [isMedicalMasterModalOpen, setIsMedicalMasterModalOpen] = useState(false);
   const [isMedicalHistoryModalOpen, setIsMedicalHistoryModalOpen] = useState(false);
   const [isMedicationModalOpen, setIsMedicationModalOpen] = useState(false);
 
@@ -189,6 +191,16 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
 
   const handleHomeCareOfficeCreateNew = () => {
     setIsHomeCareModalOpen(true);
+  };
+
+  const handleMedicalInstitutionCreateNew = () => {
+    // setIsMedicalModalOpen(false);
+    setIsMedicalMasterModalOpen(true);
+  };
+
+  const handleMedicalInstitutionMasterRefresh = () => {
+    // 医療機関マスタが更新された際の処理（必要に応じて実装）
+    console.log('Medical institution master refreshed');
   };
 
   const handleHomeCareOfficeMasterRefresh = () => {
@@ -575,10 +587,17 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
         mode="create"
       />
 
+      <MedicalInstitutionMasterModal
+        isOpen={isMedicalMasterModalOpen}
+        onClose={() => setIsMedicalMasterModalOpen(false)}
+        onRefresh={handleMedicalInstitutionMasterRefresh}
+      />
+
       <MedicalInstitutionModal
         isOpen={isMedicalModalOpen}
         onClose={() => setIsMedicalModalOpen(false)}
         onSubmit={handleMedicalInstitutionSubmit}
+        onCreateNew={handleMedicalInstitutionCreateNew}
         residentName={resident.name}
         mode="create"
       />

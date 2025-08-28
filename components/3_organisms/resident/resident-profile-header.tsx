@@ -43,8 +43,8 @@ export const ResidentProfileHeader: React.FC<ResidentProfileHeaderProps> = ({ re
                 <InfoRow label="性別" value={resident.sex} />
               </div>
               <div>
-                <InfoRow label="所属フロア・グループ" value={resident.floorGroup} />
-                <InfoRow label="所属ユニット・チーム" value={resident.unitTeam} />
+                <InfoRow label="グループ" value={resident.floorGroup} />
+                <InfoRow label="チーム" value={resident.unitTeam} />
                 <InfoRow label="部屋情報" value={resident.roomInfo} />
               </div>
               <div>
