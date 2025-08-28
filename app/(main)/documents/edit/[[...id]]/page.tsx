@@ -1,6 +1,7 @@
 'use client';
 
 import { DocumentFormEditor } from '@/components/3_organisms/documents/document-form-editor';
+import { useAuth } from '@/hooks/useAuth';
 import type { DocumentFormData } from '@/validations/document-validation';
 import { useSearchParams } from 'next/navigation';
 import React from 'react';
@@ -13,6 +14,7 @@ interface PageProps {
 
 export default function DocumentEditPage({ params }: PageProps) {
   const searchParams = useSearchParams();
+  const { selectedStaff } = useAuth();
 
   // URLパラメータからドキュメントIDを取得
   const resolvedParams = React.use(params);
@@ -48,6 +50,7 @@ export default function DocumentEditPage({ params }: PageProps) {
       const saveData = {
         documentId,
         folderId, // フォルダIDも保存データに含める
+        createdBy: selectedStaff?.name || '現在のユーザー',
         ...data,
       };
       // console.log('Saving document:', saveData);

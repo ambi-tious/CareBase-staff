@@ -7,6 +7,7 @@ import { FolderDeleteModal } from '@/components/3_organisms/modals/folder-delete
 import { FolderModal } from '@/components/3_organisms/modals/folder-modal';
 import { GenericDeleteModal } from '@/components/3_organisms/modals/generic-delete-modal';
 import { Button } from '@/components/ui/button';
+import { useAuth } from '@/hooks/useAuth';
 import type { DocumentCategory, DocumentFolder } from '@/mocks/documents-data';
 import { getCategoryByKey, getDocumentsByCategory } from '@/mocks/documents-data';
 import {
@@ -35,6 +36,7 @@ interface BreadcrumbPathItem {
 function DocumentsContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { selectedStaff } = useAuth();
 
   // URLパラメータからカテゴリーまたはフォルダIDを取得
   const categoryOrFolderId = searchParams.get('category') || searchParams.get('folder') || null;
@@ -193,7 +195,7 @@ function DocumentsContent() {
         status: 'published' as const,
         createdAt: new Date().toISOString().split('T')[0],
         updatedAt: new Date().toISOString().split('T')[0],
-        createdBy: '現在のユーザー',
+        createdBy: selectedStaff?.name || '現在のユーザー',
       }));
 
       setDocuments((prev) => [...prev, ...newFiles]);
@@ -218,7 +220,7 @@ function DocumentsContent() {
     try {
       await new Promise((resolve) => setTimeout(resolve, 500));
 
-      const newFolder = createFolder(folderName, categoryOrFolderId);
+      const newFolder = createFolder(folderName, categoryOrFolderId, selectedStaff?.name);
       setDocuments((prev) => [newFolder, ...prev]);
 
       toast.success(`「${folderName}」フォルダが作成されました`);
