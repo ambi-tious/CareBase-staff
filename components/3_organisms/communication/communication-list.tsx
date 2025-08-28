@@ -174,14 +174,10 @@ export const CommunicationList = forwardRef<CommunicationListRef, CommunicationL
           onSearchChange={setSearchQuery}
           onImportantToggle={setShowImportantOnly}
           onReset={handleResetFilters}
+          totalCount={totalRecords}
+          importantCount={importantRecords}
+          filteredCount={filteredRecords.length}
         />
-
-        {/* Statistics */}
-        <div className="flex items-center gap-4 text-sm text-gray-600">
-          <span>総件数: {totalRecords}件</span>
-          <span className="text-red-600 font-medium">重要: {importantRecords}件</span>
-          <span>表示中: {filteredRecords.length}件</span>
-        </div>
 
         {/* Timeline Table */}
         {filteredRecords.length === 0 ? (
