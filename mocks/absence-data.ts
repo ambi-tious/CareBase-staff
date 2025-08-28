@@ -1,4 +1,4 @@
-import type { Absence } from '@/types/absence';
+import type { Absence, AbsenceStatus } from '@/types/absence';
 
 export const absenceData: Absence[] = [
   {

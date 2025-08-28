@@ -25,7 +25,10 @@ export const AbsenceReasonBadge: React.FC<AbsenceReasonBadgeProps> = ({
   const displayText = reason === 'other' && customReason ? customReason : reasonConfig.label;
 
   return (
-    <Badge className={`${reasonConfig.color} ${className} flex items-center gap-1`} variant="outline">
+    <Badge
+      className={`${reasonConfig.color} ${className} flex items-center gap-1`}
+      variant="outline"
+    >
       <Icon className="h-3 w-3" />
       {displayText}
     </Badge>

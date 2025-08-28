@@ -45,10 +45,8 @@ export const AbsenceForm: React.FC<AbsenceFormProps> = ({
   const form = useAbsenceForm({ onSubmit, initialData, mode });
   const {
     formData,
-    updateField,
     isSubmitting,
     error,
-    fieldErrors,
     hasUnsavedChanges,
     onSubmit: formSubmit,
     clearError,

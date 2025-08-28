@@ -1,25 +1,29 @@
 'use client';
 
 import { MedicationCard as NewMedicationCard } from '@/components/2_molecules/medication/medication-card';
-
 import { ContactCard } from '@/components/2_molecules/resident/contact-info-card';
 import { HomeCareOfficeCard } from '@/components/2_molecules/resident/home-care-office-card';
 import { MedicalHistoryCard } from '@/components/2_molecules/resident/medical-history-card';
 import { MedicalInstitutionCard } from '@/components/2_molecules/resident/medical-institution-card';
 import { MedicationCard as OldMedicationCard } from '@/components/2_molecules/resident/medication-card';
 import {
+  AbsenceTabContent,
+  type AbsenceTabContentRef,
+} from '@/components/3_organisms/absence/absence-tab-content';
+import {
   IndividualPointsTabContent,
   type IndividualPointsTabContentRef,
 } from '@/components/3_organisms/individual-points/individual-points-tab-content';
-import { AbsenceTabContent } from '@/components/3_organisms/absence/absence-tab-content';
 import { ContactEditModal } from '@/components/3_organisms/modals/contact-edit-modal';
 import { HomeCareOfficeMasterModal } from '@/components/3_organisms/modals/home-care-office-master-modal';
 import { HomeCareOfficeModal } from '@/components/3_organisms/modals/home-care-office-modal';
-
 import { MedicalHistoryModal } from '@/components/3_organisms/modals/medical-history-modal';
 import { MedicalInstitutionModal } from '@/components/3_organisms/modals/medical-institution-modal';
 import { MedicationModal } from '@/components/3_organisms/modals/medication-modal';
-import { ResidentFilesTabContent } from '@/components/3_organisms/resident-files/resident-files-tab-content';
+import {
+  ResidentFilesTabContent,
+  type ResidentFilesTabContentRef,
+} from '@/components/3_organisms/resident-files/resident-files-tab-content';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import type {
@@ -31,12 +35,9 @@ import type {
 } from '@/mocks/care-board-data';
 import { contactService } from '@/services/contactService';
 import { medicationService } from '@/services/medicationService';
-
 import { residentDataService } from '@/services/residentDataService';
 import type { Medication } from '@/types/medication';
-
 import type { ContactFormData } from '@/validations/contact-validation';
-
 import type { MedicationFormData } from '@/validations/medication-validation';
 import type {
   HomeCareOfficeFormData,
@@ -89,6 +90,8 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
 
   const [activeTab, setActiveTab] = useState('family');
   const individualPointsTabContentRef = useRef<IndividualPointsTabContentRef>(null);
+  const absenceTabContentRef = useRef<AbsenceTabContentRef>(null);
+  const residentFilesTabContentRef = useRef<ResidentFilesTabContentRef>(null);
 
   const detailTabs = [
     { value: 'family', label: 'ご家族情報' },
@@ -96,10 +99,9 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
     { value: 'medical', label: 'かかりつけ医療機関' },
     { value: 'history', label: '既往歴' },
     { value: 'medicationInfo', label: 'お薬情報' },
-    { value: 'absence', label: '不在情報' },
-
     { value: 'individualPoints', label: '個別ポイント' },
     { value: 'files', label: 'ファイル管理' },
+    { value: 'absence', label: '不在情報' },
   ];
 
   const handleAddContact = () => {
@@ -304,10 +306,9 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
       'medical',
       'history',
       'medicationInfo',
-      'absence',
-
       'individualPoints',
       'files',
+      'absence',
     ].includes(activeTab);
   };
 
@@ -323,19 +324,12 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
         return handleAddMedicalHistory;
       case 'medicationInfo':
         return handleAddMedication;
-      case 'absence':
-        return () => {
-          // 不在情報タブの場合は直接新規作成モーダルを開く
-          // この機能はAbsenceTabContent内で管理される
-        };
-
       case 'individualPoints':
         return () => individualPointsTabContentRef.current?.openCategoryModal();
       case 'files':
-        return () => {
-          // ファイルタブの場合は直接アップロードモーダルを開く
-          // この機能はResidentFilesTabContent内で管理される
-        };
+        return () => residentFilesTabContentRef.current?.openUploadModal();
+      case 'absence':
+        return () => absenceTabContentRef.current?.openCreateModal();
       default:
         return undefined;
     }
@@ -485,23 +479,31 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
 
         <TabsContent value="absence">
           <div className="space-y-4">
-            <AbsenceTabContent residentId={resident.id} residentName={resident.name} />
+            <AbsenceTabContent
+              ref={absenceTabContentRef}
+              residentId={resident.id}
+              residentName={resident.name}
+            />
           </div>
         </TabsContent>
 
         <TabsContent value="individualPoints">
           <div className="space-y-4">
-            <IndividualPointsTabContent 
+            <IndividualPointsTabContent
               ref={individualPointsTabContentRef}
-              residentId={resident.id} 
-              residentName={resident.name} 
+              residentId={resident.id}
+              residentName={resident.name}
             />
           </div>
         </TabsContent>
 
         <TabsContent value="files">
           <div className="space-y-4">
-            <ResidentFilesTabContent residentId={resident.id} residentName={resident.name} />
+            <ResidentFilesTabContent
+              ref={residentFilesTabContentRef}
+              residentId={resident.id}
+              residentName={resident.name}
+            />
           </div>
         </TabsContent>
       </Tabs>

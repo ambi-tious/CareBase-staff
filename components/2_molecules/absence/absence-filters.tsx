@@ -11,7 +11,7 @@ import {
 } from '@/components/ui/select';
 import type { AbsenceReason, AbsenceStatus } from '@/types/absence';
 import { absenceReasonOptions, absenceStatusOptions } from '@/types/absence';
-import { Filter, RotateCcw, Search, X } from 'lucide-react';
+import { RotateCcw, Search, X } from 'lucide-react';
 import type React from 'react';
 
 interface AbsenceFiltersProps {
@@ -65,14 +65,8 @@ export const AbsenceFilters: React.FC<AbsenceFiltersProps> = ({
             </Button>
           )}
         </div>
-
         {/* Filters */}
         <div className="flex items-center gap-2">
-          <div className="flex items-center gap-2">
-            <Filter className="h-4 w-4 text-gray-500" />
-            <span className="text-sm font-medium text-gray-700">フィルター:</span>
-          </div>
-
           <Select
             value={selectedStatus || ''}
             onValueChange={(value) =>

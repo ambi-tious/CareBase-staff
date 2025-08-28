@@ -42,7 +42,7 @@ export const AbsenceModal: React.FC<AbsenceModalProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent 
+      <DialogContent
         className="max-w-4xl max-h-[90vh] overflow-y-auto tablet:max-w-[95vw] tablet:max-h-[95vh]"
         data-testid="absence-modal"
       >
@@ -59,9 +59,9 @@ export const AbsenceModal: React.FC<AbsenceModalProps> = ({
         </DialogHeader>
 
         <div className="tablet:mt-6">
-          <AbsenceForm 
-            onSubmit={onSubmit} 
-            onCancel={onClose} 
+          <AbsenceForm
+            onSubmit={onSubmit}
+            onCancel={onClose}
             initialData={initialData}
             mode={mode}
           />

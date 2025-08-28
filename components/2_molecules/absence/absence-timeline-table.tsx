@@ -77,7 +77,7 @@ export const AbsenceTimelineTable: React.FC<AbsenceTimelineTableProps> = ({
     const diffMs = end.getTime() - start.getTime();
     const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
     const diffMinutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
-    
+
     if (diffHours > 0) {
       return `${diffHours}時間${diffMinutes > 0 ? `${diffMinutes}分` : ''}`;
     }
@@ -97,15 +97,17 @@ export const AbsenceTimelineTable: React.FC<AbsenceTimelineTableProps> = ({
         newStatus
       );
       onAbsenceUpdate?.(updatedAbsence);
-      
+
       const statusLabels = {
         scheduled: '予定',
         ongoing: '不在中',
         completed: '帰所済み',
         cancelled: 'キャンセル',
       };
-      
-      toast.success(`ステータスを「${statusLabels[newStatus as keyof typeof statusLabels]}」に更新しました`);
+
+      toast.success(
+        `ステータスを「${statusLabels[newStatus as keyof typeof statusLabels]}」に更新しました`
+      );
     } catch (error) {
       console.error('Failed to update absence status:', error);
       toast.error('ステータスの更新に失敗しました');
@@ -123,7 +125,8 @@ export const AbsenceTimelineTable: React.FC<AbsenceTimelineTableProps> = ({
   };
 
   const canEdit = (absence: Absence) => absence.status === 'scheduled';
-  const canCancel = (absence: Absence) => absence.status === 'scheduled' || absence.status === 'ongoing';
+  const canCancel = (absence: Absence) =>
+    absence.status === 'scheduled' || absence.status === 'ongoing';
   const canMarkOngoing = (absence: Absence) => absence.status === 'scheduled';
   const canMarkCompleted = (absence: Absence) => absence.status === 'ongoing';
 
@@ -133,7 +136,9 @@ export const AbsenceTimelineTable: React.FC<AbsenceTimelineTableProps> = ({
   );
 
   return (
-    <div className={`bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden ${className}`}>
+    <div
+      className={`bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden ${className}`}
+    >
       <Table>
         <TableHeader>
           <TableRow className="bg-gray-50">
@@ -165,8 +170,8 @@ export const AbsenceTimelineTable: React.FC<AbsenceTimelineTableProps> = ({
           ) : (
             sortedAbsences.map((absence, index) => {
               const isUpdating = isUpdatingStatus === absence.id;
-              const showDateDivider = 
-                index === 0 || 
+              const showDateDivider =
+                index === 0 ||
                 !isSameDay(absence.startDateTime, sortedAbsences[index - 1].startDateTime);
 
               return (
@@ -186,7 +191,7 @@ export const AbsenceTimelineTable: React.FC<AbsenceTimelineTableProps> = ({
                   )}
 
                   {/* 不在記録行 */}
-                  <TableRow 
+                  <TableRow
                     className={`
                       hover:bg-gray-50 transition-colors
                       ${absence.status === 'ongoing' ? 'bg-yellow-50' : ''}
@@ -223,8 +228,8 @@ export const AbsenceTimelineTable: React.FC<AbsenceTimelineTableProps> = ({
 
                     {/* 理由列 */}
                     <TableCell>
-                      <AbsenceReasonBadge 
-                        reason={absence.reason} 
+                      <AbsenceReasonBadge
+                        reason={absence.reason}
                         customReason={absence.customReason}
                       />
                     </TableCell>
@@ -260,9 +265,9 @@ export const AbsenceTimelineTable: React.FC<AbsenceTimelineTableProps> = ({
                     <TableCell>
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                          <Button 
-                            variant="ghost" 
-                            size="sm" 
+                          <Button
+                            variant="ghost"
+                            size="sm"
                             disabled={isUpdating}
                             className="h-8 w-8 p-0"
                           >
@@ -271,18 +276,18 @@ export const AbsenceTimelineTable: React.FC<AbsenceTimelineTableProps> = ({
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end" className="w-48">
                           {canEdit(absence) && (
-                            <DropdownMenuItem 
-                              onClick={() => handleEdit(absence)} 
+                            <DropdownMenuItem
+                              onClick={() => handleEdit(absence)}
                               className="cursor-pointer"
                             >
                               <Edit3 className="h-4 w-4 mr-2" />
                               編集
                             </DropdownMenuItem>
                           )}
-                          
+
                           {canMarkOngoing(absence) && (
-                            <DropdownMenuItem 
-                              onClick={() => handleStatusUpdate(absence, 'ongoing')} 
+                            <DropdownMenuItem
+                              onClick={() => handleStatusUpdate(absence, 'ongoing')}
                               className="cursor-pointer"
                               disabled={isUpdating}
                             >
@@ -290,10 +295,10 @@ export const AbsenceTimelineTable: React.FC<AbsenceTimelineTableProps> = ({
                               不在開始
                             </DropdownMenuItem>
                           )}
-                          
+
                           {canMarkCompleted(absence) && (
-                            <DropdownMenuItem 
-                              onClick={() => handleStatusUpdate(absence, 'completed')} 
+                            <DropdownMenuItem
+                              onClick={() => handleStatusUpdate(absence, 'completed')}
                               className="cursor-pointer"
                               disabled={isUpdating}
                             >
@@ -301,12 +306,12 @@ export const AbsenceTimelineTable: React.FC<AbsenceTimelineTableProps> = ({
                               帰所完了
                             </DropdownMenuItem>
                           )}
-                          
+
                           {canCancel(absence) && (
                             <>
                               <DropdownMenuSeparator />
-                              <DropdownMenuItem 
-                                onClick={() => handleStatusUpdate(absence, 'cancelled')} 
+                              <DropdownMenuItem
+                                onClick={() => handleStatusUpdate(absence, 'cancelled')}
                                 className="cursor-pointer text-orange-600"
                                 disabled={isUpdating}
                               >
@@ -315,10 +320,10 @@ export const AbsenceTimelineTable: React.FC<AbsenceTimelineTableProps> = ({
                               </DropdownMenuItem>
                             </>
                           )}
-                          
+
                           <DropdownMenuSeparator />
-                          <DropdownMenuItem 
-                            onClick={() => handleDelete(absence)} 
+                          <DropdownMenuItem
+                            onClick={() => handleDelete(absence)}
                             className="cursor-pointer text-red-600"
                           >
                             <Trash2 className="h-4 w-4 mr-2" />

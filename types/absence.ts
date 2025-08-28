@@ -8,12 +8,12 @@
 export type AbsenceStatus = 'scheduled' | 'ongoing' | 'completed' | 'cancelled';
 
 // Absence reason categories
-export type AbsenceReason = 
-  | 'hospital_visit' 
-  | 'family_visit' 
-  | 'outing' 
-  | 'home_visit' 
-  | 'emergency' 
+export type AbsenceReason =
+  | 'hospital_visit'
+  | 'family_visit'
+  | 'outing'
+  | 'home_visit'
+  | 'emergency'
   | 'other';
 
 // Absence entity type
@@ -102,24 +102,24 @@ export const absenceReasonOptions = [
 
 // Status options
 export const absenceStatusOptions = [
-  { 
-    value: 'scheduled', 
-    label: '予定', 
-    color: 'bg-blue-100 text-blue-700 border-blue-200' 
+  {
+    value: 'scheduled',
+    label: '予定',
+    color: 'bg-blue-100 text-blue-700 border-blue-200',
   },
-  { 
-    value: 'ongoing', 
-    label: '不在中', 
-    color: 'bg-yellow-100 text-yellow-700 border-yellow-200' 
+  {
+    value: 'ongoing',
+    label: '不在中',
+    color: 'bg-yellow-100 text-yellow-700 border-yellow-200',
   },
-  { 
-    value: 'completed', 
-    label: '帰所済み', 
-    color: 'bg-green-100 text-green-700 border-green-200' 
+  {
+    value: 'completed',
+    label: '帰所済み',
+    color: 'bg-green-100 text-green-700 border-green-200',
   },
-  { 
-    value: 'cancelled', 
-    label: 'キャンセル', 
-    color: 'bg-gray-100 text-gray-700 border-gray-200' 
+  {
+    value: 'cancelled',
+    label: 'キャンセル',
+    color: 'bg-gray-100 text-gray-700 border-gray-200',
   },
 ] as const;
