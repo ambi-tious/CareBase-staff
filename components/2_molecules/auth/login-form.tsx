@@ -1,39 +1,68 @@
 'use client';
 
-import { InputField } from '@/components/1_atoms/auth/InputField';
 import { LoginButton } from '@/components/1_atoms/auth/LoginButton';
 import { ErrorAlert } from '@/components/2_molecules/auth/ErrorAlert';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { useLoginForm } from '@/hooks/useLoginForm';
-import type { LoginCredentials } from '@/types/auth';
-import type React from 'react';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import type { LoginCredentials, LoginResult } from '@/types/auth';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+
+// Login form validation schema
+const loginSchema = z.object({
+  login_id: z.string().min(1, 'ログインIDを入力してください'),
+  password: z.string().min(1, 'パスワードを入力してください'),
+});
 
 interface LoginFormProps {
-  onLogin: (credentials: LoginCredentials) => Promise<boolean>;
+  onLogin: (credentials: LoginCredentials) => Promise<LoginResult>;
   isLoading?: boolean;
+  error?: string | null;
+  onClearError?: () => void;
   className?: string;
 }
 
 export const LoginForm: React.FC<LoginFormProps> = ({
   onLogin,
   isLoading = false,
+  error = null,
+  onClearError,
   className = '',
 }) => {
-  const {
-    facilityId,
-    password,
-    error,
-    success,
-    fieldErrors,
-    isFormValid,
-    setFacilityId,
-    setPassword,
-    handleSubmit,
-    clearError,
-  } = useLoginForm({
-    onSubmit: onLogin,
-    enableRealtimeValidation: true,
+  const form = useForm<LoginCredentials>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: {
+      login_id: '',
+      password: '',
+    },
+    mode: 'onChange',
   });
+
+  const {
+    control,
+    handleSubmit,
+    formState: { isValid },
+  } = form;
+
+  const onFormSubmit = handleSubmit(async (data) => {
+    await onLogin(data);
+  });
+
+  // Clear API error when user starts typing
+  const handleFieldChange = () => {
+    if (error && onClearError) {
+      onClearError();
+    }
+  };
 
   return (
     <Card className={`w-full max-w-md ${className}`}>
@@ -41,47 +70,76 @@ export const LoginForm: React.FC<LoginFormProps> = ({
         <CardTitle className="text-2xl font-bold text-carebase-text-primary">ログイン</CardTitle>
       </CardHeader>
       <CardContent>
-        <form onSubmit={handleSubmit} className="flex flex-col gap-6">
-          <InputField
-            id="facilityId"
-            type="text"
-            label="施設ID"
-            value={facilityId}
-            onChange={(e) => setFacilityId(e.target.value)}
-            placeholder="施設IDを入力"
-            disabled={isLoading}
-            isRequired
-            error={fieldErrors.facilityId}
-            variant={fieldErrors.facilityId ? 'error' : 'default'}
-          />
+        <Form {...form}>
+          <form onSubmit={onFormSubmit} className="flex flex-col gap-6">
+            {/* ログインID */}
+            <FormField
+              control={control}
+              name="login_id"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>
+                    ログインID
+                    <span className="text-red-500">*</span>
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="ログインIDを入力"
+                      disabled={isLoading}
+                      {...field}
+                      onChange={(e) => {
+                        field.onChange(e);
+                        handleFieldChange();
+                      }}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-          <InputField
-            id="password"
-            type="password"
-            label="パスワード"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="パスワードを入力"
-            disabled={isLoading}
-            isRequired
-            error={fieldErrors.password}
-            variant={fieldErrors.password ? 'error' : 'default'}
-          />
+            {/* パスワード */}
+            <FormField
+              control={control}
+              name="password"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>
+                    パスワード
+                    <span className="text-red-500">*</span>
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      type="password"
+                      placeholder="パスワードを入力"
+                      disabled={isLoading}
+                      {...field}
+                      onChange={(e) => {
+                        field.onChange(e);
+                        handleFieldChange();
+                      }}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-          {error && <ErrorAlert type="error" message={error} dismissible onDismiss={clearError} />}
+            {error && (
+              <ErrorAlert type="error" message={error} dismissible onDismiss={onClearError} />
+            )}
 
-          {success && <ErrorAlert type="success" message="ログインに成功しました。" />}
-
-          <LoginButton
-            isLoading={isLoading}
-            disabled={!isFormValid || isLoading}
-            loadingText="ログイン中..."
-            size="lg"
-            fullWidth
-          >
-            ログイン
-          </LoginButton>
-        </form>
+            <LoginButton
+              isLoading={isLoading}
+              disabled={!isValid || isLoading}
+              loadingText="ログイン中..."
+              size="lg"
+              fullWidth
+            >
+              ログイン
+            </LoginButton>
+          </form>
+        </Form>
       </CardContent>
     </Card>
   );

@@ -3,12 +3,11 @@
 import { FolderBreadcrumb } from '@/components/2_molecules/documents/folder-breadcrumb';
 import { FolderContentsView } from '@/components/3_organisms/documents/folder-contents-view';
 import { FileUploadModal } from '@/components/3_organisms/modals/file-upload-modal';
-import { FolderCreateModal } from '@/components/3_organisms/modals/folder-create-modal';
 import { FolderDeleteModal } from '@/components/3_organisms/modals/folder-delete-modal';
-import { FolderEditModal } from '@/components/3_organisms/modals/folder-edit-modal';
+import { FolderModal } from '@/components/3_organisms/modals/folder-modal';
 import { GenericDeleteModal } from '@/components/3_organisms/modals/generic-delete-modal';
 import { Button } from '@/components/ui/button';
-import { useToast } from '@/components/ui/use-toast';
+import { useAuth } from '@/hooks/useAuth';
 import type { DocumentCategory, DocumentFolder } from '@/mocks/documents-data';
 import { getCategoryByKey, getDocumentsByCategory } from '@/mocks/documents-data';
 import {
@@ -25,6 +24,7 @@ import { FileText, FolderPlus, Trash2, Upload } from 'lucide-react';
 import Link from 'next/link';
 import { notFound, useRouter, useSearchParams } from 'next/navigation';
 import { Suspense, useEffect, useState } from 'react';
+import { toast } from 'sonner';
 
 // パンくずリストアイテムの型定義
 interface BreadcrumbPathItem {
@@ -36,7 +36,7 @@ interface BreadcrumbPathItem {
 function DocumentsContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { toast } = useToast();
+  const { selectedStaff } = useAuth();
 
   // URLパラメータからカテゴリーまたはフォルダIDを取得
   const categoryOrFolderId = searchParams.get('category') || searchParams.get('folder') || null;
@@ -67,15 +67,11 @@ function DocumentsContent() {
 
       try {
         if (!categoryOrFolderId) {
-          // ルートビュー（ホーム）
+          // ルートビュー
           const contents = getFolderContents(null);
-          const path = getFolderPath(null).map((item) => ({
-            ...item,
-            path: `/documents${item.id === 'root' ? '' : `?folder=${item.id}`}`,
-          }));
 
           setDocuments(contents);
-          setBreadcrumbPath(path);
+          setBreadcrumbPath([]);
           setIsFolderView(false);
           setCategory(null);
           setFolder(null);
@@ -97,10 +93,12 @@ function DocumentsContent() {
             }
 
             // フォルダパスを取得
-            const path = getFolderPath(categoryOrFolderId).map((item) => ({
-              ...item,
-              path: `/documents${item.id === 'root' ? '' : `?folder=${item.id}`}`,
-            }));
+            const path = getFolderPath(categoryOrFolderId)
+              .filter((item) => item.id !== 'root')
+              .map((item) => ({
+                ...item,
+                path: `/documents/folder/${item.id}`,
+              }));
             setBreadcrumbPath(path);
 
             // フォルダコンテンツを取得
@@ -119,7 +117,6 @@ function DocumentsContent() {
             setDocuments(docs as unknown as DocumentItem[]);
 
             setBreadcrumbPath([
-              { id: 'root', name: 'ホーム', path: '/documents' },
               {
                 id: categoryOrFolderId,
                 name: cat?.name || categoryOrFolderId,
@@ -170,10 +167,7 @@ function DocumentsContent() {
       setDocuments((prev) => prev.filter((item) => !selectedItems.includes(item.id)));
       setSelectedItems([]);
 
-      toast({
-        title: 'アイテムを削除しました',
-        description: `${selectedItems.length}個のアイテムが削除されました`,
-      });
+      toast.success(`${selectedItems.length}個のアイテムが削除されました`);
 
       return true;
     } catch (error) {
@@ -201,15 +195,12 @@ function DocumentsContent() {
         status: 'published' as const,
         createdAt: new Date().toISOString().split('T')[0],
         updatedAt: new Date().toISOString().split('T')[0],
-        createdBy: '現在のユーザー',
+        createdBy: selectedStaff?.name || '現在のユーザー',
       }));
 
       setDocuments((prev) => [...prev, ...newFiles]);
 
-      toast({
-        title: 'アップロード完了',
-        description: `${files.length}個のファイルがアップロードされました`,
-      });
+      toast.success(`${files.length}個のファイルがアップロードされました`);
 
       return true;
     } catch (error) {
@@ -229,13 +220,10 @@ function DocumentsContent() {
     try {
       await new Promise((resolve) => setTimeout(resolve, 500));
 
-      const newFolder = createFolder(folderName, categoryOrFolderId);
+      const newFolder = createFolder(folderName, categoryOrFolderId, selectedStaff?.name);
       setDocuments((prev) => [newFolder, ...prev]);
 
-      toast({
-        title: 'フォルダを作成しました',
-        description: `「${folderName}」フォルダが作成されました`,
-      });
+      toast.success(`「${folderName}」フォルダが作成されました`);
 
       return true;
     } catch (error) {
@@ -268,10 +256,7 @@ function DocumentsContent() {
           )
         );
 
-        toast({
-          title: 'フォルダを更新しました',
-          description: `フォルダ名を「${folderName}」に変更しました`,
-        });
+        toast.success(`フォルダ名を「${folderName}」に変更しました`);
 
         return true;
       }
@@ -298,10 +283,7 @@ function DocumentsContent() {
       if (success) {
         setDocuments((prev) => prev.filter((item) => item.id !== folderId));
 
-        toast({
-          title: 'フォルダを削除しました',
-          description: '選択したフォルダが削除されました',
-        });
+        toast.success('選択したフォルダが削除されました');
 
         return true;
       }
@@ -337,49 +319,43 @@ function DocumentsContent() {
 
   return (
     <div className="p-4 md:p-6 bg-carebase-bg min-h-screen">
-      <div className="mb-6">
+      <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
         {/* パンくずリスト */}
-        <FolderBreadcrumb path={breadcrumbPath} className="mb-4" />
+        <FolderBreadcrumb path={breadcrumbPath} />
 
-        <div className="flex flex-wrap items-center justify-between gap-4">
-          <p className="text-gray-600">
-            {documents.length}個のアイテム
-            {isFolderView && folder?.updatedAt && ` • 最終更新: ${folder.updatedAt}`}
-          </p>
-          <div className="flex items-center gap-2">
-            <Link href="/documents/edit">
-              <Button className="bg-carebase-blue hover:bg-carebase-blue-dark">
-                <FileText className="h-4 w-4 mr-2" />
-                新規書類
-              </Button>
-            </Link>
-            <Button
-              onClick={handleCreateFolder}
-              className="bg-carebase-blue hover:bg-carebase-blue-dark"
-            >
-              <FolderPlus className="h-4 w-4 mr-2" />
-              新しいフォルダ
+        <div className="flex items-center gap-2">
+          <Link href="/documents/new">
+            <Button className="bg-carebase-blue hover:bg-carebase-blue-dark">
+              <FileText className="h-4 w-4 mr-2" />
+              新規書類
             </Button>
-            <Button
-              onClick={() => setIsUploadModalOpen(true)}
-              variant="outline"
-              className="border-carebase-blue text-carebase-blue hover:bg-carebase-blue-light"
-            >
-              <Upload className="h-4 w-4 mr-2" />
-              ファイルをアップロード
-            </Button>
-            <Button
-              variant="outline"
-              onClick={handleDeleteSelected}
-              disabled={selectedItems.length === 0}
-              className={
-                selectedItems.length > 0 ? 'border-red-300 text-red-600 hover:bg-red-50' : ''
-              }
-            >
-              <Trash2 className="h-4 w-4 mr-2" />
-              選択したアイテムを削除
-            </Button>
-          </div>
+          </Link>
+          <Button
+            onClick={handleCreateFolder}
+            className="bg-carebase-blue hover:bg-carebase-blue-dark"
+          >
+            <FolderPlus className="h-4 w-4 mr-2" />
+            新しいフォルダ
+          </Button>
+          <Button
+            onClick={() => setIsUploadModalOpen(true)}
+            variant="outline"
+            className="border-carebase-blue text-carebase-blue hover:bg-carebase-blue-light"
+          >
+            <Upload className="h-4 w-4 mr-2" />
+            ファイルをアップロード
+          </Button>
+          <Button
+            variant="outline"
+            onClick={handleDeleteSelected}
+            disabled={selectedItems.length === 0}
+            className={
+              selectedItems.length > 0 ? 'border-red-300 text-red-600 hover:bg-red-50' : ''
+            }
+          >
+            <Trash2 className="h-4 w-4 mr-2" />
+            選択したアイテムを削除
+          </Button>
         </div>
       </div>
 
@@ -414,14 +390,16 @@ function DocumentsContent() {
           />
 
           {/* フォルダ操作モーダル */}
-          <FolderCreateModal
+          <FolderModal
+            mode="create"
             isOpen={isFolderCreateModalOpen}
             onClose={() => setIsFolderCreateModalOpen(false)}
             onCreateFolder={handleFolderCreate}
             existingFolders={existingFolderNames}
           />
 
-          <FolderEditModal
+          <FolderModal
+            mode="edit"
             isOpen={isFolderEditModalOpen}
             onClose={() => setIsFolderEditModalOpen(false)}
             onUpdateFolder={handleFolderUpdate}

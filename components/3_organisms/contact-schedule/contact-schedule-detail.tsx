@@ -143,7 +143,7 @@ export const ContactScheduleDetail: React.FC<ContactScheduleDetailProps> = ({ it
                 asChild
                 className="border-carebase-blue text-carebase-blue hover:bg-carebase-blue-light"
               >
-                <Link href={`/contact-schedule/edit/${item.id}`}>
+                <Link href={`/contact-schedule/${item.id}/edit`}>
                   <Edit3 className="h-4 w-4 mr-2" />
                   編集
                 </Link>

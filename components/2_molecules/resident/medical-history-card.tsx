@@ -1,15 +1,15 @@
 'use client';
 
-import type React from 'react';
-import { useState } from 'react';
-import type { MedicalHistory } from '@/mocks/care-board-data';
+import { GenericDeleteModal } from '@/components/3_organisms/modals/generic-delete-modal';
+import { MedicalHistoryModal } from '@/components/3_organisms/modals/medical-history-modal';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import { Edit3, Calendar, Building2, Trash2 } from 'lucide-react';
-import { MedicalHistoryModal } from '@/components/3_organisms/modals/medical-history-modal';
-import { GenericDeleteModal } from '@/components/3_organisms/modals/generic-delete-modal';
+import type { MedicalHistory } from '@/mocks/care-board-data';
 import { residentDataService } from '@/services/residentDataService';
-import type { MedicalHistoryFormData } from '@/types/resident-data';
+import type { MedicalHistoryFormData } from '@/validations/resident-data-validation';
+import { Building2, Calendar, Edit3, Trash2 } from 'lucide-react';
+import type React from 'react';
+import { useState } from 'react';
 
 interface MedicalHistoryCardProps {
   history: MedicalHistory;

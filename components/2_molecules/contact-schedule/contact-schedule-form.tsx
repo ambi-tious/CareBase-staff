@@ -1,15 +1,29 @@
 'use client';
 
-import { FormField } from '@/components/1_atoms/forms/form-field';
-import { FormSelect } from '@/components/1_atoms/forms/form-select';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label';
+import { DatePicker } from '@/components/ui/date-picker';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { useContactScheduleForm } from '@/hooks/useContactScheduleForm';
 import { careBoardData } from '@/mocks/care-board-data';
-import type { ContactScheduleFormData } from '@/types/contact-schedule';
 import { assignmentOptions, priorityOptions, typeOptions } from '@/types/contact-schedule';
+import type { ContactScheduleFormData } from '@/validations/contact-schedule-validation';
 import { AlertCircle, Save, Send, User } from 'lucide-react';
 import type React from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -31,6 +45,7 @@ export const ContactScheduleForm: React.FC<ContactScheduleFormProps> = ({
 }) => {
   const [currentStaffName, setCurrentStaffName] = useState('');
 
+  const form = useContactScheduleForm({ onSubmit, initialData, mode });
   const {
     formData,
     updateField,
@@ -42,7 +57,9 @@ export const ContactScheduleForm: React.FC<ContactScheduleFormProps> = ({
     submitFinal,
     saveDraft,
     clearError,
-  } = useContactScheduleForm({ onSubmit, initialData, mode });
+    control,
+    handleSubmit,
+  } = form;
 
   // Load current staff information
   useEffect(() => {
@@ -81,7 +98,7 @@ export const ContactScheduleForm: React.FC<ContactScheduleFormProps> = ({
     () => [
       { value: 'none', label: '選択なし' },
       ...careBoardData
-        .filter((resident) => resident.admissionStatus === '入居中')
+        .filter((resident) => resident.dischargeDate === undefined)
         .map((resident) => ({
           value: resident.id.toString(),
           label: `${resident.name} (${resident.careLevel})`,
@@ -90,21 +107,23 @@ export const ContactScheduleForm: React.FC<ContactScheduleFormProps> = ({
     []
   );
 
-  const onFormSubmit = useCallback(
-    async (e: React.FormEvent) => {
-      e.preventDefault();
-      const success = await submitFinal();
+  const onFormSubmit = handleSubmit(async (data: ContactScheduleFormData) => {
+    try {
+      const success = await onSubmit(data, false);
       if (success) {
         onCancel(); // Close form on success
       }
-    },
-    [submitFinal, onCancel]
-  );
+    } catch (error) {
+      console.error('Form submission error:', error);
+    }
+  });
 
   const handleSaveDraft = useCallback(async () => {
-    const success = await saveDraft();
-    if (success) {
-      console.log('Draft saved successfully');
+    try {
+      await saveDraft();
+      // console.log('Draft saved successfully');
+    } catch (error) {
+      console.error('Draft save error:', error);
     }
   }, [saveDraft]);
 
@@ -112,294 +131,335 @@ export const ContactScheduleForm: React.FC<ContactScheduleFormProps> = ({
     clearError();
   }, [clearError]);
 
-  // Field update callbacks
-  const handleTitleChange = useCallback(
-    (value: string) => {
-      updateField('title', value);
-    },
-    [updateField]
-  );
-
-  const handleTypeChange = useCallback(
-    (value: string) => {
-      updateField('type', value);
-    },
-    [updateField]
-  );
-
-  const handlePriorityChange = useCallback(
-    (value: string) => {
-      updateField('priority', value);
-    },
-    [updateField]
-  );
-
-  const handleAssignedToChange = useCallback(
-    (value: string) => {
-      updateField('assignedTo', value);
-    },
-    [updateField]
-  );
-
-  const handleDueDateChange = useCallback(
-    (value: string) => {
-      updateField('dueDate', value);
-    },
-    [updateField]
-  );
-
-  const handleStartTimeChange = useCallback(
-    (value: string) => {
-      updateField('startTime', value);
-    },
-    [updateField]
-  );
-
-  const handleEndTimeChange = useCallback(
-    (value: string) => {
-      updateField('endTime', value);
-    },
-    [updateField]
-  );
-
-  const handleRelatedResidentChange = useCallback(
-    (value: string) => {
-      // Convert 'none' to empty string for data consistency
-      const residentId = value === 'none' ? '' : value;
-      updateField('relatedResidentId', residentId);
-    },
-    [updateField]
-  );
-
-  const handleTagsChange = useCallback(
-    (value: string) => {
-      updateField('tags', value);
-    },
-    [updateField]
-  );
-
-  const handleContentChange = useCallback(
-    (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-      updateField('content', e.target.value);
-    },
-    [updateField]
-  );
-
   const isNetworkError = error?.includes('ネットワークエラー');
 
   return (
-    <form onSubmit={onFormSubmit} className={`space-y-6 ${className}`}>
-      {/* Error Alert */}
-      {error && (
-        <Alert className="border-red-200 bg-red-50">
-          <AlertCircle className="h-4 w-4 text-red-600" />
-          <AlertDescription className="text-red-700 flex items-center justify-between">
-            <span>{error}</span>
-            {isNetworkError && (
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={handleClearError}
-                disabled={isSubmitting || isSavingDraft}
-                className="ml-2"
-              >
-                リトライ
-              </Button>
-            )}
-          </AlertDescription>
-        </Alert>
-      )}
-
-      {/* Current Staff Info */}
-      <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg">
-        <div className="flex items-center gap-2">
-          <User className="h-4 w-4 text-blue-600" />
-          <span className="text-sm font-medium text-blue-800">作成者: {currentStaffName}</span>
-        </div>
-        <p className="text-xs text-blue-600 mt-1">ログイン中のユーザーが自動的に設定されます</p>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Left Column - Basic Information */}
-        <div className="space-y-4">
-          <h3 className="text-lg font-semibold text-carebase-text-primary border-b pb-2">
-            基本情報
-          </h3>
-
-          <FormField
-            label="タイトル"
-            id="title"
-            value={formData.title}
-            onChange={handleTitleChange}
-            placeholder="例：夏季感染症対策について"
-            required
-            error={fieldErrors.title}
-            disabled={isSubmitting || isSavingDraft}
-          />
-
-          <FormSelect
-            label="種別"
-            id="type"
-            value={formData.type}
-            onChange={handleTypeChange}
-            options={typeSelectOptions}
-            required
-            error={fieldErrors.type}
-            disabled={isSubmitting || isSavingDraft}
-          />
-
-          <FormSelect
-            label="重要度"
-            id="priority"
-            value={formData.priority}
-            onChange={handlePriorityChange}
-            options={prioritySelectOptions}
-            required
-            error={fieldErrors.priority}
-            disabled={isSubmitting || isSavingDraft}
-          />
-
-          <FormSelect
-            label="対象者"
-            id="assignedTo"
-            value={formData.assignedTo}
-            onChange={handleAssignedToChange}
-            options={assignmentSelectOptions}
-            required
-            error={fieldErrors.assignedTo}
-            disabled={isSubmitting || isSavingDraft}
-          />
-        </div>
-
-        {/* Right Column - Schedule Information */}
-        <div className="space-y-4">
-          <h3 className="text-lg font-semibold text-carebase-text-primary border-b pb-2">
-            日時・関連情報
-          </h3>
-
-          <FormField
-            label="実施日"
-            id="dueDate"
-            type="date"
-            value={formData.dueDate}
-            onChange={handleDueDateChange}
-            required
-            error={fieldErrors.dueDate}
-            disabled={isSubmitting || isSavingDraft}
-          />
-
-          <div className="grid grid-cols-2 gap-4">
-            <FormField
-              label="開始時刻"
-              id="startTime"
-              type="time"
-              value={formData.startTime || ''}
-              onChange={handleStartTimeChange}
-              error={fieldErrors.startTime}
-              disabled={isSubmitting || isSavingDraft}
-            />
-
-            <FormField
-              label="終了時刻"
-              id="endTime"
-              type="time"
-              value={formData.endTime || ''}
-              onChange={handleEndTimeChange}
-              error={fieldErrors.endTime}
-              disabled={isSubmitting || isSavingDraft}
-            />
-          </div>
-
-          <FormSelect
-            label="関連利用者"
-            id="relatedResidentId"
-            value={
-              !formData.relatedResidentId || formData.relatedResidentId === ''
-                ? 'none'
-                : formData.relatedResidentId
-            }
-            onChange={handleRelatedResidentChange}
-            options={residentOptions}
-            error={fieldErrors.relatedResidentId}
-            disabled={isSubmitting || isSavingDraft}
-          />
-
-          <FormField
-            label="タグ"
-            id="tags"
-            value={formData.tags || ''}
-            onChange={handleTagsChange}
-            placeholder="例：感染対策,夏季対策,健康管理"
-            error={fieldErrors.tags}
-            disabled={isSubmitting || isSavingDraft}
-          />
-        </div>
-      </div>
-
-      {/* Content */}
-      <div className="space-y-2">
-        <Label htmlFor="content" className="text-sm font-medium text-gray-700">
-          内容 <span className="text-red-500 ml-1">*</span>
-        </Label>
-        <Textarea
-          id="content"
-          value={formData.content}
-          onChange={handleContentChange}
-          placeholder="連絡・予定の詳細内容を入力してください。&#10;&#10;例：&#10;・夏季に多発する感染性胃腸炎の予防対策を強化します&#10;・食事前後の手洗い徹底をお願いします&#10;・利用者様の体調変化に注意してください"
-          disabled={isSubmitting || isSavingDraft}
-          className={`min-h-32 ${fieldErrors.content ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : ''}`}
-          rows={8}
-        />
-        {fieldErrors.content && (
-          <p className="text-sm text-red-600" role="alert">
-            {fieldErrors.content}
-          </p>
+    <Form {...form}>
+      <form onSubmit={onFormSubmit} className={`space-y-6 ${className}`}>
+        {/* Error Alert */}
+        {error && (
+          <Alert className="border-red-200 bg-red-50">
+            <AlertCircle className="h-4 w-4 text-red-600" />
+            <AlertDescription className="text-red-700 flex items-center justify-between">
+              <span>{error}</span>
+              {isNetworkError && (
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={handleClearError}
+                  disabled={isSubmitting || isSavingDraft}
+                  className="ml-2"
+                >
+                  リトライ
+                </Button>
+              )}
+            </AlertDescription>
+          </Alert>
         )}
-        <div className="text-xs text-gray-500 mt-1">{formData.content.length}/1000文字</div>
-      </div>
 
-      {/* Unsaved Changes Warning */}
-      {hasUnsavedChanges && (
-        <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+        {/* Current Staff Info */}
+        <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg">
           <div className="flex items-center gap-2">
-            <AlertCircle className="h-4 w-4 text-yellow-600" />
-            <span className="text-sm text-yellow-800">未保存の変更があります</span>
+            <User className="h-4 w-4 text-blue-600" />
+            <span className="text-sm font-medium text-blue-800">作成者: {currentStaffName}</span>
+          </div>
+          <p className="text-xs text-blue-600 mt-1">ログイン中のユーザーが自動的に設定されます</p>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Left Column - Basic Information */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold text-carebase-text-primary border-b pb-2">
+              基本情報
+            </h3>
+
+            <FormField
+              control={control}
+              name="title"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>
+                    タイトル <span className="text-red-500">*</span>
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      placeholder="例：夏季感染症対策について"
+                      disabled={isSubmitting || isSavingDraft}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={control}
+              name="type"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>
+                    種別 <span className="text-red-500">*</span>
+                  </FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    value={field.value}
+                    disabled={isSubmitting || isSavingDraft}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="種別を選択" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {typeSelectOptions.map((option) => (
+                        <SelectItem key={option.value} value={option.value}>
+                          {option.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={control}
+              name="priority"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>
+                    重要度 <span className="text-red-500">*</span>
+                  </FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    value={field.value}
+                    disabled={isSubmitting || isSavingDraft}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="重要度を選択" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {prioritySelectOptions.map((option) => (
+                        <SelectItem key={option.value} value={option.value}>
+                          {option.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={control}
+              name="assignedTo"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>
+                    対象者 <span className="text-red-500">*</span>
+                  </FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    value={field.value}
+                    disabled={isSubmitting || isSavingDraft}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="対象者を選択" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {assignmentSelectOptions.map((option) => (
+                        <SelectItem key={option.value} value={option.value}>
+                          {option.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+
+          {/* Right Column - Schedule Information */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold text-carebase-text-primary border-b pb-2">
+              日時・関連情報
+            </h3>
+
+            <FormField
+              control={control}
+              name="dueDate"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>
+                    実施日 <span className="text-red-500">*</span>
+                  </FormLabel>
+                  <FormControl>
+                    <DatePicker
+                      value={field.value}
+                      onChange={field.onChange}
+                      disabled={isSubmitting || isSavingDraft}
+                      placeholder="実施日を選択してください"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <div className="grid grid-cols-2 gap-4">
+              <FormField
+                control={control}
+                name="startTime"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>開始時刻</FormLabel>
+                    <FormControl>
+                      <Input {...field} type="time" disabled={isSubmitting || isSavingDraft} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={control}
+                name="endTime"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>終了時刻</FormLabel>
+                    <FormControl>
+                      <Input {...field} type="time" disabled={isSubmitting || isSavingDraft} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            <FormField
+              control={control}
+              name="relatedResidentId"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>関連利用者</FormLabel>
+                  <Select
+                    onValueChange={(value) => field.onChange(value === 'none' ? '' : value)}
+                    value={!field.value || field.value === '' ? 'none' : field.value}
+                    disabled={isSubmitting || isSavingDraft}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="関連利用者を選択" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {residentOptions.map((option) => (
+                        <SelectItem key={option.value} value={option.value}>
+                          {option.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={control}
+              name="tags"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>タグ</FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      placeholder="例：感染対策,夏季対策,健康管理"
+                      disabled={isSubmitting || isSavingDraft}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
           </div>
         </div>
-      )}
 
-      {/* Action Buttons */}
-      <div className="flex flex-col sm:flex-row justify-end gap-3 pt-6 border-t">
-        <Button
-          type="button"
-          variant="outline"
-          onClick={onCancel}
-          disabled={isSubmitting || isSavingDraft}
-        >
-          キャンセル
-        </Button>
+        {/* Content */}
+        <FormField
+          control={control}
+          name="content"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>
+                内容 <span className="text-red-500 ml-1">*</span>
+              </FormLabel>
+              <FormControl>
+                <Textarea
+                  {...field}
+                  placeholder="連絡・予定の詳細内容を入力してください。&#10;&#10;例：&#10;・夏季に多発する感染性胃腸炎の予防対策を強化します&#10;・食事前後の手洗い徹底をお願いします&#10;・利用者様の体調変化に注意してください"
+                  disabled={isSubmitting || isSavingDraft}
+                  className="min-h-32"
+                  rows={8}
+                />
+              </FormControl>
+              <FormMessage />
+              <div className="text-xs text-gray-500 mt-1">{field.value.length}/1000文字</div>
+            </FormItem>
+          )}
+        />
 
-        <Button
-          type="button"
-          variant="outline"
-          onClick={handleSaveDraft}
-          disabled={isSubmitting || isSavingDraft}
-          className="border-gray-400 text-gray-700 hover:bg-gray-50"
-        >
-          <Save className="h-4 w-4 mr-2" />
-          {isSavingDraft ? '保存中...' : '下書き保存'}
-        </Button>
+        {/* Unsaved Changes Warning */}
+        {hasUnsavedChanges && (
+          <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+            <div className="flex items-center gap-2">
+              <AlertCircle className="h-4 w-4 text-yellow-600" />
+              <span className="text-sm text-yellow-800">未保存の変更があります</span>
+            </div>
+          </div>
+        )}
 
-        <Button
-          type="submit"
-          disabled={isSubmitting || isSavingDraft}
-          className="bg-carebase-blue hover:bg-carebase-blue-dark"
-        >
-          <Send className="h-4 w-4 mr-2" />
-          {isSubmitting ? '作成中...' : mode === 'create' ? '作成' : '更新'}
-        </Button>
-      </div>
-    </form>
+        {/* Action Buttons */}
+        <div className="flex flex-col sm:flex-row justify-end gap-3 pt-6 border-t">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={onCancel}
+            disabled={isSubmitting || isSavingDraft}
+          >
+            キャンセル
+          </Button>
+
+          <Button
+            type="button"
+            variant="outline"
+            onClick={handleSaveDraft}
+            disabled={isSubmitting || isSavingDraft}
+            className="border-gray-400 text-gray-700 hover:bg-gray-50"
+          >
+            <Save className="h-4 w-4 mr-2" />
+            {isSavingDraft ? '保存中...' : '下書き保存'}
+          </Button>
+
+          <Button
+            type="submit"
+            disabled={isSubmitting || isSavingDraft}
+            className="bg-carebase-blue hover:bg-carebase-blue-dark"
+          >
+            <Send className="h-4 w-4 mr-2" />
+            {isSubmitting ? '作成中...' : mode === 'create' ? '作成' : '更新'}
+          </Button>
+        </div>
+      </form>
+    </Form>
   );
 };

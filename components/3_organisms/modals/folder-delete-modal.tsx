@@ -1,19 +1,19 @@
 'use client';
 
-import type React from 'react';
-import { useState } from 'react';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
-  DialogHeader,
-  DialogTitle,
   DialogDescription,
   DialogFooter,
+  DialogHeader,
+  DialogTitle,
 } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { AlertCircle, AlertTriangle, Loader2, Trash2 } from 'lucide-react';
 import type { DocumentFolder } from '@/mocks/documents-data';
+import { AlertCircle, AlertTriangle, Loader2, Trash2 } from 'lucide-react';
+import type React from 'react';
+import { useState } from 'react';
 
 interface FolderDeleteModalProps {
   isOpen: boolean;

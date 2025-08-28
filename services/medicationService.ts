@@ -1,10 +1,11 @@
 /**
  * Medication Service
  *
- * Service layer for medication information API calls
+ * API service for medication data operations
  */
 
-import type { MedicationFormData, Medication } from '@/types/medication';
+import type { Medication } from '@/types/medication';
+import type { MedicationFormData } from '@/validations/medication-validation';
 
 class MedicationService {
   private baseUrl = process.env.NEXT_PUBLIC_API_URL || '';
@@ -18,11 +19,11 @@ class MedicationService {
   ): Promise<Medication> {
     try {
       // For development, use mock creation
-      if (process.env.NODE_ENV === 'development') {
+      if (process.env.NODE_ENV) {
         return this.mockCreateMedication(residentId, medicationData);
       }
 
-      const response = await fetch(`${this.baseUrl}/api/residents/${residentId}/medications`, {
+      const response = await fetch(`${this.baseUrl}/residents/${residentId}/medications`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -52,12 +53,12 @@ class MedicationService {
   ): Promise<Medication> {
     try {
       // For development, use mock update
-      if (process.env.NODE_ENV === 'development') {
+      if (process.env.NODE_ENV) {
         return this.mockUpdateMedication(residentId, medicationId, medicationData);
       }
 
       const response = await fetch(
-        `${this.baseUrl}/api/residents/${residentId}/medications/${medicationId}`,
+        `${this.baseUrl}/residents/${residentId}/medications/${medicationId}`,
         {
           method: 'PUT',
           headers: {
@@ -85,12 +86,12 @@ class MedicationService {
   async deleteMedication(residentId: number, medicationId: string): Promise<void> {
     try {
       // For development, use mock deletion
-      if (process.env.NODE_ENV === 'development') {
+      if (process.env.NODE_ENV) {
         return this.mockDeleteMedication(residentId, medicationId);
       }
 
       const response = await fetch(
-        `${this.baseUrl}/api/residents/${residentId}/medications/${medicationId}`,
+        `${this.baseUrl}/residents/${residentId}/medications/${medicationId}`,
         {
           method: 'DELETE',
         }
@@ -115,11 +116,6 @@ class MedicationService {
     // Simulate network delay
     await new Promise((resolve) => setTimeout(resolve, 1000));
 
-    // Simulate occasional network errors for testing
-    if (Math.random() < 0.1) {
-      throw new Error('ネットワークエラーが発生しました。');
-    }
-
     // Generate new medication
     const newMedication: Medication = {
       id: `medication-${Date.now()}`,
@@ -133,7 +129,7 @@ class MedicationService {
       updatedAt: new Date().toISOString(),
     };
 
-    console.log('Mock created medication:', newMedication);
+    // console.log('Mock created medication:', newMedication);
     return newMedication;
   }
 
@@ -148,11 +144,6 @@ class MedicationService {
     // Simulate network delay
     await new Promise((resolve) => setTimeout(resolve, 1000));
 
-    // Simulate occasional network errors for testing
-    if (Math.random() < 0.05) {
-      throw new Error('ネットワークエラーが発生しました。');
-    }
-
     // Update medication
     const updatedMedication: Medication = {
       id: medicationId,
@@ -166,7 +157,7 @@ class MedicationService {
       updatedAt: new Date().toISOString(),
     };
 
-    console.log('Mock updated medication:', updatedMedication);
+    // console.log('Mock updated medication:', updatedMedication);
     return updatedMedication;
   }
 
@@ -177,12 +168,7 @@ class MedicationService {
     // Simulate network delay
     await new Promise((resolve) => setTimeout(resolve, 800));
 
-    // Simulate occasional network errors for testing
-    if (Math.random() < 0.05) {
-      throw new Error('ネットワークエラーが発生しました。');
-    }
-
-    console.log('Mock deleted medication:', { residentId, medicationId });
+    // console.log('Mock deleted medication:', { residentId, medicationId });
   }
 }
 

@@ -1,21 +1,22 @@
 'use client';
 
-import type React from 'react';
+import { MedicalInstitutionForm } from '@/components/2_molecules/forms/medical-institution-form';
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogDescription,
 } from '@/components/ui/dialog';
-import { MedicalInstitutionForm } from '@/components/2_molecules/forms/medical-institution-form';
-import type { MedicalInstitutionFormData } from '@/types/resident-data';
 import type { MedicalInstitution } from '@/mocks/care-board-data';
+import type { MedicalInstitutionFormData } from '@/validations/resident-data-validation';
+import type React from 'react';
 
 interface MedicalInstitutionModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSubmit: (data: MedicalInstitutionFormData) => Promise<boolean>;
+  onCreateNew?: () => void;
   institution?: MedicalInstitution;
   residentName?: string;
   mode: 'create' | 'edit';
@@ -25,6 +26,7 @@ export const MedicalInstitutionModal: React.FC<MedicalInstitutionModalProps> = (
   isOpen,
   onClose,
   onSubmit,
+  onCreateNew,
   institution,
   residentName,
   mode,
@@ -54,7 +56,12 @@ export const MedicalInstitutionModal: React.FC<MedicalInstitutionModalProps> = (
           </DialogDescription>
         </DialogHeader>
 
-        <MedicalInstitutionForm onSubmit={onSubmit} onCancel={onClose} initialData={initialData} />
+        <MedicalInstitutionForm
+          onSubmit={onSubmit}
+          onCancel={onClose}
+          onCreateNew={onCreateNew}
+          initialData={initialData}
+        />
       </DialogContent>
     </Dialog>
   );

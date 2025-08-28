@@ -1,7 +1,9 @@
 'use client';
 
 import { Logo } from '@/components/1_atoms/common/logo';
+import { NotificationDropdown } from '@/components/2_molecules/common/notification-dropdown';
 import { StaffDashboard } from '@/components/3_organisms/dashboard/staff-dashboard';
+import { GroupTeamSelectionModal } from '@/components/3_organisms/modals/group-team-selection-modal';
 import { Button, buttonVariants } from '@/components/ui/button'; // Import buttonVariants
 import {
   Sheet,
@@ -11,6 +13,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from '@/components/ui/sheet';
+import { useNotifications } from '@/hooks/useNotifications';
 import { cn } from '@/lib/utils'; // Import cn
 import type { Staff } from '@/mocks/staff-data';
 import { Menu, User, Users, X } from 'lucide-react';
@@ -29,7 +32,9 @@ export function AppHeader() {
   const [selectedStaffData, setSelectedStaffData] = useState<SelectedStaffData | null>(null);
   const [isStaffSelected, setIsStaffSelected] = useState(false);
   const [isGroupTeamSelected, setIsGroupTeamSelected] = useState(false);
+  const [isGroupTeamModalOpen, setIsGroupTeamModalOpen] = useState(false);
   const router = useRouter();
+  const { notifications, unreadCount, markAsRead } = useNotifications();
 
   // Load selected staff data from localStorage
   useEffect(() => {
@@ -81,7 +86,7 @@ export function AppHeader() {
       if (newStaffSelected) {
         // Navigate to staff selection with query parameter to indicate we're coming from header
         setTimeout(() => {
-          router.push('/staff-selection?from=header&staff=true&autoSelectStaff=false');
+          router.push('/staff-selection?from=header&staff=true');
         }, 200);
       } else {
         setIsGroupTeamSelected(false);
@@ -90,31 +95,27 @@ export function AppHeader() {
     [isStaffSelected, router]
   );
 
-  const handleGroupTeamClick = useCallback(
-    (e: React.MouseEvent) => {
-      e.stopPropagation();
-      // Toggle group/team selection
-      const newGroupTeamSelected = !isGroupTeamSelected;
-      setIsGroupTeamSelected(newGroupTeamSelected);
-
-      if (newGroupTeamSelected) {
-        // Navigate to staff selection with query parameter to indicate we're coming from header
-        setTimeout(() => {
-          router.push('/staff-selection?from=header&group=true&autoSelectTeam=false');
-        }, 200);
-      }
-    },
-    [isGroupTeamSelected, router]
-  );
+  const handleGroupTeamClick = useCallback((e: React.MouseEvent) => {
+    e.stopPropagation();
+    // Open group/team selection modal
+    setIsGroupTeamModalOpen(true);
+    setIsGroupTeamSelected(false);
+  }, []);
 
   const handleStaffNameClickFallback = () => {
-    router.push('/staff-selection?from=header&staff=true&autoSelectStaff=false');
+    router.push('/staff-selection?from=header&staff=true');
   };
 
   const handleGroupTeamClickFallback = () => {
-    // Clear current selection to start from group selection
-    localStorage.removeItem('carebase_selected_staff_data');
-    router.push('/staff-selection?from=header&group=true');
+    setIsGroupTeamModalOpen(true);
+  };
+
+  const handleGroupTeamChange = (updatedData: SelectedStaffData) => {
+    setSelectedStaffData(updatedData);
+  };
+
+  const handleCloseGroupTeamModal = () => {
+    setIsGroupTeamModalOpen(false);
   };
 
   return (
@@ -122,6 +123,13 @@ export function AppHeader() {
       <div className="mx-auto flex h-16 items-center justify-between px-4 md:px-6">
         <Link href="/" className="flex items-center gap-2">
           <Logo />
+          {/* 開発環境表示 */}
+          {!process.env.NEXT_PUBLIC_API_URL && (
+            <div className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-orange-100 text-orange-800 border border-orange-200">
+              <div className="w-1.5 h-1.5 bg-orange-500 rounded-full mr-1 animate-pulse"></div>
+              DEV
+            </div>
+          )}
         </Link>
         <div className="flex items-center gap-2 tablet:gap-4">
           {selectedStaffData ? (
@@ -176,6 +184,12 @@ export function AppHeader() {
             </>
           )}
 
+          <NotificationDropdown
+            notifications={notifications}
+            unreadCount={unreadCount}
+            onMarkAsRead={markAsRead}
+          />
+
           <Sheet open={isMenuOpen} onOpenChange={setIsMenuOpen}>
             <SheetTrigger
               className={cn(
@@ -189,7 +203,7 @@ export function AppHeader() {
             </SheetTrigger>
             <SheetContent
               side="right"
-              className="sm:max-w-full bg-carebase-bg p-0 overflow-y-auto min-w-[90vw]"
+              className="sm:max-w-full bg-carebase-bg p-0 overflow-y-auto min-w-[80vw]"
             >
               <SheetHeader className="flex flex-row items-center justify-between py-2 px-4 sticky top-0 bg-carebase-bg z-10 border-b">
                 <SheetTitle className="text-xl font-bold text-carebase-text-primary">
@@ -206,11 +220,75 @@ export function AppHeader() {
                   </Button>
                 </SheetClose>
               </SheetHeader>
+
+              {/* Mobile Selection Buttons */}
+              <div className="sticky top-[73px] bg-carebase-bg z-10 border-b p-4 space-y-3 lg:hidden">
+                {selectedStaffData ? (
+                  <>
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        setIsMenuOpen(false);
+                        handleStaffNameClick({ stopPropagation: () => {} } as React.MouseEvent);
+                      }}
+                      className="w-full rounded-full border-carebase-blue text-carebase-blue hover:bg-carebase-blue-light font-medium min-h-touch-target flex items-center justify-start"
+                    >
+                      <User className="mr-2 h-4 w-4" />
+                      {selectedStaffData.staff.name}
+                    </Button>
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        setIsMenuOpen(false);
+                        handleGroupTeamClick({ stopPropagation: () => {} } as React.MouseEvent);
+                      }}
+                      className="w-full rounded-full border-carebase-blue text-carebase-blue hover:bg-carebase-blue-light font-medium min-h-touch-target flex items-center justify-start"
+                    >
+                      <Users className="mr-2 h-4 w-4" />
+                      {selectedStaffData.groupName} - {selectedStaffData.teamName}
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        setIsMenuOpen(false);
+                        handleStaffNameClickFallback();
+                      }}
+                      className="w-full rounded-full border-carebase-blue text-carebase-blue hover:bg-carebase-blue-light font-medium min-h-touch-target flex items-center justify-center"
+                    >
+                      <User className="mr-2 h-4 w-4" />
+                      職員を選択
+                    </Button>
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        setIsMenuOpen(false);
+                        handleGroupTeamClickFallback();
+                      }}
+                      className="w-full rounded-full border-carebase-blue text-carebase-blue hover:bg-carebase-blue-light font-medium min-h-touch-target flex items-center justify-center"
+                    >
+                      <Users className="mr-2 h-4 w-4" />
+                      グループ・チームを選択
+                    </Button>
+                  </>
+                )}
+              </div>
+
               <StaffDashboard setIsMenuOpen={setIsMenuOpen} />
             </SheetContent>
           </Sheet>
         </div>
       </div>
+
+      {/* Group Team Selection Modal */}
+      <GroupTeamSelectionModal
+        isOpen={isGroupTeamModalOpen}
+        onClose={handleCloseGroupTeamModal}
+        selectedStaffData={selectedStaffData}
+        onGroupTeamChange={handleGroupTeamChange}
+      />
     </header>
   );
 }

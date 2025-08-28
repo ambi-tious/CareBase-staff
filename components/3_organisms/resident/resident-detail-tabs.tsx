@@ -1,19 +1,30 @@
 'use client';
 
 import { MedicationCard as NewMedicationCard } from '@/components/2_molecules/medication/medication-card';
-import { MedicationStatusCard } from '@/components/2_molecules/medication/medication-status-card';
 import { ContactCard } from '@/components/2_molecules/resident/contact-info-card';
 import { HomeCareOfficeCard } from '@/components/2_molecules/resident/home-care-office-card';
-import { IndividualPointCard } from '@/components/2_molecules/resident/individual-point-card';
 import { MedicalHistoryCard } from '@/components/2_molecules/resident/medical-history-card';
 import { MedicalInstitutionCard } from '@/components/2_molecules/resident/medical-institution-card';
 import { MedicationCard as OldMedicationCard } from '@/components/2_molecules/resident/medication-card';
+import {
+  AbsenceTabContent,
+  type AbsenceTabContentRef,
+} from '@/components/3_organisms/absence/absence-tab-content';
+import {
+  IndividualPointsTabContent,
+  type IndividualPointsTabContentRef,
+} from '@/components/3_organisms/individual-points/individual-points-tab-content';
 import { ContactEditModal } from '@/components/3_organisms/modals/contact-edit-modal';
+import { HomeCareOfficeMasterModal } from '@/components/3_organisms/modals/home-care-office-master-modal';
 import { HomeCareOfficeModal } from '@/components/3_organisms/modals/home-care-office-modal';
 import { MedicalHistoryModal } from '@/components/3_organisms/modals/medical-history-modal';
+import { MedicalInstitutionMasterModal } from '@/components/3_organisms/modals/medical-institution-master-modal';
 import { MedicalInstitutionModal } from '@/components/3_organisms/modals/medical-institution-modal';
 import { MedicationModal } from '@/components/3_organisms/modals/medication-modal';
-import { MedicationStatusModal } from '@/components/3_organisms/modals/medication-status-modal';
+import {
+  ResidentFilesTabContent,
+  type ResidentFilesTabContentRef,
+} from '@/components/3_organisms/resident-files/resident-files-tab-content';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import type {
@@ -25,19 +36,19 @@ import type {
 } from '@/mocks/care-board-data';
 import { contactService } from '@/services/contactService';
 import { medicationService } from '@/services/medicationService';
-import { medicationStatusService } from '@/services/medicationStatusService';
 import { residentDataService } from '@/services/residentDataService';
-import type { ContactFormData } from '@/types/contact';
-import type { Medication, MedicationFormData } from '@/types/medication';
-import type { MedicationStatus, MedicationStatusFormData } from '@/types/medication-status';
+import type { Medication } from '@/types/medication';
+import type { ContactFormData } from '@/validations/contact-validation';
+import type { MedicationFormData } from '@/validations/medication-validation';
 import type {
   HomeCareOfficeFormData,
   MedicalHistoryFormData,
   MedicalInstitutionFormData,
-} from '@/types/resident-data';
+} from '@/validations/resident-data-validation';
 import { PlusCircle, Settings } from 'lucide-react';
 import type React from 'react';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { toast } from 'sonner';
 
 interface ResidentDetailTabsProps {
   resident: Resident;
@@ -46,14 +57,15 @@ interface ResidentDetailTabsProps {
 export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident }) => {
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
   const [isHomeCareModalOpen, setIsHomeCareModalOpen] = useState(false);
+
+  const [isHomeCareMasterModalOpen, setIsHomeCareMasterModalOpen] = useState(false);
   const [isMedicalModalOpen, setIsMedicalModalOpen] = useState(false);
+  const [isMedicalMasterModalOpen, setIsMedicalMasterModalOpen] = useState(false);
   const [isMedicalHistoryModalOpen, setIsMedicalHistoryModalOpen] = useState(false);
   const [isMedicationModalOpen, setIsMedicationModalOpen] = useState(false);
-  const [isMedicationStatusModalOpen, setIsMedicationStatusModalOpen] = useState(false);
+
   const [contacts, setContacts] = useState<ContactPerson[]>(resident.contacts || []);
-  const [homeCareOffice, setHomeCareOffice] = useState<HomeCareOffice | undefined>(
-    resident.homeCareOffice
-  );
+  const [homeCareOffices, setHomeCareOffices] = useState<HomeCareOffice[]>([]);
   const [medicalInstitutions, setMedicalInstitutions] = useState<MedicalInstitution[]>(
     resident.medicalInstitutions || []
   );
@@ -61,18 +73,37 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
     resident.medicalHistory || []
   );
   const [medications, setMedications] = useState<Medication[]>(resident.medications || []);
-  const [medicationStatuses, setMedicationStatuses] = useState<MedicationStatus[]>(() => {
-    // Convert old format to new format for backward compatibility
-    if (resident.medicationStatus) {
-      return resident.medicationStatus.map((status) => ({
-        ...status,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      }));
-    }
-    return [];
-  });
+
+  // 居宅介護支援事業所データを取得
+  useEffect(() => {
+    const fetchHomeCareOffices = async () => {
+      try {
+        const offices = await residentDataService.getResidentHomeCareOffices(resident.id);
+
+        // サービスから空の配列が返された場合、residentデータを使用
+        if (
+          offices.length === 0 &&
+          resident.homeCareOffices &&
+          resident.homeCareOffices.length > 0
+        ) {
+          setHomeCareOffices(resident.homeCareOffices);
+        } else {
+          setHomeCareOffices(offices);
+        }
+      } catch (error) {
+        console.error('Failed to fetch home care offices:', error);
+        // フォールバックとして既存のデータを使用
+        setHomeCareOffices(resident.homeCareOffices || []);
+      }
+    };
+
+    fetchHomeCareOffices();
+  }, [resident.id, resident.homeCareOffices]);
+
   const [activeTab, setActiveTab] = useState('family');
+  const individualPointsTabContentRef = useRef<IndividualPointsTabContentRef>(null);
+  const absenceTabContentRef = useRef<AbsenceTabContentRef>(null);
+  const residentFilesTabContentRef = useRef<ResidentFilesTabContentRef>(null);
 
   const detailTabs = [
     { value: 'family', label: 'ご家族情報' },
@@ -80,8 +111,9 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
     { value: 'medical', label: 'かかりつけ医療機関' },
     { value: 'history', label: '既往歴' },
     { value: 'medicationInfo', label: 'お薬情報' },
-    { value: 'medicationStatus', label: '服薬状況' },
-    { value: 'points', label: '個別ポイント' },
+    { value: 'individualPoints', label: '個別ポイント' },
+    { value: 'files', label: 'ファイル' },
+    { value: 'absence', label: '不在情報' },
   ];
 
   const handleAddContact = () => {
@@ -104,14 +136,14 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
     setIsMedicationModalOpen(true);
   };
 
-  const handleAddMedicationStatus = () => {
-    setIsMedicationStatusModalOpen(true);
-  };
-
   const handleContactSubmit = async (contactData: ContactFormData): Promise<boolean> => {
     try {
       const newContact = await contactService.createContact(resident.id, contactData);
       setContacts((prev) => [...prev, newContact]);
+
+      // Show success toast
+      toast.success('連絡先の登録が完了しました。');
+
       return true;
     } catch (error) {
       console.error('Failed to create contact:', error);
@@ -122,12 +154,58 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
   const handleHomeCareOfficeSubmit = async (data: HomeCareOfficeFormData): Promise<boolean> => {
     try {
       const newOffice = await residentDataService.createHomeCareOffice(resident.id, data);
-      setHomeCareOffice(newOffice);
+      setHomeCareOffices((prev) => [...prev, newOffice]);
+
+      // Show success toast
+      toast.success('居宅介護支援事業所の登録が完了しました。');
+
+      // 登録完了後、すべてのモーダルを閉じる
+      setIsHomeCareModalOpen(false);
+      setIsHomeCareMasterModalOpen(false);
       return true;
     } catch (error) {
       console.error('Failed to create home care office:', error);
       return false;
     }
+  };
+
+  const handleHomeCareOfficeSelect = async (office: HomeCareOffice) => {
+    try {
+      // 既に登録されているかチェック
+      const isAlreadyRegistered = homeCareOffices.some((existing) => existing.id === office.id);
+      if (!isAlreadyRegistered) {
+        // 利用者に紐付け
+        await residentDataService.associateHomeCareOfficeToResident(resident.id, office.id);
+        setHomeCareOffices((prev) => [...prev, office]);
+
+        // Show success toast
+        toast.success('居宅介護支援事業所の紐付けが完了しました。');
+      }
+
+      setIsHomeCareMasterModalOpen(false);
+    } catch (error) {
+      console.error('Failed to associate home care office:', error);
+      toast.error('居宅介護支援事業所の紐付けに失敗しました。');
+    }
+  };
+
+  const handleHomeCareOfficeCreateNew = () => {
+    setIsHomeCareModalOpen(true);
+  };
+
+  const handleMedicalInstitutionCreateNew = () => {
+    // setIsMedicalModalOpen(false);
+    setIsMedicalMasterModalOpen(true);
+  };
+
+  const handleMedicalInstitutionMasterRefresh = () => {
+    // 医療機関マスタが更新された際の処理（必要に応じて実装）
+    console.log('Medical institution master refreshed');
+  };
+
+  const handleHomeCareOfficeMasterRefresh = () => {
+    // マスタデータが更新された場合の処理
+    // 必要に応じて選択モーダルのデータを再取得
   };
 
   const handleMedicalInstitutionSubmit = async (
@@ -136,6 +214,10 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
     try {
       const newInstitution = await residentDataService.createMedicalInstitution(resident.id, data);
       setMedicalInstitutions((prev) => [...prev, newInstitution]);
+
+      // Show success toast
+      toast.success('かかりつけ医療機関の登録が完了しました。');
+
       return true;
     } catch (error) {
       console.error('Failed to create medical institution:', error);
@@ -147,6 +229,10 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
     try {
       const newHistory = await residentDataService.createMedicalHistory(resident.id, data);
       setMedicalHistory((prev) => [...prev, newHistory]);
+
+      // Show success toast
+      toast.success('既往歴の登録が完了しました。');
+
       return true;
     } catch (error) {
       console.error('Failed to create medical history:', error);
@@ -158,20 +244,13 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
     try {
       const newMedication = await medicationService.createMedication(resident.id, data);
       setMedications((prev) => [...prev, newMedication]);
+
+      // Show success toast
+      toast.success('お薬情報の登録が完了しました。');
+
       return true;
     } catch (error) {
       console.error('Failed to create medication:', error);
-      return false;
-    }
-  };
-
-  const handleMedicationStatusSubmit = async (data: MedicationStatusFormData): Promise<boolean> => {
-    try {
-      const newStatus = await medicationStatusService.createMedicationStatus(resident.id, data);
-      setMedicationStatuses((prev) => [...prev, newStatus]);
-      return true;
-    } catch (error) {
-      console.error('Failed to create medication status:', error);
       return false;
     }
   };
@@ -183,7 +262,9 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
   };
 
   const handleHomeCareOfficeUpdate = (updatedOffice: HomeCareOffice) => {
-    setHomeCareOffice(updatedOffice);
+    setHomeCareOffices((prev) =>
+      prev.map((office) => (office.id === updatedOffice.id ? updatedOffice : office))
+    );
   };
 
   const handleMedicalInstitutionUpdate = (updatedInstitution: MedicalInstitution) => {
@@ -208,18 +289,22 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
     );
   };
 
-  const handleMedicationStatusUpdate = (updatedStatus: MedicationStatus) => {
-    setMedicationStatuses((prev) =>
-      prev.map((status) => (status.id === updatedStatus.id ? updatedStatus : status))
-    );
-  };
-
   const handleContactDelete = (contactId: string) => {
     setContacts((prev) => prev.filter((contact) => contact.id !== contactId));
   };
 
-  const handleHomeCareOfficeDelete = () => {
-    setHomeCareOffice(undefined);
+  const handleHomeCareOfficeDelete = async (officeId: string) => {
+    try {
+      // 利用者からの紐付けを解除
+      await residentDataService.dissociateHomeCareOfficeFromResident(resident.id, officeId);
+      setHomeCareOffices((prev) => prev.filter((office) => office.id !== officeId));
+
+      // Show success toast
+      toast.success('居宅介護支援事業所の紐付けを解除しました。');
+    } catch (error) {
+      console.error('Failed to dissociate home care office:', error);
+      toast.error('居宅介護支援事業所の紐付け解除に失敗しました。');
+    }
   };
 
   const handleMedicalInstitutionDelete = (institutionId: string) => {
@@ -236,10 +321,6 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
     setMedications((prev) => prev.filter((medication) => medication.id !== medicationId));
   };
 
-  const handleMedicationStatusDelete = (statusId: string) => {
-    setMedicationStatuses((prev) => prev.filter((status) => status.id !== statusId));
-  };
-
   const shouldShowAddButton = () => {
     return [
       'family',
@@ -247,8 +328,9 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
       'medical',
       'history',
       'medicationInfo',
-      'medicationStatus',
-      'points',
+      'individualPoints',
+      'files',
+      'absence',
     ].includes(activeTab);
   };
 
@@ -264,10 +346,37 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
         return handleAddMedicalHistory;
       case 'medicationInfo':
         return handleAddMedication;
-      case 'medicationStatus':
-        return handleAddMedicationStatus;
+      case 'individualPoints':
+        return () => individualPointsTabContentRef.current?.openCategoryModal();
+      case 'files':
+        return () => residentFilesTabContentRef.current?.openUploadModal();
+      case 'absence':
+        return () => absenceTabContentRef.current?.openCreateModal();
       default:
         return undefined;
+    }
+  };
+
+  const getAddButtonText = () => {
+    switch (activeTab) {
+      case 'family':
+        return 'ご家族情報を追加';
+      case 'homeCare':
+        return '居宅介護支援事業所を追加';
+      case 'medical':
+        return 'かかりつけ医療機関を追加';
+      case 'history':
+        return '既往歴を追加';
+      case 'medicationInfo':
+        return 'お薬情報を追加';
+      case 'individualPoints':
+        return 'カテゴリ管理';
+      case 'files':
+        return 'ファイルをアップロード';
+      case 'absence':
+        return '不在情報を追加';
+      default:
+        return '追加';
     }
   };
 
@@ -292,8 +401,17 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
               onClick={getAddButtonHandler()}
               className="bg-white border-carebase-blue text-carebase-blue hover:bg-carebase-blue-light font-medium"
             >
-              <PlusCircle className="h-4 w-4 mr-2 text-carebase-blue" />
-              追加
+              {activeTab === 'individualPoints' ? (
+                <>
+                  <Settings className="h-4 w-4 mr-2 text-carebase-blue" />
+                  <span>{getAddButtonText()}</span>
+                </>
+              ) : (
+                <>
+                  <PlusCircle className="h-4 w-4 mr-2 text-carebase-blue" />
+                  {getAddButtonText()}
+                </>
+              )}
             </Button>
           )}
         </div>
@@ -316,14 +434,19 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
         </TabsContent>
 
         <TabsContent value="homeCare">
-          {homeCareOffice ? (
-            <HomeCareOfficeCard
-              office={homeCareOffice}
-              residentId={resident.id}
-              residentName={resident.name}
-              onOfficeUpdate={handleHomeCareOfficeUpdate}
-              onOfficeDelete={handleHomeCareOfficeDelete}
-            />
+          {homeCareOffices.length > 0 ? (
+            <div className="space-y-4">
+              {homeCareOffices.map((office) => (
+                <HomeCareOfficeCard
+                  key={office.id}
+                  office={office}
+                  residentId={resident.id}
+                  residentName={resident.name}
+                  onOfficeUpdate={handleHomeCareOfficeUpdate}
+                  onOfficeDelete={handleHomeCareOfficeDelete}
+                />
+              ))}
+            </div>
           ) : (
             <p className="text-center text-gray-500 py-8">居宅介護支援事業所の情報はありません。</p>
           )}
@@ -399,56 +522,34 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
           )}
         </TabsContent>
 
-        <TabsContent value="medicationStatus">
-          {medicationStatuses.length > 0 ? (
-            <div className="space-y-4">
-              {/* Sort by date (newest first) */}
-              {[...medicationStatuses]
-                .sort((a, b) => {
-                  const dateA = new Date(a.date);
-                  const dateB = new Date(b.date);
-                  if (dateB.getTime() !== dateA.getTime()) {
-                    return dateB.getTime() - dateA.getTime();
-                  }
-                  // If same date, sort by ID (assuming newer IDs are larger)
-                  return b.id.localeCompare(a.id);
-                })
-                .map((status) => (
-                  <MedicationStatusCard
-                    key={status.id}
-                    medicationStatus={status}
-                    residentId={resident.id}
-                    residentName={resident.name}
-                    onStatusUpdate={handleMedicationStatusUpdate}
-                    onStatusDelete={handleMedicationStatusDelete}
-                  />
-                ))}
-            </div>
-          ) : (
-            <p className="text-center text-gray-500 py-8">服薬状況の情報はありません。</p>
-          )}
+        <TabsContent value="absence">
+          <div className="space-y-4">
+            <AbsenceTabContent
+              ref={absenceTabContentRef}
+              residentId={resident.id}
+              residentName={resident.name}
+            />
+          </div>
         </TabsContent>
 
-        <TabsContent value="points">
-          <div className="mb-4 flex gap-2">
-            <Button variant="outline" className="bg-white">
-              内容のある項目のみ表示
-            </Button>
-            <Button className="bg-carebase-blue hover:bg-carebase-blue-dark">すべて表示</Button>
-            <Button variant="outline" className="bg-white ml-auto">
-              <Settings className="h-4 w-4 mr-2" />
-              カテゴリを編集
-            </Button>
+        <TabsContent value="individualPoints">
+          <div className="space-y-4">
+            <IndividualPointsTabContent
+              ref={individualPointsTabContentRef}
+              residentId={resident.id}
+              residentName={resident.name}
+            />
           </div>
-          {resident.individualPoints && resident.individualPoints.length > 0 ? (
-            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-              {resident.individualPoints.map((point) => (
-                <IndividualPointCard key={point.id} point={point} />
-              ))}
-            </div>
-          ) : (
-            <p className="text-center text-gray-500 py-8">個別ポイントの情報はありません。</p>
-          )}
+        </TabsContent>
+
+        <TabsContent value="files">
+          <div className="space-y-4">
+            <ResidentFilesTabContent
+              ref={residentFilesTabContentRef}
+              residentId={resident.id}
+              residentName={resident.name}
+            />
+          </div>
         </TabsContent>
       </Tabs>
 
@@ -467,6 +568,12 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
         residentName={resident.name}
       />
 
+      <HomeCareOfficeMasterModal
+        isOpen={isHomeCareMasterModalOpen}
+        onClose={() => setIsHomeCareMasterModalOpen(false)}
+        onRefresh={handleHomeCareOfficeMasterRefresh}
+      />
+
       <HomeCareOfficeModal
         isOpen={isHomeCareModalOpen}
         onClose={() => setIsHomeCareModalOpen(false)}
@@ -475,10 +582,17 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
         mode="create"
       />
 
+      <MedicalInstitutionMasterModal
+        isOpen={isMedicalMasterModalOpen}
+        onClose={() => setIsMedicalMasterModalOpen(false)}
+        onRefresh={handleMedicalInstitutionMasterRefresh}
+      />
+
       <MedicalInstitutionModal
         isOpen={isMedicalModalOpen}
         onClose={() => setIsMedicalModalOpen(false)}
         onSubmit={handleMedicalInstitutionSubmit}
+        onCreateNew={handleMedicalInstitutionCreateNew}
         residentName={resident.name}
         mode="create"
       />
@@ -495,14 +609,6 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
         isOpen={isMedicationModalOpen}
         onClose={() => setIsMedicationModalOpen(false)}
         onSubmit={handleMedicationSubmit}
-        residentName={resident.name}
-        mode="create"
-      />
-
-      <MedicationStatusModal
-        isOpen={isMedicationStatusModalOpen}
-        onClose={() => setIsMedicationStatusModalOpen(false)}
-        onSubmit={handleMedicationStatusSubmit}
         residentName={resident.name}
         mode="create"
       />

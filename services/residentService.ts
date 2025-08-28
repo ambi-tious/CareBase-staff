@@ -1,5 +1,5 @@
-import type { ResidentBasicInfo } from '@/components/2_molecules/forms/resident-basic-info-form';
 import type { Resident } from '@/mocks/care-board-data';
+import type { ResidentBasicInfo } from '@/validations/resident-validation';
 
 // Helper function to calculate certification validity end date
 const calculateCertValidityEnd = (admissionDate: string): string => {
@@ -47,20 +47,19 @@ export const residentService = {
       roomInfo: data.roomInfo || undefined,
       registrationDate: new Date().toISOString().split('T')[0].replace(/-/g, '/'),
       lastUpdateDate: new Date().toISOString().split('T')[0].replace(/-/g, '/'),
-      admissionDate: data.admissionDate.replace(/-/g, '/'),
-      admissionStatus: '入居中',
+      admissionDate: data.admissionDate ? data.admissionDate.replace(/-/g, '/') : '',
+      dischargeDate: data.dischargeDate ? data.dischargeDate.replace(/-/g, '/') : undefined,
       careLevel: data.careLevel,
-      certificationDate: data.admissionDate.replace(/-/g, '/'), // Default to admission date
-      certValidityStart: data.admissionDate.replace(/-/g, '/'),
-      certValidityEnd: calculateCertValidityEnd(data.admissionDate),
-      address: data.address,
+      certificationDate: data.admissionDate ? data.admissionDate.replace(/-/g, '/') : '', // Default to admission date if available
+      certValidityStart: data.admissionDate ? data.admissionDate.replace(/-/g, '/') : '',
+      certValidityEnd: data.admissionDate ? calculateCertValidityEnd(data.admissionDate) : '',
       avatarUrl: '/placeholder.svg', // Default avatar
       events: [],
       contacts: [],
     };
 
     // In production, this would make an API call to create the resident
-    console.log('Creating resident:', newResident);
+    // console.log('Creating resident:', newResident);
 
     const { careBoardData } = await import('@/mocks/care-board-data');
     careBoardData.push(newResident);
@@ -72,7 +71,7 @@ export const residentService = {
     await new Promise((resolve) => setTimeout(resolve, 1000));
 
     // In production, this would make an API call to update the resident
-    console.log('Updating resident:', id, data);
+    // console.log('Updating resident:', id, data);
 
     // For now, return a mock updated resident
     const { careBoardData } = await import('@/mocks/care-board-data');
@@ -85,6 +84,7 @@ export const residentService = {
     const updatedResident = {
       ...existingResident,
       ...data,
+      age: existingResident.age, // Keep existing age as number
       sex:
         data.sex === '男' || data.sex === '女' || data.sex === 'その他'
           ? data.sex

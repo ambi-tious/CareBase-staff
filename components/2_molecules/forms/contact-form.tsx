@@ -1,14 +1,29 @@
 'use client';
 
-import { FormField } from '@/components/1_atoms/forms/form-field';
-import { FormSelect } from '@/components/1_atoms/forms/form-select';
-import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
-import { useContactForm } from '@/hooks/useContactForm';
-import type { ContactFormData } from '@/types/contact';
+import { Checkbox } from '@/components/ui/checkbox';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
 import { contactTypeOptions, relationshipOptions } from '@/types/contact';
-import { AlertCircle, RefreshCw } from 'lucide-react';
-import type React from 'react';
+import { contactFormSchema, type ContactFormData } from '@/validations/contact-validation';
+import { zodResolver } from '@hookform/resolvers/zod';
+import React from 'react';
+import { useForm } from 'react-hook-form';
 
 interface ContactFormProps {
   onSubmit: (data: ContactFormData) => Promise<boolean>;
@@ -23,179 +38,312 @@ export const ContactForm: React.FC<ContactFormProps> = ({
   initialData,
   className = '',
 }) => {
-  const { formData, updateField, isSubmitting, error, fieldErrors, handleSubmit, retry } =
-    useContactForm({ onSubmit, initialData });
+  const form = useForm<ContactFormData>({
+    resolver: zodResolver(contactFormSchema),
+    defaultValues: {
+      name: '',
+      furigana: '',
+      relationship: '',
+      phone1: '',
+      phone2: '',
+      email: '',
+      address: '',
+      notes: '',
+      type: '連絡先',
+      hasAlert: false,
+      alertReason: '',
+      ...initialData,
+    },
+    mode: 'onChange',
+  });
 
-  const onFormSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const success = await handleSubmit();
-    if (success) {
-      onCancel(); // Close modal on success
+  const {
+    control,
+    handleSubmit,
+    formState: { isSubmitting },
+    watch,
+  } = form;
+  const formData = watch();
+
+  const onFormSubmit = handleSubmit(async (data) => {
+    try {
+      const success = await onSubmit(data);
+      if (success) {
+        form.reset();
+        onCancel(); // Close modal on success
+      }
+    } catch (error) {
+      console.error('Form submission error:', error);
     }
-  };
-
-  const isNetworkError = error?.includes('ネットワークエラー');
+  });
 
   return (
-    <form onSubmit={onFormSubmit} className={`space-y-4 ${className}`}>
-      {/* Error Alert */}
-      {error && (
-        <Alert className="border-red-200 bg-red-50">
-          <AlertCircle className="h-4 w-4 text-red-600" />
-          <AlertDescription className="text-red-700 flex items-center justify-between">
-            <span className="h-3">{error}</span>
-            {isNetworkError && (
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={retry}
-                disabled={isSubmitting}
-                className="ml-2"
-              >
-                <RefreshCw className="h-3 w-3 mr-1" />
-                リトライ
-              </Button>
-            )}
-          </AlertDescription>
-        </Alert>
-      )}
+    <div className={`space-y-4 ${className}`}>
+      <Form {...form}>
+        <form onSubmit={onFormSubmit} className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* 基本情報 */}
+            <div className="space-y-4">
+              <h3 className="text-sm font-semibold text-gray-700 border-b pb-1">基本情報</h3>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {/* 基本情報 */}
-        <div className="space-y-4">
-          <h3 className="text-sm font-semibold text-gray-700 border-b pb-1">基本情報</h3>
+              {/* 種別 */}
+              <FormField
+                control={control}
+                name="type"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>種別 *</FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                      disabled={isSubmitting}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="種別を選択してください" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {Array.from(contactTypeOptions).map((option) => (
+                          <SelectItem key={option.value} value={option.value}>
+                            {option.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-          <FormSelect
-            label="種別"
-            id="type"
-            value={formData.type}
-            onChange={(value) => updateField('type', value)}
-            options={Array.from(contactTypeOptions)}
-            required
-            error={fieldErrors.type}
-            disabled={isSubmitting}
-          />
+              {/* 氏名 */}
+              <FormField
+                control={control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>氏名 *</FormLabel>
+                    <FormControl>
+                      <Input placeholder="山田 太郎" {...field} disabled={isSubmitting} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-          <FormField
-            label="氏名"
-            id="name"
-            value={formData.name}
-            onChange={(value) => updateField('name', value)}
-            placeholder="山田 太郎"
-            required
-            error={fieldErrors.name}
-            disabled={isSubmitting}
-          />
+              {/* フリガナ */}
+              <FormField
+                control={control}
+                name="furigana"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>フリガナ</FormLabel>
+                    <FormControl>
+                      <Input placeholder="ヤマダ タロウ" {...field} disabled={isSubmitting} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-          <FormField
-            label="フリガナ"
-            id="furigana"
-            value={formData.furigana || ''}
-            onChange={(value) => updateField('furigana', value)}
-            placeholder="ヤマダ タロウ"
-            error={fieldErrors.furigana}
-            disabled={isSubmitting}
-          />
+              {/* 続柄 */}
+              <FormField
+                control={control}
+                name="relationship"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>続柄</FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                      disabled={isSubmitting}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="続柄を選択してください" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {Array.from(relationshipOptions).map((option) => (
+                          <SelectItem key={option.value} value={option.value}>
+                            {option.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
 
-          <FormSelect
-            label="続柄"
-            id="relationship"
-            value={formData.relationship}
-            onChange={(value) => updateField('relationship', value)}
-            options={Array.from(relationshipOptions)}
-            required
-            error={fieldErrors.relationship}
-            disabled={isSubmitting}
-          />
-        </div>
+            {/* 連絡先情報 */}
+            <div className="space-y-4">
+              <h3 className="text-sm font-semibold text-gray-700 border-b pb-1">連絡先情報</h3>
 
-        {/* 連絡先情報 */}
-        <div className="space-y-4">
-          <h3 className="text-sm font-semibold text-gray-700 border-b pb-1">連絡先情報</h3>
+              {/* 電話番号1 */}
+              <FormField
+                control={control}
+                name="phone1"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>電話番号1</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="tel"
+                        placeholder="078-000-0000"
+                        {...field}
+                        disabled={isSubmitting}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-          <FormField
-            label="電話番号1"
-            id="phone1"
-            type="tel"
-            value={formData.phone1}
-            onChange={(value) => updateField('phone1', value)}
-            placeholder="078-000-0000"
-            required
-            error={fieldErrors.phone1}
-            disabled={isSubmitting}
-          />
+              {/* 電話番号2 */}
+              <FormField
+                control={control}
+                name="phone2"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>電話番号2</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="tel"
+                        placeholder="080-0000-0000"
+                        {...field}
+                        disabled={isSubmitting}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-          <FormField
-            label="電話番号2"
-            id="phone2"
-            type="tel"
-            value={formData.phone2 || ''}
-            onChange={(value) => updateField('phone2', value)}
-            placeholder="080-0000-0000"
-            error={fieldErrors.phone2}
-            disabled={isSubmitting}
-          />
+              {/* メールアドレス */}
+              <FormField
+                control={control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>メールアドレス</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="email"
+                        placeholder="example@email.com"
+                        {...field}
+                        disabled={isSubmitting}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+          </div>
 
-          <FormField
-            label="メールアドレス"
-            id="email"
-            type="email"
-            value={formData.email || ''}
-            onChange={(value) => updateField('email', value)}
-            placeholder="example@email.com"
-            error={fieldErrors.email}
-            disabled={isSubmitting}
-          />
-        </div>
-      </div>
+          {/* 住所・備考 */}
+          <div className="space-y-4">
+            {/* 住所 */}
+            <FormField
+              control={control}
+              name="address"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>住所</FormLabel>
+                  <FormControl>
+                    <Input placeholder="東京都渋谷区..." {...field} disabled={isSubmitting} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-      {/* 住所・備考 */}
-      <div className="space-y-4">
-        <FormField
-          label="住所"
-          id="address"
-          value={formData.address || ''}
-          onChange={(value) => updateField('address', value)}
-          placeholder="東京都渋谷区..."
-          error={fieldErrors.address}
-          disabled={isSubmitting}
-        />
+            {/* アラート設定 */}
+            <div className="space-y-3 p-4 border border-orange-200 bg-orange-50 rounded-lg">
+              <FormField
+                control={control}
+                name="hasAlert"
+                render={({ field }) => (
+                  <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                    <FormControl>
+                      <Checkbox
+                        checked={field.value || false}
+                        onCheckedChange={field.onChange}
+                        disabled={isSubmitting}
+                      />
+                    </FormControl>
+                    <div className="space-y-1 leading-none">
+                      <FormLabel className="text-sm font-medium text-orange-800">
+                        対応注意の場合はチェックを入れてください
+                      </FormLabel>
+                    </div>
+                  </FormItem>
+                )}
+              />
 
-        <div className="space-y-2">
-          <label htmlFor="notes" className="text-sm font-medium text-gray-700">
-            備考
-          </label>
-          <textarea
-            id="notes"
-            value={formData.notes || ''}
-            onChange={(e) => updateField('notes', e.target.value)}
-            placeholder="その他の情報があれば記入してください"
-            disabled={isSubmitting}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-carebase-blue focus:border-carebase-blue disabled:bg-gray-50 disabled:text-gray-500"
-            rows={3}
-          />
-          {fieldErrors.notes && (
-            <p className="text-sm text-red-600" role="alert">
-              {fieldErrors.notes}
-            </p>
-          )}
-        </div>
-      </div>
+              {formData.hasAlert && (
+                <FormField
+                  control={control}
+                  name="alertReason"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-sm font-medium text-orange-800">
+                        注意理由
+                      </FormLabel>
+                      <FormControl>
+                        <Textarea
+                          placeholder="例：面会NG、連絡NG、特定の時間帯のみ連絡可能など"
+                          className="border-orange-300 focus:ring-orange-500 focus:border-orange-500"
+                          rows={2}
+                          {...field}
+                          disabled={isSubmitting}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              )}
+            </div>
 
-      {/* Action Buttons */}
-      <div className="flex justify-end gap-3 pt-4 border-t">
-        <Button type="button" variant="outline" onClick={onCancel} disabled={isSubmitting}>
-          キャンセル
-        </Button>
-        <Button
-          type="submit"
-          disabled={isSubmitting}
-          className="bg-carebase-blue hover:bg-carebase-blue-dark"
-        >
-          {isSubmitting ? '登録中...' : '登録'}
-        </Button>
-      </div>
-    </form>
+            {/* 備考 */}
+            <FormField
+              control={control}
+              name="notes"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>備考</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      placeholder="その他の情報があれば記入してください"
+                      rows={3}
+                      {...field}
+                      disabled={isSubmitting}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+
+          {/* Action Buttons */}
+          <div className="flex justify-end gap-3 pt-4 border-t">
+            <Button type="button" variant="outline" onClick={onCancel} disabled={isSubmitting}>
+              キャンセル
+            </Button>
+            <Button
+              type="submit"
+              disabled={isSubmitting}
+              className="bg-carebase-blue hover:bg-carebase-blue-dark"
+            >
+              {isSubmitting ? '登録中...' : '登録'}
+            </Button>
+          </div>
+        </form>
+      </Form>
+    </div>
   );
 };

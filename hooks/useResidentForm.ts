@@ -1,5 +1,7 @@
-import type { ResidentBasicInfo } from '@/components/2_molecules/forms/resident-basic-info-form';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { residentBasicInfoSchema, type ResidentBasicInfo } from '@/validations/resident-validation';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useCallback } from 'react';
+import { useForm } from 'react-hook-form';
 
 interface UseResidentFormOptions {
   initialData?: Partial<ResidentBasicInfo>;
@@ -10,122 +12,107 @@ const initialFormData: ResidentBasicInfo = {
   name: '',
   furigana: '',
   dob: '',
-  sex: '',
+  sex: '男',
   careLevel: '',
   floorGroup: '',
   unitTeam: '',
   roomInfo: '',
-  address: '',
   admissionDate: '',
+  dischargeDate: '',
+  profileImage: '',
   certificationDate: '',
   certificationStartDate: '',
   certificationEndDate: '',
+  notes: '', // 備考フィールドの初期値を追加
 };
 
 export const useResidentForm = ({ initialData, onSubmit }: UseResidentFormOptions) => {
-  const [formData, setFormData] = useState<ResidentBasicInfo>({
-    ...initialFormData,
-    ...initialData,
+  const {
+    register,
+    handleSubmit: hookFormHandleSubmit,
+    formState: { errors, isSubmitting, isValid },
+    setValue,
+    getValues,
+    reset,
+    watch,
+  } = useForm<ResidentBasicInfo>({
+    resolver: zodResolver(residentBasicInfoSchema),
+    defaultValues: {
+      ...initialFormData,
+      ...initialData,
+    },
+    mode: 'onChange', // リアルタイムバリデーション
   });
 
-  const [errors, setErrors] = useState<Partial<Record<keyof ResidentBasicInfo, string>>>({});
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  // formDataをwatchして取得
+  const formData = watch();
 
-  const validateForm = useCallback(
-    (data: ResidentBasicInfo): Partial<Record<keyof ResidentBasicInfo, string>> => {
-      const newErrors: Partial<Record<keyof ResidentBasicInfo, string>> = {};
-
-      // Required field validation
-      if (!data.name.trim()) {
-        newErrors.name = '氏名は必須です';
+  // setFormData関数（既存のAPIを維持）
+  const setFormData = useCallback(
+    (newData: ResidentBasicInfo | ((prev: ResidentBasicInfo) => ResidentBasicInfo)) => {
+      if (typeof newData === 'function') {
+        const currentData = getValues();
+        const updatedData = newData(currentData);
+        Object.keys(updatedData).forEach((key) => {
+          setValue(key as keyof ResidentBasicInfo, updatedData[key as keyof ResidentBasicInfo]);
+        });
+      } else {
+        Object.keys(newData).forEach((key) => {
+          setValue(key as keyof ResidentBasicInfo, newData[key as keyof ResidentBasicInfo]);
+        });
       }
-
-      if (!data.furigana.trim()) {
-        newErrors.furigana = 'フリガナは必須です';
-      }
-
-      if (!data.dob) {
-        newErrors.dob = '生年月日は必須です';
-      }
-
-      if (!data.sex) {
-        newErrors.sex = '性別は必須です';
-      }
-
-      if (!data.careLevel) {
-        newErrors.careLevel = '要介護度は必須です';
-      }
-
-      if (!data.admissionDate) {
-        newErrors.admissionDate = '入所日は必須です';
-      }
-
-      if (!data.address.trim()) {
-        newErrors.address = '住所は必須です';
-      }
-
-      // Format validation
-      if (data.furigana && !/^[ァ-ヶー\s]+$/.test(data.furigana)) {
-        newErrors.furigana = 'フリガナはカタカナで入力してください';
-      }
-
-      // Date validation
-      if (data.dob && data.admissionDate) {
-        const dobDate = new Date(data.dob);
-        const admissionDate = new Date(data.admissionDate);
-        if (admissionDate <= dobDate) {
-          newErrors.admissionDate = '入所日は生年月日より後の日付を入力してください';
-        }
-      }
-
-      return newErrors;
     },
-    []
+    [setValue, getValues]
   );
 
-  // Real-time validation effect
-  useEffect(() => {
-    const newErrors = validateForm(formData);
-    setErrors(newErrors);
-  }, [formData, validateForm]);
-
-  const handleSubmit = useCallback(async () => {
-    const validationErrors = validateForm(formData);
-    setErrors(validationErrors);
-
-    if (Object.keys(validationErrors).length > 0) {
-      return false;
-    }
-
-    setIsSubmitting(true);
-    try {
-      await onSubmit(formData);
-      return true;
-    } catch (error) {
-      console.error('Form submission error:', error);
-      return false;
-    } finally {
-      setIsSubmitting(false);
-    }
-  }, [formData, validateForm, onSubmit]);
-
-  const resetForm = useCallback(() => {
-    setFormData({ ...initialFormData, ...initialData });
-    setErrors({});
-  }, [initialData]);
-
-  // Derive isValid from current errors state
-  const isValid = useMemo(() => {
-    return Object.keys(errors).length === 0;
+  // errorsをuseResidentFormの既存の形式に変換
+  const convertedErrors = useCallback(() => {
+    const converted: Partial<Record<keyof ResidentBasicInfo, string>> = {};
+    Object.keys(errors).forEach((key) => {
+      const error = errors[key as keyof ResidentBasicInfo];
+      if (error) {
+        converted[key as keyof ResidentBasicInfo] = error.message;
+      }
+    });
+    return converted;
   }, [errors]);
+
+  // handleSubmit関数（既存のAPIを維持）
+  const handleSubmit = useCallback(async () => {
+    return new Promise<boolean>((resolve) => {
+      hookFormHandleSubmit(
+        async (data) => {
+          try {
+            await onSubmit(data);
+            resolve(true);
+          } catch (error) {
+            console.error('Form submission error:', error);
+            resolve(false);
+          }
+        },
+        () => {
+          resolve(false);
+        }
+      )();
+    });
+  }, [hookFormHandleSubmit, onSubmit]);
+
+  // resetForm関数（既存のAPIを維持）
+  const resetForm = useCallback(() => {
+    reset({ ...initialFormData, ...initialData });
+  }, [reset, initialData]);
 
   return {
     formData,
     setFormData,
-    errors,
+    errors: convertedErrors(),
     isSubmitting,
     handleSubmit,
     resetForm,
     isValid,
+    // React Hook Form の追加機能
+    register,
+    setValue,
+    getValues,
   };
 };

@@ -1,8 +1,8 @@
 # お薬情報タブ設計書
 
-画面名: `お薬情報タブ`  
-パス: `/residents/[residentId]` (詳細情報タブ内)  
-URL: https://carebase-staff.vercel.app/residents/1
+- 画面名: `お薬情報タブ`
+- パス: `/residents/[residentId]` (詳細情報タブ内)
+- URL: https://carebase-staff.vercel.app/residents/1
 
 ## 概要
 
@@ -47,14 +47,14 @@ Issue: [#173 [設計] #005-5 利用者｜利用者詳細（お薬情報）](http
 
 ### アクション
 
-| 項目名     | 処理内容                   | 対象API                                             | 遷移先画面                 |
-| ---------- | -------------------------- | --------------------------------------------------- | -------------------------- |
-| 追加ボタン | お薬情報登録モーダルを表示 | -                                                   | 同一画面（モーダル表示）   |
-| 編集ボタン | お薬情報編集モーダルを表示 | -                                                   | 同一画面（モーダル表示）   |
-| 削除ボタン | 削除確認モーダルを表示     | -                                                   | 同一画面（モーダル表示）   |
-| 登録処理   | 新しいお薬情報を登録       | `/api/v1/residents/{id}/medications`                | 同一画面（モーダル閉じる） |
-| 編集処理   | 既存のお薬情報を更新       | `/api/v1/residents/{id}/medications/{medicationId}` | 同一画面（モーダル閉じる） |
-| 削除処理   | 既存のお薬情報を削除       | `/api/v1/residents/{id}/medications/{medicationId}` | 同一画面（モーダル閉じる） |
+| 項目名     | 処理内容                   | 対象API                                         | 遷移先画面                 |
+| ---------- | -------------------------- | ----------------------------------------------- | -------------------------- |
+| 追加ボタン | お薬情報登録モーダルを表示 | -                                               | 同一画面（モーダル表示）   |
+| 編集ボタン | お薬情報編集モーダルを表示 | -                                               | 同一画面（モーダル表示）   |
+| 削除ボタン | 削除確認モーダルを表示     | -                                               | 同一画面（モーダル表示）   |
+| 登録処理   | 新しいお薬情報を登録       | `/v1/residents/{id}/medications`                | 同一画面（モーダル閉じる） |
+| 編集処理   | 既存のお薬情報を更新       | `/v1/residents/{id}/medications/{medicationId}` | 同一画面（モーダル閉じる） |
+| 削除処理   | 既存のお薬情報を削除       | `/v1/residents/{id}/medications/{medicationId}` | 同一画面（モーダル閉じる） |
 
 ### モーダル仕様
 
@@ -228,12 +228,12 @@ Issue: [#173 [設計] #005-5 利用者｜利用者詳細（お薬情報）](http
 
 ### API エンドポイント
 
-| メソッド | エンドポイント                                      | 説明                     |
-| -------- | --------------------------------------------------- | ------------------------ |
-| GET      | `/api/v1/residents/{id}/medications`                | 利用者の薬剤情報一覧取得 |
-| POST     | `/api/v1/residents/{id}/medications`                | 薬剤情報の新規登録       |
-| PUT      | `/api/v1/residents/{id}/medications/{medicationId}` | 薬剤情報の更新           |
-| DELETE   | `/api/v1/residents/{id}/medications/{medicationId}` | 薬剤情報の削除           |
+| メソッド | エンドポイント                                  | 説明                     |
+| -------- | ----------------------------------------------- | ------------------------ |
+| GET      | `/v1/residents/{id}/medications`                | 利用者の薬剤情報一覧取得 |
+| POST     | `/v1/residents/{id}/medications`                | 薬剤情報の新規登録       |
+| PUT      | `/v1/residents/{id}/medications/{medicationId}` | 薬剤情報の更新           |
+| DELETE   | `/v1/residents/{id}/medications/{medicationId}` | 薬剤情報の削除           |
 
 ### 状態管理
 

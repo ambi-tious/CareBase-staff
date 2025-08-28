@@ -6,11 +6,11 @@ import { TeamSelector } from '@/components/2_molecules/auth/team-selector';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { getLucideIcon } from '@/lib/lucide-icon-registry';
-import type { Staff } from '@/mocks/staff-data';
-import { getGroupById, getStaffById, getTeamById, organizationData } from '@/mocks/staff-data';
-import { AlertCircle, LogOut } from 'lucide-react';
-import React, { forwardRef, useEffect, useRef, useState } from 'react';
+import type { Group, Staff, Team } from '@/mocks/staff-data';
+import { organizationService } from '@/services/organization-service';
+import { AlertCircle, ArrowLeft, LogOut } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { forwardRef, useEffect, useRef, useState } from 'react';
 
 // Define the type for selected staff data
 interface SelectedStaffData {
@@ -24,8 +24,6 @@ interface StaffSelectionScreenProps {
   onLogout?: () => void;
   fromHeader?: boolean;
   fromStaffClick?: boolean;
-  fromGroupClick?: boolean;
-  autoSelectStaff?: boolean;
   autoSelectTeam?: boolean;
   selectedStaffData?: SelectedStaffData;
   className?: string;
@@ -38,52 +36,108 @@ const StaffSelectionScreenComponent = forwardRef<HTMLDivElement, StaffSelectionS
       onLogout,
       fromHeader = false,
       fromStaffClick = false,
-      autoSelectStaff = true,
       autoSelectTeam = true,
-      fromGroupClick = false,
       selectedStaffData,
       className = '',
     },
     ref
   ) => {
+    const router = useRouter();
+    const [groups, setGroups] = useState<Group[]>([]);
+    const [teams, setTeams] = useState<Team[]>([]);
+    const [staff, setStaff] = useState<Staff[]>([]);
     const [selectedGroupId, setSelectedGroupId] = useState<string>('');
     const [selectedTeamId, setSelectedTeamId] = useState<string>('');
     const [selectedStaffId, setSelectedStaffId] = useState<string>('');
     const [error, setError] = useState<string>('');
+    const [isLoading, setIsLoading] = useState<boolean>(false);
 
     // Refs for scrolling
     const teamSelectorRef = useRef<HTMLDivElement>(null);
     const staffSelectorRef = useRef<HTMLDivElement>(null);
-    const loginButtonRef = useRef<HTMLDivElement>(null);
 
-    // Auto-selection logic
+    // Load groups on component mount
     useEffect(() => {
-      // Auto-select group if only one exists
-      if (organizationData.length === 1 && !selectedGroupId) {
-        setSelectedGroupId(organizationData[0].id);
-      }
-    }, [selectedGroupId]);
+      const loadGroups = async () => {
+        try {
+          const groupsData = await organizationService.getGroups();
+          setGroups(groupsData);
+
+          // Auto-select group if only one exists
+          if (groupsData.length === 1 && !selectedGroupId) {
+            setSelectedGroupId(groupsData[0].id);
+          }
+        } catch (error) {
+          console.error('Failed to load groups:', error);
+          setError('グループデータの読み込みに失敗しました');
+        }
+      };
+
+      loadGroups();
+    }, []);
 
     useEffect(() => {
       // Auto-select team if only one exists in selected group
       if (selectedGroupId) {
-        const selectedGroup = getGroupById(selectedGroupId);
-        if (selectedGroup && selectedGroup.teams.length === 1 && !selectedTeamId) {
-          setSelectedTeamId(selectedGroup.teams[0].id);
-        }
+        const loadTeamsData = async () => {
+          try {
+            const teamsData = await organizationService.getTeamsByGroup(selectedGroupId);
+            setTeams(teamsData);
+
+            if (teamsData && teamsData.length === 1 && !selectedTeamId) {
+              setSelectedTeamId(teamsData[0].id);
+            }
+          } catch (error) {
+            console.error('Failed to load team data:', error);
+            setError('チームデータの読み込みに失敗しました');
+          }
+        };
+
+        loadTeamsData();
+      }
+    }, [selectedGroupId, selectedTeamId]);
+
+    // Load team data when team is selected
+    useEffect(() => {
+      if (selectedGroupId && selectedTeamId) {
+        const loadStaffData = async () => {
+          try {
+            const staffData = await organizationService.getStaffByTeam(selectedTeamId);
+            setStaff(staffData);
+          } catch (error) {
+            console.error('Failed to load team data:', error);
+            setError('スタッフデータの取得に失敗しました');
+          }
+        };
+        loadStaffData();
       }
     }, [selectedGroupId, selectedTeamId]);
 
     // Auto-proceed when staff is selected
     useEffect(() => {
-      if (selectedGroupId && selectedTeamId && selectedStaffId) {
-        // No longer auto-proceed - user must click the login button
-      }
-    }, [selectedGroupId, selectedTeamId, selectedStaffId]);
+      if (selectedGroupId && selectedTeamId && selectedStaffId && !isLoading) {
+        setIsLoading(true);
+        setError('');
 
-    const selectedGroup = selectedGroupId ? getGroupById(selectedGroupId) : null;
-    const selectedTeam =
-      selectedGroupId && selectedTeamId ? getTeamById(selectedGroupId, selectedTeamId) : null;
+        // Small delay to show loading state
+        setTimeout(async () => {
+          try {
+            const selectedStaff = await organizationService.getStaffById(selectedStaffId);
+            if (selectedStaff) {
+              onStaffSelected(selectedStaff);
+            } else {
+              setError('有効なスタッフを選択してください');
+              setIsLoading(false);
+            }
+          } catch (error) {
+            console.error('Failed to get staff data:', error);
+            setError('スタッフデータの選択に失敗しました');
+            setSelectedStaffId('');
+            setIsLoading(false);
+          }
+        }, 500);
+      }
+    }, [selectedGroupId, selectedTeamId, selectedStaffId, isLoading, onStaffSelected]);
 
     const handleGroupSelect = (groupId: string) => {
       setSelectedGroupId(groupId);
@@ -115,13 +169,6 @@ const StaffSelectionScreenComponent = forwardRef<HTMLDivElement, StaffSelectionS
     const handleStaffSelect = (staffId: string) => {
       setSelectedStaffId(staffId);
       setError('');
-
-      setTimeout(() => {
-        loginButtonRef.current?.scrollIntoView({
-          behavior: 'smooth',
-          block: 'start',
-        });
-      }, 100);
     };
 
     const handleLogout = () => {
@@ -130,20 +177,20 @@ const StaffSelectionScreenComponent = forwardRef<HTMLDivElement, StaffSelectionS
       }
     };
 
+    const handleBack = () => {
+      router.back();
+    };
+
     // Handle selection from header navigation
     useEffect(() => {
-      if (fromHeader && selectedStaffData) {
-        const currentStaff = selectedStaffData.staff;
-
+      if (fromHeader && selectedStaffData && groups.length > 0) {
         // Find the group ID from the group name
-        const groupId = organizationData.find(
-          (group) => group.name === selectedStaffData.groupName
-        )?.id;
+        const groupId = groups.find((group) => group.name === selectedStaffData.groupName)?.id;
 
         // Find the team ID from the team name within the group
         let teamId: string | undefined;
         if (groupId) {
-          const group = getGroupById(groupId);
+          const group = groups.find((g) => g.id === groupId);
           teamId = group?.teams.find((team) => team.name === selectedStaffData.teamName)?.id;
         }
 
@@ -155,59 +202,56 @@ const StaffSelectionScreenComponent = forwardRef<HTMLDivElement, StaffSelectionS
             if (autoSelectTeam) {
               setSelectedTeamId(teamId);
             }
-
-            // Find and select the staff
-            const team = getTeamById(groupId, teamId);
-            const staffMember = team?.staff.find((s) => s.id === currentStaff.id);
-            if (staffMember && autoSelectStaff) {
-              setSelectedStaffId(staffMember.id);
-            }
-          }
-          // If coming from group click, just select the group
-          else if (fromGroupClick && teamId) {
-            if (autoSelectTeam) {
-              setSelectedTeamId(teamId);
-            }
           }
         }
       }
-    }, [
-      fromHeader,
-      fromStaffClick,
-      fromGroupClick,
-      selectedStaffData,
-      autoSelectStaff,
-      autoSelectTeam,
-    ]);
+    }, [fromHeader, fromStaffClick, selectedStaffData, autoSelectTeam, groups]);
 
-    const isGroupAutoSelected = organizationData.length === 1;
-    const isTeamAutoSelected = selectedGroup && selectedGroup.teams.length === 1;
-    const showGroupSelector = !isGroupAutoSelected;
-    const showTeamSelector = selectedGroupId && !isTeamAutoSelected;
-    const showStaffSelector = selectedGroupId && selectedTeamId;
+    // Get current group and team IDs from selected staff data
+    const getCurrentGroupTeamIds = () => {
+      if (!selectedStaffData || groups.length === 0)
+        return { currentGroupId: null, currentTeamId: null };
 
-    // Function to handle login button click
-    const handleLoginClick = () => {
-      if (selectedGroupId && selectedTeamId && selectedStaffId) {
-        const selectedStaff = getStaffById(selectedGroupId, selectedTeamId, selectedStaffId);
-        if (selectedStaff && selectedStaff.isActive) {
-          onStaffSelected(selectedStaff);
-        } else {
-          setError('有効なスタッフを選択してください');
-        }
-      } else {
-        setError('グループ、チーム、スタッフをすべて選択してください');
+      // Find current group ID by name
+      const currentGroupId =
+        groups.find((group) => group.name === selectedStaffData.groupName)?.id || null;
+
+      // Find current team ID by name within the group
+      let currentTeamId: string | null = null;
+      if (currentGroupId) {
+        const group = groups.find((g) => g.id === currentGroupId);
+        currentTeamId =
+          group?.teams.find((team) => team.name === selectedStaffData.teamName)?.id || null;
       }
+
+      return { currentGroupId, currentTeamId };
     };
+
+    const { currentGroupId, currentTeamId } = getCurrentGroupTeamIds();
+
+    const showTeamSelector = selectedGroupId;
+    const showStaffSelector = selectedGroupId && selectedTeamId;
 
     return (
       <div ref={ref} className={`max-w-4xl w-full mx-auto ${className}`}>
         <Card>
           <CardHeader>
             <div className="flex items-center justify-between">
-              <CardTitle className="text-xl font-bold text-carebase-text-primary">
-                スタッフ選択
-              </CardTitle>
+              <div className="flex items-center space-x-3">
+                {fromHeader && (
+                  <Button
+                    variant="outline"
+                    onClick={handleBack}
+                    className="text-gray-600 border-gray-300 hover:bg-gray-50"
+                  >
+                    <ArrowLeft className="w-4 h-4 mr-2" />
+                    戻る
+                  </Button>
+                )}
+                <CardTitle className="text-xl font-bold text-carebase-text-primary">
+                  スタッフ選択
+                </CardTitle>
+              </div>
               <Button
                 variant="outline"
                 onClick={handleLogout}
@@ -227,84 +271,49 @@ const StaffSelectionScreenComponent = forwardRef<HTMLDivElement, StaffSelectionS
               </Alert>
             )}
 
-            {/* Auto-selected Group Display */}
-            {isGroupAutoSelected && selectedGroup && (
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                <h3 className="text-sm font-semibold text-blue-800 mb-2">選択されたグループ</h3>
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
-                    {React.createElement(getLucideIcon(selectedGroup.icon), {
-                      className: 'w-5 h-5 text-blue-600',
-                    })}
-                  </div>
-                  <div>
-                    <p className="font-semibold text-blue-900">{selectedGroup.name}</p>
-                    <p className="text-sm text-blue-700">{selectedGroup.description}</p>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* Group Selection */}
-            {showGroupSelector && (
-              <div>
-                <GroupSelector
-                  groups={organizationData}
-                  selectedGroupId={selectedGroupId}
-                  onGroupSelect={handleGroupSelect}
-                />
-              </div>
-            )}
-
-            {/* Auto-selected Team Display */}
-            {isTeamAutoSelected && selectedTeam && (
-              <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-                <h3 className="text-sm font-semibold text-green-800 mb-2">選択されたチーム</h3>
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center">
-                    {React.createElement(getLucideIcon(selectedTeam.icon), {
-                      className: 'w-5 h-5 text-green-600',
-                    })}
-                  </div>
-                  <div>
-                    <p className="font-semibold text-green-900">{selectedTeam.name}</p>
-                    <p className="text-sm text-green-700">{selectedTeam.description}</p>
-                  </div>
-                </div>
-              </div>
-            )}
+            <div>
+              <GroupSelector
+                groups={groups}
+                selectedGroupId={selectedGroupId}
+                currentGroupId={currentGroupId || undefined}
+                onGroupSelect={handleGroupSelect}
+                disabled={isLoading}
+              />
+            </div>
 
             {/* Team Selection */}
-            {showTeamSelector && (
+            {showTeamSelector && teams && (
               <div ref={teamSelectorRef}>
                 <TeamSelector
-                  teams={selectedGroup!.teams}
+                  teams={teams}
                   selectedTeamId={selectedTeamId}
+                  currentTeamId={currentTeamId || undefined}
                   onTeamSelect={handleTeamSelect}
+                  disabled={isLoading}
                 />
               </div>
             )}
 
             {/* Staff Selection */}
-            {showStaffSelector && (
+            {showStaffSelector && staff && (
               <div ref={staffSelectorRef}>
                 <StaffSelector
-                  staff={selectedTeam!.staff}
+                  staff={staff}
                   selectedStaffId={selectedStaffId}
                   onStaffSelect={handleStaffSelect}
+                  disabled={isLoading}
                 />
               </div>
             )}
 
-            {/* Login Button - Only show when staff is selected */}
-            {selectedStaffId && (
-              <div className="flex justify-center mt-6 border-t pt-4" ref={loginButtonRef}>
-                <Button
-                  onClick={handleLoginClick}
-                  className="bg-carebase-blue hover:bg-carebase-blue-dark text-white px-8 py-2"
-                >
-                  選択したスタッフでログイン
-                </Button>
+            {/* Loading State */}
+            {isLoading && (
+              <div className="flex flex-col items-center justify-center py-4 bg-blue-50 rounded-lg border border-blue-200">
+                <div className="flex items-center gap-2 mb-2">
+                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-600"></div>
+                  <p className="text-blue-800 font-semibold">ログイン処理中...</p>
+                </div>
+                <p className="text-blue-600 text-sm">少々お待ちください</p>
               </div>
             )}
           </CardContent>

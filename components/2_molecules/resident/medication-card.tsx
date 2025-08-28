@@ -1,10 +1,10 @@
-import type React from 'react';
-import type { MedicationInfo } from '@/mocks/care-board-data';
-import Image from 'next/image';
-import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import type { MedicationInfo } from '@/mocks/care-board-data';
 import { Edit3 } from 'lucide-react';
+import Image from 'next/image';
+import Link from 'next/link';
+import type React from 'react';
 
 interface MedicationCardProps {
   medication: MedicationInfo;

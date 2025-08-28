@@ -5,7 +5,8 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { getContactScheduleById } from '@/mocks/contact-schedule-data';
-import type { ContactScheduleFormData, ContactScheduleItem } from '@/types/contact-schedule';
+import type { ContactScheduleItem } from '@/types/contact-schedule';
+import type { ContactScheduleFormData } from '@/validations/contact-schedule-validation';
 import { ArrowLeft, CheckCircle, Edit3 } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -45,12 +46,7 @@ export default function EditContactSchedulePage({ params }: EditContactScheduleP
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
       // Mock API call - in production, this would call the actual API
-      console.log('Updating contact schedule:', { ...data, isDraft, itemId: item.id });
-
-      // Simulate occasional errors for testing
-      if (Math.random() < 0.1) {
-        throw new Error('ネットワークエラーが発生しました。');
-      }
+      // console.log('Updating contact schedule:', { ...data, isDraft, itemId: item.id });
 
       if (isDraft) {
         setSuccessMessage('下書きを保存しました。');
