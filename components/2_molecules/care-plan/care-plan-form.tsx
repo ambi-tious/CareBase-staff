@@ -22,6 +22,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
+import { CareManagerCombobox } from '@/components/1_atoms/care-manager/care-manager-combobox';
 import { useCarePlanForm } from '@/hooks/useCarePlanForm';
 import { certificationStatusOptions, planTypeOptions, serviceTypeOptions } from '@/types/care-plan';
 import type { CarePlanFormData, CarePlanServiceFormData } from '@/validations/care-plan-validation';
@@ -431,10 +432,12 @@ export const CarePlanForm: React.FC<CarePlanFormProps> = ({
                         ケアマネージャー <span className="text-red-500">*</span>
                       </FormLabel>
                       <FormControl>
-                        <Input
-                          {...field}
-                          placeholder="例：山田太郎"
+                        <CareManagerCombobox
+                          value={field.value}
+                          onValueChange={field.onChange}
+                          placeholder="ケアマネージャーを選択または入力してください"
                           disabled={isSubmitting || isSavingDraft}
+                          allowCustomValue={true}
                         />
                       </FormControl>
                       <FormMessage />

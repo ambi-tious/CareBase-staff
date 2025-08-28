@@ -156,12 +156,12 @@ export const careBoardData: Resident[] = [
     homeCareOffices: [
       {
         id: '1',
-        businessName: 'ケアサポートセンター',
+        businessName: '渋谷ケアプランセンター',
         address: '東京都渋谷区渋谷1-1-1',
         phone: '03-1234-5678',
         fax: '03-1234-5679',
         careManager: '田中太郎',
-        notes: '備考情報1',
+        notes: '渋谷エリア専門のケアプランセンター',
       },
     ],
     medicalInstitutions: [
@@ -386,12 +386,12 @@ export const careBoardData: Resident[] = [
     homeCareOffices: [
       {
         id: '2',
-        businessName: 'ライフケアサポート',
+        businessName: '新宿ライフケアサポート',
         address: '東京都新宿区新宿2-2-2',
         phone: '03-2345-6789',
         fax: '03-2345-6790',
         careManager: '佐藤花子',
-        notes: '備考情報2',
+        notes: '新宿区在宅介護支援事業所',
       },
     ],
     medicalInstitutions: [
@@ -612,12 +612,12 @@ export const careBoardData: Resident[] = [
     homeCareOffices: [
       {
         id: '3',
-        businessName: 'ホームケアサービス',
+        businessName: '港区ホームケアサービス',
         address: '東京都港区港3-3-3',
         phone: '03-3456-7890',
         fax: '03-3456-7891',
         careManager: '鈴木一郎',
-        notes: '備考情報3',
+        notes: '港区地域密着型ケアサービス',
       },
     ],
     medicalInstitutions: [
@@ -835,12 +835,12 @@ export const careBoardData: Resident[] = [
     homeCareOffices: [
       {
         id: '4',
-        businessName: 'ケアライフサポート',
+        businessName: '品川ケアライフサポート',
         address: '東京都品川区品川4-4-4',
         phone: '03-4567-8901',
         fax: '03-4567-8902',
         careManager: '高橋美咲',
-        notes: '備考情報4',
+        notes: '品川区在宅介護支援センター',
       },
     ],
     medicalInstitutions: [
@@ -1047,12 +1047,12 @@ export const careBoardData: Resident[] = [
     homeCareOffices: [
       {
         id: '5',
-        businessName: 'サポートケアセンター',
+        businessName: '目黒サポートケアセンター',
         address: '東京都目黒区目黒5-5-5',
         phone: '03-5678-9012',
         fax: '03-5678-9013',
         careManager: '渡辺健太',
-        notes: '備考情報5',
+        notes: '目黒区専門のケアプランセンター',
       },
     ],
     medicalInstitutions: [
@@ -1163,12 +1163,12 @@ export const careBoardData: Resident[] = [
     homeCareOffices: [
       {
         id: '1',
-        businessName: 'ケアサポートセンター',
+        businessName: '渋谷ケアプランセンター',
         address: '東京都渋谷区渋谷1-1-1',
         phone: '03-1234-5678',
         fax: '03-1234-5679',
         careManager: '田中太郎',
-        notes: '備考情報1',
+        notes: '渋谷エリア専門のケアプランセンター',
       },
     ],
     medicalInstitutions: [
@@ -1231,12 +1231,12 @@ export const careBoardData: Resident[] = [
     homeCareOffices: [
       {
         id: '2',
-        businessName: 'ライフケアサポート',
+        businessName: '新宿ライフケアサポート',
         address: '東京都新宿区新宿2-2-2',
         phone: '03-2345-6789',
         fax: '03-2345-6790',
         careManager: '佐藤花子',
-        notes: '備考情報2',
+        notes: '新宿区在宅介護支援事業所',
       },
     ],
     medicalInstitutions: [
@@ -1291,12 +1291,12 @@ export const careBoardData: Resident[] = [
     homeCareOffices: [
       {
         id: '3',
-        businessName: 'ホームケアサービス',
+        businessName: '港区ホームケアサービス',
         address: '東京都港区港3-3-3',
         phone: '03-3456-7890',
         fax: '03-3456-7891',
         careManager: '鈴木一郎',
-        notes: '備考情報3',
+        notes: '港区地域密着型ケアサービス',
       },
     ],
     events: [],

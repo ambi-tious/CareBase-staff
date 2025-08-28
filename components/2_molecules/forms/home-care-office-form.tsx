@@ -1,5 +1,6 @@
 'use client';
 
+import { CareManagerCombobox } from '@/components/1_atoms/care-manager/care-manager-combobox';
 import { Button } from '@/components/ui/button';
 import {
   Form,
@@ -83,7 +84,13 @@ export const HomeCareOfficeForm: React.FC<HomeCareOfficeFormProps> = ({
                   <FormItem>
                     <FormLabel>ケアマネージャー</FormLabel>
                     <FormControl>
-                      <Input placeholder="山口恵子" {...field} disabled={isSubmitting} />
+                      <CareManagerCombobox
+                        value={field.value}
+                        onValueChange={field.onChange}
+                        placeholder="ケアマネージャーを選択または入力してください"
+                        disabled={isSubmitting}
+                        allowCustomValue={true}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

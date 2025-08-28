@@ -44,7 +44,7 @@ import type {
 } from '@/validations/resident-data-validation';
 import { PlusCircle, Settings } from 'lucide-react';
 import type React from 'react';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
 
 interface ResidentDetailTabsProps {
@@ -61,9 +61,7 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
   const [isMedicationModalOpen, setIsMedicationModalOpen] = useState(false);
 
   const [contacts, setContacts] = useState<ContactPerson[]>(resident.contacts || []);
-  const [homeCareOffices, setHomeCareOffices] = useState<HomeCareOffice[]>(
-    resident.homeCareOffices || []
-  );
+  const [homeCareOffices, setHomeCareOffices] = useState<HomeCareOffice[]>([]);
   const [medicalInstitutions, setMedicalInstitutions] = useState<MedicalInstitution[]>(
     resident.medicalInstitutions || []
   );
@@ -71,6 +69,22 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
     resident.medicalHistory || []
   );
   const [medications, setMedications] = useState<Medication[]>(resident.medications || []);
+
+  // 居宅介護支援事業所データを取得
+  useEffect(() => {
+    const fetchHomeCareOffices = async () => {
+      try {
+        const offices = await residentDataService.getResidentHomeCareOffices(resident.id);
+        setHomeCareOffices(offices);
+      } catch (error) {
+        console.error('Failed to fetch home care offices:', error);
+        // フォールバックとして既存のデータを使用
+        setHomeCareOffices(resident.homeCareOffices || []);
+      }
+    };
+
+    fetchHomeCareOffices();
+  }, [resident.id, resident.homeCareOffices]);
 
   const [activeTab, setActiveTab] = useState('family');
   const individualPointsTabContentRef = useRef<IndividualPointsTabContentRef>(null);
@@ -128,9 +142,9 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
       // Show success toast
       toast.success('居宅介護支援事業所の登録が完了しました。');
 
-      // 新規作成後、マスタ管理モーダルを再表示
+      // 登録完了後、すべてのモーダルを閉じる
       setIsHomeCareModalOpen(false);
-      setIsHomeCareMasterModalOpen(true);
+      setIsHomeCareMasterModalOpen(false);
       return true;
     } catch (error) {
       console.error('Failed to create home care office:', error);
@@ -138,11 +152,23 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
     }
   };
 
-  const handleHomeCareOfficeSelect = (office: HomeCareOffice) => {
-    // 既に登録されているかチェック
-    const isAlreadyRegistered = homeCareOffices.some((existing) => existing.id === office.id);
-    if (!isAlreadyRegistered) {
-      setHomeCareOffices((prev) => [...prev, office]);
+  const handleHomeCareOfficeSelect = async (office: HomeCareOffice) => {
+    try {
+      // 既に登録されているかチェック
+      const isAlreadyRegistered = homeCareOffices.some((existing) => existing.id === office.id);
+      if (!isAlreadyRegistered) {
+        // 利用者に紐付け
+        await residentDataService.associateHomeCareOfficeToResident(resident.id, office.id);
+        setHomeCareOffices((prev) => [...prev, office]);
+
+        // Show success toast
+        toast.success('居宅介護支援事業所の紐付けが完了しました。');
+      }
+
+      setIsHomeCareMasterModalOpen(false);
+    } catch (error) {
+      console.error('Failed to associate home care office:', error);
+      toast.error('居宅介護支援事業所の紐付けに失敗しました。');
     }
   };
 
@@ -240,8 +266,18 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
     setContacts((prev) => prev.filter((contact) => contact.id !== contactId));
   };
 
-  const handleHomeCareOfficeDelete = (officeId: string) => {
-    setHomeCareOffices((prev) => prev.filter((office) => office.id !== officeId));
+  const handleHomeCareOfficeDelete = async (officeId: string) => {
+    try {
+      // 利用者からの紐付けを解除
+      await residentDataService.dissociateHomeCareOfficeFromResident(resident.id, officeId);
+      setHomeCareOffices((prev) => prev.filter((office) => office.id !== officeId));
+
+      // Show success toast
+      toast.success('居宅介護支援事業所の紐付けを解除しました。');
+    } catch (error) {
+      console.error('Failed to dissociate home care office:', error);
+      toast.error('居宅介護支援事業所の紐付け解除に失敗しました。');
+    }
   };
 
   const handleMedicalInstitutionDelete = (institutionId: string) => {

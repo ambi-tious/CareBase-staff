@@ -19,18 +19,22 @@ import type {
 } from '@/validations/resident-data-validation';
 
 class ResidentDataService {
-  private baseUrl = process.env.NEXT_PUBLIC_API_URL || '';
+  private readonly STORAGE_KEY = 'carebase_home_care_offices_master';
+  private readonly RESIDENT_OFFICES_KEY = 'carebase_resident_home_care_offices';
 
-  // Home Care Office Methods
-  async getHomeCareOffices(): Promise<HomeCareOffice[]> {
-    await new Promise((resolve) => setTimeout(resolve, 500));
-
-    if (Math.random() < 0.05) {
-      throw new Error('ネットワークエラーが発生しました。');
+  // Home Care Office Master Data Methods
+  private getStoredMasterOffices(): HomeCareOffice[] {
+    try {
+      const stored = localStorage.getItem(this.STORAGE_KEY);
+      if (stored) {
+        return JSON.parse(stored);
+      }
+    } catch (error) {
+      console.error('Failed to load stored home care offices:', error);
     }
 
-    // モックデータ - 実際の実装ではAPIから取得
-    const mockOffices: HomeCareOffice[] = [
+    // 初回のデフォルトマスタデータ
+    const defaultOffices: HomeCareOffice[] = [
       {
         id: '1',
         businessName: '渋谷ケアプランセンター',
@@ -78,7 +82,78 @@ class ResidentDataService {
       },
     ];
 
-    return mockOffices;
+    // 初回のみデフォルトデータを保存
+    this.storeMasterOffices(defaultOffices);
+    return defaultOffices;
+  }
+
+  private storeMasterOffices(offices: HomeCareOffice[]): void {
+    try {
+      localStorage.setItem(this.STORAGE_KEY, JSON.stringify(offices));
+    } catch (error) {
+      console.error('Failed to store home care offices:', error);
+    }
+  }
+
+  private getResidentOfficesAssociations(): Record<number, string[]> {
+    try {
+      const stored = localStorage.getItem(this.RESIDENT_OFFICES_KEY);
+      return stored ? JSON.parse(stored) : {};
+    } catch (error) {
+      console.error('Failed to load resident office associations:', error);
+      return {};
+    }
+  }
+
+  private storeResidentOfficesAssociations(associations: Record<number, string[]>): void {
+    try {
+      localStorage.setItem(this.RESIDENT_OFFICES_KEY, JSON.stringify(associations));
+    } catch (error) {
+      console.error('Failed to store resident office associations:', error);
+    }
+  }
+
+  async getHomeCareOffices(): Promise<HomeCareOffice[]> {
+    await new Promise((resolve) => setTimeout(resolve, 500));
+
+    return this.getStoredMasterOffices();
+  }
+
+  // 利用者の居宅介護支援事業所を取得
+  async getResidentHomeCareOffices(residentId: number): Promise<HomeCareOffice[]> {
+    await new Promise((resolve) => setTimeout(resolve, 300));
+
+    const associations = this.getResidentOfficesAssociations();
+    const officeIds = associations[residentId] || [];
+    const allOffices = this.getStoredMasterOffices();
+
+    return allOffices.filter((office) => officeIds.includes(office.id));
+  }
+
+  // 利用者に居宅介護支援事業所を紐付け
+  async associateHomeCareOfficeToResident(residentId: number, officeId: string): Promise<void> {
+    await new Promise((resolve) => setTimeout(resolve, 500));
+
+    const associations = this.getResidentOfficesAssociations();
+    if (!associations[residentId]) {
+      associations[residentId] = [];
+    }
+
+    if (!associations[residentId].includes(officeId)) {
+      associations[residentId].push(officeId);
+      this.storeResidentOfficesAssociations(associations);
+    }
+  }
+
+  // 利用者からの居宅介護支援事業所の紐付けを解除
+  async dissociateHomeCareOfficeFromResident(residentId: number, officeId: string): Promise<void> {
+    await new Promise((resolve) => setTimeout(resolve, 500));
+
+    const associations = this.getResidentOfficesAssociations();
+    if (associations[residentId]) {
+      associations[residentId] = associations[residentId].filter((id) => id !== officeId);
+      this.storeResidentOfficesAssociations(associations);
+    }
   }
 
   async createHomeCareOffice(
@@ -87,10 +162,7 @@ class ResidentDataService {
   ): Promise<HomeCareOffice> {
     await new Promise((resolve) => setTimeout(resolve, 1000));
 
-    if (Math.random() < 0.1) {
-      throw new Error('ネットワークエラーが発生しました。');
-    }
-
+    // 新しい事業所をマスタに追加
     const newOffice: HomeCareOffice = {
       id: `hco-${Date.now()}`,
       businessName: data.businessName || '',
@@ -100,6 +172,14 @@ class ResidentDataService {
       address: data.address || '',
       notes: data.notes || '',
     };
+
+    // マスタデータに追加
+    const allOffices = this.getStoredMasterOffices();
+    allOffices.push(newOffice);
+    this.storeMasterOffices(allOffices);
+
+    // 利用者に自動紐付け
+    await this.associateHomeCareOfficeToResident(residentId, newOffice.id);
 
     // console.log('Mock created home care office:', newOffice);
     return newOffice;
@@ -111,10 +191,6 @@ class ResidentDataService {
     data: HomeCareOfficeFormData
   ): Promise<HomeCareOffice> {
     await new Promise((resolve) => setTimeout(resolve, 1000));
-
-    if (Math.random() < 0.05) {
-      throw new Error('ネットワークエラーが発生しました。');
-    }
 
     const updatedOffice: HomeCareOffice = {
       id: officeId,
@@ -133,20 +209,12 @@ class ResidentDataService {
   async deleteHomeCareOffice(residentId: number, officeId: string): Promise<void> {
     await new Promise((resolve) => setTimeout(resolve, 800));
 
-    if (Math.random() < 0.05) {
-      throw new Error('ネットワークエラーが発生しました。');
-    }
-
     // console.log('Mock deleted home care office:', { residentId, officeId });
   }
 
   // マスタデータ管理用メソッド
   async createHomeCareOfficeMaster(data: HomeCareOfficeFormData): Promise<HomeCareOffice> {
     await new Promise((resolve) => setTimeout(resolve, 1000));
-
-    if (Math.random() < 0.1) {
-      throw new Error('ネットワークエラーが発生しました。');
-    }
 
     const newOffice: HomeCareOffice = {
       id: `hco-master-${Date.now()}`,
@@ -158,6 +226,11 @@ class ResidentDataService {
       notes: data.notes || '',
     };
 
+    // マスタデータに追加
+    const allOffices = this.getStoredMasterOffices();
+    allOffices.push(newOffice);
+    this.storeMasterOffices(allOffices);
+
     // console.log('Mock created home care office master:', newOffice);
     return newOffice;
   }
@@ -167,10 +240,6 @@ class ResidentDataService {
     data: HomeCareOfficeFormData
   ): Promise<HomeCareOffice> {
     await new Promise((resolve) => setTimeout(resolve, 1000));
-
-    if (Math.random() < 0.05) {
-      throw new Error('ネットワークエラーが発生しました。');
-    }
 
     const updatedOffice: HomeCareOffice = {
       id: officeId,
@@ -182,6 +251,14 @@ class ResidentDataService {
       notes: data.notes || '',
     };
 
+    // マスタデータを更新
+    const allOffices = this.getStoredMasterOffices();
+    const index = allOffices.findIndex((office) => office.id === officeId);
+    if (index !== -1) {
+      allOffices[index] = updatedOffice;
+      this.storeMasterOffices(allOffices);
+    }
+
     // console.log('Mock updated home care office master:', updatedOffice);
     return updatedOffice;
   }
@@ -189,9 +266,19 @@ class ResidentDataService {
   async deleteHomeCareOfficeMaster(officeId: string): Promise<void> {
     await new Promise((resolve) => setTimeout(resolve, 800));
 
-    if (Math.random() < 0.05) {
-      throw new Error('ネットワークエラーが発生しました。');
-    }
+    // マスタデータから削除
+    const allOffices = this.getStoredMasterOffices();
+    const filteredOffices = allOffices.filter((office) => office.id !== officeId);
+    this.storeMasterOffices(filteredOffices);
+
+    // 全利用者からの紐付けも削除
+    const associations = this.getResidentOfficesAssociations();
+    Object.keys(associations).forEach((residentId) => {
+      associations[parseInt(residentId)] = associations[parseInt(residentId)].filter(
+        (id) => id !== officeId
+      );
+    });
+    this.storeResidentOfficesAssociations(associations);
 
     // console.log('Mock deleted home care office master:', { officeId });
   }
@@ -202,10 +289,6 @@ class ResidentDataService {
     data: MedicalInstitutionFormData
   ): Promise<MedicalInstitution> {
     await new Promise((resolve) => setTimeout(resolve, 1000));
-
-    if (Math.random() < 0.1) {
-      throw new Error('ネットワークエラーが発生しました。');
-    }
 
     const newInstitution: MedicalInstitution = {
       id: `mi-${Date.now()}`,
@@ -228,10 +311,6 @@ class ResidentDataService {
   ): Promise<MedicalInstitution> {
     await new Promise((resolve) => setTimeout(resolve, 1000));
 
-    if (Math.random() < 0.05) {
-      throw new Error('ネットワークエラーが発生しました。');
-    }
-
     const updatedInstitution: MedicalInstitution = {
       id: institutionId,
       institutionName: data.institutionName,
@@ -249,10 +328,6 @@ class ResidentDataService {
   async deleteMedicalInstitution(residentId: number, institutionId: string): Promise<void> {
     await new Promise((resolve) => setTimeout(resolve, 800));
 
-    if (Math.random() < 0.05) {
-      throw new Error('ネットワークエラーが発生しました。');
-    }
-
     // console.log('Mock deleted medical institution:', { residentId, institutionId });
   }
 
@@ -262,10 +337,6 @@ class ResidentDataService {
     data: MedicalHistoryFormDataType
   ): Promise<MedicalHistory> {
     await new Promise((resolve) => setTimeout(resolve, 1000));
-
-    if (Math.random() < 0.1) {
-      throw new Error('ネットワークエラーが発生しました。');
-    }
 
     const newHistory: MedicalHistory = {
       id: `mh-${Date.now()}`,
@@ -287,10 +358,6 @@ class ResidentDataService {
   ): Promise<MedicalHistory> {
     await new Promise((resolve) => setTimeout(resolve, 1000));
 
-    if (Math.random() < 0.05) {
-      throw new Error('ネットワークエラーが発生しました。');
-    }
-
     const updatedHistory: MedicalHistory = {
       id: historyId,
       date: data.onsetDate.replace(/-/g, '/'), // Convert YYYY-MM to YYYY/MM
@@ -307,10 +374,6 @@ class ResidentDataService {
   async deleteMedicalHistory(residentId: number, historyId: string): Promise<void> {
     await new Promise((resolve) => setTimeout(resolve, 800));
 
-    if (Math.random() < 0.05) {
-      throw new Error('ネットワークエラーが発生しました。');
-    }
-
     // console.log('Mock deleted medical history:', { residentId, historyId });
   }
 
@@ -320,10 +383,6 @@ class ResidentDataService {
     data: MedicationInfoFormData
   ): Promise<MedicationInfo> {
     await new Promise((resolve) => setTimeout(resolve, 1000));
-
-    if (Math.random() < 0.1) {
-      throw new Error('ネットワークエラーが発生しました。');
-    }
 
     const newMedication: MedicationInfo = {
       id: `med-${Date.now()}`,
@@ -350,10 +409,6 @@ class ResidentDataService {
   ): Promise<MedicationInfo> {
     await new Promise((resolve) => setTimeout(resolve, 1000));
 
-    if (Math.random() < 0.05) {
-      throw new Error('ネットワークエラーが発生しました。');
-    }
-
     const updatedMedication: MedicationInfo = {
       id: medicationId,
       medicationName: data.medicationName,
@@ -374,10 +429,6 @@ class ResidentDataService {
 
   async deleteMedicationInfo(residentId: number, medicationId: string): Promise<void> {
     await new Promise((resolve) => setTimeout(resolve, 800));
-
-    if (Math.random() < 0.05) {
-      throw new Error('ネットワークエラーが発生しました。');
-    }
 
     // console.log('Mock deleted medication info:', { residentId, medicationId });
   }

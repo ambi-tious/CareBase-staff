@@ -203,7 +203,7 @@ export function AppHeader() {
             </SheetTrigger>
             <SheetContent
               side="right"
-              className="sm:max-w-full bg-carebase-bg p-0 overflow-y-auto min-w-[90vw]"
+              className="sm:max-w-full bg-carebase-bg p-0 overflow-y-auto min-w-[80vw]"
             >
               <SheetHeader className="flex flex-row items-center justify-between py-2 px-4 sticky top-0 bg-carebase-bg z-10 border-b">
                 <SheetTitle className="text-xl font-bold text-carebase-text-primary">
