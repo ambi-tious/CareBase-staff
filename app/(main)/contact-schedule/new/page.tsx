@@ -48,11 +48,6 @@ export default function NewContactSchedulePage() {
       // Mock API call - in production, this would call the actual API
       // console.log('Submitting contact schedule:', { ...data, isDraft });
 
-      // Simulate occasional errors for testing
-      if (Math.random() < 0.1) {
-        throw new Error('ネットワークエラーが発生しました。');
-      }
-
       if (isDraft) {
         setSuccessMessage('下書きを保存しました。');
         return true;

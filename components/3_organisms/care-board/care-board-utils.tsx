@@ -15,6 +15,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
 import { getLucideIcon } from '@/lib/lucide-icon-registry';
 import {
   CareCategoryGroupKey,
@@ -715,11 +716,11 @@ export const CareRecordModal: React.FC<CareRecordModalProps> = ({
             {/* 備考入力 */}
             <div className="space-y-2">
               <label className="text-sm font-medium tablet-landscape:text-base">備考</label>
-              <textarea
+              <Textarea
                 value={updatedEvent.details || ''}
                 onChange={(e) => setUpdatedEvent({ ...updatedEvent, details: e.target.value })}
                 placeholder="備考があれば入力してください"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md tablet-landscape:px-4 tablet-landscape:py-3"
+                className="tablet-landscape:px-4 tablet-landscape:py-3"
                 rows={3}
               />
             </div>

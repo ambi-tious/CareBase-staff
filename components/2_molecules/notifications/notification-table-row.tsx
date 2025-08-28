@@ -32,12 +32,7 @@ export const NotificationTableRow: React.FC<NotificationTableRowProps> = ({
   };
 
   const getScheduleInfo = () => {
-    if (notification.type === 'handover') {
-      const handover = notification as import('@/types/notification').HandoverNotification;
-      if (handover.scheduledDate && handover.scheduledTime) {
-        return `${handover.scheduledDate} ${handover.scheduledTime}`;
-      }
-    } else if (notification.type === 'contact_schedule') {
+    if (notification.type === 'contact_schedule') {
       const schedule = notification as import('@/types/notification').ContactScheduleNotification;
       const dueDate = format(new Date(schedule.dueDate), 'MM/dd', { locale: ja });
       if (schedule.startTime) {

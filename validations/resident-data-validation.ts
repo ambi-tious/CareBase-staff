@@ -12,20 +12,20 @@ export const homeCareOfficeFormSchema = z.object({
     .string()
     .min(1, '事業所名は必須です')
     .max(100, '事業所名は100文字以内で入力してください'),
-  careManager: z
-    .string()
-    .min(1, 'ケアマネージャー名は必須です')
-    .max(50, 'ケアマネージャー名は50文字以内で入力してください'),
+  careManager: z.string().max(50, 'ケアマネージャー名は50文字以内で入力してください').optional(),
   phone: z
     .string()
-    .min(1, '電話番号は必須です')
-    .regex(/^[0-9\-\+\(\)\s]+$/, '有効な電話番号を入力してください'),
+    .regex(/^[0-9\-\+\(\)\s]+$/, '有効な電話番号を入力してください')
+    .optional()
+    .or(z.literal(''))
+    .optional(),
   fax: z
     .string()
     .regex(/^[0-9\-\+\(\)\s]*$/, '有効なFAX番号を入力してください')
     .optional()
-    .or(z.literal('')),
-  address: z.string().min(1, '住所は必須です').max(200, '住所は200文字以内で入力してください'),
+    .or(z.literal(''))
+    .optional(),
+  address: z.string().max(200, '住所は200文字以内で入力してください').optional(),
   notes: z.string().optional(),
 });
 
@@ -118,18 +118,6 @@ export const medicalHistoryFormSchema = z
 
 export type MedicalHistoryFormData = z.infer<typeof medicalHistoryFormSchema>;
 
-// Medication Status Types
-export const medicationStatusFormSchema = z.object({
-  date: z
-    .string()
-    .min(1, '登録日は必須です')
-    .regex(/^\d{4}\/\d{2}\/\d{2}$/, '有効な日付を入力してください（YYYY/MM/DD）'),
-  content: z.string().min(1, '内容は必須です').max(500, '内容は500文字以内で入力してください'),
-  notes: z.string().optional(),
-});
-
-export type MedicationStatusFormData = z.infer<typeof medicationStatusFormSchema>;
-
 // バリデーションヘルパー関数
 export const validateHomeCareOfficeForm = (data: unknown) => {
   return homeCareOfficeFormSchema.safeParse(data);
@@ -145,10 +133,6 @@ export const validateMedicationInfoForm = (data: unknown) => {
 
 export const validateMedicalHistoryForm = (data: unknown) => {
   return medicalHistoryFormSchema.safeParse(data);
-};
-
-export const validateMedicationStatusForm = (data: unknown) => {
-  return medicationStatusFormSchema.safeParse(data);
 };
 
 // エラーメッセージ定数
@@ -191,10 +175,4 @@ export const RESIDENT_DATA_ERROR_MESSAGES = {
   DISEASE_NAME_TOO_LONG: '病名は100文字以内で入力してください',
   INVALID_ONSET_DATE: '有効な年月を入力してください（YYYY-MM）',
   ONSET_DATE_FUTURE: '発症年月は過去の日付を入力してください',
-
-  // Medication Status
-  REQUIRED_DATE: '登録日は必須です',
-  REQUIRED_CONTENT: '内容は必須です',
-  INVALID_DATE: '有効な日付を入力してください（YYYY/MM/DD）',
-  CONTENT_TOO_LONG: '内容は500文字以内で入力してください',
 } as const;

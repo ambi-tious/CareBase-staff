@@ -26,7 +26,7 @@
 - 空状態表示
 - モーダル（フォルダ作成・編集・削除、ファイルアップロード、一括削除確認）
 
-![書類一覧画面スクリーンショット](https://github.com/user-attachments/assets/de4fb4c5-7973-42f7-adc5-e89a6f477d14)
+<img width="1470" height="730" alt="スクリーンショット 2025-08-04 21 09 55" src="https://github.com/user-attachments/assets/bc70022f-ec6e-442b-adce-ec1db9f00a26" />
 
 ### 画面項目
 
@@ -43,8 +43,8 @@
 | 全選択チェックボックス       | Checkbox           | -    | テーブルヘッダー | 未選択               | 全アイテムの一括選択・解除                |
 | アイテム一覧テーブル         | FolderContentsView | -    | データあり時     | -                    | テーブル表示、ソート・検索・選択機能      |
 | 空状態表示                   | テキスト表示       | -    | データなし時     | -                    | 空フォルダ・検索結果なし時のメッセージ    |
-| フォルダ作成モーダル         | FolderCreateModal  | -    | ボタンクリック時 | -                    | フォルダ名入力、重複チェック              |
-| フォルダ編集モーダル         | FolderEditModal    | -    | フォルダ編集時   | -                    | フォルダ名変更、重複チェック              |
+| フォルダ作成モーダル         | FolderModal        | -    | ボタンクリック時 | -                    | フォルダ名入力、重複チェック              |
+| フォルダ編集モーダル         | FolderModal        | -    | フォルダ編集時   | -                    | フォルダ名変更、重複チェック              |
 | フォルダ削除モーダル         | FolderDeleteModal  | -    | フォルダ削除時   | -                    | 削除確認ダイアログ                        |
 | ファイルアップロードモーダル | FileUploadModal    | -    | ボタンクリック時 | -                    | ファイル選択・ドラッグ&ドロップ対応       |
 | 一括削除確認モーダル         | GenericDeleteModal | -    | 一括削除時       | -                    | 選択アイテムの削除確認                    |
@@ -198,8 +198,7 @@
 #### モーダル
 
 - **FileUploadModal**: ファイルアップロードモーダル
-- **FolderCreateModal**: フォルダ作成モーダル
-- **FolderEditModal**: フォルダ編集モーダル
+- **FolderModal**: フォルダ作成・編集共通モーダル（mode='create'/'edit'で切り替え）
 - **FolderDeleteModal**: フォルダ削除モーダル
 - **GenericDeleteModal**: 一括削除確認モーダル
 

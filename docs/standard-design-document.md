@@ -653,16 +653,16 @@ interface ApiError {
 #### RESTful API設計
 
 ```
-GET    /api/v1/residents           # 利用者一覧取得
-GET    /api/v1/residents/{id}      # 利用者詳細取得
-POST   /api/v1/residents           # 利用者新規作成
-PUT    /api/v1/residents/{id}      # 利用者更新
-DELETE /api/v1/residents/{id}      # 利用者削除
+GET    /v1/residents           # 利用者一覧取得
+GET    /v1/residents/{id}      # 利用者詳細取得
+POST   /v1/residents           # 利用者新規作成
+PUT    /v1/residents/{id}      # 利用者更新
+DELETE /v1/residents/{id}      # 利用者削除
 
-GET    /api/v1/care-records        # 介護記録一覧取得
-POST   /api/v1/care-records        # 介護記録作成
-PUT    /api/v1/care-records/{id}   # 介護記録更新
-DELETE /api/v1/care-records/{id}   # 介護記録削除
+GET    /v1/care-records        # 介護記録一覧取得
+POST   /v1/care-records        # 介護記録作成
+PUT    /v1/care-records/{id}   # 介護記録更新
+DELETE /v1/care-records/{id}   # 介護記録削除
 ```
 
 ### 8.2 リクエスト・レスポンス仕様

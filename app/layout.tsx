@@ -1,5 +1,6 @@
-import { Toaster } from '@/components/ui/toaster';
+import { AuthProvider } from '@/components/providers/AuthProvider';
 import type { Metadata, Viewport } from 'next';
+import { Toaster } from 'sonner';
 import './globals.css';
 
 export const metadata: Metadata = {
@@ -48,8 +49,10 @@ export default function RootLayout({
   return (
     <html lang="ja">
       <body>
-        {children}
-        <Toaster />
+        <AuthProvider>
+          {children}
+          <Toaster />
+        </AuthProvider>
       </body>
     </html>
   );

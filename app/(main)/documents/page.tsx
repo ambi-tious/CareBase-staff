@@ -3,12 +3,10 @@
 import { FolderBreadcrumb } from '@/components/2_molecules/documents/folder-breadcrumb';
 import { FolderContentsView } from '@/components/3_organisms/documents/folder-contents-view';
 import { FileUploadModal } from '@/components/3_organisms/modals/file-upload-modal';
-import { FolderCreateModal } from '@/components/3_organisms/modals/folder-create-modal';
 import { FolderDeleteModal } from '@/components/3_organisms/modals/folder-delete-modal';
-import { FolderEditModal } from '@/components/3_organisms/modals/folder-edit-modal';
+import { FolderModal } from '@/components/3_organisms/modals/folder-modal';
 import { GenericDeleteModal } from '@/components/3_organisms/modals/generic-delete-modal';
 import { Button } from '@/components/ui/button';
-import { useToast } from '@/components/ui/use-toast';
 import { useAuth } from '@/hooks/useAuth';
 import type { DocumentCategory, DocumentFolder } from '@/mocks/documents-data';
 import { getCategoryByKey, getDocumentsByCategory } from '@/mocks/documents-data';
@@ -26,6 +24,7 @@ import { FileText, FolderPlus, Trash2, Upload } from 'lucide-react';
 import Link from 'next/link';
 import { notFound, useRouter, useSearchParams } from 'next/navigation';
 import { Suspense, useEffect, useState } from 'react';
+import { toast } from 'sonner';
 
 // パンくずリストアイテムの型定義
 interface BreadcrumbPathItem {
@@ -37,7 +36,6 @@ interface BreadcrumbPathItem {
 function DocumentsContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { toast } = useToast();
   const { selectedStaff } = useAuth();
 
   // URLパラメータからカテゴリーまたはフォルダIDを取得
@@ -169,10 +167,7 @@ function DocumentsContent() {
       setDocuments((prev) => prev.filter((item) => !selectedItems.includes(item.id)));
       setSelectedItems([]);
 
-      toast({
-        title: 'アイテムを削除しました',
-        description: `${selectedItems.length}個のアイテムが削除されました`,
-      });
+      toast.success(`${selectedItems.length}個のアイテムが削除されました`);
 
       return true;
     } catch (error) {
@@ -205,10 +200,7 @@ function DocumentsContent() {
 
       setDocuments((prev) => [...prev, ...newFiles]);
 
-      toast({
-        title: 'アップロード完了',
-        description: `${files.length}個のファイルがアップロードされました`,
-      });
+      toast.success(`${files.length}個のファイルがアップロードされました`);
 
       return true;
     } catch (error) {
@@ -231,10 +223,7 @@ function DocumentsContent() {
       const newFolder = createFolder(folderName, categoryOrFolderId, selectedStaff?.name);
       setDocuments((prev) => [newFolder, ...prev]);
 
-      toast({
-        title: 'フォルダを作成しました',
-        description: `「${folderName}」フォルダが作成されました`,
-      });
+      toast.success(`「${folderName}」フォルダが作成されました`);
 
       return true;
     } catch (error) {
@@ -267,10 +256,7 @@ function DocumentsContent() {
           )
         );
 
-        toast({
-          title: 'フォルダを更新しました',
-          description: `フォルダ名を「${folderName}」に変更しました`,
-        });
+        toast.success(`フォルダ名を「${folderName}」に変更しました`);
 
         return true;
       }
@@ -297,10 +283,7 @@ function DocumentsContent() {
       if (success) {
         setDocuments((prev) => prev.filter((item) => item.id !== folderId));
 
-        toast({
-          title: 'フォルダを削除しました',
-          description: '選択したフォルダが削除されました',
-        });
+        toast.success('選択したフォルダが削除されました');
 
         return true;
       }
@@ -413,14 +396,16 @@ function DocumentsContent() {
           />
 
           {/* フォルダ操作モーダル */}
-          <FolderCreateModal
+          <FolderModal
+            mode="create"
             isOpen={isFolderCreateModalOpen}
             onClose={() => setIsFolderCreateModalOpen(false)}
             onCreateFolder={handleFolderCreate}
             existingFolders={existingFolderNames}
           />
 
-          <FolderEditModal
+          <FolderModal
+            mode="edit"
             isOpen={isFolderEditModalOpen}
             onClose={() => setIsFolderEditModalOpen(false)}
             onUpdateFolder={handleFolderUpdate}

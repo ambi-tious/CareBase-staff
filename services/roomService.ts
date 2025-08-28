@@ -4,13 +4,8 @@
  * API service for room management
  */
 
+import { getAllActiveRooms, getRoomsByGroup, getRoomsByGroupAndTeam } from '@/mocks/room-data';
 import type { Room } from '@/types/room';
-import {
-  getRoomsByGroupAndTeam,
-  getAllActiveRooms,
-  getRoomsByGroup,
-  getRoomsWithOccupancy,
-} from '@/mocks/room-data';
 
 class RoomService {
   private baseUrl = process.env.NEXT_PUBLIC_API_URL || '';
@@ -21,11 +16,11 @@ class RoomService {
   async getRoomsByGroupAndTeam(groupId: string, teamId: string): Promise<Room[]> {
     try {
       // For development, use mock data
-      if (process.env.NODE_ENV === 'development') {
+      if (process.env.NODE_ENV) {
         return this.mockGetRoomsByGroupAndTeam(groupId, teamId);
       }
 
-      const response = await fetch(`${this.baseUrl}/api/rooms?groupId=${groupId}&teamId=${teamId}`);
+      const response = await fetch(`${this.baseUrl}/rooms?groupId=${groupId}&teamId=${teamId}`);
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -45,11 +40,11 @@ class RoomService {
   async getAllActiveRooms(): Promise<Room[]> {
     try {
       // For development, use mock data
-      if (process.env.NODE_ENV === 'development') {
+      if (process.env.NODE_ENV) {
         return this.mockGetAllActiveRooms();
       }
 
-      const response = await fetch(`${this.baseUrl}/api/rooms`);
+      const response = await fetch(`${this.baseUrl}/rooms`);
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -69,11 +64,11 @@ class RoomService {
   async getRoomsByGroup(groupId: string): Promise<Room[]> {
     try {
       // For development, use mock data
-      if (process.env.NODE_ENV === 'development') {
+      if (process.env.NODE_ENV) {
         return this.mockGetRoomsByGroup(groupId);
       }
 
-      const response = await fetch(`${this.baseUrl}/api/rooms?groupId=${groupId}`);
+      const response = await fetch(`${this.baseUrl}/rooms?groupId=${groupId}`);
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);

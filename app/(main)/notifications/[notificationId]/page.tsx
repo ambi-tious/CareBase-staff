@@ -1,15 +1,15 @@
 'use client';
 
-import { getNotificationById } from '@/mocks/notification-data';
-import { NotificationTypeBadge } from '@/components/1_atoms/notifications/notification-type-badge';
 import { NotificationPriorityBadge } from '@/components/1_atoms/notifications/notification-priority-badge';
 import { NotificationStatusBadge } from '@/components/1_atoms/notifications/notification-status-badge';
+import { NotificationTypeBadge } from '@/components/1_atoms/notifications/notification-type-badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { getNotificationById } from '@/mocks/notification-data';
 import type { Notification } from '@/types/notification';
 import { format } from 'date-fns';
 import { ja } from 'date-fns/locale';
-import { ArrowLeft, Bell, Calendar, User, ExternalLink } from 'lucide-react';
+import { ArrowLeft, Bell, Calendar, ExternalLink, User } from 'lucide-react';
 import Link from 'next/link';
 import React, { useState } from 'react';
 
@@ -146,26 +146,6 @@ export default function NotificationDetailPage({
               </span>
             </div>
           )}
-
-          {/* Schedule Info for handover type */}
-          {notification.type === 'handover' &&
-            (() => {
-              const handover = notification as import('@/types/notification').HandoverNotification;
-              return (
-                (handover.scheduledDate || handover.scheduledTime) && (
-                  <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
-                    <span className="text-sm font-medium text-yellow-800">実施予定: </span>
-                    <span className="text-sm text-yellow-700">
-                      {handover.scheduledDate &&
-                        format(new Date(handover.scheduledDate), 'yyyy年MM月dd日', {
-                          locale: ja,
-                        })}
-                      {handover.scheduledTime && ` ${handover.scheduledTime}`}
-                    </span>
-                  </div>
-                )
-              );
-            })()}
 
           {/* Content */}
           <div className="space-y-2">

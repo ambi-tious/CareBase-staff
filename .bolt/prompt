@@ -35,7 +35,7 @@
 - **バリデーション**: Zod（フロントエンドと共通）
 
 ### 開発環境
-- **Node.jsバージョン**: 18.x以上
+- **Node.jsバージョン**: 20.x以上
 - **パッケージマネージャー**: pnpm
 - **コード品質**: ESLint / Prettier による静的解析とフォーマット
 
@@ -116,7 +116,7 @@ export const userService = {
   },
   
   async getUserById(id: string): Promise<User> {
-    const response = await api.get(`/api/users/${id}`);
+    const response = await api.get(`/users/${id}`);
     return UserSchema.parse(response.data);
   },
 };
