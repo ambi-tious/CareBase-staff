@@ -20,7 +20,7 @@ export default function NewResidentPage() {
   const [isRoomModalOpen, setIsRoomModalOpen] = useState(false);
   const [rooms, setRooms] = useState<Room[]>([]);
 
-  const { formData, setFormData, errors, isSubmitting, handleSubmit } = useResidentForm({
+  const residentFormHook = useResidentForm({
     onSubmit: async (data) => {
       try {
         setSubmitError(null);
@@ -38,6 +38,8 @@ export default function NewResidentPage() {
       }
     },
   });
+
+  const { formData, setFormData, errors, isSubmitting, handleSubmit } = residentFormHook;
 
   // Load rooms on component mount
   useEffect(() => {
@@ -185,9 +187,25 @@ export default function NewResidentPage() {
         </CardHeader>
         <CardContent>
           <ResidentBasicInfoForm
-            data={formData}
-            onChange={setFormData}
-            errors={errors}
+            onSubmit={async (data) => {
+              try {
+                setSubmitError(null);
+                const newResident = await residentService.createResident(data);
+
+                // Show success toast
+                toast.success('利用者の登録が完了しました。');
+
+                // Navigate to the resident detail page
+                router.replace(`/residents/${newResident.id}`);
+                return true;
+              } catch (error) {
+                console.error('Failed to create resident:', error);
+                setSubmitError('利用者の登録に失敗しました。もう一度お試しください。');
+                return false;
+              }
+            }}
+            onCancel={handleCancel}
+            initialData={formData}
             disabled={isSubmitting}
             handleRoomManagement={handleRoomManagement}
           />

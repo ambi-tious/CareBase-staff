@@ -1,7 +1,5 @@
 'use client';
 
-import { FormField } from '@/components/1_atoms/forms/form-field';
-import { FormSelect } from '@/components/1_atoms/forms/form-select';
 import { GenericDeleteModal } from '@/components/3_organisms/modals/generic-delete-modal';
 import {
   Accordion,
@@ -19,6 +17,22 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import type { Room, RoomFormData } from '@/types/room';
 import {
@@ -27,8 +41,22 @@ import {
   getTeamIdByName,
   getTeamOptionsByGroup,
 } from '@/utils/staff-utils';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { AlertCircle, Building, Edit3, Home, Plus, Trash2 } from 'lucide-react';
 import React, { useCallback, useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+
+// Room validation schema
+const roomFormSchema = z.object({
+  name: z.string().min(1, '部屋名は必須です'),
+  capacity: z
+    .number()
+    .min(1, '定員は1以上で入力してください')
+    .max(10, '定員は10以下で入力してください'),
+  groupId: z.string().min(1, 'グループは必須です'),
+  teamId: z.string().min(1, 'チームは必須です'),
+});
 
 // Interface for selected staff data from localStorage
 interface SelectedStaffData {
@@ -61,23 +89,31 @@ export const RoomManagementModal: React.FC<RoomManagementModalProps> = ({
   onDeleteRoom,
 }) => {
   const [activeTab, setActiveTab] = useState('list');
-  const [formData, setFormData] = useState<RoomFormData>({
-    name: '',
-    capacity: 1,
-    groupId: '',
-    teamId: '',
-  });
   const [editingRoom, setEditingRoom] = useState<Room | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [fieldErrors, setFieldErrors] = useState<Partial<Record<keyof RoomFormData, string>>>({});
   const [currentUserTeamId, setCurrentUserTeamId] = useState<string>('');
   const [deleteConfirmRoom, setDeleteConfirmRoom] = useState<Room | null>(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [deleteError, setDeleteError] = useState<string | null>(null);
 
+  const form = useForm<RoomFormData>({
+    resolver: zodResolver(roomFormSchema),
+    defaultValues: {
+      name: '',
+      capacity: 1,
+      groupId: '',
+      teamId: '',
+    },
+    mode: 'onChange',
+  });
+
+  const { control, handleSubmit, reset, setValue, watch, formState } = form;
+  const { isValid } = formState;
+  const watchedGroupId = watch('groupId');
+
   const resetForm = useCallback(() => {
-    setFormData({
+    reset({
       name: '',
       capacity: 1,
       groupId: '',
@@ -85,11 +121,10 @@ export const RoomManagementModal: React.FC<RoomManagementModalProps> = ({
     });
     setEditingRoom(null);
     setError(null);
-    setFieldErrors({});
-  }, []);
+  }, [reset]);
 
   const groupOptions = getAllGroupOptions();
-  const teamOptions = getTeamOptionsByGroup(formData.groupId || '');
+  const teamOptions = getTeamOptionsByGroup(watchedGroupId || '');
 
   // Load current logged-in user's group and team information
   useEffect(() => {
@@ -105,11 +140,8 @@ export const RoomManagementModal: React.FC<RoomManagementModalProps> = ({
 
           // Set default values for new room creation
           if (!editingRoom && groupId && teamId) {
-            setFormData((prev) => ({
-              ...prev,
-              groupId,
-              teamId,
-            }));
+            setValue('groupId', groupId);
+            setValue('teamId', teamId);
           }
 
           // Set current user's team ID for accordion default state
@@ -129,47 +161,20 @@ export const RoomManagementModal: React.FC<RoomManagementModalProps> = ({
         loadSelectedStaffData();
       }
     }
-  }, [isOpen, editingRoom, resetForm]);
+  }, [isOpen, editingRoom, resetForm, setValue]);
 
-  const validateForm = useCallback(() => {
-    const newFieldErrors: Partial<Record<keyof RoomFormData, string>> = {};
-
-    if (!formData.name.trim()) {
-      newFieldErrors.name = '部屋名は必須です';
-    }
-
-    if (formData.capacity < 1 || formData.capacity > 10) {
-      newFieldErrors.capacity = '定員は1〜10名で入力してください';
-    }
-
-    if (!formData.groupId) {
-      newFieldErrors.groupId = 'グループは必須です';
-    }
-
-    if (!formData.teamId) {
-      newFieldErrors.teamId = 'チームは必須です';
-    }
-
+  const onSubmit = handleSubmit(async (data: RoomFormData) => {
     // 重複チェック
     const existingRoom = rooms.find(
       (room) =>
-        room.name === formData.name.trim() &&
-        room.groupId === formData.groupId &&
-        room.teamId === formData.teamId &&
+        room.name === data.name.trim() &&
+        room.groupId === data.groupId &&
+        room.teamId === data.teamId &&
         room.id !== editingRoom?.id
     );
 
     if (existingRoom) {
-      newFieldErrors.name = '同じグループ・チーム内に同じ名前の部屋が既に存在します';
-    }
-
-    setFieldErrors(newFieldErrors);
-    setError(Object.keys(newFieldErrors).length > 0 ? '入力内容に不備があります。' : null);
-    return Object.keys(newFieldErrors).length === 0;
-  }, [formData, rooms, editingRoom]);
-
-  const handleSubmit = useCallback(async () => {
-    if (!validateForm()) {
+      form.setError('name', { message: '同じグループ・チーム内に同じ名前の部屋が既に存在します' });
       return;
     }
 
@@ -180,9 +185,9 @@ export const RoomManagementModal: React.FC<RoomManagementModalProps> = ({
       let success = false;
 
       if (editingRoom) {
-        success = await onUpdateRoom(editingRoom.id, formData);
+        success = await onUpdateRoom(editingRoom.id, data);
       } else {
-        success = await onCreateRoom(formData);
+        success = await onCreateRoom(data);
       }
 
       if (success) {
@@ -197,24 +202,26 @@ export const RoomManagementModal: React.FC<RoomManagementModalProps> = ({
     } finally {
       setIsSubmitting(false);
     }
-  }, [formData, editingRoom, validateForm, onCreateRoom, onUpdateRoom, resetForm]);
+  });
 
-  const handleEdit = useCallback((room: Room) => {
-    // まず編集対象の部屋を設定
-    setEditingRoom(room);
-    // フォームデータを設定
-    setFormData({
-      name: room.name,
-      capacity: room.capacity,
-      groupId: room.groupId,
-      teamId: room.teamId,
-    });
-    // エラーをクリア
-    setError(null);
-    setFieldErrors({});
-    // フォームタブに切り替え
-    setActiveTab('form');
-  }, []);
+  const handleEdit = useCallback(
+    (room: Room) => {
+      // まず編集対象の部屋を設定
+      setEditingRoom(room);
+      // フォームデータを設定
+      reset({
+        name: room.name,
+        capacity: room.capacity,
+        groupId: room.groupId,
+        teamId: room.teamId,
+      });
+      // エラーをクリア
+      setError(null);
+      // フォームタブに切り替え
+      setActiveTab('form');
+    },
+    [reset]
+  );
 
   const handleDelete = useCallback((room: Room) => {
     setDeleteConfirmRoom(room);
@@ -250,17 +257,6 @@ export const RoomManagementModal: React.FC<RoomManagementModalProps> = ({
     resetForm();
     setActiveTab('form');
   }, [resetForm]);
-
-  const updateField = useCallback(
-    (field: keyof RoomFormData, value: string | number) => {
-      setFormData((prev) => ({ ...prev, [field]: value }));
-      // Clear field error when user starts typing
-      if (fieldErrors[field]) {
-        setFieldErrors((prev) => ({ ...prev, [field]: undefined }));
-      }
-    },
-    [fieldErrors]
-  );
 
   // Group rooms by group and team
   const groupedRooms = rooms.reduce(
@@ -481,101 +477,163 @@ export const RoomManagementModal: React.FC<RoomManagementModalProps> = ({
             </TabsContent>
 
             <TabsContent value="form" className="space-y-6">
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {/* Left Column - Basic Information */}
-                <div className="space-y-4">
-                  <h3 className="text-lg font-semibold text-carebase-text-primary border-b pb-2">
-                    基本情報
-                  </h3>
+              <Form {...form}>
+                <form onSubmit={onSubmit}>
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    {/* Left Column - Basic Information */}
+                    <div className="space-y-4">
+                      <h3 className="text-lg font-semibold text-carebase-text-primary border-b pb-2">
+                        基本情報
+                      </h3>
 
-                  <FormField
-                    label="部屋名"
-                    id="name"
-                    value={formData.name}
-                    onChange={(value) => updateField('name', value)}
-                    placeholder="101号室"
-                    required
-                    error={fieldErrors.name}
-                    disabled={isSubmitting}
-                  />
+                      <FormField
+                        control={control}
+                        name="name"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>
+                              部屋名 <span className="text-red-500">*</span>
+                            </FormLabel>
+                            <FormControl>
+                              <Input placeholder="101号室" disabled={isSubmitting} {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
 
-                  <FormField
-                    label="定員"
-                    id="capacity"
-                    type="number"
-                    value={formData.capacity.toString()}
-                    onChange={(value) => updateField('capacity', parseInt(value) || 1)}
-                    placeholder="1"
-                    required
-                    error={fieldErrors.capacity}
-                    disabled={isSubmitting}
-                  />
-                </div>
+                      <FormField
+                        control={control}
+                        name="capacity"
+                        render={({ field: { onChange, value, ...field } }) => (
+                          <FormItem>
+                            <FormLabel>
+                              定員 <span className="text-red-500">*</span>
+                            </FormLabel>
+                            <FormControl>
+                              <Input
+                                type="number"
+                                placeholder="1"
+                                disabled={isSubmitting}
+                                value={value.toString()}
+                                onChange={(e) => onChange(parseInt(e.target.value) || 1)}
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
 
-                {/* Right Column - Assignment */}
-                <div className="space-y-4">
-                  <h3 className="text-lg font-semibold text-carebase-text-primary border-b pb-2">
-                    所属設定
-                  </h3>
+                    {/* Right Column - Assignment */}
+                    <div className="space-y-4">
+                      <h3 className="text-lg font-semibold text-carebase-text-primary border-b pb-2">
+                        所属設定
+                      </h3>
 
-                  <FormSelect
-                    label="所属グループ"
-                    id="groupId"
-                    value={formData.groupId}
-                    onChange={(value) => {
-                      updateField('groupId', value);
-                      updateField('teamId', ''); // Reset team when group changes
-                    }}
-                    options={groupOptions.map((option) => ({
-                      value: getGroupIdByName(option.value) || '',
-                      label: option.label,
-                    }))}
-                    required
-                    error={fieldErrors.groupId}
-                    disabled={isSubmitting}
-                  />
+                      <FormField
+                        control={control}
+                        name="groupId"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>
+                              所属グループ <span className="text-red-500">*</span>
+                            </FormLabel>
+                            <Select
+                              value={field.value}
+                              onValueChange={(value) => {
+                                field.onChange(value);
+                                setValue('teamId', ''); // Reset team when group changes
+                              }}
+                              disabled={isSubmitting}
+                            >
+                              <FormControl>
+                                <SelectTrigger>
+                                  <SelectValue placeholder="グループを選択" />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                {groupOptions.map((option) => {
+                                  const groupId = getGroupIdByName(option.value) || '';
+                                  return (
+                                    <SelectItem key={groupId} value={groupId}>
+                                      {option.label}
+                                    </SelectItem>
+                                  );
+                                })}
+                              </SelectContent>
+                            </Select>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
 
-                  <FormSelect
-                    label="所属チーム"
-                    id="teamId"
-                    value={formData.teamId}
-                    onChange={(value) => updateField('teamId', value)}
-                    options={teamOptions.map((option) => ({
-                      value: getTeamIdByName(option.value, formData.groupId) || '',
-                      label: option.label,
-                    }))}
-                    required
-                    error={fieldErrors.teamId}
-                    disabled={isSubmitting || !formData.groupId}
-                    placeholder={
-                      !formData.groupId
-                        ? 'まずグループを選択してください'
-                        : 'チームを選択してください'
-                    }
-                  />
-                </div>
-              </div>
+                      <FormField
+                        control={control}
+                        name="teamId"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>
+                              所属チーム <span className="text-red-500">*</span>
+                            </FormLabel>
+                            <Select
+                              value={field.value}
+                              onValueChange={field.onChange}
+                              disabled={isSubmitting || !watchedGroupId}
+                            >
+                              <FormControl>
+                                <SelectTrigger>
+                                  <SelectValue
+                                    placeholder={
+                                      !watchedGroupId
+                                        ? 'まずグループを選択してください'
+                                        : 'チームを選択してください'
+                                    }
+                                  />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                {teamOptions.map((option) => {
+                                  const teamId =
+                                    getTeamIdByName(option.value, watchedGroupId) || '';
+                                  return (
+                                    <SelectItem key={teamId} value={teamId}>
+                                      {option.label}
+                                    </SelectItem>
+                                  );
+                                })}
+                              </SelectContent>
+                            </Select>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                  </div>
 
-              {/* Action Buttons */}
-              <div className="flex flex-col sm:flex-row justify-end gap-3 pt-6 border-t">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => setActiveTab('list')}
-                  disabled={isSubmitting}
-                >
-                  キャンセル
-                </Button>
+                  {/* Action Buttons */}
+                  <div className="flex flex-col sm:flex-row justify-end gap-3 pt-6 border-t">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => setActiveTab('list')}
+                      disabled={isSubmitting}
+                    >
+                      キャンセル
+                    </Button>
 
-                <Button
-                  onClick={handleSubmit}
-                  disabled={isSubmitting}
-                  className="bg-carebase-blue hover:bg-carebase-blue-dark"
-                >
-                  <Home className="h-4 w-4 mr-2" />
-                  {isSubmitting ? '保存中...' : editingRoom ? '部屋を更新' : '部屋を作成'}
-                </Button>
-              </div>
+                    <Button
+                      type="submit"
+                      disabled={isSubmitting || !isValid}
+                      className="bg-carebase-blue hover:bg-carebase-blue-dark"
+                    >
+                      <Home className="h-4 w-4 mr-2" />
+                      {isSubmitting ? '保存中...' : editingRoom ? '部屋を更新' : '部屋を作成'}
+                    </Button>
+                  </div>
+                </form>
+              </Form>
             </TabsContent>
           </Tabs>
         </div>

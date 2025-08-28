@@ -3,9 +3,8 @@
 import { FolderBreadcrumb } from '@/components/2_molecules/documents/folder-breadcrumb';
 import { FolderContentsView } from '@/components/3_organisms/documents/folder-contents-view';
 import { FileUploadModal } from '@/components/3_organisms/modals/file-upload-modal';
-import { FolderCreateModal } from '@/components/3_organisms/modals/folder-create-modal';
 import { FolderDeleteModal } from '@/components/3_organisms/modals/folder-delete-modal';
-import { FolderEditModal } from '@/components/3_organisms/modals/folder-edit-modal';
+import { FolderModal } from '@/components/3_organisms/modals/folder-modal';
 import { GenericDeleteModal } from '@/components/3_organisms/modals/generic-delete-modal';
 import { Button } from '@/components/ui/button';
 import type { DocumentCategory, DocumentFolder } from '@/mocks/documents-data';
@@ -395,14 +394,16 @@ function DocumentsContent() {
           />
 
           {/* フォルダ操作モーダル */}
-          <FolderCreateModal
+          <FolderModal
+            mode="create"
             isOpen={isFolderCreateModalOpen}
             onClose={() => setIsFolderCreateModalOpen(false)}
             onCreateFolder={handleFolderCreate}
             existingFolders={existingFolderNames}
           />
 
-          <FolderEditModal
+          <FolderModal
+            mode="edit"
             isOpen={isFolderEditModalOpen}
             onClose={() => setIsFolderEditModalOpen(false)}
             onUpdateFolder={handleFolderUpdate}

@@ -1,19 +1,26 @@
 'use client';
 
-import { FormField } from '@/components/1_atoms/forms/form-field';
-import { FormSelect } from '@/components/1_atoms/forms/form-select';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { getFolderPath } from '@/mocks/hierarchical-documents';
 import type { DocumentFormData } from '@/validations/document-validation';
 import { Folder } from 'lucide-react';
 import type React from 'react';
+import type { Control } from 'react-hook-form';
 
 interface DocumentFormFieldsProps {
-  formData: DocumentFormData;
-  updateField: (field: keyof DocumentFormData, value: string) => void;
+  control: Control<DocumentFormData>;
   isSubmitting: boolean;
   error: string | null;
-  fieldErrors: Partial<Record<keyof DocumentFormData, string>>;
   onSubmit: () => Promise<boolean>;
   onCancel: () => void;
   className?: string;
@@ -28,11 +35,9 @@ const statusOptions = [
 ];
 
 export const DocumentFormFields: React.FC<DocumentFormFieldsProps> = ({
-  formData,
-  updateField,
+  control,
   isSubmitting,
   error,
-  fieldErrors,
   onSubmit,
   onCancel,
   className = '',
@@ -77,50 +82,84 @@ export const DocumentFormFields: React.FC<DocumentFormFieldsProps> = ({
       {/* 基本情報 */}
       <div className="space-y-4">
         <FormField
-          label="書類タイトル"
-          id="title"
-          value={formData.title}
-          onChange={(value) => updateField('title', value)}
-          placeholder="書類のタイトルを入力してください"
-          required
-          error={fieldErrors.title}
-          disabled={isSubmitting}
+          control={control}
+          name="title"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>
+                書類タイトル <span className="text-red-500">*</span>
+              </FormLabel>
+              <FormControl>
+                <Input
+                  {...field}
+                  placeholder="書類のタイトルを入力してください"
+                  disabled={isSubmitting}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
         />
 
         {/* 保存場所表示フィールド */}
         <div className="space-y-2">
-          <label className="text-sm font-medium text-gray-700">保存場所</label>
+          <Label className="text-sm font-medium text-gray-700">保存場所</Label>
           <div className="flex items-center gap-2">
-            <input
+            <Input
               type="text"
               value={getFolderPathDisplay()}
               disabled
-              className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50 text-gray-600"
+              className="bg-gray-50 text-gray-600"
+              readOnly
             />
             <Folder className="h-4 w-4 text-blue-500" />
           </div>
           <p className="text-xs text-gray-500">書類が保存されるフォルダの場所です</p>
         </div>
 
-        <FormSelect
-          label="ステータス"
-          id="status"
-          value={formData.status}
-          onChange={(value) => updateField('status', value as 'draft' | 'published' | 'archived')}
-          options={statusOptions}
-          required
-          error={fieldErrors.status}
-          disabled={isSubmitting}
+        <FormField
+          control={control}
+          name="status"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>
+                ステータス <span className="text-red-500">*</span>
+              </FormLabel>
+              <Select onValueChange={field.onChange} value={field.value} disabled={isSubmitting}>
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="ステータスを選択" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  {statusOptions.map((option) => (
+                    <SelectItem key={option.value} value={option.value}>
+                      {option.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )}
         />
 
         <FormField
-          label="タグ"
-          id="tags"
-          value={formData.tags}
-          onChange={(value) => updateField('tags', value)}
-          placeholder="カンマ区切りでタグを入力（例: 会議,報告,2025年度）"
-          error={fieldErrors.tags}
-          disabled={isSubmitting}
+          control={control}
+          name="tags"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>タグ</FormLabel>
+              <FormControl>
+                <Input
+                  {...field}
+                  placeholder="カンマ区切りでタグを入力（例: 会議,報告,2025年度）"
+                  disabled={isSubmitting}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
         />
       </div>
     </form>

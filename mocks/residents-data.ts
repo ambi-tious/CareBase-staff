@@ -1,6 +1,5 @@
 import type { IconName } from '@/lib/lucide-icon-registry';
 import type { Medication } from '@/types/medication';
-import type { MedicationStatus } from '@/types/medication-status';
 import type { CareCategoryKey } from './care-categories';
 
 export interface ContactPerson {
@@ -102,7 +101,7 @@ export interface Resident {
   medicalHistory?: MedicalHistory[];
   medicationInfo?: MedicationInfo[];
   medications?: Medication[];
-  medicationStatus?: MedicationStatus[];
+
   individualPoints?: IndividualPoint[];
 }
 
@@ -157,12 +156,12 @@ export const careBoardData: Resident[] = [
     homeCareOffices: [
       {
         id: '1',
-        businessName: 'ケアサポートセンター',
+        businessName: '渋谷ケアプランセンター',
         address: '東京都渋谷区渋谷1-1-1',
         phone: '03-1234-5678',
         fax: '03-1234-5679',
         careManager: '田中太郎',
-        notes: '備考情報1',
+        notes: '渋谷エリア専門のケアプランセンター',
       },
     ],
     medicalInstitutions: [
@@ -233,24 +232,7 @@ export const careBoardData: Resident[] = [
         updatedAt: '2025-01-01T00:00:00Z',
       },
     ],
-    medicationStatus: [
-      {
-        id: 'status-1-1',
-        date: '2025-01-20',
-        content: '朝薬正常服用、血圧安定',
-        notes: '本人より「調子良い」との発言あり',
-        createdAt: '2025-01-20T07:00:00Z',
-        updatedAt: '2025-01-20T07:00:00Z',
-      },
-      {
-        id: 'status-1-2',
-        date: '2025-01-19',
-        content: '夕薬服用時に軽い咳あり',
-        notes: '水分補給後改善、継続観察',
-        createdAt: '2025-01-19T19:00:00Z',
-        updatedAt: '2025-01-19T19:00:00Z',
-      },
-    ],
+
     events: [
       {
         scheduledTime: '07:00',
@@ -404,12 +386,12 @@ export const careBoardData: Resident[] = [
     homeCareOffices: [
       {
         id: '2',
-        businessName: 'ライフケアサポート',
+        businessName: '新宿ライフケアサポート',
         address: '東京都新宿区新宿2-2-2',
         phone: '03-2345-6789',
         fax: '03-2345-6790',
         careManager: '佐藤花子',
-        notes: '備考情報2',
+        notes: '新宿区在宅介護支援事業所',
       },
     ],
     medicalInstitutions: [
@@ -490,24 +472,7 @@ export const careBoardData: Resident[] = [
         updatedAt: '2025-01-01T00:00:00Z',
       },
     ],
-    medicationStatus: [
-      {
-        id: 'status-2-1',
-        date: '2025-01-20',
-        content: '朝薬服用済み、認知機能安定',
-        notes: '本日は穏やかで協力的',
-        createdAt: '2025-01-20T08:30:00Z',
-        updatedAt: '2025-01-20T08:30:00Z',
-      },
-      {
-        id: 'status-2-2',
-        date: '2025-01-19',
-        content: '就寝前薬服用、良眠',
-        notes: '夜間の徘徊なし',
-        createdAt: '2025-01-19T21:00:00Z',
-        updatedAt: '2025-01-19T21:00:00Z',
-      },
-    ],
+
     events: [
       {
         scheduledTime: '07:15',
@@ -647,12 +612,12 @@ export const careBoardData: Resident[] = [
     homeCareOffices: [
       {
         id: '3',
-        businessName: 'ホームケアサービス',
+        businessName: '港区ホームケアサービス',
         address: '東京都港区港3-3-3',
         phone: '03-3456-7890',
         fax: '03-3456-7891',
         careManager: '鈴木一郎',
-        notes: '備考情報3',
+        notes: '港区地域密着型ケアサービス',
       },
     ],
     medicalInstitutions: [
@@ -733,24 +698,7 @@ export const careBoardData: Resident[] = [
         updatedAt: '2025-01-01T00:00:00Z',
       },
     ],
-    medicationStatus: [
-      {
-        id: 'status-3-1',
-        date: '2025-01-20',
-        content: '夕薬服用済み、出血傾向なし',
-        notes: 'PT-INR 2.1で適正範囲内',
-        createdAt: '2025-01-20T19:00:00Z',
-        updatedAt: '2025-01-20T19:00:00Z',
-      },
-      {
-        id: 'status-3-2',
-        date: '2025-01-19',
-        content: '点眼薬使用、眼の充血なし',
-        notes: '本人による点眼確認済み',
-        createdAt: '2025-01-19T21:00:00Z',
-        updatedAt: '2025-01-19T21:00:00Z',
-      },
-    ],
+
     events: [
       {
         scheduledTime: '06:45',
@@ -887,12 +835,12 @@ export const careBoardData: Resident[] = [
     homeCareOffices: [
       {
         id: '4',
-        businessName: 'ケアライフサポート',
+        businessName: '品川ケアライフサポート',
         address: '東京都品川区品川4-4-4',
         phone: '03-4567-8901',
         fax: '03-4567-8902',
         careManager: '高橋美咲',
-        notes: '備考情報4',
+        notes: '品川区在宅介護支援センター',
       },
     ],
     medicalInstitutions: [
@@ -973,24 +921,7 @@ export const careBoardData: Resident[] = [
         updatedAt: '2025-01-01T00:00:00Z',
       },
     ],
-    medicationStatus: [
-      {
-        id: 'status-4-1',
-        date: '2025-01-20',
-        content: '週1回骨粗鬆症薬服用済み',
-        notes: '起床時30分前服用、水分多めに摂取',
-        createdAt: '2025-01-20T06:30:00Z',
-        updatedAt: '2025-01-20T06:30:00Z',
-      },
-      {
-        id: 'status-4-2',
-        date: '2025-01-19',
-        content: '夕薬服用、副作用なし',
-        notes: '食事摂取良好',
-        createdAt: '2025-01-19T19:00:00Z',
-        updatedAt: '2025-01-19T19:00:00Z',
-      },
-    ],
+
     events: [
       {
         scheduledTime: '07:30',
@@ -1116,12 +1047,12 @@ export const careBoardData: Resident[] = [
     homeCareOffices: [
       {
         id: '5',
-        businessName: 'サポートケアセンター',
+        businessName: '目黒サポートケアセンター',
         address: '東京都目黒区目黒5-5-5',
         phone: '03-5678-9012',
         fax: '03-5678-9013',
         careManager: '渡辺健太',
-        notes: '備考情報5',
+        notes: '目黒区専門のケアプランセンター',
       },
     ],
     medicalInstitutions: [
@@ -1165,16 +1096,7 @@ export const careBoardData: Resident[] = [
         updatedAt: '2025-01-01T00:00:00Z',
       },
     ],
-    medicationStatus: [
-      {
-        id: 'status-5-1',
-        date: '2025-01-18',
-        content: 'EPO注射実施、注射部位異常なし',
-        notes: 'Hb 10.2g/dl、目標範囲内',
-        createdAt: '2025-01-18T10:00:00Z',
-        updatedAt: '2025-01-18T10:00:00Z',
-      },
-    ],
+
     events: [
       {
         scheduledTime: '10:00',
@@ -1241,12 +1163,12 @@ export const careBoardData: Resident[] = [
     homeCareOffices: [
       {
         id: '1',
-        businessName: 'ケアサポートセンター',
+        businessName: '渋谷ケアプランセンター',
         address: '東京都渋谷区渋谷1-1-1',
         phone: '03-1234-5678',
         fax: '03-1234-5679',
         careManager: '田中太郎',
-        notes: '備考情報1',
+        notes: '渋谷エリア専門のケアプランセンター',
       },
     ],
     medicalInstitutions: [
@@ -1271,7 +1193,7 @@ export const careBoardData: Resident[] = [
       },
     ],
     medications: [],
-    medicationStatus: [],
+
     events: [],
   },
   {
@@ -1309,12 +1231,12 @@ export const careBoardData: Resident[] = [
     homeCareOffices: [
       {
         id: '2',
-        businessName: 'ライフケアサポート',
+        businessName: '新宿ライフケアサポート',
         address: '東京都新宿区新宿2-2-2',
         phone: '03-2345-6789',
         fax: '03-2345-6790',
         careManager: '佐藤花子',
-        notes: '備考情報2',
+        notes: '新宿区在宅介護支援事業所',
       },
     ],
     medicalInstitutions: [
@@ -1330,7 +1252,7 @@ export const careBoardData: Resident[] = [
     ],
     medicalHistory: [],
     medications: [],
-    medicationStatus: [],
+
     events: [],
   },
   // 追加の利用者データ（満室状況を作るため）
@@ -1369,12 +1291,12 @@ export const careBoardData: Resident[] = [
     homeCareOffices: [
       {
         id: '3',
-        businessName: 'ホームケアサービス',
+        businessName: '港区ホームケアサービス',
         address: '東京都港区港3-3-3',
         phone: '03-3456-7890',
         fax: '03-3456-7891',
         careManager: '鈴木一郎',
-        notes: '備考情報3',
+        notes: '港区地域密着型ケアサービス',
       },
     ],
     events: [],

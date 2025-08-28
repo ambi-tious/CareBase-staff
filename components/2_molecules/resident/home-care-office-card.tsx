@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import type { HomeCareOffice } from '@/mocks/care-board-data';
 import { residentDataService } from '@/services/residentDataService';
 import type { HomeCareOfficeFormData } from '@/validations/resident-data-validation';
-import { Edit3, MapPin, Phone, Unlink } from 'lucide-react';
+import { Edit3, MapPin, Phone, Printer, Unlink, User } from 'lucide-react';
 import type React from 'react';
 import { useState } from 'react';
 
@@ -60,12 +60,13 @@ export const HomeCareOfficeCard: React.FC<HomeCareOfficeCardProps> = ({
     setDeleteError(null);
 
     try {
-      await residentDataService.deleteHomeCareOffice(residentId, office.id);
+      // 利用者からの紐付けを解除（マスタからは削除しない）
+      await residentDataService.dissociateHomeCareOfficeFromResident(residentId, office.id);
       onOfficeDelete?.(office.id);
       return true;
     } catch (error) {
-      console.error('Failed to delete home care office:', error);
-      setDeleteError(error instanceof Error ? error.message : '削除に失敗しました。');
+      console.error('Failed to dissociate home care office:', error);
+      setDeleteError(error instanceof Error ? error.message : '紐付け解除に失敗しました。');
       return false;
     } finally {
       setIsDeleting(false);
@@ -76,9 +77,8 @@ export const HomeCareOfficeCard: React.FC<HomeCareOfficeCardProps> = ({
     <>
       <Card className="mb-4">
         <CardHeader className="flex flex-row items-center justify-between pb-2">
-          <div>
-            <h3 className="text-lg font-semibold mb-1">事業所名</h3>
-            <p className="text-xl font-bold text-carebase-blue">{office.businessName}</p>
+          <div className="flex items-center gap-3">
+            <h3 className="text-lg font-semibold">{office.businessName}</h3>
           </div>
           <div className="flex items-center gap-2">
             <Button variant="outline" size="sm" onClick={handleEditClick}>
@@ -97,25 +97,32 @@ export const HomeCareOfficeCard: React.FC<HomeCareOfficeCardProps> = ({
           </div>
         </CardHeader>
         <CardContent className="text-sm">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-1">
-            <p>
-              <strong>ケアマネージャー:</strong> {office.careManager}
-            </p>
-            <p>
-              <Phone className="inline h-4 w-4 mr-1 text-gray-500" />
-              <strong>電話番号:</strong> {office.phone}
-            </p>
-            <p>
-              <strong>FAX:</strong> {office.fax}
-            </p>
-            <p className="md:col-span-2">
-              <MapPin className="inline h-4 w-4 mr-1 text-gray-500" />
-              <strong>住所:</strong> {office.address}
-            </p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-3">
+            <div className="space-y-2">
+              <div className="flex items-center gap-2">
+                <Phone className="h-4 w-4 text-gray-500" />
+                <span>{office.phone}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Printer className="h-4 w-4 text-gray-500" />
+                <span>{office.fax}</span>
+              </div>
+            </div>
+            <div className="space-y-2">
+              <div className="flex items-center gap-2">
+                <User className="h-4 w-4 text-gray-500" />
+                {office.careManager}
+              </div>
+              <div className="flex items-center gap-2">
+                <MapPin className="h-4 w-4 text-gray-500" />
+                <span>{office.address}</span>
+              </div>
+            </div>
+
             {office.notes && (
-              <p className="md:col-span-2 pt-2 mt-2 border-t">
-                <strong>備考:</strong> {office.notes}
-              </p>
+              <div className="md:col-span-2 pt-2 mt-2 border-t">
+                <p className="mt-1 text-gray-700 whitespace-pre-line">{office.notes}</p>
+              </div>
             )}
           </div>
         </CardContent>

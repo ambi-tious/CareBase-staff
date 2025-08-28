@@ -1,6 +1,5 @@
 'use client';
 
-import { FormField } from '@/components/1_atoms/forms/form-field';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -11,14 +10,25 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
 import { getLucideIcon } from '@/lib/lucide-icon-registry';
 import type { PointCategory } from '@/types/individual-point';
 import type { CategoryFormData } from '@/validations/individual-point-validation';
 import { categoryFormSchema } from '@/validations/individual-point-validation';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { AlertCircle, Edit3, FolderPlus, Palette, Plus, Settings, Trash2 } from 'lucide-react';
 import React, { useCallback, useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
 
 interface CategoryManagementModalProps {
   isOpen: boolean;
@@ -62,18 +72,24 @@ export const CategoryManagementModal: React.FC<CategoryManagementModalProps> = (
   onDeleteCategory,
 }) => {
   const [activeTab, setActiveTab] = useState('list');
-  const [formData, setFormData] = useState<CategoryFormData>({
-    name: '',
-    description: '',
-    icon: 'FileText',
-    color: '#6b7280',
-  });
   const [editingCategory, setEditingCategory] = useState<PointCategory | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [fieldErrors, setFieldErrors] = useState<Partial<Record<keyof CategoryFormData, string>>>(
-    {}
-  );
+
+  const form = useForm<CategoryFormData>({
+    resolver: zodResolver(categoryFormSchema),
+    defaultValues: {
+      name: '',
+      description: '',
+      icon: 'FileText',
+      color: '#6b7280',
+    },
+    mode: 'onChange',
+  });
+
+  const { control, handleSubmit, reset, watch, formState } = form;
+  const { isValid } = formState;
+  const formData = watch();
 
   // Reset form when modal opens/closes
   useEffect(() => {
@@ -84,7 +100,7 @@ export const CategoryManagementModal: React.FC<CategoryManagementModalProps> = (
   }, [isOpen]);
 
   const resetForm = useCallback(() => {
-    setFormData({
+    reset({
       name: '',
       description: '',
       icon: 'FileText',
@@ -92,37 +108,9 @@ export const CategoryManagementModal: React.FC<CategoryManagementModalProps> = (
     });
     setEditingCategory(null);
     setError(null);
-    setFieldErrors({});
-  }, []);
+  }, [reset]);
 
-  const validateForm = useCallback(() => {
-    const result = categoryFormSchema.safeParse(formData);
-
-    if (!result.success) {
-      const newFieldErrors: Partial<Record<keyof CategoryFormData, string>> = {};
-
-      for (const error of result.error.errors) {
-        if (error.path.length > 0) {
-          const field = error.path[0] as keyof CategoryFormData;
-          newFieldErrors[field] = error.message;
-        }
-      }
-
-      setFieldErrors(newFieldErrors);
-      setError('入力内容に不備があります。必須項目を確認してください。');
-      return false;
-    }
-
-    setFieldErrors({});
-    setError(null);
-    return true;
-  }, [formData]);
-
-  const handleSubmit = useCallback(async () => {
-    if (!validateForm()) {
-      return;
-    }
-
+  const onSubmit = handleSubmit(async (data: CategoryFormData) => {
     setIsSubmitting(true);
     setError(null);
 
@@ -130,9 +118,9 @@ export const CategoryManagementModal: React.FC<CategoryManagementModalProps> = (
       let success = false;
 
       if (editingCategory) {
-        success = await onUpdateCategory(editingCategory.id, formData);
+        success = await onUpdateCategory(editingCategory.id, data);
       } else {
-        success = await onCreateCategory(formData);
+        success = await onCreateCategory(data);
       }
 
       if (success) {
@@ -149,18 +137,21 @@ export const CategoryManagementModal: React.FC<CategoryManagementModalProps> = (
     } finally {
       setIsSubmitting(false);
     }
-  }, [formData, editingCategory, validateForm, onCreateCategory, onUpdateCategory, resetForm]);
+  });
 
-  const handleEdit = useCallback((category: PointCategory) => {
-    setEditingCategory(category);
-    setFormData({
-      name: category.name,
-      description: category.description || '',
-      icon: category.icon,
-      color: category.color,
-    });
-    setActiveTab('form');
-  }, []);
+  const handleEdit = useCallback(
+    (category: PointCategory) => {
+      setEditingCategory(category);
+      reset({
+        name: category.name,
+        description: category.description || '',
+        icon: category.icon,
+        color: category.color,
+      });
+      setActiveTab('form');
+    },
+    [reset]
+  );
 
   const handleDelete = useCallback(
     async (category: PointCategory) => {
@@ -191,17 +182,6 @@ export const CategoryManagementModal: React.FC<CategoryManagementModalProps> = (
     resetForm();
     setActiveTab('form');
   }, [resetForm]);
-
-  const updateField = useCallback(
-    (field: keyof CategoryFormData, value: string) => {
-      setFormData((prev) => ({ ...prev, [field]: value }));
-      // Clear field error when user starts typing
-      if (fieldErrors[field]) {
-        setFieldErrors((prev) => ({ ...prev, [field]: undefined }));
-      }
-    },
-    [fieldErrors]
-  );
 
   const customCategories = categories.filter((cat) => !cat.isSystemDefault);
   const systemCategories = categories.filter((cat) => cat.isSystemDefault);
@@ -357,172 +337,193 @@ export const CategoryManagementModal: React.FC<CategoryManagementModalProps> = (
             </TabsContent>
 
             <TabsContent value="form" className="space-y-6">
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {/* Left Column - Basic Information */}
-                <div className="space-y-4">
-                  <h3 className="text-lg font-semibold text-carebase-text-primary border-b pb-2">
-                    基本情報
-                  </h3>
+              <Form {...form}>
+                <form onSubmit={onSubmit}>
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    {/* Left Column - Basic Information */}
+                    <div className="space-y-4">
+                      <h3 className="text-lg font-semibold text-carebase-text-primary border-b pb-2">
+                        基本情報
+                      </h3>
 
-                  <FormField
-                    label="カテゴリ名"
-                    id="name"
-                    value={formData.name}
-                    onChange={(value) => updateField('name', value)}
-                    placeholder="例：リハビリテーション"
-                    required
-                    error={fieldErrors.name}
-                    disabled={isSubmitting}
-                  />
+                      <FormField
+                        control={control}
+                        name="name"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>
+                              カテゴリ名 <span className="text-red-500">*</span>
+                            </FormLabel>
+                            <FormControl>
+                              <Input
+                                placeholder="例：リハビリテーション"
+                                disabled={isSubmitting}
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
 
-                  <div className="space-y-2">
-                    <label htmlFor="description" className="text-sm font-medium text-gray-700">
-                      説明
-                    </label>
-                    <Textarea
-                      id="description"
-                      value={formData.description || ''}
-                      onChange={(e) => updateField('description', e.target.value)}
-                      placeholder="カテゴリの説明を入力してください"
-                      disabled={isSubmitting}
-                      rows={3}
-                    />
-                    {fieldErrors.description && (
-                      <p className="text-sm text-red-600" role="alert">
-                        {fieldErrors.description}
-                      </p>
-                    )}
-                  </div>
-                </div>
-
-                {/* Right Column - Visual Settings */}
-                <div className="space-y-4">
-                  <h3 className="text-lg font-semibold text-carebase-text-primary border-b pb-2">
-                    表示設定
-                  </h3>
-
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium text-gray-700">
-                      アイコン <span className="text-red-500 ml-1">*</span>
-                    </label>
-                    <div className="grid grid-cols-5 gap-2">
-                      {iconOptions.map((option) => {
-                        const Icon = getLucideIcon(option.value);
-                        return (
-                          <button
-                            key={option.value}
-                            type="button"
-                            onClick={() => updateField('icon', option.value)}
-                            disabled={isSubmitting}
-                            className={`
-                              h-12 rounded-lg border-2 transition-all duration-200 flex items-center justify-center
-                              ${
-                                formData.icon === option.value
-                                  ? 'border-carebase-blue-dark bg-carebase-blue/10 shadow-lg scale-105'
-                                  : 'border-gray-300 hover:border-gray-400 hover:bg-gray-50'
-                              }
-                            `}
-                            title={option.label}
-                          >
-                            <Icon className="h-5 w-5 text-gray-700" />
-                          </button>
-                        );
-                      })}
+                      <FormField
+                        control={control}
+                        name="description"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>説明</FormLabel>
+                            <FormControl>
+                              <Textarea
+                                placeholder="カテゴリの説明を入力してください"
+                                disabled={isSubmitting}
+                                rows={3}
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
                     </div>
-                    {fieldErrors.icon && (
-                      <p className="text-sm text-red-600" role="alert">
-                        {fieldErrors.icon}
-                      </p>
-                    )}
-                  </div>
 
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium text-gray-700">
-                      色 <span className="text-red-500 ml-1">*</span>
-                    </label>
-                    <div className="grid grid-cols-4 gap-2">
-                      {colorOptions.map((option) => (
-                        <button
-                          key={option.value}
-                          type="button"
-                          onClick={() => updateField('color', option.value)}
-                          disabled={isSubmitting}
-                          className={`
-                            h-12 rounded-lg border-2 transition-all duration-200 flex items-center justify-center
-                            ${
-                              formData.color === option.value
-                                ? 'border-carebase-blue-dark shadow-lg scale-105'
-                                : 'border-gray-300 hover:border-gray-400'
-                            }
-                          `}
-                          style={{ backgroundColor: option.color }}
-                          title={option.label}
-                        >
-                          {formData.color === option.value && (
-                            <div className="w-4 h-4 bg-white rounded-full flex items-center justify-center">
-                              <div className="w-2 h-2 bg-current rounded-full" />
+                    {/* Right Column - Visual Settings */}
+                    <div className="space-y-4">
+                      <h3 className="text-lg font-semibold text-carebase-text-primary border-b pb-2">
+                        表示設定
+                      </h3>
+
+                      <FormField
+                        control={control}
+                        name="icon"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>
+                              アイコン <span className="text-red-500 ml-1">*</span>
+                            </FormLabel>
+                            <FormControl>
+                              <div className="grid grid-cols-5 gap-2">
+                                {iconOptions.map((option) => {
+                                  const Icon = getLucideIcon(option.value);
+                                  return (
+                                    <button
+                                      key={option.value}
+                                      type="button"
+                                      onClick={() => field.onChange(option.value)}
+                                      disabled={isSubmitting}
+                                      className={`
+                                        h-12 rounded-lg border-2 transition-all duration-200 flex items-center justify-center
+                                        ${
+                                          field.value === option.value
+                                            ? 'border-carebase-blue-dark bg-carebase-blue/10 shadow-lg scale-105'
+                                            : 'border-gray-300 hover:border-gray-400 hover:bg-gray-50'
+                                        }
+                                      `}
+                                      title={option.label}
+                                    >
+                                      <Icon className="h-5 w-5 text-gray-700" />
+                                    </button>
+                                  );
+                                })}
+                              </div>
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={control}
+                        name="color"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>
+                              色 <span className="text-red-500 ml-1">*</span>
+                            </FormLabel>
+                            <FormControl>
+                              <div className="grid grid-cols-4 gap-2">
+                                {colorOptions.map((option) => (
+                                  <button
+                                    key={option.value}
+                                    type="button"
+                                    onClick={() => field.onChange(option.value)}
+                                    disabled={isSubmitting}
+                                    className={`
+                                      h-12 rounded-lg border-2 transition-all duration-200 flex items-center justify-center
+                                      ${
+                                        field.value === option.value
+                                          ? 'border-carebase-blue-dark shadow-lg scale-105'
+                                          : 'border-gray-300 hover:border-gray-400'
+                                      }
+                                    `}
+                                    style={{ backgroundColor: option.color }}
+                                    title={option.label}
+                                  >
+                                    {field.value === option.value && (
+                                      <div className="w-4 h-4 bg-white rounded-full flex items-center justify-center">
+                                        <div className="w-2 h-2 bg-current rounded-full" />
+                                      </div>
+                                    )}
+                                  </button>
+                                ))}
+                              </div>
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      {/* Preview */}
+                      <div className="space-y-2">
+                        <label className="text-sm font-medium text-gray-700">プレビュー</label>
+                        <div className="p-4 border border-gray-200 rounded-lg bg-gray-50">
+                          <div className="flex items-center gap-3">
+                            <div
+                              className="w-10 h-10 rounded-full flex items-center justify-center"
+                              style={{ backgroundColor: formData.color + '20' }}
+                            >
+                              {React.createElement(getLucideIcon(formData.icon), {
+                                className: 'h-5 w-5',
+                                style: { color: formData.color },
+                              })}
                             </div>
-                          )}
-                        </button>
-                      ))}
-                    </div>
-                    {fieldErrors.color && (
-                      <p className="text-sm text-red-600" role="alert">
-                        {fieldErrors.color}
-                      </p>
-                    )}
-                  </div>
-
-                  {/* Preview */}
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium text-gray-700">プレビュー</label>
-                    <div className="p-4 border border-gray-200 rounded-lg bg-gray-50">
-                      <div className="flex items-center gap-3">
-                        <div
-                          className="w-10 h-10 rounded-full flex items-center justify-center"
-                          style={{ backgroundColor: formData.color + '20' }}
-                        >
-                          {React.createElement(getLucideIcon(formData.icon), {
-                            className: 'h-5 w-5',
-                            style: { color: formData.color },
-                          })}
-                        </div>
-                        <div>
-                          <p className="font-medium">{formData.name || 'カテゴリ名'}</p>
-                          {formData.description && (
-                            <p className="text-sm text-gray-500">{formData.description}</p>
-                          )}
+                            <div>
+                              <p className="font-medium">{formData.name || 'カテゴリ名'}</p>
+                              {formData.description && (
+                                <p className="text-sm text-gray-500">{formData.description}</p>
+                              )}
+                            </div>
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              </div>
 
-              {/* Action Buttons */}
-              <div className="flex flex-col sm:flex-row justify-end gap-3 pt-6 border-t">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => setActiveTab('list')}
-                  disabled={isSubmitting}
-                >
-                  キャンセル
-                </Button>
+                  {/* Action Buttons */}
+                  <div className="flex flex-col sm:flex-row justify-end gap-3 pt-6 border-t">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => setActiveTab('list')}
+                      disabled={isSubmitting}
+                    >
+                      キャンセル
+                    </Button>
 
-                <Button
-                  onClick={handleSubmit}
-                  disabled={isSubmitting}
-                  className="bg-carebase-blue hover:bg-carebase-blue-dark"
-                >
-                  <Palette className="h-4 w-4 mr-2" />
-                  {isSubmitting
-                    ? '保存中...'
-                    : editingCategory
-                      ? 'カテゴリを更新'
-                      : 'カテゴリを作成'}
-                </Button>
-              </div>
+                    <Button
+                      type="submit"
+                      disabled={isSubmitting || !isValid}
+                      className="bg-carebase-blue hover:bg-carebase-blue-dark"
+                    >
+                      <Palette className="h-4 w-4 mr-2" />
+                      {isSubmitting
+                        ? '保存中...'
+                        : editingCategory
+                          ? 'カテゴリを更新'
+                          : 'カテゴリを作成'}
+                    </Button>
+                  </div>
+                </form>
+              </Form>
             </TabsContent>
           </Tabs>
         </div>
