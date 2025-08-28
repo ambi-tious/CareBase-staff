@@ -7,25 +7,46 @@
 import { z } from 'zod';
 
 // Contact schedule form data schema
-export const contactScheduleFormSchema = z.object({
-  title: z
-    .string()
-    .min(1, 'タイトルは必須です')
-    .max(100, 'タイトルは100文字以内で入力してください'),
-  content: z.string().min(1, '内容は必須です').max(1000, '内容は1000文字以内で入力してください'),
-  type: z.enum(['contact', 'schedule', 'handover'], {
-    required_error: '種別は必須です',
-  }),
-  priority: z.enum(['high', 'medium', 'low'], {
-    required_error: '重要度は必須です',
-  }),
-  assignedTo: z.string().min(1, '対象者は必須です'),
-  dueDate: z.string().min(1, '実施日は必須です'),
-  startTime: z.string().optional(),
-  endTime: z.string().optional(),
-  relatedResidentId: z.string().optional(),
-  tags: z.string().optional(),
-});
+export const contactScheduleFormSchema = z
+  .object({
+    title: z
+      .string()
+      .min(1, 'タイトルは必須です')
+      .max(100, 'タイトルは100文字以内で入力してください'),
+    content: z.string().min(1, '内容は必須です').max(1000, '内容は1000文字以内で入力してください'),
+    type: z.enum(['contact', 'schedule', 'handover'], {
+      required_error: '種別は必須です',
+    }),
+    priority: z.enum(['high', 'medium', 'low'], {
+      required_error: '重要度は必須です',
+    }),
+    assignedTo: z.string().min(1, '対象者は必須です'),
+    dueDate: z.string().min(1, '実施日は必須です'),
+    startTime: z.string().optional(),
+    endTime: z.string().optional(),
+    relatedResidentId: z.string().optional(),
+    tags: z.string().optional(),
+    category: z.string({ required_error: 'カテゴリは必須です' }),
+  })
+  .refine(
+    (data) => {
+      // 開始時刻と終了時刻の比較チェック
+      if (data.startTime && data.endTime) {
+        const startTime = data.startTime;
+        const endTime = data.endTime;
+
+        // 時刻を比較（HH:MM形式）
+        if (startTime >= endTime) {
+          return false;
+        }
+      }
+      return true;
+    },
+    {
+      message: '終了時刻は開始時刻より後に設定してください。',
+      path: ['endTime'], // エラーメッセージを終了時刻フィールドに表示
+    }
+  );
 
 export type ContactScheduleFormData = z.infer<typeof contactScheduleFormSchema>;
 
@@ -44,4 +65,6 @@ export const CONTACT_SCHEDULE_ERROR_MESSAGES = {
   REQUIRED_DUE_DATE: '実施日は必須です',
   TITLE_TOO_LONG: 'タイトルは100文字以内で入力してください',
   CONTENT_TOO_LONG: '内容は1000文字以内で入力してください',
+  REQUIRED_CATEGORY: 'カテゴリは必須です',
+  END_TIME_BEFORE_START_TIME: '終了時刻は開始時刻より後に設定してください。',
 } as const;

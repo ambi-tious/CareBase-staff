@@ -27,6 +27,7 @@ const initialFormData: ContactScheduleFormData = {
   assignedTo: '',
   relatedResidentId: '',
   tags: '',
+  category: 'company-wide',
 };
 
 export const useContactScheduleForm = ({
