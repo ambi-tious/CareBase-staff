@@ -503,19 +503,25 @@ export const ResidentBasicInfoForm: React.FC<ResidentBasicInfoFormProps> = ({
                     </div>
                   </div>
                 )}
-                <Input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageUpload}
-                  disabled={disabled || imageCompressing}
-                  className="hidden"
+                <FormField
+                  control={control}
+                  name="profileImage"
+                  render={() => (
+                    <FormItem>
+                      <FormControl>
+                        <Input
+                          ref={fileInputRef}
+                          type="file"
+                          accept="image/*"
+                          onChange={handleImageUpload}
+                          disabled={disabled || imageCompressing}
+                          className="hidden"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
-                {errors.profileImage && (
-                  <p className="text-sm text-red-600" role="alert">
-                    {errors.profileImage.message}
-                  </p>
-                )}
               </div>
               <div className="flex-1 flex flex-col gap-4">
                 <FormField
@@ -853,11 +859,15 @@ export const ResidentBasicInfoForm: React.FC<ResidentBasicInfoFormProps> = ({
                       </div>
                     </div>
                   )}
-                  {errors.roomInfo && (
-                    <p className="text-sm text-red-600" role="alert">
-                      {errors.roomInfo.message}
-                    </p>
-                  )}
+                  <FormField
+                    control={control}
+                    name="roomInfo"
+                    render={() => (
+                      <FormItem>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
                 </div>
                 <Button
                   variant="outline"

@@ -53,9 +53,7 @@ export const IndividualPointForm: React.FC<IndividualPointFormProps> = ({
     updateField,
     isSubmitting,
     error,
-    fieldErrors,
     hasUnsavedChanges,
-    submitForm,
     clearError,
     control,
     handleSubmit,
@@ -446,47 +444,50 @@ export const IndividualPointForm: React.FC<IndividualPointFormProps> = ({
         </div>
 
         {/* Content */}
-        <div className="space-y-2">
-          <Label htmlFor="content" className="text-sm font-medium text-gray-700">
-            詳細内容 <span className="text-red-500 ml-1">*</span>
-          </Label>
-          <Textarea
-            id="content"
-            value={formData.content}
-            onChange={(e) => updateField('content', e.target.value)}
-            placeholder="個別ポイントの詳細な内容を入力してください。&#10;&#10;例：&#10;・食事の際は、誤嚥防止のためとろみスプーン大を使用&#10;・水分摂取時も同様に使用&#10;・使用方法は添付の画像を参照"
-            disabled={isSubmitting}
-            className={`min-h-32 ${fieldErrors.content ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : ''}`}
-            rows={6}
-          />
-          {fieldErrors.content && (
-            <p className="text-sm text-red-600" role="alert">
-              {fieldErrors.content.message}
-            </p>
+        <FormField
+          control={control}
+          name="content"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>
+                詳細内容 <span className="text-red-500 ml-1">*</span>
+              </FormLabel>
+              <FormControl>
+                <Textarea
+                  {...field}
+                  placeholder="個別ポイントの詳細な内容を入力してください。&#10;&#10;例：&#10;・食事の際は、誤嚥防止のためとろみスプーン大を使用&#10;・水分摂取時も同様に使用&#10;・使用方法は添付の画像を参照"
+                  disabled={isSubmitting}
+                  className="min-h-32"
+                  rows={6}
+                />
+              </FormControl>
+              <div className="text-xs text-gray-500 mt-1">{field.value.length}/1000文字</div>
+              <FormMessage />
+            </FormItem>
           )}
-          <div className="text-xs text-gray-500 mt-1">{formData.content.length}/1000文字</div>
-        </div>
+        />
 
         {/* Notes */}
-        <div className="space-y-2">
-          <Label htmlFor="notes" className="text-sm font-medium text-gray-700">
-            備考
-          </Label>
-          <Textarea
-            id="notes"
-            value={formData.notes || ''}
-            onChange={(e) => updateField('notes', e.target.value)}
-            placeholder="追加の備考があれば入力してください"
-            disabled={isSubmitting}
-            className="min-h-20"
-            rows={3}
-          />
-          {fieldErrors.notes && (
-            <p className="text-sm text-red-600" role="alert">
-              {fieldErrors.notes.message}
-            </p>
+        <FormField
+          control={control}
+          name="notes"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>備考</FormLabel>
+              <FormControl>
+                <Textarea
+                  {...field}
+                  value={field.value || ''}
+                  placeholder="追加の備考があれば入力してください"
+                  disabled={isSubmitting}
+                  className="min-h-20"
+                  rows={3}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
           )}
-        </div>
+        />
 
         {/* Unsaved Changes Warning */}
         {hasUnsavedChanges && (
