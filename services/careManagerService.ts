@@ -1,5 +1,9 @@
 import { careManagerMasterData, searchCareManagers } from '@/mocks/care-manager-data';
-import type { CareManager, CareManagerFormData, CareManagerSearchOptions } from '@/types/care-manager';
+import type {
+  CareManager,
+  CareManagerFormData,
+  CareManagerSearchOptions,
+} from '@/types/care-manager';
 
 /**
  * ケアマネージャーマスタサービス
@@ -50,7 +54,7 @@ class CareManagerService {
    */
   async getActiveCareManagers(): Promise<CareManager[]> {
     const managers = await this.getAllCareManagers();
-    return managers.filter(manager => manager.isActive);
+    return managers.filter((manager) => manager.isActive);
   }
 
   /**
@@ -60,7 +64,9 @@ class CareManagerService {
     const managers = await this.getAllCareManagers();
     return new Promise((resolve) => {
       setTimeout(() => {
-        resolve(searchCareManagers(managers, options.keyword, options.isActive, options.officeName));
+        resolve(
+          searchCareManagers(managers, options.keyword, options.isActive, options.officeName)
+        );
       }, 200);
     });
   }
@@ -70,7 +76,7 @@ class CareManagerService {
    */
   async getCareManagerById(id: string): Promise<CareManager | null> {
     const managers = await this.getAllCareManagers();
-    return managers.find(manager => manager.id === id) || null;
+    return managers.find((manager) => manager.id === id) || null;
   }
 
   /**
@@ -78,7 +84,7 @@ class CareManagerService {
    */
   async getCareManagerByName(name: string): Promise<CareManager | null> {
     const managers = await this.getAllCareManagers();
-    return managers.find(manager => manager.name === name) || null;
+    return managers.find((manager) => manager.name === name) || null;
   }
 
   /**
@@ -86,7 +92,7 @@ class CareManagerService {
    */
   async createCareManager(data: CareManagerFormData): Promise<CareManager> {
     const managers = this.getStoredCareManagers();
-    
+
     const newManager: CareManager = {
       id: `cm-${Date.now()}`,
       name: data.name,
@@ -114,9 +120,12 @@ class CareManagerService {
   /**
    * ケアマネージャー情報を更新
    */
-  async updateCareManager(id: string, data: Partial<CareManagerFormData>): Promise<CareManager | null> {
+  async updateCareManager(
+    id: string,
+    data: Partial<CareManagerFormData>
+  ): Promise<CareManager | null> {
     const managers = this.getStoredCareManagers();
-    const index = managers.findIndex(manager => manager.id === id);
+    const index = managers.findIndex((manager) => manager.id === id);
 
     if (index === -1) {
       return null;
@@ -143,7 +152,7 @@ class CareManagerService {
    */
   async deactivateCareManager(id: string): Promise<boolean> {
     const managers = this.getStoredCareManagers();
-    const index = managers.findIndex(manager => manager.id === id);
+    const index = managers.findIndex((manager) => manager.id === id);
 
     if (index === -1) {
       return false;
@@ -169,7 +178,7 @@ class CareManagerService {
    */
   async activateCareManager(id: string): Promise<boolean> {
     const managers = this.getStoredCareManagers();
-    const index = managers.findIndex(manager => manager.id === id);
+    const index = managers.findIndex((manager) => manager.id === id);
 
     if (index === -1) {
       return false;
@@ -195,16 +204,18 @@ class CareManagerService {
    */
   async getOfficeNames(): Promise<string[]> {
     const managers = await this.getActiveCareManagers();
-    const officeNames = [...new Set(managers.map(manager => manager.officeName))];
+    const officeNames = [...new Set(managers.map((manager) => manager.officeName))];
     return officeNames.sort();
   }
 
   /**
    * ケアマネージャー選択用のオプションを取得
    */
-  async getCareManagerOptions(): Promise<Array<{ value: string; label: string; officeName: string }>> {
+  async getCareManagerOptions(): Promise<
+    Array<{ value: string; label: string; officeName: string }>
+  > {
     const managers = await this.getActiveCareManagers();
-    return managers.map(manager => ({
+    return managers.map((manager) => ({
       value: manager.name,
       label: `${manager.name} (${manager.officeName})`,
       officeName: manager.officeName,
@@ -221,11 +232,12 @@ class CareManagerService {
 
     const managers = await this.getActiveCareManagers();
     const suggestions = managers
-      .filter(manager => 
-        manager.name.toLowerCase().includes(query.toLowerCase()) ||
-        manager.officeName.toLowerCase().includes(query.toLowerCase())
+      .filter(
+        (manager) =>
+          manager.name.toLowerCase().includes(query.toLowerCase()) ||
+          manager.officeName.toLowerCase().includes(query.toLowerCase())
       )
-      .map(manager => manager.name);
+      .map((manager) => manager.name);
 
     return [...new Set(suggestions)];
   }

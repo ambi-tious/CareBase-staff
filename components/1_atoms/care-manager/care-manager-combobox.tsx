@@ -2,18 +2,14 @@
 
 import { Button } from '@/components/ui/button';
 import {
-    Command,
-    CommandEmpty,
-    CommandGroup,
-    CommandInput,
-    CommandItem,
-    CommandList,
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
 } from '@/components/ui/command';
-import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
-} from '@/components/ui/popover';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { cn } from '@/lib/utils';
 import { careManagerService } from '@/services/careManagerService';
 import { Check, ChevronsUpDown } from 'lucide-react';
@@ -120,11 +116,7 @@ export const CareManagerCombobox: React.FC<CareManagerComboboxProps> = ({
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className={cn(
-            'w-full justify-between',
-            !value && 'text-muted-foreground',
-            className
-          )}
+          className={cn('w-full justify-between', !value && 'text-muted-foreground', className)}
           disabled={disabled}
         >
           <span className="truncate">{getDisplayLabel()}</span>
@@ -159,13 +151,14 @@ export const CareManagerCombobox: React.FC<CareManagerComboboxProps> = ({
                     '該当するケアマネージャーが見つかりません'
                   )}
                 </CommandEmpty>
-                
+
                 {options.length > 0 && (
                   <CommandGroup>
                     {options
-                      .filter((option) =>
-                        option.label.toLowerCase().includes(inputValue.toLowerCase()) ||
-                        option.value.toLowerCase().includes(inputValue.toLowerCase())
+                      .filter(
+                        (option) =>
+                          option.label.toLowerCase().includes(inputValue.toLowerCase()) ||
+                          option.value.toLowerCase().includes(inputValue.toLowerCase())
                       )
                       .map((option) => (
                         <CommandItem

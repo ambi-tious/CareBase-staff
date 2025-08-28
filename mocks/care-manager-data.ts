@@ -143,7 +143,7 @@ export const searchCareManagers = (
   data: CareManager[],
   keyword?: string,
   isActive?: boolean,
-  officeName?: string,
+  officeName?: string
 ): CareManager[] => {
   return data.filter((manager) => {
     // アクティブフラグでのフィルタ
