@@ -1,17 +1,18 @@
 'use client';
 
-import { CommunicationRecordCard } from '@/components/2_molecules/communication/communication-record-card';
-import { CommunicationThreadView } from '@/components/2_molecules/communication/communication-thread-view';
+import { CommunicationFilters } from '@/components/2_molecules/communication/communication-filters';
+import { CommunicationTimelineTable } from '@/components/2_molecules/communication/communication-timeline-table';
+import { CommunicationDetailModal } from '@/components/3_organisms/modals/communication-detail-modal';
+import { GenericDeleteModal } from '@/components/3_organisms/modals/generic-delete-modal';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Switch } from '@/components/ui/switch';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import type { CommunicationRecord, CommunicationThread } from '@/types/communication';
-import { MessageCircle, MessageSquare, Plus, Search, X } from 'lucide-react';
+import { format } from 'date-fns';
+import { ja } from 'date-fns/locale';
+import { MessageCircle, Plus } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { forwardRef, useImperativeHandle, useMemo, useState } from 'react';
+import { forwardRef, useImperativeHandle, useMemo, useRef, useState } from 'react';
+import { toast } from 'sonner';
 
 interface CommunicationListProps {
   records: CommunicationRecord[];
@@ -24,7 +25,6 @@ interface CommunicationListProps {
   onEdit?: (record: CommunicationRecord) => void;
   onReply?: (record: CommunicationRecord) => void;
   onCreateHandover?: (record: CommunicationRecord) => void;
-  onAddToThread?: (threadId: string) => void;
   className?: string;
 }
 
@@ -45,7 +45,6 @@ export const CommunicationList = forwardRef<CommunicationListRef, CommunicationL
       onEdit,
       onReply,
       onCreateHandover,
-      onAddToThread,
       className = '',
     },
     ref
@@ -53,7 +52,12 @@ export const CommunicationList = forwardRef<CommunicationListRef, CommunicationL
     const router = useRouter();
     const [searchQuery, setSearchQuery] = useState('');
     const [showImportantOnly, setShowImportantOnly] = useState(false);
-    const [activeTab, setActiveTab] = useState('all');
+    const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
+    const [selectedRecord, setSelectedRecord] = useState<CommunicationRecord | null>(null);
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+    const [deletingRecord, setDeletingRecord] = useState<CommunicationRecord | null>(null);
+    const [isDeleting, setIsDeleting] = useState(false);
+    const [deleteError, setDeleteError] = useState<string | null>(null);
 
     // Expose methods to parent component via ref
     useImperativeHandle(
@@ -84,36 +88,78 @@ export const CommunicationList = forwardRef<CommunicationListRef, CommunicationL
       });
     }, [records, searchQuery, showImportantOnly]);
 
-    const filteredThreads = useMemo(() => {
-      return threads.filter((thread) => {
-        // Search filter
-        const matchesSearch =
-          searchQuery === '' ||
-          thread.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          thread.records.some(
-            (record) =>
-              record.communicationContent.toLowerCase().includes(searchQuery.toLowerCase()) ||
-              record.responseContent.toLowerCase().includes(searchQuery.toLowerCase())
-          );
-
-        // Importance filter
-        const matchesImportance = !showImportantOnly || thread.isImportant;
-
-        return matchesSearch && matchesImportance;
-      });
-    }, [threads, searchQuery, showImportantOnly]);
-
-    // Get standalone records (not part of any thread)
-    const standaloneRecords = useMemo(() => {
-      return filteredRecords.filter((record) => !record.threadId);
-    }, [filteredRecords]);
+    // Get thread records for selected record
+    const getThreadRecords = (record: CommunicationRecord): CommunicationRecord[] => {
+      if (!record.threadId) return [record];
+      return records.filter(r => r.threadId === record.threadId);
+    };
 
     const handleCreateRecord = () => {
       router.push(`/residents/${residentId}/communications/new`);
     };
 
-    const clearSearch = () => {
+    const handleResetFilters = () => {
       setSearchQuery('');
+      setShowImportantOnly(false);
+    };
+
+    const handleViewRecord = (record: CommunicationRecord) => {
+      setSelectedRecord(record);
+      setIsDetailModalOpen(true);
+    };
+
+    const handleEdit = (record: CommunicationRecord) => {
+      setIsDetailModalOpen(false);
+      onEdit?.(record);
+    };
+
+    const handleReply = (record: CommunicationRecord) => {
+      setIsDetailModalOpen(false);
+      onReply?.(record);
+    };
+
+    const handleCreateHandover = (record: CommunicationRecord) => {
+      setIsDetailModalOpen(false);
+      onCreateHandover?.(record);
+    };
+
+    const handleDeleteRecord = (recordId: string) => {
+      const record = records.find(r => r.id === recordId);
+      if (record) {
+        setDeletingRecord(record);
+        setDeleteError(null);
+        setIsDeleteModalOpen(true);
+      }
+    };
+
+    const handleDeleteConfirm = async (): Promise<boolean> => {
+      if (!deletingRecord) return false;
+
+      setIsDeleting(true);
+      setDeleteError(null);
+
+      try {
+        const { communicationService } = await import('@/services/communicationService');
+        await communicationService.deleteCommunicationRecord(residentId.toString(), deletingRecord.id);
+        onRecordDelete?.(deletingRecord.id);
+
+        toast.success('コミュニケーション記録の削除が完了しました。');
+        return true;
+      } catch (error) {
+        console.error('Failed to delete communication record:', error);
+        setDeleteError(error instanceof Error ? error.message : '削除に失敗しました。');
+        return false;
+      } finally {
+        setIsDeleting(false);
+      }
+    };
+
+    const handleCloseModals = () => {
+      setIsDetailModalOpen(false);
+      setIsDeleteModalOpen(false);
+      setSelectedRecord(null);
+      setDeletingRecord(null);
+      setDeleteError(null);
     };
 
     const totalRecords = records.length;
@@ -122,160 +168,87 @@ export const CommunicationList = forwardRef<CommunicationListRef, CommunicationL
     return (
       <div className={`space-y-6 ${className}`}>
         {/* Search and Filters */}
-        <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
-          <div className="flex items-center gap-4">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-              <Input
-                type="text"
-                placeholder="コミュニケーション記録を検索..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 pr-10 w-80"
-              />
-              {searchQuery && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={clearSearch}
-                  className="absolute right-1 top-1/2 transform -translate-y-1/2 h-6 w-6 p-0 hover:bg-gray-100"
-                >
-                  <X className="h-3 w-3" />
-                </Button>
-              )}
-            </div>
-            <div className="flex items-center space-x-2">
-              <Switch
-                id="important-only"
-                checked={showImportantOnly}
-                onCheckedChange={setShowImportantOnly}
-              />
-              <Label htmlFor="important-only" className="text-sm">
-                重要な記録のみ表示
-              </Label>
-            </div>
-          </div>
+        <CommunicationFilters
+          searchQuery={searchQuery}
+          showImportantOnly={showImportantOnly}
+          onSearchChange={setSearchQuery}
+          onImportantToggle={setShowImportantOnly}
+          onReset={handleResetFilters}
+        />
 
-          <div className="flex items-center gap-4 text-sm text-gray-600">
-            <span>総件数: {totalRecords}件</span>
-            <span className="text-red-600 font-medium">重要: {importantRecords}件</span>
-            <span>表示中: {activeTab === 'threads' ? filteredThreads.length : filteredRecords.length}件</span>
-          </div>
+        {/* Statistics */}
+        <div className="flex items-center gap-4 text-sm text-gray-600">
+          <span>総件数: {totalRecords}件</span>
+          <span className="text-red-600 font-medium">重要: {importantRecords}件</span>
+          <span>表示中: {filteredRecords.length}件</span>
         </div>
 
-        {/* Tabs */}
-        <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList>
-            <TabsTrigger value="all" className="flex items-center gap-2">
-              <MessageCircle className="h-4 w-4" />
-              すべての記録
-            </TabsTrigger>
-            <TabsTrigger value="threads" className="flex items-center gap-2">
-              <MessageSquare className="h-4 w-4" />
-              スレッド表示
-            </TabsTrigger>
-          </TabsList>
+        {/* Timeline Table */}
+        {filteredRecords.length === 0 ? (
+          <Card className="border-dashed border-2 border-gray-300">
+            <CardContent className="text-center py-12">
+              <MessageCircle className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+              <h3 className="text-lg font-medium text-gray-900 mb-2">
+                {searchQuery || showImportantOnly
+                  ? '検索条件に一致するコミュニケーション記録がありません'
+                  : 'コミュニケーション記録がありません'}
+              </h3>
+              <p className="text-gray-500 mb-6">
+                {searchQuery || showImportantOnly
+                  ? '検索条件を変更するか、新しいコミュニケーション記録を登録してください。'
+                  : 'ご家族や関係者とのコミュニケーション記録を管理できます。'}
+              </p>
+              <Button
+                onClick={handleCreateRecord}
+                className="bg-carebase-blue hover:bg-carebase-blue-dark"
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                最初のコミュニケーション記録を登録
+              </Button>
+            </CardContent>
+          </Card>
+        ) : (
+          <CommunicationTimelineTable
+            records={filteredRecords}
+            residentId={residentId}
+            residentName={residentName}
+            onRecordUpdate={onRecordUpdate}
+            onRecordDelete={handleDeleteRecord}
+            onEdit={handleEdit}
+            onReply={handleReply}
+            onCreateHandover={handleCreateHandover}
+            onViewThread={handleViewRecord}
+          />
+        )}
 
-          <TabsContent value="all" className="space-y-4">
-            {filteredRecords.length === 0 ? (
-              <Card className="border-dashed border-2 border-gray-300">
-                <CardContent className="text-center py-12">
-                  <MessageCircle className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">
-                    {searchQuery || showImportantOnly
-                      ? '検索条件に一致するコミュニケーション記録がありません'
-                      : 'コミュニケーション記録がありません'}
-                  </h3>
-                  <p className="text-gray-500 mb-6">
-                    {searchQuery || showImportantOnly
-                      ? '検索条件を変更するか、新しいコミュニケーション記録を登録してください。'
-                      : 'ご家族や関係者とのコミュニケーション記録を管理できます。'}
-                  </p>
-                  <Button
-                    onClick={handleCreateRecord}
-                    className="bg-carebase-blue hover:bg-carebase-blue-dark"
-                  >
-                    <Plus className="h-4 w-4 mr-2" />
-                    最初のコミュニケーション記録を登録
-                  </Button>
-                </CardContent>
-              </Card>
-            ) : (
-              <div className="space-y-4">
-                {filteredRecords.map((record) => (
-                  <CommunicationRecordCard
-                    key={record.id}
-                    record={record}
-                    residentId={residentId}
-                    residentName={residentName}
-                    onRecordUpdate={onRecordUpdate}
-                    onRecordDelete={onRecordDelete}
-                    onEdit={onEdit}
-                    onReply={onReply}
-                    onCreateHandover={onCreateHandover}
-                  />
-                ))}
-              </div>
-            )}
-          </TabsContent>
+        {/* Modals */}
+        <CommunicationDetailModal
+          isOpen={isDetailModalOpen}
+          onClose={handleCloseModals}
+          record={selectedRecord}
+          threadRecords={selectedRecord ? getThreadRecords(selectedRecord) : []}
+          residentId={residentId}
+          residentName={residentName}
+          onEdit={handleEdit}
+          onReply={handleReply}
+          onCreateHandover={handleCreateHandover}
+          onRecordUpdate={onRecordUpdate}
+          onRecordDelete={onRecordDelete}
+        />
 
-          <TabsContent value="threads" className="space-y-4">
-            {filteredThreads.length === 0 ? (
-              <Card className="border-dashed border-2 border-gray-300">
-                <CardContent className="text-center py-12">
-                  <MessageSquare className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">
-                    {searchQuery || showImportantOnly
-                      ? '検索条件に一致するスレッドがありません'
-                      : 'コミュニケーションスレッドがありません'}
-                  </h3>
-                  <p className="text-gray-500 mb-6">
-                    関連するコミュニケーション記録がスレッドとして表示されます。
-                  </p>
-                </CardContent>
-              </Card>
-            ) : (
-              <div className="space-y-6">
-                {filteredThreads.map((thread) => (
-                  <CommunicationThreadView
-                    key={thread.id}
-                    thread={thread}
-                    residentId={residentId}
-                    residentName={residentName}
-                    onRecordUpdate={onRecordUpdate}
-                    onRecordDelete={onRecordDelete}
-                    onEdit={onEdit}
-                    onReply={onReply}
-                    onCreateHandover={onCreateHandover}
-                    onAddToThread={onAddToThread}
-                  />
-                ))}
-              </div>
-            )}
-
-            {/* Standalone records */}
-            {standaloneRecords.length > 0 && (
-              <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-carebase-text-primary border-b pb-2">
-                  個別の記録
-                </h3>
-                {standaloneRecords.map((record) => (
-                  <CommunicationRecordCard
-                    key={record.id}
-                    record={record}
-                    residentId={residentId}
-                    residentName={residentName}
-                    onRecordUpdate={onRecordUpdate}
-                    onRecordDelete={onRecordDelete}
-                    onEdit={onEdit}
-                    onReply={onReply}
-                    onCreateHandover={onCreateHandover}
-                  />
-                ))}
-              </div>
-            )}
-          </TabsContent>
-        </Tabs>
+        <GenericDeleteModal
+          isOpen={isDeleteModalOpen}
+          onClose={handleCloseModals}
+          onConfirm={handleDeleteConfirm}
+          itemName={
+            deletingRecord
+              ? `${format(new Date(deletingRecord.datetime), 'MM/dd HH:mm', { locale: ja })}のコミュニケーション記録`
+              : ''
+          }
+          itemType="コミュニケーション記録"
+          isDeleting={isDeleting}
+          error={deleteError}
+        />
       </div>
     );
   }

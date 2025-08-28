@@ -33,7 +33,6 @@ export const CommunicationTabContent = forwardRef<CommunicationTabContentRef, Co
     const [isReplyModalOpen, setIsReplyModalOpen] = useState(false);
     const [editingRecord, setEditingRecord] = useState<CommunicationRecord | null>(null);
     const [replyingToRecord, setReplyingToRecord] = useState<CommunicationRecord | null>(null);
-    const [selectedThreadId, setSelectedThreadId] = useState<string>('');
     const communicationListRef = useRef<{ openCreateModal: () => void }>(null);
 
     // Load communication data
@@ -158,11 +157,6 @@ export const CommunicationTabContent = forwardRef<CommunicationTabContentRef, Co
       toast.success('申し送り作成画面に移動します。');
     };
 
-    const handleAddToThread = (threadId: string) => {
-      setSelectedThreadId(threadId);
-      setIsCreateModalOpen(true);
-    };
-
     const handleCreateSubmit = async (data: CommunicationFormData): Promise<boolean> => {
       try {
         const newRecord = await communicationService.createCommunicationRecord(
@@ -171,7 +165,6 @@ export const CommunicationTabContent = forwardRef<CommunicationTabContentRef, Co
         );
         handleRecordCreate(newRecord);
         setIsCreateModalOpen(false);
-        setSelectedThreadId('');
 
         // Show success toast
         toast.success('コミュニケーション記録の登録が完了しました。');
@@ -240,7 +233,6 @@ export const CommunicationTabContent = forwardRef<CommunicationTabContentRef, Co
       setIsReplyModalOpen(false);
       setEditingRecord(null);
       setReplyingToRecord(null);
-      setSelectedThreadId('');
     };
 
     if (isLoading) {
@@ -268,7 +260,6 @@ export const CommunicationTabContent = forwardRef<CommunicationTabContentRef, Co
           onEdit={handleEdit}
           onReply={handleReply}
           onCreateHandover={handleCreateHandover}
-          onAddToThread={handleAddToThread}
         />
 
         {/* Modals */}
@@ -279,7 +270,6 @@ export const CommunicationTabContent = forwardRef<CommunicationTabContentRef, Co
           residentName={residentName}
           contacts={contacts}
           mode="create"
-          threadId={selectedThreadId}
         />
 
         <CommunicationModal
