@@ -11,9 +11,8 @@ import {
 } from '@/components/ui/select';
 import type { ResidentFileCategory } from '@/types/resident-file';
 import { fileCategoryOptions } from '@/types/resident-file';
-import { Filter, RotateCcw, Search, X, Upload } from 'lucide-react';
+import { RotateCcw, Search, X, Upload } from 'lucide-react';
 import type React from 'react';
-import { useState } from 'react';
 
 interface FileFiltersProps {
   searchQuery: string;
@@ -34,8 +33,6 @@ export const FileFilters: React.FC<FileFiltersProps> = ({
   onUploadFile,
   className = '',
 }) => {
-  const [isExpanded, setIsExpanded] = useState(false);
-
   const clearSearch = () => {
     onSearchChange('');
   };
@@ -43,7 +40,7 @@ export const FileFilters: React.FC<FileFiltersProps> = ({
   const hasActiveFilters = selectedCategory || searchQuery;
 
   return (
-    <div className={`space-y-4 ${className}`}>
+    <div className={`${className}`}>
       {/* Search, filter toggle, and upload button */}
       <div className="flex items-center gap-3">
         {/* Search bar */}
@@ -127,62 +124,6 @@ export const FileFilters: React.FC<FileFiltersProps> = ({
           </Button>
         )}
       </div>
-
-      {/* Expanded filters */}
-      {isExpanded && (
-        <div className="p-4 border border-gray-200 rounded-lg bg-gray-50 space-y-4">
-          <div className="flex items-center gap-2 mb-4">
-            <Filter className="h-4 w-4 text-gray-500" />
-            <span className="text-sm font-medium text-gray-700">フィルタ条件</span>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {/* Category filter */}
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700">カテゴリ</label>
-              <Select
-                value={selectedCategory || ''}
-                onValueChange={(value) =>
-                  onCategoryChange(value === 'all' ? undefined : (value as ResidentFileCategory))
-                }
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="すべて" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">すべて</SelectItem>
-                  {fileCategoryOptions.map((option) => (
-                    <SelectItem key={option.value} value={option.value}>
-                      {option.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-
-          {/* Active filters display */}
-          {hasActiveFilters && (
-            <div className="pt-3 border-t border-gray-200">
-              <div className="flex items-center gap-2 text-sm text-gray-600">
-                <span>アクティブフィルタ:</span>
-                <div className="flex flex-wrap gap-1">
-                  {selectedCategory && (
-                    <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs">
-                      カテゴリ: {fileCategoryOptions.find((c) => c.value === selectedCategory)?.label}
-                    </span>
-                  )}
-                  {searchQuery && (
-                    <span className="bg-green-100 text-green-800 px-2 py-1 rounded text-xs">
-                      検索: {searchQuery}
-                    </span>
-                  )}
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
-      )}
     </div>
   );
 };
