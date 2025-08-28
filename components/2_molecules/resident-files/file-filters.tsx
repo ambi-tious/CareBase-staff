@@ -21,6 +21,7 @@ interface FileFiltersProps {
   onSearchChange: (query: string) => void;
   onCategoryChange: (category?: ResidentFileCategory) => void;
   onReset: () => void;
+  onUploadFile?: () => void;
   className?: string;
 }
 
@@ -30,6 +31,7 @@ export const FileFilters: React.FC<FileFiltersProps> = ({
   onSearchChange,
   onCategoryChange,
   onReset,
+  onUploadFile,
   className = '',
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -42,14 +44,14 @@ export const FileFilters: React.FC<FileFiltersProps> = ({
 
   return (
     <div className={`space-y-4 ${className}`}>
-      {/* Search and filter toggle */}
-      <div className="flex items-center gap-4">
+      {/* Search, filter toggle, and upload button */}
+      <div className="flex items-center gap-3">
         {/* Search bar */}
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
           <Input
             type="text"
-            placeholder="ファイル名、説明で検索..."
+            placeholder="ファイル名で検索..."
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
             className="pl-10 pr-10"
@@ -66,7 +68,47 @@ export const FileFilters: React.FC<FileFiltersProps> = ({
           )}
         </div>
 
-        {/* Filter toggle */}
+        {/* Category filter */}
+        <Select
+          value={selectedCategory || ''}
+          onValueChange={(value) =>
+            onCategoryChange(value === 'all' ? undefined : (value as ResidentFileCategory))
+          }
+        >
+          <SelectTrigger className="w-40">
+            <SelectValue placeholder="カテゴリ" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">すべて</SelectItem>
+            {fileCategoryOptions.map((option) => (
+              <SelectItem key={option.value} value={option.value}>
+                {option.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+
+        {/* Reset button */}
+        {hasActiveFilters && (
+          <Button variant="outline" size="sm" onClick={onReset}>
+            <RotateCcw className="h-4 w-4" />
+          </Button>
+        )}
+
+        {/* Upload button */}
+        {onUploadFile && (
+          <Button
+            onClick={onUploadFile}
+            className="bg-carebase-blue hover:bg-carebase-blue-dark"
+          >
+            <Upload className="h-4 w-4 mr-2" />
+            アップロード
+          </Button>
+        )}
+      </div>
+    </div>
+  );
+};
         <Button
           variant="outline"
           onClick={() => setIsExpanded(!isExpanded)}

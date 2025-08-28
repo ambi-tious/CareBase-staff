@@ -197,28 +197,6 @@ export const ResidentFilesTabContent: React.FC<ResidentFilesTabContentProps> = (
 
   return (
     <div className={`space-y-6 ${className}`}>
-      {/* Header with upload button */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <FileText className="h-6 w-6 text-carebase-blue" />
-          <div>
-            <h2 className="text-xl font-bold text-carebase-text-primary">
-              {residentName}様のファイル
-            </h2>
-            <p className="text-sm text-gray-600">
-              総件数: {files.length}件 | 表示中: {filteredFiles.length}件
-            </p>
-          </div>
-        </div>
-        <Button
-          onClick={handleUploadFile}
-          className="bg-carebase-blue hover:bg-carebase-blue-dark"
-        >
-          <Upload className="h-4 w-4 mr-2" />
-          ファイルをアップロード
-        </Button>
-      </div>
-
       {/* Filters */}
       <FileFilters
         searchQuery={searchQuery}
@@ -226,6 +204,7 @@ export const ResidentFilesTabContent: React.FC<ResidentFilesTabContentProps> = (
         onSearchChange={setSearchQuery}
         onCategoryChange={setSelectedCategory}
         onReset={handleResetFilters}
+        onUploadFile={handleUploadFile}
       />
 
       {/* File grid */}
