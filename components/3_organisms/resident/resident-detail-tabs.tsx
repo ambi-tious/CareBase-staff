@@ -11,6 +11,10 @@ import {
   type AbsenceTabContentRef,
 } from '@/components/3_organisms/absence/absence-tab-content';
 import {
+  CommunicationTabContent,
+  type CommunicationTabContentRef,
+} from '@/components/3_organisms/communication/communication-tab-content';
+import {
   IndividualPointsTabContent,
   type IndividualPointsTabContentRef,
 } from '@/components/3_organisms/individual-points/individual-points-tab-content';
@@ -92,6 +96,7 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
   const individualPointsTabContentRef = useRef<IndividualPointsTabContentRef>(null);
   const absenceTabContentRef = useRef<AbsenceTabContentRef>(null);
   const residentFilesTabContentRef = useRef<ResidentFilesTabContentRef>(null);
+  const communicationTabContentRef = useRef<CommunicationTabContentRef>(null);
 
   const detailTabs = [
     { value: 'family', label: 'ご家族情報' },
@@ -99,6 +104,7 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
     { value: 'medical', label: 'かかりつけ医療機関' },
     { value: 'history', label: '既往歴' },
     { value: 'medicationInfo', label: 'お薬情報' },
+    { value: 'communication', label: 'コミュニケーション記録' },
     { value: 'individualPoints', label: '個別ポイント' },
     { value: 'files', label: 'ファイル' },
     { value: 'absence', label: '不在情報' },
@@ -306,6 +312,7 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
       'medical',
       'history',
       'medicationInfo',
+      'communication',
       'individualPoints',
       'files',
       'absence',
@@ -324,6 +331,8 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
         return handleAddMedicalHistory;
       case 'medicationInfo':
         return handleAddMedication;
+      case 'communication':
+        return () => communicationTabContentRef.current?.openCreateModal();
       case 'individualPoints':
         return () => individualPointsTabContentRef.current?.openCategoryModal();
       case 'files':
@@ -347,6 +356,8 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
         return '既往歴を追加';
       case 'medicationInfo':
         return 'お薬情報を追加';
+      case 'communication':
+        return 'コミュニケーション記録を追加';
       case 'individualPoints':
         return 'カテゴリ管理';
       case 'files':
