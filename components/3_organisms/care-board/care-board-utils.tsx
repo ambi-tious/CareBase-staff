@@ -1,4 +1,3 @@
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -30,7 +29,7 @@ import {
 import { Check, Clock, HeartPulse, Save, User, X } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 
-// 利用者情報セル（アイコン・名前・careLevelバッジ）共通化
+// 利用者情報セル（アイコン・名前）共通化
 import type { Resident } from '@/mocks/care-board-data';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -71,12 +70,6 @@ export const ResidentInfoCell: React.FC<ResidentInfoCellProps> = ({ resident, cl
         <span className="text-base font-medium truncate tablet-landscape:text-lg">
           {resident.name}
         </span>
-        <Badge
-          variant="outline"
-          className="mt-0.5 w-fit px-2 py-0.5 text-xs font-normal text-carebase-blue border-carebase-blue bg-carebase-blue/10 tablet-landscape:text-sm tablet-landscape:px-3 tablet-landscape:py-1"
-        >
-          {resident.careLevel}
-        </Badge>
       </div>
     </Link>
   );

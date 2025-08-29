@@ -33,7 +33,7 @@ import { getResidentStatus } from '@/utils/resident-status-helpers';
 import { getAllGroupOptions, getAllTeamOptions } from '@/utils/staff-utils';
 import { residentBasicInfoSchema, type ResidentBasicInfo } from '@/validations/resident-validation';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Settings, Upload, X } from 'lucide-react';
+import { Save, Settings, Upload, X } from 'lucide-react';
 import Image from 'next/image';
 import type React from 'react';
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -140,7 +140,7 @@ const calculateBirthdateFromAge = (ageStr: string, existingDob?: string): string
 export const ResidentBasicInfoForm: React.FC<ResidentBasicInfoFormProps> = ({
   onSubmit,
   onCancel,
-  initialData = {},
+  initialData,
   disabled = false,
   handleRoomManagement,
   className = '',
@@ -149,7 +149,21 @@ export const ResidentBasicInfoForm: React.FC<ResidentBasicInfoFormProps> = ({
   const form = useForm<ResidentBasicInfo>({
     resolver: zodResolver(residentBasicInfoSchema),
     defaultValues: {
-      ...initialData,
+      name: initialData?.name || '',
+      furigana: initialData?.furigana || '',
+      dob: initialData?.dob || '',
+      age: initialData?.age || '',
+      sex: initialData?.sex || '男',
+
+      floorGroup: initialData?.floorGroup || '',
+      unitTeam: initialData?.unitTeam || '',
+      roomInfo: initialData?.roomInfo || '',
+      admissionDate: initialData?.admissionDate || '',
+      dischargeDate: initialData?.dischargeDate || '',
+      status: initialData?.status || 'ー',
+      profileImage: initialData?.profileImage || '',
+
+      notes: initialData?.notes || '',
     },
     mode: 'onChange',
   });
@@ -174,8 +188,9 @@ export const ResidentBasicInfoForm: React.FC<ResidentBasicInfoFormProps> = ({
   const onFormSubmit = handleSubmit(async (data: ResidentBasicInfo) => {
     try {
       const success = await onSubmit(data);
-      if (success) {
-        onCancel();
+      if (!success) {
+        // エラーハンドリングは親コンポーネントで行われるため、ここでは何もしない
+        console.error('Form submission failed');
       }
     } catch (error) {
       console.error('Form submission error:', error);
@@ -997,6 +1012,20 @@ export const ResidentBasicInfoForm: React.FC<ResidentBasicInfoFormProps> = ({
               )}
             />
           </div>
+        </div>
+        {/* Action Buttons */}
+        <div className="flex items-center justify-end gap-4 mt-8 pt-6 border-t">
+          <Button variant="outline" type="button" onClick={onCancel} disabled={isSubmitting}>
+            キャンセル
+          </Button>
+          <Button
+            type="submit"
+            disabled={isSubmitting}
+            className="bg-carebase-blue hover:bg-carebase-blue-dark"
+          >
+            <Save className="h-4 w-4 mr-2" />
+            {isSubmitting ? '保存中...' : '保存'}
+          </Button>
         </div>
       </form>
     </Form>

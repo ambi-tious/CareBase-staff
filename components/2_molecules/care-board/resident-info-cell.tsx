@@ -1,4 +1,3 @@
-import { Badge } from '@/components/ui/badge';
 import type { Resident } from '@/mocks/residents-data';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -10,20 +9,6 @@ interface ResidentInfoCellProps {
 }
 
 export const ResidentInfoCell: React.FC<ResidentInfoCellProps> = ({ resident, className = '' }) => {
-  const careLevelColor = (() => {
-    switch (resident.careLevel) {
-      case '要介護1':
-      case '要介護2':
-        return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      case '要介護3':
-      case '要介護4':
-      case '要介護5':
-        return 'bg-red-100 text-red-800 border-red-200';
-      default:
-        return 'bg-gray-100 text-gray-800 border-gray-200';
-    }
-  })();
-
   return (
     <div className={`flex items-center gap-2 ${className}`}>
       <Link
@@ -43,9 +28,6 @@ export const ResidentInfoCell: React.FC<ResidentInfoCellProps> = ({ resident, cl
           {resident.name}
         </span>
       </Link>
-      <Badge variant="outline" className={`text-xs px-2 py-0.5 font-medium ${careLevelColor}`}>
-        {resident.careLevel}
-      </Badge>
     </div>
   );
 };

@@ -14,16 +14,14 @@ const initialFormData: ResidentBasicInfo = {
   dob: '',
   age: '65',
   sex: '男',
-  careLevel: '',
+
   floorGroup: '',
   unitTeam: '',
   roomInfo: '',
   admissionDate: '',
   dischargeDate: '',
   profileImage: '',
-  certificationDate: '',
-  certificationStartDate: '',
-  certificationEndDate: '',
+
   notes: '', // 備考フィールドの初期値を追加
 };
 

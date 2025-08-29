@@ -5,7 +5,7 @@ import {
   ResidentsToolbar,
   type SortOption,
 } from '@/components/2_molecules/resident/residents-toolbar';
-import { careBoardData } from '@/mocks/care-board-data';
+import { useResidents } from '@/hooks/useResidents';
 import { getResidentStatus, type ResidentStatus } from '@/utils/resident-status-helpers';
 import { Users } from 'lucide-react';
 import { useRouter } from 'next/navigation';
@@ -23,6 +23,7 @@ interface SelectedStaffData {
 
 export const ResidentsList: React.FC = () => {
   const router = useRouter();
+  const { residents, isLoading } = useResidents();
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<ResidentStatus | 'all'>('all');
   const [sortBy, setSortBy] = useState<SortOption>('name');
@@ -60,7 +61,7 @@ export const ResidentsList: React.FC = () => {
   // Filter and sort residents
   const filteredAndSortedResidents = useMemo(() => {
     // First, filter residents
-    const filtered = careBoardData.filter((resident) => {
+    const filtered = residents.filter((resident) => {
       // Filter by search query
       const matchesSearch =
         searchQuery === '' ||
@@ -101,7 +102,7 @@ export const ResidentsList: React.FC = () => {
     });
 
     return sorted;
-  }, [searchQuery, statusFilter, sortBy, selectedStaffData]);
+  }, [residents, searchQuery, statusFilter, sortBy, selectedStaffData]);
 
   const handleCreateResident = () => {
     router.push('/residents/new');
@@ -120,8 +121,13 @@ export const ResidentsList: React.FC = () => {
         className="mb-6"
       />
 
-      {/* Results */}
-      {filteredAndSortedResidents.length === 0 ? (
+      {/* Loading State */}
+      {isLoading ? (
+        <div className="text-center py-12">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-carebase-blue mx-auto mb-4"></div>
+          <p className="text-gray-500">利用者データを読み込み中...</p>
+        </div>
+      ) : /* Results */ filteredAndSortedResidents.length === 0 ? (
         <div className="text-center py-12">
           <Users className="h-12 w-12 text-gray-400 mx-auto mb-4" />
           <h3 className="text-lg font-medium text-gray-900 mb-2">利用者が見つかりません</h3>

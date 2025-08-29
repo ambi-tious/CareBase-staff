@@ -1,3 +1,4 @@
+import { notifyResidentsUpdated } from '@/hooks/useResidents';
 import type { Resident } from '@/mocks/care-board-data';
 import type { ResidentBasicInfo } from '@/validations/resident-validation';
 
@@ -38,7 +39,7 @@ export const residentService = {
     const newResident: Resident = {
       id: newId,
       name: data.name,
-      furigana: data.furigana,
+      furigana: data.furigana || '',
       dob: data.dob.replace(/-/g, '/'), // Convert YYYY-MM-DD to YYYY/MM/DD
       sex: data.sex as '男' | '女' | 'その他',
       age: calculateAge(data.dob),
@@ -49,11 +50,9 @@ export const residentService = {
       lastUpdateDate: new Date().toISOString().split('T')[0].replace(/-/g, '/'),
       admissionDate: data.admissionDate ? data.admissionDate.replace(/-/g, '/') : '',
       dischargeDate: data.dischargeDate ? data.dischargeDate.replace(/-/g, '/') : undefined,
-      careLevel: data.careLevel,
-      certificationDate: data.admissionDate ? data.admissionDate.replace(/-/g, '/') : '', // Default to admission date if available
-      certValidityStart: data.admissionDate ? data.admissionDate.replace(/-/g, '/') : '',
-      certValidityEnd: data.admissionDate ? calculateCertValidityEnd(data.admissionDate) : '',
-      avatarUrl: '/placeholder.svg', // Default avatar
+
+      avatarUrl: data.profileImage || '/placeholder.svg', // Use uploaded image or default avatar
+      notes: data.notes || '',
       events: [],
       contacts: [],
     };
@@ -63,6 +62,10 @@ export const residentService = {
 
     const { careBoardData } = await import('@/mocks/care-board-data');
     careBoardData.push(newResident);
+
+    // データ変更を通知
+    notifyResidentsUpdated();
+
     return newResident;
   },
 
@@ -84,7 +87,18 @@ export const residentService = {
     const updatedResident = {
       ...existingResident,
       ...data,
-      age: existingResident.age, // Keep existing age as number
+      age: data.dob
+        ? (() => {
+            const birthDate = new Date(data.dob.replace(/-/g, '/'));
+            const today = new Date();
+            let age = today.getFullYear() - birthDate.getFullYear();
+            const monthDiff = today.getMonth() - birthDate.getMonth();
+            if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+              age--;
+            }
+            return age;
+          })()
+        : existingResident.age,
       sex:
         data.sex === '男' || data.sex === '女' || data.sex === 'その他'
           ? data.sex
@@ -97,6 +111,9 @@ export const residentService = {
     if (residentIndex !== -1) {
       careBoardData[residentIndex] = updatedResident;
     }
+
+    // データ変更を通知
+    notifyResidentsUpdated();
 
     return updatedResident;
   },

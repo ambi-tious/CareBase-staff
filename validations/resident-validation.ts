@@ -12,25 +12,22 @@ export const residentBasicInfoSchema = z
     name: z.string().min(1, '氏名は必須です').max(50, '氏名は50文字以内で入力してください'),
     furigana: z
       .string()
-      .refine((val) => !val || /^[ァ-ヶー\s]*$/.test(val), 'フリガナはカタカナで入力してください'),
+      .refine((val) => !val || /^[ァ-ヶー\s]*$/.test(val), 'フリガナはカタカナで入力してください')
+      .optional(),
     dob: z.string().min(1, '生年月日は必須です'),
     age: z.string().optional(),
-    sex: z
-      .union([z.enum(['男', '女', 'その他']), z.literal('')], {
-        errorMap: () => ({ message: '性別は必須です' }),
-      })
-      .refine((val) => val !== '', '性別は必須です'),
-    careLevel: z.string(),
+    sex: z.enum(['男', '女', 'その他'], {
+      errorMap: () => ({ message: '性別は必須です' }),
+    }),
+
     floorGroup: z.string().min(1, '所属フロア・グループは必須です'),
     unitTeam: z.string().min(1, '所属ユニット・チームは必須です'),
     roomInfo: z.string().min(1, '部屋情報は必須です'),
     admissionDate: z.string().optional(), // 入所日を必須から外す
     dischargeDate: z.string().optional(),
     status: z.enum(['入所前', '入所中', '退所', 'ー']).optional(),
-    profileImage: z.string(),
-    certificationDate: z.string(),
-    certificationStartDate: z.string(),
-    certificationEndDate: z.string(),
+    profileImage: z.string().optional(),
+
     notes: z.string().optional(), // 備考フィールドを追加
   })
   .refine(

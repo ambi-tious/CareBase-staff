@@ -89,10 +89,7 @@ export interface Resident {
   admissionDate?: string;
   dischargeDate?: string;
   status?: '入所前' | '入所中' | '退所' | 'ー';
-  careLevel: string;
-  certificationDate: string;
-  certValidityStart: string;
-  certValidityEnd: string;
+
   avatarUrl: string;
   notes?: string; // 備考フィールドを追加
   events: CareEvent[];
@@ -121,10 +118,7 @@ export const careBoardData: Resident[] = [
     lastUpdateDate: '2025/05/20',
     admissionDate: '2025/04/15',
     status: '入所中',
-    careLevel: '要介護1',
-    certificationDate: '2025/01/11',
-    certValidityStart: '2024/12/28',
-    certValidityEnd: '2025/12/27',
+
     avatarUrl: '/elderly-japanese-man.png',
     notes:
       '食事の際は必ず介助が必要です。アレルギーはありませんが、食事のペースが遅いため、ゆっくりと見守りながら介助してください。',
@@ -354,10 +348,7 @@ export const careBoardData: Resident[] = [
     lastUpdateDate: '2025/05/15',
     admissionDate: '2025/12/01',
     status: '入所前',
-    careLevel: '要介護3',
-    certificationDate: '2025/02/01',
-    certValidityStart: '2025/01/15',
-    certValidityEnd: '2026/01/14',
+
     avatarUrl: '/elderly-japanese-woman.png',
     notes:
       '認知症のため、見守りが必要です。徘徊の可能性があるため、常に声かけを行い、安全確認を徹底してください。歩行器を使用して移動します。',
@@ -580,10 +571,7 @@ export const careBoardData: Resident[] = [
     admissionDate: '2020/01/20',
     dischargeDate: '2025/01/20',
     status: '退所',
-    careLevel: '要介護2',
-    certificationDate: '2025/01/01',
-    certValidityStart: '2024/12/15',
-    certValidityEnd: '2025/12/14',
+
     avatarUrl: '/elderly-man-avatar.png',
     notes:
       '心房細動のため、血圧と脈拍の定期的なチェックが必要です。視力が低下しているため、文字の読み上げや説明を丁寧に行ってください。',
@@ -806,10 +794,7 @@ export const careBoardData: Resident[] = [
     lastUpdateDate: '2025/05/12',
     admissionDate: '2025/02/10',
     status: '入所中',
-    careLevel: '要支援2',
-    certificationDate: '2025/01/20',
-    certValidityStart: '2025/01/01',
-    certValidityEnd: '2026/01/01',
+
     avatarUrl: '/senior-japanese-woman.png',
     contacts: [
       {
@@ -1029,10 +1014,7 @@ export const careBoardData: Resident[] = [
     status: '入所中',
     registrationDate: '2024/11/01',
     lastUpdateDate: '2025/05/15',
-    careLevel: '要介護2',
-    certificationDate: '2024/10/20',
-    certValidityStart: '2024/10/20',
-    certValidityEnd: '2025/10/19',
+
     avatarUrl: '/elderly-japanese-woman.png',
     contacts: [
       {
@@ -1135,10 +1117,7 @@ export const careBoardData: Resident[] = [
     status: '入所中',
     registrationDate: '2025/01/01',
     lastUpdateDate: '2025/03/01',
-    careLevel: '要介護2',
-    certificationDate: '2024/12/15',
-    certValidityStart: '2024/12/15',
-    certValidityEnd: '2025/12/14',
+
     avatarUrl: '/senior-japanese-man.png',
     contacts: [
       {
@@ -1215,10 +1194,7 @@ export const careBoardData: Resident[] = [
     status: '入所中',
     registrationDate: '2025/02/01',
     lastUpdateDate: '2025/04/01',
-    careLevel: '自立',
-    certificationDate: '2025/01/20',
-    certValidityStart: '2025/01/20',
-    certValidityEnd: '2026/01/19',
+
     avatarUrl: '/old-japanese-man.png',
     contacts: [
       {
@@ -1276,10 +1252,7 @@ export const careBoardData: Resident[] = [
     lastUpdateDate: '2025/05/10',
     admissionDate: '2025/01/15',
     status: '入所中',
-    careLevel: '要介護1',
-    certificationDate: '2025/01/01',
-    certValidityStart: '2024/12/20',
-    certValidityEnd: '2025/12/19',
+
     avatarUrl: '/elderly-japanese-man.png',
     contacts: [
       {
@@ -1322,10 +1295,7 @@ export const careBoardData: Resident[] = [
     lastUpdateDate: '2025/05/08',
     admissionDate: '2025/03/01',
     status: '入所中',
-    careLevel: '要介護2',
-    certificationDate: '2025/02/15',
-    certValidityStart: '2025/02/15',
-    certValidityEnd: '2026/02/14',
+
     avatarUrl: '/elderly-japanese-woman.png',
     contacts: [
       {
@@ -1369,10 +1339,7 @@ export const careBoardData: Resident[] = [
     admissionDate: '2025/02/20',
     dischargeDate: '2025/05/15',
     status: '退所',
-    careLevel: '要介護3',
-    certificationDate: '2025/02/01',
-    certValidityStart: '2025/02/01',
-    certValidityEnd: '2026/01/31',
+
     avatarUrl: '/elderly-japanese-man.png',
     contacts: [
       {
@@ -1415,10 +1382,7 @@ export const careBoardData: Resident[] = [
     lastUpdateDate: '2025/05/01',
     // admissionDate: 未設定（入所前の状態）
     status: 'ー',
-    careLevel: '要介護1',
-    certificationDate: '2025/04/20',
-    certValidityStart: '2025/04/20',
-    certValidityEnd: '2026/04/19',
+
     avatarUrl: '/elderly-japanese-woman.png',
     notes: '入所予定の利用者です。入所日は未定です。',
     contacts: [
@@ -1473,10 +1437,7 @@ export const careBoardData: Resident[] = [
     lastUpdateDate: '2025/04/20',
     admissionDate: '2025/06/01', // 未来の入所日（入所前の状態）
     status: '入所前',
-    careLevel: '要介護2',
-    certificationDate: '2025/04/15',
-    certValidityStart: '2025/04/15',
-    certValidityEnd: '2026/04/14',
+
     avatarUrl: '/elderly-japanese-man.png',
     notes: '6月1日に入所予定です。',
     contacts: [

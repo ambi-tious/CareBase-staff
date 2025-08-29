@@ -5,11 +5,10 @@ import { RoomManagementModal } from '@/components/3_organisms/modals/room-manage
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { useResidentForm } from '@/hooks/useResidentForm';
 import { residentService } from '@/services/residentService';
 import { roomService } from '@/services/roomService';
 import type { Room, RoomFormData } from '@/types/room';
-import { ArrowLeft, Save, UserPlus } from 'lucide-react';
+import { ArrowLeft, UserPlus } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
@@ -19,27 +18,7 @@ export default function NewResidentPage() {
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [isRoomModalOpen, setIsRoomModalOpen] = useState(false);
   const [rooms, setRooms] = useState<Room[]>([]);
-
-  const residentFormHook = useResidentForm({
-    onSubmit: async (data) => {
-      try {
-        setSubmitError(null);
-        const newResident = await residentService.createResident(data);
-
-        // Show success toast
-        toast.success('利用者の登録が完了しました。');
-
-        // Navigate to the resident detail page
-        router.replace(`/residents/${newResident.id}`);
-      } catch (error) {
-        console.error('Failed to create resident:', error);
-        setSubmitError('利用者の登録に失敗しました。もう一度お試しください。');
-        throw error;
-      }
-    },
-  });
-
-  const { formData, isSubmitting, handleSubmit } = residentFormHook;
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Load rooms on component mount
   useEffect(() => {
@@ -54,13 +33,6 @@ export default function NewResidentPage() {
 
     loadRooms();
   }, []);
-
-  const handleSave = async () => {
-    const success = await handleSubmit();
-    if (!success && !submitError) {
-      setSubmitError('入力内容に不備があります。必須項目を確認してください。');
-    }
-  };
 
   const handleCancel = () => {
     router.push('/residents');
@@ -189,6 +161,7 @@ export default function NewResidentPage() {
           <ResidentBasicInfoForm
             onSubmit={async (data) => {
               try {
+                setIsSubmitting(true);
                 setSubmitError(null);
                 const newResident = await residentService.createResident(data);
 
@@ -202,28 +175,14 @@ export default function NewResidentPage() {
                 console.error('Failed to create resident:', error);
                 setSubmitError('利用者の登録に失敗しました。もう一度お試しください。');
                 return false;
+              } finally {
+                setIsSubmitting(false);
               }
             }}
             onCancel={handleCancel}
-            initialData={formData}
             disabled={isSubmitting}
             handleRoomManagement={handleRoomManagement}
           />
-
-          {/* Action Buttons */}
-          <div className="flex items-center justify-end gap-4 mt-8 pt-6 border-t">
-            <Button variant="outline" onClick={handleCancel} disabled={isSubmitting}>
-              キャンセル
-            </Button>
-            <Button
-              onClick={handleSave}
-              disabled={isSubmitting}
-              className="bg-carebase-blue hover:bg-carebase-blue-dark"
-            >
-              <Save className="h-4 w-4 mr-2" />
-              {isSubmitting ? '登録中...' : '登録'}
-            </Button>
-          </div>
         </CardContent>
       </Card>
 

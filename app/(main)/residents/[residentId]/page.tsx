@@ -1,18 +1,40 @@
+'use client';
+
 import { ResidentDetailTabs } from '@/components/3_organisms/resident/resident-detail-tabs';
 import { ResidentProfileHeader } from '@/components/3_organisms/resident/resident-profile-header';
 import { Button } from '@/components/ui/button';
-import { getResidentById } from '@/mocks/care-board-data';
+import { useResidents } from '@/hooks/useResidents';
 import { Edit } from 'lucide-react';
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
 
-export default async function ResidentDetailPage({
+export default function ResidentDetailPage({
   params,
 }: {
   params: Promise<{ residentId: string }>;
 }) {
-  const resolvedParams = await params;
-  const residentIdNum = Number.parseInt(resolvedParams.residentId, 10);
-  const resident = getResidentById(residentIdNum);
+  const { residents, isLoading } = useResidents();
+  const [residentId, setResidentId] = useState<string>('');
+
+  useEffect(() => {
+    const resolveParams = async () => {
+      const resolvedParams = await params;
+      setResidentId(resolvedParams.residentId);
+    };
+    resolveParams();
+  }, [params]);
+
+  const residentIdNum = Number.parseInt(residentId, 10);
+  const resident = residents.find((r) => r.id === residentIdNum);
+
+  if (isLoading) {
+    return (
+      <div className="p-6 text-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-carebase-blue mx-auto mb-4"></div>
+        <p className="text-gray-500">利用者データを読み込み中...</p>
+      </div>
+    );
+  }
 
   if (!resident) {
     return <div className="p-6 text-center text-red-500">ご利用者が見つかりません。</div>;

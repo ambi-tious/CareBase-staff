@@ -1,4 +1,5 @@
 import { AuthProvider } from '@/components/providers/AuthProvider';
+import { ZodErrorProvider } from '@/components/providers/ZodErrorProvider';
 import type { Metadata, Viewport } from 'next';
 import { Toaster } from 'sonner';
 import './globals.css';
@@ -49,10 +50,12 @@ export default function RootLayout({
   return (
     <html lang="ja">
       <body>
-        <AuthProvider>
-          {children}
-          <Toaster />
-        </AuthProvider>
+        <ZodErrorProvider>
+          <AuthProvider>
+            {children}
+            <Toaster />
+          </AuthProvider>
+        </ZodErrorProvider>
       </body>
     </html>
   );

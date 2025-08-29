@@ -116,7 +116,7 @@ export const ContactScheduleForm: React.FC<ContactScheduleFormProps> = ({
         .filter((resident) => resident.dischargeDate === undefined)
         .map((resident) => ({
           value: resident.id.toString(),
-          label: `${resident.name} (${resident.careLevel})`,
+          label: `${resident.name}`,
         })),
     ],
     []
