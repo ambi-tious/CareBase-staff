@@ -1,11 +1,15 @@
 'use client';
 
-import { ActionDropdownMenu, type ActionDropdownConfig } from '@/components/1_atoms/buttons/action-dropdown-menu';
+import {
+  ActionDropdownMenu,
+  type ActionDropdownConfig,
+} from '@/components/1_atoms/buttons/action-dropdown-menu';
 import { CategoryBadge } from '@/components/1_atoms/individual-points/category-badge';
 import { MediaThumbnail } from '@/components/1_atoms/individual-points/media-thumbnail';
 import { PriorityBadge } from '@/components/1_atoms/individual-points/priority-badge';
 import { StatusBadge } from '@/components/1_atoms/individual-points/status-badge';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import type { IndividualPoint } from '@/types/individual-point';
 import { format } from 'date-fns';
