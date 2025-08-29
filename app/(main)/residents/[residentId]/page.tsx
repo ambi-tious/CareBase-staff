@@ -19,11 +19,12 @@ export default async function ResidentDetailPage({
   }
 
   return (
-    <div className="p-4 md:p-6 bg-carebase-bg min-h-screen">
-      <div className="flex justify-between items-center mb-4">
+    <div className="p-3 md:p-4 bg-carebase-bg min-h-screen space-y-4">
+      {/* Compact Navigation Header */}
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 bg-white p-3 rounded-lg border border-gray-200 shadow-sm">
         <Link
           href="/residents"
-          className="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+          className="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-700 bg-gray-50 border border-gray-200 rounded-md hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-carebase-blue transition-colors"
         >
           <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path
@@ -39,6 +40,7 @@ export default async function ResidentDetailPage({
           variant="outline"
           asChild
           className="border-carebase-blue text-carebase-blue hover:bg-carebase-blue-light"
+          size="sm"
         >
           <Link href={`/residents/${resident.id}/edit`}>
             <Edit className="h-4 w-4 mr-2" />
@@ -46,7 +48,11 @@ export default async function ResidentDetailPage({
           </Link>
         </Button>
       </div>
+
+      {/* Resident Profile */}
       <ResidentProfileHeader resident={resident} />
+
+      {/* Resident Details Tabs */}
       <ResidentDetailTabs resident={resident} />
     </div>
   );

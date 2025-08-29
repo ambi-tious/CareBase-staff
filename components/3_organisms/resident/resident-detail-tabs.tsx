@@ -29,6 +29,7 @@ import {
   type ResidentFilesTabContentRef,
 } from '@/components/3_organisms/resident-files/resident-files-tab-content';
 import { Button } from '@/components/ui/button';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import type {
   ContactPerson,
@@ -371,39 +372,58 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
 
   return (
     <>
-      <Tabs defaultValue="family" className="w-full" onValueChange={setActiveTab}>
-        <div className="flex justify-between items-center mb-4">
-          <TabsList className="bg-gray-200 p-1.5 rounded-xl">
-            {detailTabs.map((tab) => (
-              <TabsTrigger
-                key={tab.value}
-                value={tab.value}
-                className="data-[state=active]:bg-carebase-blue data-[state=active]:text-white data-[state=inactive]:bg-transparent data-[state=inactive]:text-gray-600 px-4 py-2.5 text-sm font-medium rounded-lg"
+      <div className="bg-white rounded-lg border border-gray-200 shadow-sm">
+        {/* Compact Header with Tab Selector */}
+        <div className="border-b border-gray-100 p-4">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <div className="flex-1">
+              <Select value={activeTab} onValueChange={setActiveTab}>
+                <SelectTrigger className="w-full sm:w-80 bg-gray-50 border-gray-200 focus:border-carebase-blue">
+                  <SelectValue placeholder="タブを選択" />
+                </SelectTrigger>
+                <SelectContent>
+                  {detailTabs.map((tab) => (
+                    <SelectItem key={tab.value} value={tab.value}>
+                      {tab.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            {shouldShowAddButton() && (
+              <Button
+                variant="outline"
+                onClick={getAddButtonHandler()}
+                className="bg-white border-carebase-blue text-carebase-blue hover:bg-carebase-blue-light font-medium whitespace-nowrap"
+                size="sm"
               >
-                {tab.label}
-              </TabsTrigger>
-            ))}
-          </TabsList>
-          {shouldShowAddButton() && (
-            <Button
-              variant="outline"
-              onClick={getAddButtonHandler()}
-              className="bg-white border-carebase-blue text-carebase-blue hover:bg-carebase-blue-light font-medium"
-            >
-              {activeTab === 'individualPoints' ? (
-                <>
-                  <Settings className="h-4 w-4 mr-2 text-carebase-blue" />
-                  <span>{getAddButtonText()}</span>
-                </>
-              ) : (
-                <>
-                  <PlusCircle className="h-4 w-4 mr-2 text-carebase-blue" />
-                  {getAddButtonText()}
-                </>
-              )}
-            </Button>
-          )}
+                {activeTab === 'individualPoints' ? (
+                  <>
+                    <Settings className="h-4 w-4 mr-2 text-carebase-blue" />
+                    <span>{getAddButtonText()}</span>
+                  </>
+                ) : (
+                  <>
+                    <PlusCircle className="h-4 w-4 mr-2 text-carebase-blue" />
+                    {getAddButtonText()}
+                  </>
+                )}
+              </Button>
+            )}
+          </div>
         </div>
+
+        {/* Content Area */}
+        <div className="p-4">
+          <Tabs value={activeTab} className="w-full" onValueChange={setActiveTab}>
+            {/* Hidden TabsList for compatibility */}
+            <TabsList className="hidden">
+              {detailTabs.map((tab) => (
+                <TabsTrigger key={tab.value} value={tab.value}>
+                  {tab.label}
+                </TabsTrigger>
+              ))}
+            </TabsList>
 
         <TabsContent value="family">
           {contacts.length > 0 ? (
@@ -551,7 +571,9 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
             />
           </div>
         </TabsContent>
-      </Tabs>
+          </Tabs>
+        </div>
+      </div>
 
       <ContactEditModal
         isOpen={isContactModalOpen}
