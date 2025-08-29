@@ -67,10 +67,10 @@ export const useDocumentForm = ({ onSubmit, initialData = {} }: UseDocumentFormO
           if (!isDraft) {
             reset({ ...initialFormData, ...initialData });
           }
-          setFormState((prev) => ({
+          setFormState(() => ({
             isSubmitting: false,
             isSavingDraft: false,
-            hasUnsavedChanges: isDraft ? prev.hasUnsavedChanges : false,
+            hasUnsavedChanges: false,
             error: null,
           }));
           return true;
