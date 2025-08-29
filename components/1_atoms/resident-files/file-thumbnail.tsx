@@ -36,7 +36,7 @@ export const FileThumbnail: React.FC<FileThumbnailProps> = ({
   };
 
   return (
-    <div className={`relative group cursor-pointer ${className}`} onClick={onClick}>
+    <div className={`relative group cursor-pointer max-w-32 ${className}`} onClick={onClick}>
       <div className="flex items-center justify-center">
         <div
           className={`${getSizeClasses()} rounded-lg border border-gray-200 overflow-hidden bg-gray-50`}

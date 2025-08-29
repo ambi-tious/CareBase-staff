@@ -10,7 +10,7 @@ import { getResidentById } from '@/mocks/care-board-data';
 import { residentService } from '@/services/residentService';
 import { roomService } from '@/services/roomService';
 import type { Room, RoomFormData } from '@/types/room';
-import { ArrowLeft, Edit3 } from 'lucide-react';
+import { ArrowLeft, Edit3, Save } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
@@ -193,43 +193,6 @@ export default function EditResidentPage({ params }: EditResidentPageProps) {
         </CardHeader>
         <CardContent>
           <ResidentBasicInfoForm
-            onSubmit={async (data) => {
-              try {
-                setIsSubmitting(true);
-                setSubmitError(null);
-
-                // 更新用に一部フォーマット変換（内部データはスラッシュ区切りが既定）
-                const payload: Record<string, unknown> = {
-                  ...data,
-                  dob: data.dob ? data.dob.replaceAll('-', '/') : '',
-                  admissionDate: data.admissionDate ? data.admissionDate.replaceAll('-', '/') : '',
-                  dischargeDate: data.dischargeDate
-                    ? data.dischargeDate.replaceAll('-', '/')
-                    : undefined,
-                };
-
-                // 画像は Resident の avatarUrl にマップする
-                if (data.profileImage) {
-                  payload.avatarUrl = data.profileImage;
-                  delete payload.profileImage;
-                }
-
-                const updatePayload = payload as Parameters<
-                  typeof residentService.updateResident
-                >[1];
-                await residentService.updateResident(resident!.id, updatePayload);
-
-                // 編集後は詳細へ戻る
-                router.push(`/residents/${resident!.id}`);
-                return true;
-              } catch (error) {
-                console.error('Failed to update resident:', error);
-                setSubmitError('利用者情報の更新に失敗しました。もう一度お試しください。');
-                return false;
-              } finally {
-                setIsSubmitting(false);
-              }
-            }}
             onCancel={handleCancel}
             initialData={
               resident
@@ -256,6 +219,58 @@ export default function EditResidentPage({ params }: EditResidentPageProps) {
             disabled={isSubmitting}
             handleRoomManagement={handleRoomManagement}
           />
+          {/* Action Buttons */}
+          <div className="flex items-center justify-end gap-4 mt-8 pt-6 border-t">
+            <Button variant="outline" onClick={handleCancel} disabled={isSubmitting}>
+              キャンセル
+            </Button>
+            <Button
+              onClick={async (data) => {
+                try {
+                  setIsSubmitting(true);
+                  setSubmitError(null);
+
+                  // 更新用に一部フォーマット変換（内部データはスラッシュ区切りが既定）
+                  const payload: Record<string, unknown> = {
+                    ...data,
+                    dob: data.dob ? data.dob.replaceAll('-', '/') : '',
+                    admissionDate: data.admissionDate
+                      ? data.admissionDate.replaceAll('-', '/')
+                      : '',
+                    dischargeDate: data.dischargeDate
+                      ? data.dischargeDate.replaceAll('-', '/')
+                      : undefined,
+                  };
+
+                  // 画像は Resident の avatarUrl にマップする
+                  if (data.profileImage) {
+                    payload.avatarUrl = data.profileImage;
+                    delete payload.profileImage;
+                  }
+
+                  const updatePayload = payload as Parameters<
+                    typeof residentService.updateResident
+                  >[1];
+                  await residentService.updateResident(resident!.id, updatePayload);
+
+                  // 編集後は詳細へ戻る
+                  router.push(`/residents/${resident!.id}`);
+                  return true;
+                } catch (error) {
+                  console.error('Failed to update resident:', error);
+                  setSubmitError('利用者情報の更新に失敗しました。もう一度お試しください。');
+                  return false;
+                } finally {
+                  setIsSubmitting(false);
+                }
+              }}
+              disabled={isSubmitting}
+              className="bg-carebase-blue hover:bg-carebase-blue-dark"
+            >
+              <Save className="h-4 w-4 mr-2" />
+              {isSubmitting ? '登録中...' : '登録'}
+            </Button>
+          </div>
         </CardContent>
       </Card>
 

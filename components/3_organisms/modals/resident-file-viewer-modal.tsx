@@ -107,24 +107,6 @@ export const ResidentFileViewerModal: React.FC<ResidentFileViewerModalProps> = (
                   <FileCategoryBadge category={file.category} />
                 </div>
               </DialogTitle>
-              <div className="flex items-center gap-4 text-sm text-gray-500 mt-1">
-                {file.description && <p className="text-sm text-gray-700">{file.description}</p>}
-
-                <div className="flex items-center gap-4 text-xs text-gray-500">
-                  <div className="flex items-center gap-1">
-                    <File className="h-3 w-3" />
-                    <span>{formatFileSize(file.fileSize)}</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <User className="h-3 w-3" />
-                    <span>{file.uploadedByName}</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <Calendar className="h-3 w-3" />
-                    <span>{formatDate(file.uploadedAt)}</span>
-                  </div>
-                </div>
-              </div>
             </div>
             <div className="flex items-center gap-2 ml-4 mr-[60px]">
               {file.isImage && (
@@ -179,6 +161,24 @@ export const ResidentFileViewerModal: React.FC<ResidentFileViewerModalProps> = (
                   )}
                 </DropdownMenuContent>
               </DropdownMenu>
+            </div>
+          </div>
+          <div className="flex items-center gap-4 text-sm text-gray-500">
+            {file.description && <p className="text-sm text-gray-700">{file.description}</p>}
+
+            <div className="flex items-center gap-4 text-xs text-gray-500">
+              <div className="flex items-center gap-1">
+                <File className="h-3 w-3" />
+                <span>{formatFileSize(file.fileSize)}</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <User className="h-3 w-3" />
+                <span>{file.uploadedByName}</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <Calendar className="h-3 w-3" />
+                <span>{formatDate(file.uploadedAt)}</span>
+              </div>
             </div>
           </div>
         </DialogHeader>
