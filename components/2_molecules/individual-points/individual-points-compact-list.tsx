@@ -1,10 +1,10 @@
 'use client';
 
+import { ActionDropdownMenu } from '@/components/1_atoms/buttons/action-dropdown-menu';
 import { CategoryBadge } from '@/components/1_atoms/individual-points/category-badge';
 import { PriorityBadge } from '@/components/1_atoms/individual-points/priority-badge';
 import { StatusBadge } from '@/components/1_atoms/individual-points/status-badge';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import type { IndividualPoint } from '@/types/individual-point';
 import { format } from 'date-fns';
@@ -149,28 +149,31 @@ export const IndividualPointsCompactList: React.FC<IndividualPointsCompactListPr
 
               {/* アクションボタン */}
               <div className="flex gap-2">
-                {onEdit && (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={(e) => handleEdit(e, point)}
-                    className="border-carebase-blue text-carebase-blue hover:bg-carebase-blue-light h-8 px-3"
-                  >
-                    <Edit3 className="h-3 w-3 mr-1" />
-                    編集
-                  </Button>
-                )}
-                {onDelete && !point.isSystemDefault && (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={(e) => handleDelete(e, point)}
-                    className="border-red-300 text-red-600 hover:bg-red-50 h-8 px-3"
-                  >
-                    <Trash2 className="h-3 w-3 mr-1" />
-                    削除
-                  </Button>
-                )}
+                <ActionDropdownMenu
+                  actions={[
+                    ...(onEdit
+                      ? [
+                          {
+                            id: 'edit',
+                            label: '編集',
+                            icon: Edit3,
+                            onClick: (e?: React.MouseEvent) => handleEdit(e!, point),
+                          },
+                        ]
+                      : []),
+                    ...(onDelete && !point.isSystemDefault
+                      ? [
+                          {
+                            id: 'delete',
+                            label: '削除',
+                            icon: Trash2,
+                            onClick: (e?: React.MouseEvent) => handleDelete(e!, point),
+                            variant: 'destructive' as const,
+                          },
+                        ]
+                      : []),
+                  ]}
+                />
               </div>
             </div>
 

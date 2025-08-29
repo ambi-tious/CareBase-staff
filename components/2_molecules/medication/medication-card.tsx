@@ -1,8 +1,11 @@
 'use client';
 
+import {
+  ActionDropdownMenu,
+  type ActionDropdownConfig,
+} from '@/components/1_atoms/buttons/action-dropdown-menu';
 import { GenericDeleteModal } from '@/components/3_organisms/modals/generic-delete-modal';
 import { MedicationModal } from '@/components/3_organisms/modals/medication-modal';
-import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { medicationService } from '@/services/medicationService';
 import type { Medication } from '@/types/medication';
@@ -78,10 +81,26 @@ export const MedicationCard: React.FC<MedicationCardProps> = ({
 
   const isOngoing = !medication.endDate || new Date(medication.endDate) >= new Date();
 
+  const actionButtons: ActionDropdownConfig[] = [
+    {
+      id: 'edit',
+      label: '編集',
+      icon: Edit3,
+      onClick: handleEditClick,
+    },
+    {
+      id: 'delete',
+      label: '削除',
+      icon: Trash2,
+      onClick: handleDeleteClick,
+      variant: 'destructive',
+    },
+  ];
+
   return (
     <>
-      <Card className="mb-4">
-        <CardHeader className="flex flex-row items-center justify-between pb-2">
+      <Card>
+        <CardHeader className="flex flex-row items-start justify-between pb-3 space-y-0">
           <div className="flex items-center gap-3">
             <div className="flex-shrink-0">
               <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center">
@@ -89,7 +108,6 @@ export const MedicationCard: React.FC<MedicationCardProps> = ({
               </div>
             </div>
             <div>
-              <h3 className="text-lg font-semibold mb-1">薬剤名</h3>
               <p className="text-xl font-bold text-carebase-blue">{medication.medicationName}</p>
             </div>
             <span
@@ -100,21 +118,7 @@ export const MedicationCard: React.FC<MedicationCardProps> = ({
               {isOngoing ? '服用中' : '服用終了'}
             </span>
           </div>
-          <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm" onClick={handleEditClick}>
-              <Edit3 className="h-3 w-3 mr-1" />
-              編集
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleDeleteClick}
-              className="border-red-300 text-red-600 hover:bg-red-50 hover:border-red-400"
-            >
-              <Trash2 className="h-3 w-3 mr-1" />
-              削除
-            </Button>
-          </div>
+          <ActionDropdownMenu actions={actionButtons} />
         </CardHeader>
         <CardContent className="text-sm">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-3">

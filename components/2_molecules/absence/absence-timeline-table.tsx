@@ -34,8 +34,7 @@ import {
   User,
   X,
 } from 'lucide-react';
-import React from 'react';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { toast } from 'sonner';
 
 interface AbsenceTimelineTableProps {
@@ -142,7 +141,6 @@ export const AbsenceTimelineTable: React.FC<AbsenceTimelineTableProps> = ({
       <Table>
         <TableHeader>
           <TableRow className="bg-gray-50">
-            <TableHead className="w-24">日付</TableHead>
             <TableHead className="w-32">時間</TableHead>
             <TableHead className="w-20">期間</TableHead>
             <TableHead className="w-32">理由</TableHead>
@@ -199,11 +197,6 @@ export const AbsenceTimelineTable: React.FC<AbsenceTimelineTableProps> = ({
                       ${absence.status === 'cancelled' ? 'bg-gray-50' : ''}
                     `}
                   >
-                    {/* 日付列（同日の場合は空白） */}
-                    <TableCell className="text-sm text-gray-600">
-                      {showDateDivider ? '' : ''}
-                    </TableCell>
-
                     {/* 時間列 */}
                     <TableCell>
                       <div className="space-y-1">

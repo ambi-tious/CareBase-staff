@@ -454,8 +454,8 @@ export const ResidentBasicInfoForm: React.FC<ResidentBasicInfoFormProps> = ({
                         src={imagePreview}
                         alt="利用者画像"
                         className="w-32 h-32 object-cover rounded-lg"
-                        width={32}
-                        height={32}
+                        width={128}
+                        height={128}
                       />
                     </div>
                     <div className="flex flex-col gap-2 mt-2">

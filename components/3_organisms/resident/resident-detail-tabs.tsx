@@ -388,110 +388,124 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
         </div>
 
         <TabsContent value="family">
-          {contacts.length > 0 ? (
-            contacts.map((contact) => (
-              <ContactCard
-                key={contact.id}
-                contact={contact}
-                residentId={resident.id}
-                residentName={resident.name}
-                onUpdate={handleContactUpdate}
-                onDelete={handleContactDelete}
-              />
-            ))
-          ) : (
-            <p className="text-center text-gray-500 py-8">ご家族情報はありません。</p>
-          )}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+            {contacts.length > 0 ? (
+              contacts.map((contact) => (
+                <ContactCard
+                  key={contact.id}
+                  contact={contact}
+                  residentId={resident.id}
+                  residentName={resident.name}
+                  onUpdate={handleContactUpdate}
+                  onDelete={handleContactDelete}
+                />
+              ))
+            ) : (
+              <p className="text-center text-gray-500 py-8">ご家族情報はありません。</p>
+            )}
+          </div>
         </TabsContent>
 
         <TabsContent value="homeCare">
-          {homeCareOffices.length > 0 ? (
-            <div className="space-y-4">
-              {homeCareOffices.map((office) => (
-                <HomeCareOfficeCard
-                  key={office.id}
-                  office={office}
-                  residentId={resident.id}
-                  residentName={resident.name}
-                  onOfficeUpdate={handleHomeCareOfficeUpdate}
-                  onOfficeDelete={handleHomeCareOfficeDelete}
-                />
-              ))}
-            </div>
-          ) : (
-            <p className="text-center text-gray-500 py-8">居宅介護支援事業所の情報はありません。</p>
-          )}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+            {homeCareOffices.length > 0 ? (
+              <>
+                {homeCareOffices.map((office) => (
+                  <HomeCareOfficeCard
+                    key={office.id}
+                    office={office}
+                    residentId={resident.id}
+                    residentName={resident.name}
+                    onOfficeUpdate={handleHomeCareOfficeUpdate}
+                    onOfficeDelete={handleHomeCareOfficeDelete}
+                  />
+                ))}
+              </>
+            ) : (
+              <p className="text-center text-gray-500 py-8">
+                居宅介護支援事業所の情報はありません。
+              </p>
+            )}
+          </div>
         </TabsContent>
 
         <TabsContent value="medical">
-          {medicalInstitutions.length > 0 ? (
-            medicalInstitutions.map((institution) => (
-              <MedicalInstitutionCard
-                key={institution.id}
-                institution={institution}
-                residentId={resident.id}
-                residentName={resident.name}
-                onInstitutionUpdate={handleMedicalInstitutionUpdate}
-                onInstitutionDelete={handleMedicalInstitutionDelete}
-              />
-            ))
-          ) : (
-            <p className="text-center text-gray-500 py-8">かかりつけ医療機関の情報はありません。</p>
-          )}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+            {medicalInstitutions.length > 0 ? (
+              medicalInstitutions.map((institution) => (
+                <MedicalInstitutionCard
+                  key={institution.id}
+                  institution={institution}
+                  residentId={resident.id}
+                  residentName={resident.name}
+                  onInstitutionUpdate={handleMedicalInstitutionUpdate}
+                  onInstitutionDelete={handleMedicalInstitutionDelete}
+                />
+              ))
+            ) : (
+              <p className="text-center text-gray-500 py-8">
+                かかりつけ医療機関の情報はありません。
+              </p>
+            )}
+          </div>
         </TabsContent>
 
         <TabsContent value="history">
-          {medicalHistory.length > 0 ? (
-            <div className="space-y-4">
-              {/* Sort by onset date (newest first), then by registration date */}
-              {[...medicalHistory]
-                .sort((a, b) => {
-                  // First sort by onset date (newest first)
-                  const dateA = a.date ? new Date(a.date.replace('/', '-') + '-01') : new Date(0);
-                  const dateB = b.date ? new Date(b.date.replace('/', '-') + '-01') : new Date(0);
-                  if (dateB.getTime() !== dateA.getTime()) {
-                    return dateB.getTime() - dateA.getTime();
-                  }
-                  // If same onset date, sort by ID (assuming newer IDs are larger)
-                  return b.id.localeCompare(a.id);
-                })
-                .map((history) => (
-                  <MedicalHistoryCard
-                    key={history.id}
-                    history={history}
-                    residentId={resident.id}
-                    residentName={resident.name}
-                    medicalInstitutions={medicalInstitutions}
-                    onHistoryUpdate={handleMedicalHistoryUpdate}
-                    onHistoryDelete={handleMedicalHistoryDelete}
-                  />
-                ))}
-            </div>
-          ) : (
-            <p className="text-center text-gray-500 py-8">現病歴＆既往歴の情報はありません。</p>
-          )}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+            {medicalHistory.length > 0 ? (
+              <>
+                {/* Sort by onset date (newest first), then by registration date */}
+                {[...medicalHistory]
+                  .sort((a, b) => {
+                    // First sort by onset date (newest first)
+                    const dateA = a.date ? new Date(a.date.replace('/', '-') + '-01') : new Date(0);
+                    const dateB = b.date ? new Date(b.date.replace('/', '-') + '-01') : new Date(0);
+                    if (dateB.getTime() !== dateA.getTime()) {
+                      return dateB.getTime() - dateA.getTime();
+                    }
+                    // If same onset date, sort by ID (assuming newer IDs are larger)
+                    return b.id.localeCompare(a.id);
+                  })
+                  .map((history) => (
+                    <MedicalHistoryCard
+                      key={history.id}
+                      history={history}
+                      residentId={resident.id}
+                      residentName={resident.name}
+                      medicalInstitutions={medicalInstitutions}
+                      onHistoryUpdate={handleMedicalHistoryUpdate}
+                      onHistoryDelete={handleMedicalHistoryDelete}
+                    />
+                  ))}
+              </>
+            ) : (
+              <p className="text-center text-gray-500 py-8">現病歴＆既往歴の情報はありません。</p>
+            )}
+          </div>
         </TabsContent>
 
         <TabsContent value="medicationInfo">
-          {medications.length > 0 ? (
-            medications.map((medication) => (
-              <NewMedicationCard
-                key={medication.id}
-                medication={medication}
-                residentId={resident.id}
-                residentName={resident.name}
-                onMedicationUpdate={handleMedicationUpdate}
-                onMedicationDelete={handleMedicationDelete}
-              />
-            ))
-          ) : resident.medicationInfo && resident.medicationInfo.length > 0 ? (
-            // Fallback to old medication info for backward compatibility
-            resident.medicationInfo.map((medication) => (
-              <OldMedicationCard key={medication.id} medication={medication} />
-            ))
-          ) : (
-            <p className="text-center text-gray-500 py-8">お薬情報はありません。</p>
-          )}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+            {medications.length > 0 ? (
+              medications.map((medication) => (
+                <NewMedicationCard
+                  key={medication.id}
+                  medication={medication}
+                  residentId={resident.id}
+                  residentName={resident.name}
+                  onMedicationUpdate={handleMedicationUpdate}
+                  onMedicationDelete={handleMedicationDelete}
+                />
+              ))
+            ) : resident.medicationInfo && resident.medicationInfo.length > 0 ? (
+              // Fallback to old medication info for backward compatibility
+              resident.medicationInfo.map((medication) => (
+                <OldMedicationCard key={medication.id} medication={medication} />
+              ))
+            ) : (
+              <p className="text-center text-gray-500 py-8">お薬情報はありません。</p>
+            )}
+          </div>
         </TabsContent>
 
         <TabsContent value="absence">

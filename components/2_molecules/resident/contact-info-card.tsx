@@ -1,9 +1,12 @@
 'use client';
 
+import {
+  ActionDropdownMenu,
+  type ActionDropdownConfig,
+} from '@/components/1_atoms/buttons/action-dropdown-menu';
 import { ContactEditModal } from '@/components/3_organisms/modals/contact-edit-modal';
 import { GenericDeleteModal } from '@/components/3_organisms/modals/generic-delete-modal';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import type { ContactPerson } from '@/mocks/care-board-data';
 import { contactService } from '@/services/contactService';
@@ -92,39 +95,39 @@ export const ContactCard: React.FC<ContactCardProps> = ({
 
   const shouldEmphasizePhone1 = contact.phone1 && !contact.phone2;
 
+  const actionButtons: ActionDropdownConfig[] = [
+    {
+      id: 'edit',
+      label: '編集',
+      icon: Edit3,
+      onClick: handleEdit,
+    },
+    {
+      id: 'delete',
+      label: '削除',
+      icon: Trash2,
+      onClick: handleDelete,
+      variant: 'destructive',
+    },
+  ];
+
   return (
     <>
-      <Card className="mb-4">
-        <CardHeader className="flex flex-row items-center justify-between pb-2">
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between pb-3 space-y-0">
           <div className="flex items-center gap-3">
-            <div>
-              <div className="flex items-center gap-2 mb-1">
-                <Badge className={`${getTypeColor(contact.type)}`}>{contact.type}</Badge>
-                <h3 className="text-lg font-semibold">
-                  {contact.name}
-                  {contact.furigana && (
-                    <span className="text-sm text-gray-500 ml-2">({contact.furigana})</span>
-                  )}
-                </h3>
-                {contact.hasAlert && <AlertTriangle className="h-4 w-4 text-orange-600" />}
-              </div>
+            <div className="flex items-center gap-2">
+              <Badge className={`${getTypeColor(contact.type)}`}>{contact.type}</Badge>
+              <h3 className="text-lg font-semibold">
+                {contact.name}
+                {contact.furigana && (
+                  <span className="text-sm text-gray-500 ml-2">({contact.furigana})</span>
+                )}
+              </h3>
+              {contact.hasAlert && <AlertTriangle className="h-4 w-4 text-orange-600" />}
             </div>
           </div>
-          <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm" onClick={handleEdit}>
-              <Edit3 className="h-3 w-3 mr-1" />
-              編集
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleDelete}
-              className="border-red-300 text-red-600 hover:bg-red-50 hover:border-red-400"
-            >
-              <Trash2 className="h-3 w-3 mr-1" />
-              削除
-            </Button>
-          </div>
+          <ActionDropdownMenu actions={actionButtons} />
         </CardHeader>
 
         <CardContent className="text-sm">

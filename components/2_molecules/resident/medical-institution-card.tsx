@@ -1,8 +1,11 @@
 'use client';
 
+import {
+  ActionDropdownMenu,
+  type ActionDropdownConfig,
+} from '@/components/1_atoms/buttons/action-dropdown-menu';
 import { GenericDeleteModal } from '@/components/3_organisms/modals/generic-delete-modal';
 import { MedicalInstitutionModal } from '@/components/3_organisms/modals/medical-institution-modal';
-import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import type { MedicalInstitution } from '@/mocks/care-board-data';
 import { residentDataService } from '@/services/residentDataService';
@@ -76,9 +79,25 @@ export const MedicalInstitutionCard: React.FC<MedicalInstitutionCardProps> = ({
     }
   };
 
+  const actionButtons: ActionDropdownConfig[] = [
+    {
+      id: 'edit',
+      label: '編集',
+      icon: Edit3,
+      onClick: handleEditClick,
+    },
+    {
+      id: 'unlink',
+      label: '紐付け解除',
+      icon: Unlink,
+      onClick: handleUnlinkClick,
+      variant: 'destructive',
+    },
+  ];
+
   return (
     <>
-      <Card className="mb-4">
+      <Card>
         <CardHeader className="flex flex-row items-start justify-between pb-2 space-y-0">
           <div className="flex flex-col items-start">
             <h3 className="text-lg font-semibold text-carebase-blue">
@@ -88,21 +107,7 @@ export const MedicalInstitutionCard: React.FC<MedicalInstitutionCardProps> = ({
               <strong className="text-sm text-gray-500">医師: {institution.doctorName}</strong>
             </div>
           </div>
-          <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm" onClick={handleEditClick}>
-              <Edit3 className="h-3 w-3 mr-1" />
-              編集
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleUnlinkClick}
-              className="border-red-300 text-red-600 hover:bg-red-50 hover:border-red-400"
-            >
-              <Unlink className="h-3 w-3 mr-1" />
-              紐付け解除
-            </Button>
-          </div>
+          <ActionDropdownMenu actions={actionButtons} />
         </CardHeader>
         <CardContent className="text-sm">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-3">

@@ -1,8 +1,11 @@
 'use client';
 
+import {
+  ActionDropdownMenu,
+  type ActionDropdownConfig,
+} from '@/components/1_atoms/buttons/action-dropdown-menu';
 import { GenericDeleteModal } from '@/components/3_organisms/modals/generic-delete-modal';
 import { MedicalHistoryModal } from '@/components/3_organisms/modals/medical-history-modal';
-import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import type { MedicalHistory, MedicalInstitution } from '@/mocks/care-board-data';
 import { residentDataService } from '@/services/residentDataService';
@@ -79,10 +82,26 @@ export const MedicalHistoryCard: React.FC<MedicalHistoryCardProps> = ({
     return 'bg-blue-100 text-blue-700';
   };
 
+  const actionButtons: ActionDropdownConfig[] = [
+    {
+      id: 'edit',
+      label: '編集',
+      icon: Edit3,
+      onClick: handleEditClick,
+    },
+    {
+      id: 'delete',
+      label: '削除',
+      icon: Trash2,
+      onClick: handleDeleteClick,
+      variant: 'destructive',
+    },
+  ];
+
   return (
     <>
-      <Card className="mb-4">
-        <CardHeader className="flex flex-row items-center justify-between pb-2">
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
           <div className="flex items-center gap-3">
             <div>
               <p className="text-xl font-bold text-carebase-blue">{history.diseaseName}</p>
@@ -95,21 +114,7 @@ export const MedicalHistoryCard: React.FC<MedicalHistoryCardProps> = ({
               </span>
             )}
           </div>
-          <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm" onClick={handleEditClick}>
-              <Edit3 className="h-3 w-3 mr-1" />
-              編集
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleDeleteClick}
-              className="border-red-300 text-red-600 hover:bg-red-50 hover:border-red-400"
-            >
-              <Trash2 className="h-3 w-3 mr-1" />
-              削除
-            </Button>
-          </div>
+          <ActionDropdownMenu actions={actionButtons} />
         </CardHeader>
         <CardContent className="text-sm">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-1">

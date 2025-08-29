@@ -1,11 +1,11 @@
 'use client';
 
+import { ActionDropdownMenu, type ActionDropdownConfig } from '@/components/1_atoms/buttons/action-dropdown-menu';
 import { CategoryBadge } from '@/components/1_atoms/individual-points/category-badge';
 import { MediaThumbnail } from '@/components/1_atoms/individual-points/media-thumbnail';
 import { PriorityBadge } from '@/components/1_atoms/individual-points/priority-badge';
 import { StatusBadge } from '@/components/1_atoms/individual-points/status-badge';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import type { IndividualPoint } from '@/types/individual-point';
 import { format } from 'date-fns';
@@ -49,6 +49,25 @@ export const IndividualPointCard: React.FC<IndividualPointCardProps> = ({
 
   const shouldShowExpandButton = point.content.length > 100 || point.notes;
 
+  const actionButtons: ActionDropdownConfig[] = [];
+  if (onEdit) {
+    actionButtons.push({
+      id: 'edit',
+      label: '編集',
+      icon: Edit3,
+      onClick: handleEdit,
+    });
+  }
+  if (onDelete && !point.isSystemDefault) {
+    actionButtons.push({
+      id: 'delete',
+      label: '削除',
+      icon: Trash2,
+      onClick: handleDelete,
+      variant: 'destructive',
+    });
+  }
+
   return (
     <Card className={`hover:shadow-md transition-shadow ${className}`}>
       <CardHeader className="pb-3">
@@ -73,30 +92,11 @@ export const IndividualPointCard: React.FC<IndividualPointCardProps> = ({
               </div>
             </div>
           </div>
-          <div className="flex items-center gap-2 ml-4">
-            {onEdit && (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleEdit}
-                className="border-carebase-blue text-carebase-blue hover:bg-carebase-blue-light"
-              >
-                <Edit3 className="h-3 w-3 mr-1" />
-                編集
-              </Button>
-            )}
-            {onDelete && !point.isSystemDefault && (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleDelete}
-                className="border-red-300 text-red-600 hover:bg-red-50"
-              >
-                <Trash2 className="h-3 w-3 mr-1" />
-                削除
-              </Button>
-            )}
-          </div>
+          {actionButtons.length > 0 && (
+            <div className="ml-4">
+              <ActionDropdownMenu actions={actionButtons} />
+            </div>
+          )}
         </div>
       </CardHeader>
 
