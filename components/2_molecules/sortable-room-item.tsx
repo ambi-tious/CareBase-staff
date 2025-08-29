@@ -39,21 +39,43 @@ export const SortableRoomItem: React.FC<SortableRoomItemProps> = ({
       <Card
         ref={setNodeRef}
         style={style}
-        className={`border border-gray-200 cursor-grab ${
+        className={`border border-gray-200 cursor-grab relative ${
           isDragging ? 'shadow-lg opacity-50 cursor-grabbing' : 'hover:shadow-md'
         } transition-shadow`}
         {...attributes}
         {...listeners}
       >
-        <CardContent className="p-4 relative">
+        {typeof index === 'number' && (
+          <div className="absolute -top-2 -left-2 w-6 h-6 bg-carebase-blue text-white rounded-full flex items-center justify-center text-xs font-semibold">
+            {index + 1}
+          </div>
+        )}
+        <CardContent className="p-4">
           {/* Order Number */}
-          {typeof index === 'number' && (
-            <div className="absolute top-2 left-2 w-6 h-6 bg-carebase-blue text-white rounded-full flex items-center justify-center text-xs font-semibold">
-              {index + 1}
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="font-semibold text-carebase-blue text-lg">{room.name}</h3>
+              <span
+                className={`text-xs ${
+                  (room.currentOccupancy || 0) >= room.capacity
+                    ? 'text-red-700'
+                    : (room.currentOccupancy || 0) > 0
+                      ? 'text-yellow-700'
+                      : 'text-green-700'
+                }`}
+              >
+                {(room.currentOccupancy || 0) >= room.capacity ? (
+                  '満室'
+                ) : (
+                  <>
+                    <span>空きあり</span>
+                    <span className="ml-1">
+                      ( {room.capacity - (room.currentOccupancy || 0)}名 )
+                    </span>
+                  </>
+                )}
+              </span>
             </div>
-          )}
-          <div className="flex items-center justify-between mb-2 mt-2">
-            <h4 className="font-semibold text-carebase-text-primary ml-8">{room.name}</h4>
             <ActionDropdownMenu
               actions={[
                 {
@@ -78,31 +100,9 @@ export const SortableRoomItem: React.FC<SortableRoomItemProps> = ({
               ]}
             />
           </div>
-          <div className="text-sm text-gray-600">
-            <div className="flex items-center justify-between">
-              <span>定員: {room.capacity}名</span>
-              <span
-                className={`text-xs px-2 py-1 rounded-full ${
-                  (room.currentOccupancy || 0) >= room.capacity
-                    ? 'bg-red-100 text-red-700'
-                    : (room.currentOccupancy || 0) > 0
-                      ? 'bg-yellow-100 text-yellow-700'
-                      : 'bg-green-100 text-green-700'
-                }`}
-              >
-                {room.currentOccupancy || 0}/{room.capacity}
-              </span>
-            </div>
-            <div className="mt-1">
-              <span
-                className={`text-xs font-medium ${
-                  (room.currentOccupancy || 0) >= room.capacity ? 'text-red-600' : 'text-green-600'
-                }`}
-              >
-                {(room.currentOccupancy || 0) >= room.capacity ? '満室' : '空きあり'}
-              </span>
-            </div>
-            <p className="text-xs mt-1">
+          <div className="flex items-center text-gray-600 mt-2 gap-2">
+            <p className="text-xs">定員: {room.capacity}名</p>
+            <p className="text-xs">
               作成日: {new Date(room.createdAt).toLocaleDateString('ja-JP')}
             </p>
           </div>

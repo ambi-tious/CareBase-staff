@@ -458,7 +458,7 @@ export const RoomManagementModal: React.FC<RoomManagementModalProps> = ({
                       </AccordionTrigger>
                       <AccordionContent className="px-6 pb-6">
                         <div className="mb-4">
-                          <p className="text-sm text-gray-600 mb-3">
+                          <p className="text-xs text-gray-600 mb-3">
                             ドラッグ&ドロップで部屋の順番を変更できます
                           </p>
                           <RoomSortableList
