@@ -377,9 +377,9 @@ class ResidentDataService {
 
     const newHistory: MedicalHistory = {
       id: `mh-${Date.now()}`,
-      date: data.onsetDate.replace('-', '/'), // Convert YYYY-MM to YYYY/MM
+      date: data.onsetDate?.replace('-', '/') || '', // Convert YYYY-MM to YYYY/MM
       diseaseName: data.diseaseName,
-      treatmentStatus: data.treatmentStatus,
+      treatmentStatus: data.treatmentStatus || false,
       treatmentInstitution: data.treatmentInstitution,
       notes: data.notes,
     };
@@ -397,9 +397,9 @@ class ResidentDataService {
 
     const updatedHistory: MedicalHistory = {
       id: historyId,
-      date: data.onsetDate.replace(/-/g, '/'), // Convert YYYY-MM to YYYY/MM
+      date: data.onsetDate?.replace(/-/g, '/') || '', // Convert YYYY-MM to YYYY/MM
       diseaseName: data.diseaseName,
-      treatmentStatus: data.treatmentStatus,
+      treatmentStatus: data.treatmentStatus || false,
       treatmentInstitution: data.treatmentInstitution,
       notes: data.notes,
     };

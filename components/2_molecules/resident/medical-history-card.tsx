@@ -4,9 +4,10 @@ import { GenericDeleteModal } from '@/components/3_organisms/modals/generic-dele
 import { MedicalHistoryModal } from '@/components/3_organisms/modals/medical-history-modal';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import type { MedicalHistory } from '@/mocks/care-board-data';
+import type { MedicalHistory, MedicalInstitution } from '@/mocks/care-board-data';
 import { residentDataService } from '@/services/residentDataService';
 import type { MedicalHistoryFormData } from '@/validations/resident-data-validation';
+import { format } from 'date-fns';
 import { Building2, Calendar, Edit3, Trash2 } from 'lucide-react';
 import type React from 'react';
 import { useState } from 'react';
@@ -15,6 +16,7 @@ interface MedicalHistoryCardProps {
   history: MedicalHistory;
   residentId: number;
   residentName?: string;
+  medicalInstitutions: MedicalInstitution[];
   onHistoryUpdate?: (updatedHistory: MedicalHistory) => void;
   onHistoryDelete?: (historyId: string) => void;
 }
@@ -23,6 +25,7 @@ export const MedicalHistoryCard: React.FC<MedicalHistoryCardProps> = ({
   history,
   residentId,
   residentName,
+  medicalInstitutions,
   onHistoryUpdate,
   onHistoryDelete,
 }) => {
@@ -72,17 +75,8 @@ export const MedicalHistoryCard: React.FC<MedicalHistoryCardProps> = ({
     }
   };
 
-  const getStatusBadgeColor = (status: string) => {
-    switch (status) {
-      case '治療中':
-        return 'bg-blue-100 text-blue-700';
-      case '完治':
-        return 'bg-green-100 text-green-700';
-      case '経過観察':
-        return 'bg-yellow-100 text-yellow-700';
-      default:
-        return 'bg-gray-100 text-gray-700';
-    }
+  const getStatusBadgeColor = () => {
+    return 'bg-blue-100 text-blue-700';
   };
 
   return (
@@ -91,14 +85,15 @@ export const MedicalHistoryCard: React.FC<MedicalHistoryCardProps> = ({
         <CardHeader className="flex flex-row items-center justify-between pb-2">
           <div className="flex items-center gap-3">
             <div>
-              <h3 className="text-lg font-semibold mb-1">病名</h3>
               <p className="text-xl font-bold text-carebase-blue">{history.diseaseName}</p>
             </div>
-            <span
-              className={`px-2 py-1 text-xs font-semibold rounded-full ${getStatusBadgeColor(history.treatmentStatus)}`}
-            >
-              {history.treatmentStatus}
-            </span>
+            {history.treatmentStatus && (
+              <span
+                className={`px-2 py-1 text-xs font-semibold rounded-full ${getStatusBadgeColor()}`}
+              >
+                治療中
+              </span>
+            )}
           </div>
           <div className="flex items-center gap-2">
             <Button variant="outline" size="sm" onClick={handleEditClick}>
@@ -118,21 +113,17 @@ export const MedicalHistoryCard: React.FC<MedicalHistoryCardProps> = ({
         </CardHeader>
         <CardContent className="text-sm">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-1">
-            <p>
-              <Calendar className="inline h-4 w-4 mr-1 text-gray-500" />
-              <strong>発症年月:</strong> {history.date}
-            </p>
+            <div className="flex items-center gap-2">
+              <Calendar className="inline h-4 w-4 text-gray-500" />
+              {history.date ? format(new Date(history.date), 'yyyy年MM月') : ''}
+            </div>
             {history.treatmentInstitution && (
-              <p>
-                <Building2 className="inline h-4 w-4 mr-1 text-gray-500" />
-                <strong>治療機関:</strong> {history.treatmentInstitution}
-              </p>
+              <div className="flex items-center gap-2">
+                <Building2 className="inline h-4 w-4 text-gray-500" />
+                {history.treatmentInstitution}
+              </div>
             )}
-            {history.notes && (
-              <p className="md:col-span-2 pt-2 mt-2 border-t">
-                <strong>備考:</strong> {history.notes}
-              </p>
-            )}
+            {history.notes && <p className="md:col-span-2 pt-2 mt-2 border-t">{history.notes}</p>}
           </div>
         </CardContent>
       </Card>
@@ -143,6 +134,7 @@ export const MedicalHistoryCard: React.FC<MedicalHistoryCardProps> = ({
         onSubmit={handleEditSubmit}
         history={history}
         residentName={residentName}
+        medicalInstitutions={medicalInstitutions}
         mode="edit"
       />
 
@@ -151,7 +143,7 @@ export const MedicalHistoryCard: React.FC<MedicalHistoryCardProps> = ({
         onClose={() => setIsDeleteModalOpen(false)}
         onConfirm={handleDeleteConfirm}
         itemName={history.diseaseName}
-        itemType="既往歴情報"
+        itemType="現病歴＆既往歴情報"
         isDeleting={isDeleting}
         error={deleteError}
       />

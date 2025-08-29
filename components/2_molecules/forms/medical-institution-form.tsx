@@ -2,6 +2,7 @@
 
 import { DoctorCombobox } from '@/components/1_atoms/medical/doctor-combobox';
 import { MedicalInstitutionCombobox } from '@/components/1_atoms/medical/medical-institution-combobox';
+import { SelectedMedicalInstitutionInfo } from '@/components/2_molecules/medical/selected-medical-institution-info';
 import { MedicalInstitutionMasterFormModal } from '@/components/3_organisms/modals/medical-institution-master-form-modal';
 import { MedicalInstitutionMasterModal } from '@/components/3_organisms/modals/medical-institution-master-modal';
 import { Button } from '@/components/ui/button';
@@ -25,7 +26,6 @@ import React from 'react';
 interface MedicalInstitutionFormProps {
   onSubmit: (data: MedicalInstitutionFormData) => Promise<boolean>;
   onCancel: () => void;
-  onCreateNew?: () => void;
   initialData?: Partial<MedicalInstitutionFormData>;
   className?: string;
 }
@@ -33,7 +33,6 @@ interface MedicalInstitutionFormProps {
 export const MedicalInstitutionForm: React.FC<MedicalInstitutionFormProps> = ({
   onSubmit,
   onCancel,
-  onCreateNew,
   initialData,
   className = '',
 }) => {
@@ -193,54 +192,10 @@ export const MedicalInstitutionForm: React.FC<MedicalInstitutionFormProps> = ({
             />
 
             {/* 医療機関情報表示エリア */}
-            {selectedInstitution && (
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                <h3 className="text-sm font-semibold text-blue-800 mb-3 flex items-center">
-                  <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                    <path
-                      fillRule="evenodd"
-                      d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                  選択された医療機関の情報
-                </h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      電話番号
-                    </label>
-                    <div className="text-sm text-gray-900 mt-1">
-                      {selectedInstitution.phone || '未設定'}
-                    </div>
-                  </div>
-                  <div>
-                    <label className="text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      FAX
-                    </label>
-                    <div className="text-sm text-gray-900 mt-1">
-                      {selectedInstitution.fax || '未設定'}
-                    </div>
-                  </div>
-                  <div>
-                    <label className="text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      住所
-                    </label>
-                    <div className="text-sm text-gray-900 mt-1">
-                      {selectedInstitution.address || '未設定'}
-                    </div>
-                  </div>
-                  <div>
-                    <label className="text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      備考
-                    </label>
-                    <div className="text-sm text-gray-900 mt-1">
-                      {selectedInstitution.notes || '未設定'}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
+            <SelectedMedicalInstitutionInfo
+              institution={selectedInstitution}
+              showDoctorName={false}
+            />
 
             <FormField
               control={control}

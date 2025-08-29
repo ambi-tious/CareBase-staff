@@ -17,7 +17,6 @@ interface DatePickerProps {
   disabled?: boolean;
   className?: string;
   id?: string;
-  mode?: 'date' | 'month';
   captionLayout?: 'label' | 'dropdown' | 'dropdown-months' | 'dropdown-years';
 }
 
@@ -28,7 +27,6 @@ export function DatePicker({
   disabled = false,
   className,
   id,
-  mode = 'date',
   captionLayout,
 }: DatePickerProps) {
   const [isOpen, setIsOpen] = React.useState(false);
@@ -45,10 +43,6 @@ export function DatePicker({
       setCurrentMonth(new Date(value));
     }
   }, [value]);
-
-  // デフォルトのプレースホルダーを設定
-  const defaultPlaceholder = mode === 'month' ? '年月を選択してください' : '日付を選択してください';
-  const finalPlaceholder = placeholder || defaultPlaceholder;
 
   // 文字列の日付をDateオブジェクトに変換
   const dateValue = value ? new Date(value) : undefined;
@@ -70,18 +64,13 @@ export function DatePicker({
       const day = value ? new Date(value).getDate() : 1;
       const formattedDate = format(new Date(date.setDate(day)), 'yyyy-MM-dd');
       onChange(formattedDate);
-      if (mode === 'month') {
-        setIsOpen(false);
-      }
     }
   };
 
   // 表示用の日付フォーマット
   const displayValue = dateValue
-    ? mode === 'month'
-      ? format(dateValue, 'yyyy年MM月', { locale: ja })
-      : format(dateValue, 'yyyy年MM月dd日', { locale: ja })
-    : finalPlaceholder;
+    ? format(dateValue, 'yyyy年MM月dd日', { locale: ja })
+    : placeholder || '日付を選択してください';
 
   return (
     <Popover open={isOpen} onOpenChange={setIsOpen}>
@@ -101,27 +90,14 @@ export function DatePicker({
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-auto p-0" align="start">
-        {mode === 'month' ? (
-          <Calendar
-            mode="single"
-            selected={dateValue}
-            month={currentMonth}
-            onMonthChange={handleMonthChange}
-            captionLayout={captionLayout || 'dropdown'}
-            locale={ja}
-            className="[&_.rdp-table]:hidden [&_.rdp-nav]:hidden"
-          />
-        ) : (
-          <Calendar
-            mode="single"
-            selected={dateValue}
-            onSelect={handleDateSelect}
-            captionLayout={captionLayout || 'dropdown'}
-            onMonthChange={handleMonthChange}
-            month={currentMonth}
-            locale={ja}
-          />
-        )}
+        <Calendar
+          selected={dateValue}
+          onSelect={handleDateSelect}
+          captionLayout={captionLayout || 'dropdown'}
+          onMonthChange={handleMonthChange}
+          month={currentMonth}
+          locale={ja}
+        />
       </PopoverContent>
     </Popover>
   );

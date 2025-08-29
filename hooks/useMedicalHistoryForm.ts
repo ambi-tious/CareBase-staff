@@ -18,7 +18,8 @@ interface UseMedicalHistoryFormOptions {
 const initialFormData: MedicalHistoryFormData = {
   diseaseName: '',
   onsetDate: '',
-  treatmentStatus: '治療中',
+  treatmentStatus: false,
+  treatmentInstitution: '',
   notes: '',
 };
 

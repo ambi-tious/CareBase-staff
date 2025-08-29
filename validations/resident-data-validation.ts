@@ -95,18 +95,18 @@ export const medicalHistoryFormSchema = z
       .max(100, '病名は100文字以内で入力してください'),
     onsetDate: z
       .string()
-      .min(1, '発症年月は必須です')
-      .regex(/^\d{4}-\d{2}$/, '有効な年月を入力してください（YYYY-MM）'),
-    treatmentStatus: z.enum(['治療中', '完治', '経過観察', 'その他'], {
-      required_error: '治療状況は必須です',
-      invalid_type_error: '有効な治療状況を選択してください',
-    }),
+      .optional()
+      .refine((val) => !val || /^\d{4}-\d{2}$/.test(val), {
+        message: '有効な年月を入力してください（YYYY-MM）',
+      }),
+    treatmentStatus: z.boolean().optional(),
     treatmentInstitution: z.string().optional(),
     notes: z.string().optional(),
   })
   .refine(
     (data) => {
-      // 発症年月が過去の日付かチェック
+      // 発症年月が入力されている場合のみ過去の日付かチェック
+      if (!data.onsetDate) return true;
       const onsetDate = new Date(data.onsetDate + '-01');
       const today = new Date();
       return onsetDate <= today;

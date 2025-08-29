@@ -1,17 +1,16 @@
 'use client';
 
 import { ContactScheduleDetail } from '@/components/3_organisms/contact-schedule/contact-schedule-detail';
-import { useToast } from '@/components/ui/use-toast';
 import { getContactScheduleById } from '@/mocks/contact-schedule-data';
 import type { ContactScheduleItem } from '@/types/contact-schedule';
 import { useEffect, useState } from 'react';
+import { toast } from 'sonner';
 
 interface ContactScheduleDetailPageProps {
   params: Promise<{ itemId: string }>;
 }
 
 export default function ContactScheduleDetailPage({ params }: ContactScheduleDetailPageProps) {
-  const { toast } = useToast();
   const [item, setItem] = useState<ContactScheduleItem | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -37,18 +36,12 @@ export default function ContactScheduleDetailPage({ params }: ContactScheduleDet
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
       // モックの削除成功処理
-      toast({
-        title: '連絡・予定を削除しました',
-      });
+      toast.success('連絡・予定を削除しました');
 
       return true;
     } catch (error) {
       console.error('Failed to delete contact schedule:', error);
-      toast({
-        title: 'エラーが発生しました',
-        description: '削除に失敗しました。もう一度お試しください。',
-        variant: 'destructive',
-      });
+      toast.error('削除に失敗しました。もう一度お試しください。');
       return false;
     }
   };

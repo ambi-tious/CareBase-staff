@@ -42,7 +42,7 @@ const initialMedicalInstitutionFormData: MedicalInstitutionFormData = {
 const initialMedicalHistoryFormData: MedicalHistoryFormDataType = {
   diseaseName: '',
   onsetDate: '',
-  treatmentStatus: '治療中',
+  treatmentStatus: false,
   treatmentInstitution: '',
   notes: '',
 };

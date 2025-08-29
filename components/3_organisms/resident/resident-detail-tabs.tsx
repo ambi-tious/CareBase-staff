@@ -109,7 +109,7 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
     { value: 'family', label: 'ご家族情報' },
     { value: 'homeCare', label: '居宅介護支援事業所' },
     { value: 'medical', label: 'かかりつけ医療機関' },
-    { value: 'history', label: '既往歴' },
+    { value: 'history', label: '現病歴＆既往歴' },
     { value: 'medicationInfo', label: 'お薬情報' },
     { value: 'individualPoints', label: '個別ポイント' },
     { value: 'files', label: 'ファイル' },
@@ -169,35 +169,6 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
     }
   };
 
-  const handleHomeCareOfficeSelect = async (office: HomeCareOffice) => {
-    try {
-      // 既に登録されているかチェック
-      const isAlreadyRegistered = homeCareOffices.some((existing) => existing.id === office.id);
-      if (!isAlreadyRegistered) {
-        // 利用者に紐付け
-        await residentDataService.associateHomeCareOfficeToResident(resident.id, office.id);
-        setHomeCareOffices((prev) => [...prev, office]);
-
-        // Show success toast
-        toast.success('居宅介護支援事業所の紐付けが完了しました。');
-      }
-
-      setIsHomeCareMasterModalOpen(false);
-    } catch (error) {
-      console.error('Failed to associate home care office:', error);
-      toast.error('居宅介護支援事業所の紐付けに失敗しました。');
-    }
-  };
-
-  const handleHomeCareOfficeCreateNew = () => {
-    setIsHomeCareModalOpen(true);
-  };
-
-  const handleMedicalInstitutionCreateNew = () => {
-    // setIsMedicalModalOpen(false);
-    setIsMedicalMasterModalOpen(true);
-  };
-
   const handleMedicalInstitutionMasterRefresh = () => {
     // 医療機関マスタが更新された際の処理（必要に応じて実装）
     console.log('Medical institution master refreshed');
@@ -231,7 +202,7 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
       setMedicalHistory((prev) => [...prev, newHistory]);
 
       // Show success toast
-      toast.success('既往歴の登録が完了しました。');
+      toast.success('現病歴＆既往歴の登録が完了しました。');
 
       return true;
     } catch (error) {
@@ -366,7 +337,7 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
       case 'medical':
         return 'かかりつけ医療機関を追加';
       case 'history':
-        return '既往歴を追加';
+        return '現病歴＆既往歴を追加';
       case 'medicationInfo':
         return 'お薬情報を追加';
       case 'individualPoints':
@@ -476,8 +447,8 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
               {[...medicalHistory]
                 .sort((a, b) => {
                   // First sort by onset date (newest first)
-                  const dateA = new Date(a.date.replace('/', '-') + '-01');
-                  const dateB = new Date(b.date.replace('/', '-') + '-01');
+                  const dateA = a.date ? new Date(a.date.replace('/', '-') + '-01') : new Date(0);
+                  const dateB = b.date ? new Date(b.date.replace('/', '-') + '-01') : new Date(0);
                   if (dateB.getTime() !== dateA.getTime()) {
                     return dateB.getTime() - dateA.getTime();
                   }
@@ -490,13 +461,14 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
                     history={history}
                     residentId={resident.id}
                     residentName={resident.name}
+                    medicalInstitutions={medicalInstitutions}
                     onHistoryUpdate={handleMedicalHistoryUpdate}
                     onHistoryDelete={handleMedicalHistoryDelete}
                   />
                 ))}
             </div>
           ) : (
-            <p className="text-center text-gray-500 py-8">既往歴の情報はありません。</p>
+            <p className="text-center text-gray-500 py-8">現病歴＆既往歴の情報はありません。</p>
           )}
         </TabsContent>
 
@@ -592,7 +564,6 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
         isOpen={isMedicalModalOpen}
         onClose={() => setIsMedicalModalOpen(false)}
         onSubmit={handleMedicalInstitutionSubmit}
-        onCreateNew={handleMedicalInstitutionCreateNew}
         residentName={resident.name}
         mode="create"
       />
@@ -602,6 +573,7 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
         onClose={() => setIsMedicalHistoryModalOpen(false)}
         onSubmit={handleMedicalHistorySubmit}
         residentName={resident.name}
+        medicalInstitutions={medicalInstitutions}
         mode="create"
       />
 

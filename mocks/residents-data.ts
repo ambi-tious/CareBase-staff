@@ -39,9 +39,9 @@ export interface MedicalInstitution {
 
 export interface MedicalHistory {
   id: string;
-  date: string;
+  date?: string;
   diseaseName: string;
-  treatmentStatus: '治療中' | '完治' | '経過観察' | 'その他';
+  treatmentStatus: boolean;
   treatmentInstitution?: string;
   notes?: string;
 }
@@ -187,25 +187,25 @@ export const careBoardData: Resident[] = [
     medicalHistory: [
       {
         id: 'history-1-1',
-        date: '2020-03-15',
+        date: '2020-03',
         diseaseName: '高血圧症',
-        treatmentStatus: '治療中',
+        treatmentStatus: true,
         treatmentInstitution: '神戸中央病院',
         notes: 'ACE阻害薬で良好にコントロール中',
       },
       {
         id: 'history-1-2',
-        date: '2018-07-20',
+        date: '2018-07',
         diseaseName: '糖尿病',
-        treatmentStatus: '治療中',
+        treatmentStatus: true,
         treatmentInstitution: '神戸中央病院',
         notes: 'HbA1c 6.8%で安定',
       },
       {
         id: 'history-1-3',
-        date: '2019-11-10',
+        date: '2019-11',
         diseaseName: '白内障',
-        treatmentStatus: '完治',
+        treatmentStatus: false,
         treatmentInstitution: '神戸西眼科クリニック',
         notes: '両眼手術済み、経過良好',
       },
@@ -417,27 +417,26 @@ export const careBoardData: Resident[] = [
     medicalHistory: [
       {
         id: 'history-2-1',
-        date: '2022-01-10',
+        date: '2022-01',
         diseaseName: 'アルツハイマー型認知症',
-        treatmentStatus: '治療中',
+        treatmentStatus: true,
         treatmentInstitution: '大阪市立総合医療センター',
         notes: 'MMSE 18点、中等度認知症',
       },
       {
         id: 'history-2-2',
-        date: '2020-05-15',
+        date: '2020-05',
         diseaseName: '変形性膝関節症',
-        treatmentStatus: '治療中',
+        treatmentStatus: true,
         treatmentInstitution: '梅田整形外科',
         notes: '両膝に痛み、歩行器使用',
       },
       {
         id: 'history-2-3',
-        date: '2019-12-01',
         diseaseName: '不眠症',
-        treatmentStatus: '治療中',
+        treatmentStatus: true,
         treatmentInstitution: '大阪市立総合医療センター',
-        notes: '睡眠薬調整中',
+        notes: '睡眠薬調整中、発症時期不明',
       },
     ],
     medications: [
@@ -643,25 +642,25 @@ export const careBoardData: Resident[] = [
     medicalHistory: [
       {
         id: 'history-3-1',
-        date: '2021-03-20',
+        date: '2021-03',
         diseaseName: '心房細動',
-        treatmentStatus: '治療中',
+        treatmentStatus: true,
         treatmentInstitution: '京都第一赤十字病院',
         notes: '抗凝固薬服用中、定期心電図モニタリング',
       },
       {
         id: 'history-3-2',
-        date: '2020-09-10',
+        date: '2020-09',
         diseaseName: '緑内障',
-        treatmentStatus: '治療中',
+        treatmentStatus: true,
         treatmentInstitution: '烏丸眼科',
         notes: '点眼薬で眼圧コントロール中',
       },
       {
         id: 'history-3-3',
-        date: '2019-06-15',
+        date: '2019-06',
         diseaseName: '前立腺肥大症',
-        treatmentStatus: '治療中',
+        treatmentStatus: true,
         treatmentInstitution: '京都第一赤十字病院',
         notes: 'α1ブロッカーで症状改善',
       },
@@ -866,27 +865,26 @@ export const careBoardData: Resident[] = [
     medicalHistory: [
       {
         id: 'history-4-1',
-        date: '2023-08-15',
+        date: '2023-08',
         diseaseName: '腰椎圧迫骨折',
-        treatmentStatus: '経過観察',
+        treatmentStatus: false,
         treatmentInstitution: '横浜労災病院',
         notes: 'L2圧迫骨折、保存療法で経過良好',
       },
       {
         id: 'history-4-2',
-        date: '2022-04-10',
+        date: '2022-04',
         diseaseName: '骨粗鬆症',
-        treatmentStatus: '治療中',
+        treatmentStatus: true,
         treatmentInstitution: '新横浜内科クリニック',
         notes: '骨密度改善傾向',
       },
       {
         id: 'history-4-3',
-        date: '2021-11-05',
         diseaseName: '高脂血症',
-        treatmentStatus: '治療中',
+        treatmentStatus: true,
         treatmentInstitution: '新横浜内科クリニック',
-        notes: 'LDL-C 120mg/dlで目標達成',
+        notes: 'LDL-C 120mg/dlで目標達成、発症時期不明',
       },
     ],
     medications: [
@@ -1069,17 +1067,17 @@ export const careBoardData: Resident[] = [
     medicalHistory: [
       {
         id: 'history-5-1',
-        date: '2023-02-01',
+        date: '2023-02',
         diseaseName: '慢性腎不全',
-        treatmentStatus: '治療中',
+        treatmentStatus: true,
         treatmentInstitution: '関東中央病院',
         notes: 'CKD stage 3、食事療法中',
       },
       {
         id: 'history-5-2',
-        date: '2022-08-20',
+        date: '2022-08',
         diseaseName: '貧血',
-        treatmentStatus: '治療中',
+        treatmentStatus: true,
         treatmentInstitution: '関東中央病院',
         notes: '腎性貧血、EPO製剤使用',
       },
@@ -1185,9 +1183,9 @@ export const careBoardData: Resident[] = [
     medicalHistory: [
       {
         id: 'history-6-1',
-        date: '2023-05-10',
+        date: '2023-05',
         diseaseName: '前立腺癌',
-        treatmentStatus: '経過観察',
+        treatmentStatus: false,
         treatmentInstitution: '横浜市立みなと赤十字病院',
         notes: '根治手術後、PSA陰性で経過良好',
       },

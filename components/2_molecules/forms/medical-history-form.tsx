@@ -1,8 +1,10 @@
 'use client';
 
+import { ResidentMedicalInstitutionCombobox } from '@/components/1_atoms/medical/resident-medical-institution-combobox';
+import { SelectedMedicalInstitutionInfo } from '@/components/2_molecules/medical/selected-medical-institution-info';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
-import { DatePicker } from '@/components/ui/date-picker';
+import { Checkbox } from '@/components/ui/checkbox';
 import {
   Form,
   FormControl,
@@ -12,15 +14,9 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { useMedicalHistoryForm } from '@/hooks/useMedicalHistoryForm';
+import type { MedicalInstitution } from '@/mocks/residents-data';
 import type { MedicalHistoryFormData } from '@/validations/resident-data-validation';
 import { AlertCircle, RefreshCw } from 'lucide-react';
 import React from 'react';
@@ -29,24 +25,41 @@ interface MedicalHistoryFormProps {
   onSubmit: (data: MedicalHistoryFormData) => Promise<boolean>;
   onCancel: () => void;
   initialData?: Partial<MedicalHistoryFormData>;
+  medicalInstitutions: MedicalInstitution[];
   className?: string;
 }
-
-const treatmentStatusOptions = [
-  { value: '治療中', label: '治療中' },
-  { value: '完治', label: '完治' },
-  { value: '経過観察', label: '経過観察' },
-  { value: 'その他', label: 'その他' },
-];
 
 export const MedicalHistoryForm: React.FC<MedicalHistoryFormProps> = ({
   onSubmit,
   onCancel,
   initialData,
+  medicalInstitutions,
   className = '',
 }) => {
   const form = useMedicalHistoryForm({ onSubmit, initialData });
-  const { isSubmitting, error, retry, control, handleSubmit } = form;
+  const { isSubmitting, error, retry, control, handleSubmit, watch } = form;
+
+  // 選択された医療機関の情報表示用ステート
+  const [selectedInstitution, setSelectedInstitution] = React.useState<MedicalInstitution | null>(
+    null
+  );
+
+  // 初期データがある場合の処理
+  React.useEffect(() => {
+    if (initialData?.treatmentInstitution && !selectedInstitution) {
+      const institution = medicalInstitutions.find(
+        (inst) => inst.institutionName === initialData.treatmentInstitution
+      );
+      if (institution) {
+        setSelectedInstitution(institution);
+      }
+    }
+  }, [initialData, medicalInstitutions, selectedInstitution]);
+
+  // 医療機関選択時の処理
+  const handleInstitutionSelect = (institution: MedicalInstitution | null) => {
+    setSelectedInstitution(institution);
+  };
 
   const onFormSubmit = handleSubmit(async (data: MedicalHistoryFormData) => {
     try {
@@ -111,15 +124,13 @@ export const MedicalHistoryForm: React.FC<MedicalHistoryFormProps> = ({
               name="onsetDate"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>
-                    発症年月 <span className="text-red-500">*</span>
-                  </FormLabel>
+                  <FormLabel>発症年月</FormLabel>
                   <FormControl>
-                    <DatePicker
+                    <Input
+                      type="month"
                       value={field.value}
-                      onChange={field.onChange}
+                      onChange={(e) => field.onChange(e.target.value)}
                       disabled={isSubmitting}
-                      mode="month"
                       placeholder="発症年月を選択してください"
                     />
                   </FormControl>
@@ -132,28 +143,20 @@ export const MedicalHistoryForm: React.FC<MedicalHistoryFormProps> = ({
               control={control}
               name="treatmentStatus"
               render={({ field }) => (
-                <FormItem>
-                  <FormLabel>
-                    治療状況 <span className="text-red-500">*</span>
-                  </FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    value={field.value}
-                    disabled={isSubmitting}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="治療状況を選択" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {treatmentStatusOptions.map((option) => (
-                        <SelectItem key={option.value} value={option.value}>
-                          {option.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                  <FormControl>
+                    <Checkbox
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                      disabled={isSubmitting}
+                    />
+                  </FormControl>
+                  <div className="space-y-1 leading-none">
+                    <FormLabel>治療中</FormLabel>
+                    <p className="text-xs text-muted-foreground">
+                      現在治療中の場合はチェックしてください
+                    </p>
+                  </div>
                   <FormMessage />
                 </FormItem>
               )}
@@ -170,11 +173,24 @@ export const MedicalHistoryForm: React.FC<MedicalHistoryFormProps> = ({
                 <FormItem>
                   <FormLabel>治療機関名</FormLabel>
                   <FormControl>
-                    <Input {...field} placeholder="○○病院" disabled={isSubmitting} />
+                    <ResidentMedicalInstitutionCombobox
+                      value={field.value || ''}
+                      onValueChange={field.onChange}
+                      onInstitutionSelect={handleInstitutionSelect}
+                      medicalInstitutions={medicalInstitutions}
+                      placeholder="治療機関を選択してください"
+                      disabled={isSubmitting}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
+            />
+
+            {/* 医療機関情報表示エリア */}
+            <SelectedMedicalInstitutionInfo
+              institution={selectedInstitution}
+              showDoctorName={true}
             />
           </div>
         </div>
