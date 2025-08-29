@@ -1,9 +1,6 @@
 'use client';
 
-import { CategoryBadge } from '@/components/1_atoms/care-record/category-badge';
-import { CategoryBadge as HandoverCategoryBadge } from '@/components/1_atoms/handover/category-badge';
-import { PriorityBadge as HandoverPriorityBadge } from '@/components/1_atoms/handover/priority-badge';
-import { StatusBadge as HandoverStatusBadge } from '@/components/1_atoms/handover/status-badge';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -194,14 +191,11 @@ export const RecordDataDailyView: React.FC<RecordDataDailyViewProps> = ({
                       </TableCell>
                       <TableCell className="text-sm w-[7rem]">{record.createdByName}</TableCell>
                       <TableCell className="w-[9.5rem]">
-                        <CategoryBadge
-                          category={record.category}
-                          className="w-[9.5rem] justify-start"
-                        />
+                        <Badge variant="secondary">{record.category}</Badge>
                       </TableCell>
                       <TableCell className="max-w-xs">
                         <div className="font-medium text-sm line-clamp-1">{record.title}</div>
-                        <div className="text-xs text-gray-500 line-clamp-1">{record.summary}</div>
+                        <div className="text-xs text-gray-500 line-clamp-1">{record.content}</div>
                       </TableCell>
                       <TableCell className="w-[80px]">
                         <Button variant="outline" size="sm" asChild>
@@ -279,14 +273,11 @@ export const RecordDataDailyView: React.FC<RecordDataDailyViewProps> = ({
                       </TableCell>
                       <TableCell className="text-sm w-[7rem]">{record.createdByName}</TableCell>
                       <TableCell className="w-[9.5rem]">
-                        <CategoryBadge
-                          category={record.category}
-                          className="w-[9.5rem] justify-start"
-                        />
+                        <Badge variant="secondary">{record.category}</Badge>
                       </TableCell>
                       <TableCell className="max-w-xs">
                         <div className="font-medium text-sm line-clamp-1">{record.title}</div>
-                        <div className="text-xs text-gray-500 line-clamp-1">{record.summary}</div>
+                        <div className="text-xs text-gray-500 line-clamp-1">{record.content}</div>
                       </TableCell>
                       <TableCell className="w-[80px]">
                         <Button variant="outline" size="sm" asChild>
@@ -364,17 +355,14 @@ export const RecordDataDailyView: React.FC<RecordDataDailyViewProps> = ({
                       </TableCell>
                       <TableCell className="text-sm w-[7rem]">{handover.createdByName}</TableCell>
                       <TableCell className="w-[9.5rem]">
-                        <HandoverCategoryBadge
-                          category={handover.category}
-                          className="w-[9.5rem] justify-start"
-                        />
+                        <Badge variant="secondary">{handover.category}</Badge>
                       </TableCell>
                       <TableCell className="max-w-xs">
                         <div className="font-medium text-sm line-clamp-1">{handover.title}</div>
                         <div className="text-xs text-gray-500 line-clamp-1">{handover.content}</div>
                         <div className="flex items-center gap-2">
-                          <HandoverPriorityBadge priority={handover.priority} />
-                          <HandoverStatusBadge status={handover.status} />
+                          <Badge variant="outline">{handover.priority}</Badge>
+                          <Badge variant="default">{handover.status}</Badge>
                         </div>
                       </TableCell>
                       <TableCell className="w-[80px]">

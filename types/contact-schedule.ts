@@ -28,6 +28,7 @@ export interface ContactScheduleItem {
   tags?: string[];
   relatedResidentId?: string;
   relatedResidentName?: string;
+  category: string;
 }
 
 // Type options

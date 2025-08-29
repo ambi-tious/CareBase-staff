@@ -5,8 +5,6 @@ import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import type { Resident } from '@/mocks/care-board-data';
-import { careRecordData } from '@/mocks/care-record-data';
-import { handoverData } from '@/mocks/handover-data';
 import { addDays, format } from 'date-fns';
 import { ja } from 'date-fns/locale';
 import {
@@ -22,6 +20,10 @@ import type React from 'react';
 import { useEffect, useState } from 'react';
 import { RecordDataDailyView } from './record-data-daily-view';
 import { RecordDataMonthlyView } from './record-data-monthly-view';
+// import { careRecordData } from '@/mocks/care-record-data'; // File not found - using empty array
+const careRecordData: any[] = [];
+// import { handoverData } from '@/mocks/handover-data'; // File not found - using empty array
+const handoverData: any[] = [];
 
 interface RecordDataViewProps {
   resident: Resident;
