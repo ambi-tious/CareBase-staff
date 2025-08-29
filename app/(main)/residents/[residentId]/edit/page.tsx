@@ -236,7 +236,6 @@ export default function EditResidentPage({ params }: EditResidentPageProps) {
               furigana: resident.furigana || '',
               dob: toHyphenDate(resident.dob),
               sex: resident.sex || '男',
-              careLevel: resident.careLevel || '',
               floorGroup: resident.floorGroup || '',
               unitTeam: resident.unitTeam || '',
               roomInfo: resident.roomInfo || '',
@@ -244,10 +243,6 @@ export default function EditResidentPage({ params }: EditResidentPageProps) {
               dischargeDate: toHyphenDate(resident.dischargeDate),
               status: (resident.status as '入所前' | '入所中' | '退所' | 'ー') || 'ー',
               profileImage: resident.avatarUrl || '',
-              certificationDate: resident.certificationDate || '',
-              certificationStartDate: '', // 表示項目外のため未設定
-              certificationEndDate: '', // 同上
-              age: '', // 生年月日から自動計算
               notes: resident.notes || '',
             }}
             disabled={isSubmitting}
