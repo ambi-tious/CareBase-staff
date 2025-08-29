@@ -1,5 +1,6 @@
 'use client';
 
+import { RoomSortableList } from '@/components/2_molecules/room-sortable-list';
 import { GenericDeleteModal } from '@/components/3_organisms/modals/generic-delete-modal';
 import {
   Accordion,
@@ -42,9 +43,10 @@ import {
   getTeamOptionsByGroup,
 } from '@/utils/staff-utils';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { AlertCircle, Building, Edit3, Home, Plus, Trash2 } from 'lucide-react';
+import { AlertCircle, Building, Home, Plus } from 'lucide-react';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 import { z } from 'zod';
 
 // Room validation schema
@@ -78,6 +80,7 @@ interface RoomManagementModalProps {
   onCreateRoom: (data: RoomFormData) => Promise<boolean>;
   onUpdateRoom: (roomId: string, data: RoomFormData) => Promise<boolean>;
   onDeleteRoom: (roomId: string) => Promise<boolean>;
+  onReorderRooms: (groupId: string, teamId: string, roomIds: string[]) => Promise<boolean>;
 }
 
 export const RoomManagementModal: React.FC<RoomManagementModalProps> = ({
@@ -87,6 +90,7 @@ export const RoomManagementModal: React.FC<RoomManagementModalProps> = ({
   onCreateRoom,
   onUpdateRoom,
   onDeleteRoom,
+  onReorderRooms,
 }) => {
   const [activeTab, setActiveTab] = useState('list');
   const [editingRoom, setEditingRoom] = useState<Room | null>(null);
@@ -96,6 +100,7 @@ export const RoomManagementModal: React.FC<RoomManagementModalProps> = ({
   const [deleteConfirmRoom, setDeleteConfirmRoom] = useState<Room | null>(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [localRooms, setLocalRooms] = useState<Room[]>(rooms);
 
   const form = useForm<RoomFormData>({
     resolver: zodResolver(roomFormSchema),
@@ -125,6 +130,11 @@ export const RoomManagementModal: React.FC<RoomManagementModalProps> = ({
 
   const groupOptions = getAllGroupOptions();
   const teamOptions = getTeamOptionsByGroup(watchedGroupId || '');
+
+  // Update local rooms when props change
+  useEffect(() => {
+    setLocalRooms(rooms);
+  }, [rooms]);
 
   // Load current logged-in user's group and team information
   useEffect(() => {
@@ -193,6 +203,7 @@ export const RoomManagementModal: React.FC<RoomManagementModalProps> = ({
       if (success) {
         resetForm();
         setActiveTab('list');
+        // Note: ローカル状態は親コンポーネントからのprops更新で自動的に同期される
       } else {
         setError(editingRoom ? '部屋の更新に失敗しました。' : '部屋の作成に失敗しました。');
       }
@@ -258,8 +269,55 @@ export const RoomManagementModal: React.FC<RoomManagementModalProps> = ({
     setActiveTab('form');
   }, [resetForm]);
 
+  const handleRoomReorder = useCallback(
+    async (groupId: string, teamId: string, roomIds: string[]) => {
+      // すぐにローカル状態を更新（楽観的更新）
+      const updatedRooms = localRooms.map((room) => {
+        if (room.groupId === groupId && room.teamId === teamId) {
+          const newIndex = roomIds.indexOf(room.id);
+          if (newIndex !== -1) {
+            return { ...room, sortOrder: newIndex + 1 };
+          }
+        }
+        return room;
+      });
+
+      // ソート順に並び替え
+      const sortedRooms = updatedRooms.sort((a, b) => {
+        if (a.groupId !== b.groupId) return a.groupId.localeCompare(b.groupId);
+        if (a.teamId !== b.teamId) return a.teamId.localeCompare(b.teamId);
+        return (a.sortOrder || 999) - (b.sortOrder || 999);
+      });
+
+      setLocalRooms(sortedRooms);
+
+      // バックグラウンドでサーバーに更新を送信
+      try {
+        const success = await onReorderRooms(groupId, teamId, roomIds);
+        if (success) {
+          // 成功時のメッセージ表示
+          const groupName = getGroupName(groupId);
+          const teamName = getTeamName(teamId);
+          toast.success(`${groupName} - ${teamName}の部屋順番を更新しました`);
+        } else {
+          // 失敗した場合は元の状態に戻す
+          setLocalRooms(rooms);
+          setError('部屋の並び替えに失敗しました。');
+          toast.error('部屋の順番の更新に失敗しました');
+        }
+      } catch (error) {
+        console.error('Room reorder error:', error);
+        // 失敗した場合は元の状態に戻す
+        setLocalRooms(rooms);
+        setError('ネットワークエラーが発生しました。');
+        toast.error('ネットワークエラーが発生しました');
+      }
+    },
+    [localRooms, onReorderRooms, rooms]
+  );
+
   // Group rooms by group and team
-  const groupedRooms = rooms.reduce(
+  const groupedRooms = localRooms.reduce(
     (acc, room) => {
       const key = `${room.groupId}-${room.teamId}`;
       if (!acc[key]) {
@@ -399,75 +457,20 @@ export const RoomManagementModal: React.FC<RoomManagementModalProps> = ({
                         </div>
                       </AccordionTrigger>
                       <AccordionContent className="px-6 pb-6">
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                          {group.rooms.map((room) => (
-                            <Card key={room.id} className="border border-gray-200">
-                              <CardContent className="p-4">
-                                <div className="flex items-center justify-between mb-2">
-                                  <h4 className="font-semibold text-carebase-text-primary">
-                                    {room.name}
-                                  </h4>
-                                  <div className="flex items-center gap-2">
-                                    <Button
-                                      variant="outline"
-                                      size="sm"
-                                      onClick={(e) => {
-                                        e.preventDefault();
-                                        e.stopPropagation();
-                                        handleEdit(room);
-                                      }}
-                                      disabled={isSubmitting}
-                                    >
-                                      <Edit3 className="h-3 w-3 mr-1" />
-                                      編集
-                                    </Button>
-                                    <Button
-                                      variant="outline"
-                                      size="sm"
-                                      onClick={() => handleDelete(room)}
-                                      disabled={isSubmitting}
-                                      className="border-red-300 text-red-600 hover:bg-red-50"
-                                    >
-                                      <Trash2 className="h-3 w-3 mr-1" />
-                                      削除
-                                    </Button>
-                                  </div>
-                                </div>
-                                <div className="text-sm text-gray-600">
-                                  <div className="flex items-center justify-between">
-                                    <span>定員: {room.capacity}名</span>
-                                    <span
-                                      className={`text-xs px-2 py-1 rounded-full ${
-                                        (room.currentOccupancy || 0) >= room.capacity
-                                          ? 'bg-red-100 text-red-700'
-                                          : (room.currentOccupancy || 0) > 0
-                                            ? 'bg-yellow-100 text-yellow-700'
-                                            : 'bg-green-100 text-green-700'
-                                      }`}
-                                    >
-                                      {room.currentOccupancy || 0}/{room.capacity}
-                                    </span>
-                                  </div>
-                                  <div className="mt-1">
-                                    <span
-                                      className={`text-xs font-medium ${
-                                        (room.currentOccupancy || 0) >= room.capacity
-                                          ? 'text-red-600'
-                                          : 'text-green-600'
-                                      }`}
-                                    >
-                                      {(room.currentOccupancy || 0) >= room.capacity
-                                        ? '満室'
-                                        : '空きあり'}
-                                    </span>
-                                  </div>
-                                  <p className="text-xs mt-1">
-                                    作成日: {new Date(room.createdAt).toLocaleDateString('ja-JP')}
-                                  </p>
-                                </div>
-                              </CardContent>
-                            </Card>
-                          ))}
+                        <div className="mb-4">
+                          <p className="text-sm text-gray-600 mb-3">
+                            ドラッグ&ドロップで部屋の順番を変更できます
+                          </p>
+                          <RoomSortableList
+                            rooms={group.rooms}
+                            onReorder={(roomIds) =>
+                              handleRoomReorder(group.groupId, group.teamId, roomIds)
+                            }
+                            onEdit={handleEdit}
+                            onDelete={handleDelete}
+                            isSubmitting={isSubmitting}
+                            layout="grid"
+                          />
                         </div>
                       </AccordionContent>
                     </AccordionItem>

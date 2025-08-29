@@ -893,6 +893,7 @@ export const ResidentBasicInfoForm: React.FC<ResidentBasicInfoFormProps> = ({
                   />
                 </div>
                 <Button
+                  type="button"
                   variant="outline"
                   onClick={handleRoomManagement}
                   className="flex items-center gap-2 border-purple-300 text-purple-600 hover:bg-purple-50"

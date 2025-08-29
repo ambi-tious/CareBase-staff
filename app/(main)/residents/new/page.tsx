@@ -194,6 +194,20 @@ export default function NewResidentPage() {
         onCreateRoom={handleCreateRoom}
         onUpdateRoom={handleUpdateRoom}
         onDeleteRoom={handleDeleteRoom}
+        onReorderRooms={async (groupId, teamId, roomIds) => {
+          try {
+            const success = await roomService.updateRoomSortOrders(groupId, teamId, roomIds);
+            if (success) {
+              // Refresh rooms data
+              const updatedRooms = await roomService.getAllActiveRooms();
+              setRooms(updatedRooms);
+            }
+            return success;
+          } catch (error) {
+            console.error('Failed to reorder rooms:', error);
+            return false;
+          }
+        }}
       />
     </div>
   );

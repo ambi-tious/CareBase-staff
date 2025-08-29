@@ -4,7 +4,12 @@
  * API service for room management
  */
 
-import { getAllActiveRooms, getRoomsByGroup, getRoomsByGroupAndTeam } from '@/mocks/room-data';
+import {
+  getAllActiveRooms,
+  getRoomsByGroup,
+  getRoomsByGroupAndTeam,
+  updateRoomSortOrders,
+} from '@/mocks/room-data';
 import type { Room } from '@/types/room';
 
 class RoomService {
@@ -59,6 +64,36 @@ class RoomService {
   }
 
   /**
+   * Update room sort orders
+   */
+  async updateRoomSortOrders(groupId: string, teamId: string, roomIds: string[]): Promise<boolean> {
+    try {
+      // For development, use mock data
+      if (process.env.NODE_ENV) {
+        return this.mockUpdateRoomSortOrders(groupId, teamId, roomIds);
+      }
+
+      const response = await fetch(`${this.baseUrl}/rooms/reorder`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ groupId, teamId, roomIds }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      return data.success;
+    } catch (error) {
+      console.error('Update room sort orders error:', error);
+      throw new Error('部屋の並び替えに失敗しました。');
+    }
+  }
+
+  /**
    * Get rooms by group
    */
   async getRoomsByGroup(groupId: string): Promise<Room[]> {
@@ -101,6 +136,16 @@ class RoomService {
     // Simulate network delay
     await new Promise((resolve) => setTimeout(resolve, 300));
     return getRoomsByGroup(groupId);
+  }
+
+  private async mockUpdateRoomSortOrders(
+    groupId: string,
+    teamId: string,
+    roomIds: string[]
+  ): Promise<boolean> {
+    // Simulate network delay
+    await new Promise((resolve) => setTimeout(resolve, 300));
+    return updateRoomSortOrders(groupId, teamId, roomIds);
   }
 }
 

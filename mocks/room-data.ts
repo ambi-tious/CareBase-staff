@@ -11,6 +11,7 @@ export const roomData: Room[] = [
     groupId: 'group-1',
     teamId: 'team-a1',
     isActive: true,
+    sortOrder: 1,
     createdAt: '2025-01-01T00:00:00Z',
     updatedAt: '2025-01-01T00:00:00Z',
   },
@@ -22,6 +23,7 @@ export const roomData: Room[] = [
     groupId: 'group-1',
     teamId: 'team-a1',
     isActive: true,
+    sortOrder: 2,
     createdAt: '2025-01-01T00:00:00Z',
     updatedAt: '2025-01-01T00:00:00Z',
   },
@@ -33,6 +35,7 @@ export const roomData: Room[] = [
     groupId: 'group-1',
     teamId: 'team-a1',
     isActive: true,
+    sortOrder: 3,
     createdAt: '2025-01-01T00:00:00Z',
     updatedAt: '2025-01-01T00:00:00Z',
   },
@@ -44,6 +47,7 @@ export const roomData: Room[] = [
     groupId: 'group-1',
     teamId: 'team-a2',
     isActive: true,
+    sortOrder: 1,
     createdAt: '2025-01-01T00:00:00Z',
     updatedAt: '2025-01-01T00:00:00Z',
   },
@@ -55,6 +59,7 @@ export const roomData: Room[] = [
     groupId: 'group-1',
     teamId: 'team-a2',
     isActive: true,
+    sortOrder: 2,
     createdAt: '2025-01-01T00:00:00Z',
     updatedAt: '2025-01-01T00:00:00Z',
   },
@@ -66,6 +71,7 @@ export const roomData: Room[] = [
     groupId: 'group-1',
     teamId: 'team-a2',
     isActive: true,
+    sortOrder: 3,
     createdAt: '2025-01-01T00:00:00Z',
     updatedAt: '2025-01-01T00:00:00Z',
   },
@@ -77,6 +83,7 @@ export const roomData: Room[] = [
     groupId: 'group-1',
     teamId: 'team-a3',
     isActive: true,
+    sortOrder: 1,
     createdAt: '2025-01-01T00:00:00Z',
     updatedAt: '2025-01-01T00:00:00Z',
   },
@@ -88,6 +95,7 @@ export const roomData: Room[] = [
     groupId: 'group-1',
     teamId: 'team-a3',
     isActive: true,
+    sortOrder: 2,
     createdAt: '2025-01-01T00:00:00Z',
     updatedAt: '2025-01-01T00:00:00Z',
   },
@@ -101,6 +109,7 @@ export const roomData: Room[] = [
     groupId: 'group-2',
     teamId: 'team-b1',
     isActive: true,
+    sortOrder: 1,
     createdAt: '2025-01-01T00:00:00Z',
     updatedAt: '2025-01-01T00:00:00Z',
   },
@@ -112,6 +121,7 @@ export const roomData: Room[] = [
     groupId: 'group-2',
     teamId: 'team-b1',
     isActive: true,
+    sortOrder: 2,
     createdAt: '2025-01-01T00:00:00Z',
     updatedAt: '2025-01-01T00:00:00Z',
   },
@@ -123,6 +133,7 @@ export const roomData: Room[] = [
     groupId: 'group-2',
     teamId: 'team-b1',
     isActive: true,
+    sortOrder: 3,
     createdAt: '2025-01-01T00:00:00Z',
     updatedAt: '2025-01-01T00:00:00Z',
   },
@@ -134,6 +145,7 @@ export const roomData: Room[] = [
     groupId: 'group-2',
     teamId: 'team-b2',
     isActive: true,
+    sortOrder: 1,
     createdAt: '2025-01-01T00:00:00Z',
     updatedAt: '2025-01-01T00:00:00Z',
   },
@@ -145,6 +157,7 @@ export const roomData: Room[] = [
     groupId: 'group-2',
     teamId: 'team-b2',
     isActive: true,
+    sortOrder: 2,
     createdAt: '2025-01-01T00:00:00Z',
     updatedAt: '2025-01-01T00:00:00Z',
   },
@@ -157,6 +170,7 @@ export const roomData: Room[] = [
     groupId: 'group-1',
     teamId: 'team-a1',
     isActive: true,
+    sortOrder: 4,
     createdAt: '2025-01-01T00:00:00Z',
     updatedAt: '2025-01-01T00:00:00Z',
   },
@@ -168,6 +182,7 @@ export const roomData: Room[] = [
     groupId: 'group-1',
     teamId: 'team-a1',
     isActive: true,
+    sortOrder: 5,
     createdAt: '2025-01-01T00:00:00Z',
     updatedAt: '2025-01-01T00:00:00Z',
   },
@@ -193,7 +208,8 @@ export const getRoomsByGroupAndTeam = (groupId: string, teamId: string): Room[] 
   const filteredRooms = roomData.filter(
     (room) => room.groupId === groupId && room.teamId === teamId && room.isActive
   );
-  return getRoomsWithOccupancy(filteredRooms);
+  const sortedRooms = filteredRooms.sort((a, b) => (a.sortOrder || 999) - (b.sortOrder || 999));
+  return getRoomsWithOccupancy(sortedRooms);
 };
 
 export const getRoomById = (roomId: string): Room | undefined => {
@@ -209,10 +225,42 @@ export const getRoomById = (roomId: string): Room | undefined => {
 
 export const getAllActiveRooms = (): Room[] => {
   const activeRooms = roomData.filter((room) => room.isActive);
-  return getRoomsWithOccupancy(activeRooms);
+  const sortedRooms = activeRooms.sort((a, b) => {
+    if (a.groupId !== b.groupId) return a.groupId.localeCompare(b.groupId);
+    if (a.teamId !== b.teamId) return a.teamId.localeCompare(b.teamId);
+    return (a.sortOrder || 999) - (b.sortOrder || 999);
+  });
+  return getRoomsWithOccupancy(sortedRooms);
 };
 
 export const getRoomsByGroup = (groupId: string): Room[] => {
   const filteredRooms = roomData.filter((room) => room.groupId === groupId && room.isActive);
-  return getRoomsWithOccupancy(filteredRooms);
+  const sortedRooms = filteredRooms.sort((a, b) => {
+    if (a.teamId !== b.teamId) return a.teamId.localeCompare(b.teamId);
+    return (a.sortOrder || 999) - (b.sortOrder || 999);
+  });
+  return getRoomsWithOccupancy(sortedRooms);
+};
+
+// Update room sort orders for a specific group and team
+export const updateRoomSortOrders = (
+  groupId: string,
+  teamId: string,
+  roomIds: string[]
+): boolean => {
+  try {
+    roomIds.forEach((roomId, index) => {
+      const roomIndex = roomData.findIndex(
+        (room) => room.id === roomId && room.groupId === groupId && room.teamId === teamId
+      );
+      if (roomIndex !== -1) {
+        roomData[roomIndex].sortOrder = index + 1;
+        roomData[roomIndex].updatedAt = new Date().toISOString();
+      }
+    });
+    return true;
+  } catch (error) {
+    console.error('Failed to update room sort orders:', error);
+    return false;
+  }
 };

@@ -12,6 +12,7 @@ export interface Room {
   groupId: string;
   teamId: string;
   isActive: boolean;
+  sortOrder?: number;
   createdAt: string;
   updatedAt: string;
 }
