@@ -61,9 +61,7 @@ export const CommunicationThreadView: React.FC<CommunicationThreadViewProps> = (
                 スレッド
               </Badge>
             </div>
-            <CardTitle className="text-lg text-carebase-text-primary">
-              {thread.title}
-            </CardTitle>
+            <CardTitle className="text-lg text-carebase-text-primary">{thread.title}</CardTitle>
             <div className="flex items-center gap-4 text-sm text-gray-600">
               <div className="flex items-center gap-1">
                 <Calendar className="h-4 w-4" />

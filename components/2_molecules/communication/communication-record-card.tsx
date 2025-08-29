@@ -191,9 +191,7 @@ export const CommunicationRecordCard: React.FC<CommunicationRecordCardProps> = (
               <span>作成日時: {formatDateTime(record.createdAt)}</span>
             </div>
             {record.updatedAt !== record.createdAt && (
-              <div className="mt-1 text-blue-600">
-                最終更新: {formatDateTime(record.updatedAt)}
-              </div>
+              <div className="mt-1 text-blue-600">最終更新: {formatDateTime(record.updatedAt)}</div>
             )}
           </div>
         </CardContent>

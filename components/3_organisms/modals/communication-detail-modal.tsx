@@ -117,7 +117,10 @@ export const CommunicationDetailModal: React.FC<CommunicationDetailModalProps> =
                     {getContactPersonTypeLabel(record.contactPersonType)}
                   </Badge>
                   {hasThread && (
-                    <Badge variant="outline" className="bg-purple-50 text-purple-700 border-purple-200">
+                    <Badge
+                      variant="outline"
+                      className="bg-purple-50 text-purple-700 border-purple-200"
+                    >
                       <MessageSquare className="h-3 w-3 mr-1" />
                       スレッド ({threadRecords.length}件)
                     </Badge>
@@ -190,11 +193,11 @@ export const CommunicationDetailModal: React.FC<CommunicationDetailModalProps> =
                   {threadRecords.length}件
                 </Badge>
               </div>
-              
+
               <div className="space-y-3 max-h-96 overflow-y-auto">
                 {sortedThreadRecords.map((threadRecord, index) => {
                   const isMainRecord = threadRecord.id === record.id;
-                  
+
                   return (
                     <Card
                       key={threadRecord.id}

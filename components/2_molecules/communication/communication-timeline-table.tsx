@@ -17,7 +17,6 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { communicationService } from '@/services/communicationService';
 import type { CommunicationRecord } from '@/types/communication';
 import { format } from 'date-fns';
 import { ja } from 'date-fns/locale';
@@ -33,9 +32,7 @@ import {
   User,
   Users,
 } from 'lucide-react';
-import React from 'react';
-import { useState } from 'react';
-import { toast } from 'sonner';
+import React, { useState } from 'react';
 
 interface CommunicationTimelineTableProps {
   records: CommunicationRecord[];
@@ -63,10 +60,6 @@ export const CommunicationTimelineTable: React.FC<CommunicationTimelineTableProp
   className = '',
 }) => {
   const [isUpdatingStatus, setIsUpdatingStatus] = useState<string | null>(null);
-
-  const formatDateTime = (dateString: string) => {
-    return format(new Date(dateString), 'MM/dd HH:mm', { locale: ja });
-  };
 
   const formatDate = (dateString: string) => {
     return format(new Date(dateString), 'yyyy/MM/dd', { locale: ja });
@@ -112,13 +105,14 @@ export const CommunicationTimelineTable: React.FC<CommunicationTimelineTableProp
   // Group records by thread and count thread members
   const getThreadInfo = (record: CommunicationRecord) => {
     if (!record.threadId) return null;
-    
-    const threadRecords = records.filter(r => r.threadId === record.threadId);
+
+    const threadRecords = records.filter((r) => r.threadId === record.threadId);
     return {
       count: threadRecords.length,
-      isMainRecord: threadRecords.sort((a, b) => 
-        new Date(a.datetime).getTime() - new Date(b.datetime).getTime()
-      )[0].id === record.id
+      isMainRecord:
+        threadRecords.sort(
+          (a, b) => new Date(a.datetime).getTime() - new Date(b.datetime).getTime()
+        )[0].id === record.id,
     };
   };
 
@@ -129,7 +123,6 @@ export const CommunicationTimelineTable: React.FC<CommunicationTimelineTableProp
       <Table>
         <TableHeader>
           <TableRow className="bg-gray-50">
-            <TableHead className="w-24">日付</TableHead>
             <TableHead className="w-20">時間</TableHead>
             <TableHead className="w-32">連絡者</TableHead>
             <TableHead className="w-32">対応者</TableHead>
@@ -160,9 +153,8 @@ export const CommunicationTimelineTable: React.FC<CommunicationTimelineTableProp
             sortedRecords.map((record, index) => {
               const isUpdating = isUpdatingStatus === record.id;
               const showDateDivider =
-                index === 0 ||
-                !isSameDay(record.datetime, sortedRecords[index - 1].datetime);
-              
+                index === 0 || !isSameDay(record.datetime, sortedRecords[index - 1].datetime);
+
               const threadInfo = getThreadInfo(record);
 
               return (
@@ -189,11 +181,6 @@ export const CommunicationTimelineTable: React.FC<CommunicationTimelineTableProp
                     `}
                     onClick={() => handleViewThread(record)}
                   >
-                    {/* 日付列（同日の場合は空白） */}
-                    <TableCell className="text-sm text-gray-600">
-                      {showDateDivider ? '' : ''}
-                    </TableCell>
-
                     {/* 時間列 */}
                     <TableCell>
                       <div className="flex items-center gap-1 text-sm font-medium">

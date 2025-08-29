@@ -29,7 +29,11 @@ const initialFormData: CommunicationFormData = {
   parentId: '',
 };
 
-export const useCommunicationForm = ({ onSubmit, initialData = {}, mode }: UseCommunicationFormOptions) => {
+export const useCommunicationForm = ({
+  onSubmit,
+  initialData = {},
+  mode,
+}: UseCommunicationFormOptions) => {
   const form = useForm<CommunicationFormData>({
     resolver: zodResolver(communicationFormSchema),
     defaultValues: {

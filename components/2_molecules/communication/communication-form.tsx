@@ -83,7 +83,7 @@ export const CommunicationForm: React.FC<CommunicationFormProps> = ({
 
   // Contact person options
   const contactPersonOptions = useMemo(() => {
-    return contacts.map(contact => ({
+    return contacts.map((contact) => ({
       id: contact.id,
       name: contact.name,
       relationship: contact.relationship,
@@ -93,7 +93,7 @@ export const CommunicationForm: React.FC<CommunicationFormProps> = ({
   // Handle contact person selection
   useEffect(() => {
     if (watchedContactPersonType === 'family' && watchedContactPersonId) {
-      const selectedContact = contactPersonOptions.find(c => c.id === watchedContactPersonId);
+      const selectedContact = contactPersonOptions.find((c) => c.id === watchedContactPersonId);
       if (selectedContact) {
         setValue('contactPersonName', selectedContact.name);
       }
@@ -137,7 +137,9 @@ export const CommunicationForm: React.FC<CommunicationFormProps> = ({
         <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg">
           <div className="flex items-center gap-2">
             <User className="h-4 w-4 text-blue-600" />
-            <span className="text-sm font-medium text-blue-800">記録作成者: {currentStaffName}</span>
+            <span className="text-sm font-medium text-blue-800">
+              記録作成者: {currentStaffName}
+            </span>
           </div>
           <p className="text-xs text-blue-600 mt-1">ログイン中のユーザーが自動的に設定されます</p>
         </div>
@@ -264,7 +266,9 @@ export const CommunicationForm: React.FC<CommunicationFormProps> = ({
                             <div className="flex items-center gap-2">
                               <User className="h-4 w-4" />
                               <span>{contact.name}</span>
-                              <span className="text-xs text-gray-500">({contact.relationship})</span>
+                              <span className="text-xs text-gray-500">
+                                ({contact.relationship})
+                              </span>
                             </div>
                           </SelectItem>
                         ))}
@@ -312,9 +316,7 @@ export const CommunicationForm: React.FC<CommunicationFormProps> = ({
                     />
                   </FormControl>
                   <div className="space-y-1 leading-none">
-                    <FormLabel className="text-sm font-medium">
-                      重要なコミュニケーション
-                    </FormLabel>
+                    <FormLabel className="text-sm font-medium">重要なコミュニケーション</FormLabel>
                     <p className="text-xs text-gray-500">
                       緊急性が高い内容や申し送りが必要な場合はチェックしてください
                     </p>
@@ -346,9 +348,7 @@ export const CommunicationForm: React.FC<CommunicationFormProps> = ({
                       rows={6}
                     />
                   </FormControl>
-                  <div className="text-xs text-gray-500 mt-1">
-                    {field.value.length}/2000文字
-                  </div>
+                  <div className="text-xs text-gray-500 mt-1">{field.value.length}/2000文字</div>
                   <FormMessage />
                 </FormItem>
               )}
@@ -370,9 +370,7 @@ export const CommunicationForm: React.FC<CommunicationFormProps> = ({
                       rows={6}
                     />
                   </FormControl>
-                  <div className="text-xs text-gray-500 mt-1">
-                    {field.value.length}/2000文字
-                  </div>
+                  <div className="text-xs text-gray-500 mt-1">{field.value.length}/2000文字</div>
                   <FormMessage />
                 </FormItem>
               )}
@@ -401,7 +399,13 @@ export const CommunicationForm: React.FC<CommunicationFormProps> = ({
             disabled={isSubmitting}
             className="bg-carebase-blue hover:bg-carebase-blue-dark"
           >
-            {isSubmitting ? '保存中...' : mode === 'create' ? '登録' : mode === 'reply' ? '返信' : '更新'}
+            {isSubmitting
+              ? '保存中...'
+              : mode === 'create'
+                ? '登録'
+                : mode === 'reply'
+                  ? '返信'
+                  : '更新'}
           </Button>
         </div>
       </form>

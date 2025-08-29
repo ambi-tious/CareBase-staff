@@ -11,7 +11,7 @@ import { format } from 'date-fns';
 import { ja } from 'date-fns/locale';
 import { MessageCircle, Plus } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { forwardRef, useImperativeHandle, useMemo, useRef, useState } from 'react';
+import { forwardRef, useImperativeHandle, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 
 interface CommunicationListProps {
@@ -91,7 +91,7 @@ export const CommunicationList = forwardRef<CommunicationListRef, CommunicationL
     // Get thread records for selected record
     const getThreadRecords = (record: CommunicationRecord): CommunicationRecord[] => {
       if (!record.threadId) return [record];
-      return records.filter(r => r.threadId === record.threadId);
+      return records.filter((r) => r.threadId === record.threadId);
     };
 
     const handleCreateRecord = () => {
@@ -124,7 +124,7 @@ export const CommunicationList = forwardRef<CommunicationListRef, CommunicationL
     };
 
     const handleDeleteRecord = (recordId: string) => {
-      const record = records.find(r => r.id === recordId);
+      const record = records.find((r) => r.id === recordId);
       if (record) {
         setDeletingRecord(record);
         setDeleteError(null);
@@ -140,7 +140,10 @@ export const CommunicationList = forwardRef<CommunicationListRef, CommunicationL
 
       try {
         const { communicationService } = await import('@/services/communicationService');
-        await communicationService.deleteCommunicationRecord(residentId.toString(), deletingRecord.id);
+        await communicationService.deleteCommunicationRecord(
+          residentId.toString(),
+          deletingRecord.id
+        );
         onRecordDelete?.(deletingRecord.id);
 
         toast.success('コミュニケーション記録の削除が完了しました。');
@@ -166,7 +169,7 @@ export const CommunicationList = forwardRef<CommunicationListRef, CommunicationL
     const importantRecords = records.filter((r) => r.isImportant).length;
 
     return (
-      <div className={`space-y-6 ${className}`}>
+      <div className={`space-y-4 ${className}`}>
         {/* Search and Filters */}
         <CommunicationFilters
           searchQuery={searchQuery}
@@ -206,7 +209,7 @@ export const CommunicationList = forwardRef<CommunicationListRef, CommunicationL
         ) : (
           <CommunicationTimelineTable
             records={filteredRecords}
-            residentId={residentId}
+            residentId={residentId.toString()}
             residentName={residentName}
             onRecordUpdate={onRecordUpdate}
             onRecordDelete={handleDeleteRecord}

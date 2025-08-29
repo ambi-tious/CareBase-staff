@@ -48,7 +48,7 @@ export const CommunicationModal: React.FC<CommunicationModalProps> = ({
         responseContent: mode === 'reply' ? '' : record.responseContent,
         isImportant: record.isImportant,
         threadId: threadId || record.threadId || '',
-        parentId: mode === 'reply' ? record.id : (parentId || record.parentId || ''),
+        parentId: mode === 'reply' ? record.id : parentId || record.parentId || '',
       }
     : {
         threadId: threadId || '',
@@ -93,7 +93,8 @@ export const CommunicationModal: React.FC<CommunicationModalProps> = ({
             {getTitle()}
           </DialogTitle>
           <DialogDescription className="text-gray-600 tablet:text-tablet-base tablet:mt-3">
-            {residentName && `${residentName}様の`}{getDescription()} 必須項目（
+            {residentName && `${residentName}様の`}
+            {getDescription()} 必須項目（
             <span className="text-red-500">*</span>）は必ず入力してください。
           </DialogDescription>
         </DialogHeader>

@@ -61,7 +61,10 @@ class CommunicationService {
   /**
    * Create new communication record
    */
-  async createCommunicationRecord(residentId: string, data: CommunicationFormData): Promise<CommunicationRecord> {
+  async createCommunicationRecord(
+    residentId: string,
+    data: CommunicationFormData
+  ): Promise<CommunicationRecord> {
     try {
       // For development, use mock creation
       if (process.env.NODE_ENV) {
@@ -154,7 +157,9 @@ class CommunicationService {
   /**
    * Mock implementations for development
    */
-  private async mockGetResidentCommunicationRecords(residentId: string): Promise<CommunicationRecord[]> {
+  private async mockGetResidentCommunicationRecords(
+    residentId: string
+  ): Promise<CommunicationRecord[]> {
     // Simulate network delay
     await new Promise((resolve) => setTimeout(resolve, 500));
 
@@ -162,7 +167,9 @@ class CommunicationService {
     return getCommunicationRecordsByResident(residentId);
   }
 
-  private async mockGetResidentCommunicationThreads(residentId: string): Promise<CommunicationThread[]> {
+  private async mockGetResidentCommunicationThreads(
+    residentId: string
+  ): Promise<CommunicationThread[]> {
     // Simulate network delay
     await new Promise((resolve) => setTimeout(resolve, 500));
 
@@ -193,7 +200,7 @@ class CommunicationService {
     // Get staff name from staffId
     const { getAllStaff } = await import('@/mocks/staff-data');
     const allStaff = getAllStaff();
-    const selectedStaff = allStaff.find(s => s.id === data.staffId);
+    const selectedStaff = allStaff.find((s) => s.id === data.staffId);
     staffName = selectedStaff?.name || '不明な職員';
 
     // Generate new record
@@ -231,7 +238,7 @@ class CommunicationService {
     // Get staff name from staffId
     const { getAllStaff } = await import('@/mocks/staff-data');
     const allStaff = getAllStaff();
-    const selectedStaff = allStaff.find(s => s.id === data.staffId);
+    const selectedStaff = allStaff.find((s) => s.id === data.staffId);
 
     // Update record
     const updatedRecord: CommunicationRecord = {
