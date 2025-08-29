@@ -1,29 +1,22 @@
 'use client';
 
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
 import { getLucideIcon } from '@/lib/lucide-icon-registry';
 import type { IndividualPoint } from '@/types/individual-point';
 import { categoryOptions } from '@/types/individual-point';
-import { PlusCircle, Target } from 'lucide-react';
 import type React from 'react';
 
 interface IndividualPointsSummaryProps {
   points: IndividualPoint[];
-  onCreatePoint?: () => void;
   onCategoryClick?: (category: string) => void;
   selectedCategory?: string;
-  onCategoryManagement?: () => void;
   className?: string;
 }
 
 export const IndividualPointsSummary: React.FC<IndividualPointsSummaryProps> = ({
   points,
-  onCreatePoint,
   onCategoryClick,
   selectedCategory,
-  onCategoryManagement,
   className = '',
 }) => {
   // カテゴリ別の件数を集計
@@ -135,31 +128,6 @@ export const IndividualPointsSummary: React.FC<IndividualPointsSummaryProps> = (
           );
         })}
       </div>
-
-      {/* 空の状態の表示 */}
-      {totalActivePoints === 0 && (
-        <Card className="border-dashed border-2 border-gray-300">
-          <CardContent className="text-center py-12">
-            <Target className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">個別ポイントがありません</h3>
-            <p className="text-gray-500 mb-6">
-              この利用者様の個別ケアポイントを作成して、
-              <br />
-              より質の高いケアを提供しましょう。
-            </p>
-            {onCreatePoint && (
-              <Button
-                onClick={onCreatePoint}
-                className="bg-carebase-blue hover:bg-carebase-blue-dark"
-                size="lg"
-              >
-                <PlusCircle className="h-5 w-5 mr-2" />
-                最初の個別ポイントを作成
-              </Button>
-            )}
-          </CardContent>
-        </Card>
-      )}
     </div>
   );
 };

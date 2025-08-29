@@ -1,5 +1,6 @@
 'use client';
 
+import { ResidentStatusBadge } from '@/components/1_atoms/residents/resident-status-badge';
 import { Button } from '@/components/ui/button';
 import { DatePicker } from '@/components/ui/date-picker';
 import {
@@ -28,6 +29,7 @@ import {
   isImageFile,
   isSupportedImageFormat,
 } from '@/utils/image-utils';
+import { getResidentStatus } from '@/utils/resident-status-helpers';
 import { getAllGroupOptions, getAllTeamOptions } from '@/utils/staff-utils';
 import { residentBasicInfoSchema, type ResidentBasicInfo } from '@/validations/resident-validation';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -147,22 +149,6 @@ export const ResidentBasicInfoForm: React.FC<ResidentBasicInfoFormProps> = ({
   const form = useForm<ResidentBasicInfo>({
     resolver: zodResolver(residentBasicInfoSchema),
     defaultValues: {
-      name: '',
-      furigana: '',
-      dob: '',
-      sex: '男',
-      age: '',
-      admissionDate: '',
-      dischargeDate: '',
-      floorGroup: '',
-      unitTeam: '',
-      roomInfo: '',
-      notes: '',
-      profileImage: '',
-      certificationDate: '',
-      certificationStartDate: '',
-      certificationEndDate: '',
-      careLevel: '',
       ...initialData,
     },
     mode: 'onChange',
@@ -346,6 +332,20 @@ export const ResidentBasicInfoForm: React.FC<ResidentBasicInfoFormProps> = ({
     }
   }, [watchedData.dob, watchedData.age, setValue]);
 
+  // 入所日・退所日が変更された時にステータスを自動更新
+  useEffect(() => {
+    const autoStatus = getResidentStatus({
+      admissionDate: watchedData.admissionDate,
+      dischargeDate: watchedData.dischargeDate,
+    });
+
+    // 現在のステータスが空で、自動判定されたステータスがある場合のみ自動設定
+    // 「ー」が選択されている場合は自動更新しない
+    if (autoStatus && !watchedData.status && watchedData.status !== 'ー') {
+      setValue('status', autoStatus);
+    }
+  }, [watchedData.admissionDate, watchedData.dischargeDate, watchedData.status, setValue]);
+
   const updateField = useCallback(
     (field: keyof ResidentBasicInfo, value: string) => {
       setValue(field, value);
@@ -384,6 +384,14 @@ export const ResidentBasicInfoForm: React.FC<ResidentBasicInfoFormProps> = ({
     },
     [setValue]
   );
+  useEffect(() => {
+    if (form.getValues('age')) {
+      handleAgeChange(form.getValues('age') as string);
+    }
+    if (form.getValues('dob')) {
+      handleDobChange(form.getValues('dob') as string);
+    }
+  }, []);
 
   // Helper functions to get IDs from names
   const getGroupIdByName = (groupName: string): string | null => {
@@ -929,19 +937,65 @@ export const ResidentBasicInfoForm: React.FC<ResidentBasicInfoFormProps> = ({
               />
             </div>
 
-            {/* Submit Buttons */}
-            <div className="flex justify-end gap-3 pt-6 border-t">
-              <Button type="button" variant="outline" onClick={onCancel} disabled={isSubmitting}>
-                キャンセル
-              </Button>
-              <Button
-                type="submit"
-                disabled={isSubmitting}
-                className="bg-carebase-blue hover:bg-carebase-blue-dark"
-              >
-                {isSubmitting ? '保存中...' : '保存'}
-              </Button>
-            </div>
+            {/* 利用者ステータス選択 */}
+            <FormField
+              control={control}
+              name="status"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>ステータス</FormLabel>
+                  <Select
+                    value={field.value || ''}
+                    onValueChange={field.onChange}
+                    disabled={disabled}
+                  >
+                    <FormControl>
+                      <SelectTrigger
+                        className={
+                          errors.status
+                            ? 'border-red-300 focus:border-red-500 focus:ring-red-500'
+                            : ''
+                        }
+                      >
+                        <SelectValue placeholder="ステータスを選択" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="ー">ー</SelectItem>
+                      <SelectItem value="入所前">入所前</SelectItem>
+                      <SelectItem value="入所中">入所中</SelectItem>
+                      <SelectItem value="退所">退所</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                  {/* 自動判定されたステータスの表示 */}
+                  {(() => {
+                    const autoStatus = getResidentStatus({
+                      admissionDate: watchedData.admissionDate,
+                      dischargeDate: watchedData.dischargeDate,
+                    });
+
+                    if (autoStatus && field.value !== autoStatus && field.value !== 'ー') {
+                      return (
+                        <div className="flex items-center gap-2 mt-1 text-sm text-blue-600">
+                          <span>推奨:</span>
+                          <ResidentStatusBadge status={autoStatus} />
+                          <button
+                            type="button"
+                            onClick={() => field.onChange(autoStatus)}
+                            className="text-blue-600 underline hover:text-blue-800"
+                            disabled={disabled}
+                          >
+                            適用
+                          </button>
+                        </div>
+                      );
+                    }
+                    return null;
+                  })()}
+                </FormItem>
+              )}
+            />
           </div>
         </div>
       </form>

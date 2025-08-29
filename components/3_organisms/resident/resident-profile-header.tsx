@@ -1,6 +1,8 @@
 import { InfoRow } from '@/components/1_atoms/common/info-row';
+import { ResidentStatusBadge } from '@/components/1_atoms/residents/resident-status-badge';
 import { Card, CardContent } from '@/components/ui/card';
 import type { Resident } from '@/mocks/care-board-data';
+import { getResidentStatus } from '@/utils/resident-status-helpers';
 import Image from 'next/image';
 import type React from 'react';
 
@@ -9,6 +11,9 @@ interface ResidentProfileHeaderProps {
 }
 
 export const ResidentProfileHeader: React.FC<ResidentProfileHeaderProps> = ({ resident }) => {
+  // フォームで設定されたステータスがあればそれを使用、なければ自動判定
+  const status = resident.status || getResidentStatus(resident);
+
   return (
     <Card className="mb-6">
       <CardContent className="p-6">
@@ -35,9 +40,10 @@ export const ResidentProfileHeader: React.FC<ResidentProfileHeaderProps> = ({ re
               <div>
                 <div className="mb-4">
                   <h2 className="text-xs text-gray-500">{resident.furigana}</h2>
-                  <p className="text-3xl font-bold mb-1 text-carebase-text-primary">
-                    {resident.name}
-                  </p>
+                  <div className="flex items-center gap-3 mb-1">
+                    <p className="text-3xl font-bold text-carebase-text-primary">{resident.name}</p>
+                    {status && status !== 'ー' && <ResidentStatusBadge status={status} />}
+                  </div>
                 </div>
                 <InfoRow label="生年月日" value={`${resident.dob} (${resident.age}歳)`} />
                 <InfoRow label="性別" value={resident.sex} />

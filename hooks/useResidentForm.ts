@@ -12,6 +12,7 @@ const initialFormData: ResidentBasicInfo = {
   name: '',
   furigana: '',
   dob: '',
+  age: '65',
   sex: '男',
   careLevel: '',
   floorGroup: '',

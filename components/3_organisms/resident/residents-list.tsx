@@ -1,8 +1,12 @@
 'use client';
 
 import { ResidentCard } from '@/components/2_molecules/resident/resident-card';
-import { ResidentsToolbar } from '@/components/2_molecules/resident/residents-toolbar';
+import {
+  ResidentsToolbar,
+  type SortOption,
+} from '@/components/2_molecules/resident/residents-toolbar';
 import { careBoardData } from '@/mocks/care-board-data';
+import { getResidentStatus, type ResidentStatus } from '@/utils/resident-status-helpers';
 import { Users } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import type React from 'react';
@@ -20,7 +24,8 @@ interface SelectedStaffData {
 export const ResidentsList: React.FC = () => {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState('');
-  const [showDischargedResidents, setShowDischargedResidents] = useState(false);
+  const [statusFilter, setStatusFilter] = useState<ResidentStatus | 'all'>('all');
+  const [sortBy, setSortBy] = useState<SortOption>('name');
   const [selectedStaffData, setSelectedStaffData] = useState<SelectedStaffData | null>(null);
 
   // Load selected staff data from localStorage
@@ -52,17 +57,22 @@ export const ResidentsList: React.FC = () => {
     };
   }, []);
 
-  // Filter residents based on search query, discharge status, and group/team
-  const filteredResidents = useMemo(() => {
-    return careBoardData.filter((resident) => {
+  // Filter and sort residents
+  const filteredAndSortedResidents = useMemo(() => {
+    // First, filter residents
+    const filtered = careBoardData.filter((resident) => {
       // Filter by search query
       const matchesSearch =
         searchQuery === '' ||
         resident.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         resident.furigana.toLowerCase().includes(searchQuery.toLowerCase());
 
-      // Filter by discharge status
-      const matchesStatus = showDischargedResidents || resident.dischargeDate === undefined;
+      // Filter by status
+      const currentStatus = resident.status || getResidentStatus(resident);
+      const matchesStatusFilter =
+        statusFilter === 'all'
+          ? currentStatus !== '退所' // 「全て」の場合は退所済以外を表示
+          : (statusFilter === null && currentStatus === null) || currentStatus === statusFilter;
 
       // Filter by group and team if selected staff data exists
       const matchesGroupTeam =
@@ -70,9 +80,28 @@ export const ResidentsList: React.FC = () => {
         (resident.floorGroup === selectedStaffData.groupName &&
           resident.unitTeam === selectedStaffData.teamName);
 
-      return matchesSearch && matchesStatus && matchesGroupTeam;
+      return matchesSearch && matchesStatusFilter && matchesGroupTeam;
     });
-  }, [searchQuery, showDischargedResidents, selectedStaffData]);
+
+    // Then, sort residents
+    const sorted = [...filtered].sort((a, b) => {
+      switch (sortBy) {
+        case 'name':
+          // Sort by furigana (reading) for proper Japanese sorting
+          return a.furigana.localeCompare(b.furigana, 'ja');
+        case 'room': {
+          // Sort by room info, handling undefined values
+          const roomA = a.roomInfo || '';
+          const roomB = b.roomInfo || '';
+          return roomA.localeCompare(roomB, 'ja', { numeric: true });
+        }
+        default:
+          return 0;
+      }
+    });
+
+    return sorted;
+  }, [searchQuery, statusFilter, sortBy, selectedStaffData]);
 
   const handleCreateResident = () => {
     router.push('/residents/new');
@@ -83,14 +112,16 @@ export const ResidentsList: React.FC = () => {
       {/* Toolbar */}
       <ResidentsToolbar
         onSearch={setSearchQuery}
-        showDischargedResidents={showDischargedResidents}
-        onToggleDischargedResidents={setShowDischargedResidents}
+        statusFilter={statusFilter}
+        onStatusFilterChange={setStatusFilter}
+        sortBy={sortBy}
+        onSortChange={setSortBy}
         onCreateResident={handleCreateResident}
         className="mb-6"
       />
 
       {/* Results */}
-      {filteredResidents.length === 0 ? (
+      {filteredAndSortedResidents.length === 0 ? (
         <div className="text-center py-12">
           <Users className="h-12 w-12 text-gray-400 mx-auto mb-4" />
           <h3 className="text-lg font-medium text-gray-900 mb-2">利用者が見つかりません</h3>
@@ -102,7 +133,7 @@ export const ResidentsList: React.FC = () => {
         </div>
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
-          {filteredResidents.map((resident) => (
+          {filteredAndSortedResidents.map((resident) => (
             <ResidentCard key={resident.id} resident={resident} />
           ))}
         </div>

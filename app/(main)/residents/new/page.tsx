@@ -39,7 +39,7 @@ export default function NewResidentPage() {
     },
   });
 
-  const { formData, setFormData, errors, isSubmitting, handleSubmit } = residentFormHook;
+  const { formData, isSubmitting, handleSubmit } = residentFormHook;
 
   // Load rooms on component mount
   useEffect(() => {

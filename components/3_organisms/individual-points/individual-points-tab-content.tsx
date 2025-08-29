@@ -340,10 +340,8 @@ export const IndividualPointsTabContent = forwardRef<
       {/* サマリ表示 */}
       <IndividualPointsSummary
         points={points}
-        onCreatePoint={handleCreatePoint}
         onCategoryClick={handleCategoryClick}
         selectedCategory={selectedCategory}
-        onCategoryManagement={handleCategoryManagement}
       />
 
       {/* フィルタ機能 */}
@@ -367,7 +365,7 @@ export const IndividualPointsTabContent = forwardRef<
 
       <IndividualPointsCompactList
         points={filteredPoints}
-        selectedCategory={selectedCategory}
+        onCreatePoint={handleCreatePoint}
         onEdit={handleEditPoint}
         onDelete={handleDeletePoint}
         onViewDetails={handleViewDetails}

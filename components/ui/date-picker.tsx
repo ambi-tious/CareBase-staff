@@ -91,6 +91,7 @@ export function DatePicker({
       </PopoverTrigger>
       <PopoverContent className="w-auto p-0" align="start">
         <Calendar
+          mode="single"
           selected={dateValue}
           onSelect={handleDateSelect}
           captionLayout={captionLayout || 'dropdown'}

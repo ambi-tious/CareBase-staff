@@ -26,6 +26,7 @@ export const residentBasicInfoSchema = z
     roomInfo: z.string().min(1, '部屋情報は必須です'),
     admissionDate: z.string().optional(), // 入所日を必須から外す
     dischargeDate: z.string().optional(),
+    status: z.enum(['入所前', '入所中', '退所', 'ー']).optional(),
     profileImage: z.string(),
     certificationDate: z.string(),
     certificationStartDate: z.string(),

@@ -58,7 +58,7 @@ export const GroupTeamSelectionModal: React.FC<GroupTeamSelectionModalProps> = (
   });
 
   const { control, handleSubmit, setValue, watch, formState } = form;
-  const { isValid, isSubmitting } = formState;
+  const { isValid } = formState;
   const watchedGroupId = watch('groupId');
   const watchedTeamId = watch('teamId');
 
@@ -202,9 +202,6 @@ export const GroupTeamSelectionModal: React.FC<GroupTeamSelectionModalProps> = (
   const { currentGroupId, currentTeamId } = getCurrentGroupTeamIds();
   const showTeamSelector = teams.length > 0;
 
-  // 現在選択中のグループ・チーム情報を取得
-  const currentGroup = groups.find((g) => g.id === currentGroupId);
-
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto tablet:max-w-[95vw] tablet:max-h-[95vh]">
@@ -251,7 +248,7 @@ export const GroupTeamSelectionModal: React.FC<GroupTeamSelectionModalProps> = (
           )}
 
           <Form {...form}>
-            <form onSubmit={onSubmit}>
+            <form onSubmit={onSubmit} className="space-y-6">
               {/* Group Selector */}
               <FormField
                 control={control}

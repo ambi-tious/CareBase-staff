@@ -5,28 +5,29 @@ import { CategoryBadge } from '@/components/1_atoms/individual-points/category-b
 import { PriorityBadge } from '@/components/1_atoms/individual-points/priority-badge';
 import { StatusBadge } from '@/components/1_atoms/individual-points/status-badge';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import type { IndividualPoint } from '@/types/individual-point';
 import { format } from 'date-fns';
 import { ja } from 'date-fns/locale';
-import { Calendar, Edit3, Paperclip, Target, Trash2, User } from 'lucide-react';
+import { Calendar, Edit3, Paperclip, PlusCircle, Target, Trash2, User } from 'lucide-react';
 import type React from 'react';
 
 interface IndividualPointsCompactListProps {
   points: IndividualPoint[];
-  selectedCategory?: string;
   onEdit?: (point: IndividualPoint) => void;
   onDelete?: (point: IndividualPoint) => void;
   onViewDetails?: (point: IndividualPoint) => void;
+  onCreatePoint?: () => void;
   className?: string;
 }
 
 export const IndividualPointsCompactList: React.FC<IndividualPointsCompactListProps> = ({
   points,
-  selectedCategory,
   onEdit,
   onDelete,
   onViewDetails,
+  onCreatePoint,
   className = '',
 }) => {
   // アクティブなポイントのみ表示
@@ -60,19 +61,25 @@ export const IndividualPointsCompactList: React.FC<IndividualPointsCompactListPr
 
   if (sortedPoints.length === 0) {
     return (
-      <Card className={`border-dashed border-2 border-gray-300 ${className}`}>
-        <CardContent className="text-center py-8">
-          <Target className="h-12 w-12 text-gray-400 mx-auto mb-3" />
-          <h3 className="text-base font-medium text-gray-900 mb-2">
-            {selectedCategory
-              ? 'フィルタ条件に一致する個別ポイントがありません'
-              : '個別ポイントがありません'}
-          </h3>
-          <p className="text-sm text-gray-500">
-            {selectedCategory
-              ? 'フィルタ条件を変更するか、新しい個別ポイントを作成してください。'
-              : '利用者様の個別ケアポイントを作成してください。'}
+      <Card className="border-dashed border-2 border-gray-300">
+        <CardContent className="text-center py-12">
+          <Target className="h-16 w-16 text-gray-400 mx-auto mb-4" />
+          <h3 className="text-lg font-medium text-gray-900 mb-2">個別ポイントがありません</h3>
+          <p className="text-gray-500 mb-6">
+            この利用者様の個別ケアポイントを作成して、
+            <br />
+            より質の高いケアを提供しましょう。
           </p>
+          {onCreatePoint && (
+            <Button
+              onClick={onCreatePoint}
+              className="bg-carebase-blue hover:bg-carebase-blue-dark"
+              size="lg"
+            >
+              <PlusCircle className="h-5 w-5 mr-2" />
+              最初の個別ポイントを作成
+            </Button>
+          )}
         </CardContent>
       </Card>
     );

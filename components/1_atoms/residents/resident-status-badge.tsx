@@ -2,7 +2,7 @@ import { Badge } from '@/components/ui/badge';
 import type React from 'react';
 
 interface ResidentStatusBadgeProps {
-  status: '入所前' | '入所中' | '退所';
+  status: '入所前' | '入所中' | '退所' | 'ー';
   className?: string;
 }
 
