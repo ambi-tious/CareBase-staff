@@ -120,11 +120,12 @@ class MedicationService {
     const newMedication: Medication = {
       id: `medication-${Date.now()}`,
       medicationName: medicationData.medicationName,
-      dosageInstructions: medicationData.dosageInstructions,
-      startDate: medicationData.startDate,
+      dosageInstructions: medicationData.dosageInstructions || '',
+      startDate: medicationData.startDate || '',
       endDate: medicationData.endDate || undefined,
-      prescribingInstitution: medicationData.prescribingInstitution,
+      prescribingInstitution: medicationData.prescribingInstitution || '',
       notes: medicationData.notes || undefined,
+      thumbnailUrl: medicationData.thumbnailUrl || undefined,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };
@@ -148,11 +149,12 @@ class MedicationService {
     const updatedMedication: Medication = {
       id: medicationId,
       medicationName: medicationData.medicationName,
-      dosageInstructions: medicationData.dosageInstructions,
-      startDate: medicationData.startDate,
+      dosageInstructions: medicationData.dosageInstructions || '',
+      startDate: medicationData.startDate || '',
       endDate: medicationData.endDate || undefined,
-      prescribingInstitution: medicationData.prescribingInstitution,
+      prescribingInstitution: medicationData.prescribingInstitution || '',
       notes: medicationData.notes || undefined,
+      thumbnailUrl: medicationData.thumbnailUrl || undefined,
       createdAt: '2025-01-01T00:00:00.000Z', // Mock creation date
       updatedAt: new Date().toISOString(),
     };

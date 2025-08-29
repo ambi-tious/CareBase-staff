@@ -1,5 +1,8 @@
 'use client';
 
+import { ResidentMedicalInstitutionCombobox } from '@/components/1_atoms/medical/resident-medical-institution-combobox';
+import { ImageUploadField } from '@/components/1_atoms/upload/image-upload-field';
+import { SelectedMedicalInstitutionInfo } from '@/components/2_molecules/medical/selected-medical-institution-info';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { DatePicker } from '@/components/ui/date-picker';
@@ -14,14 +17,16 @@ import {
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { useMedicationForm } from '@/hooks/useMedicationForm';
+import type { MedicalInstitution } from '@/mocks/residents-data';
 import type { MedicationFormData } from '@/validations/medication-validation';
 import { AlertCircle, RefreshCw } from 'lucide-react';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 interface MedicationFormProps {
   onSubmit: (data: MedicationFormData) => Promise<boolean>;
   onCancel: () => void;
   initialData?: Partial<MedicationFormData>;
+  medicalInstitutions: MedicalInstitution[];
   className?: string;
 }
 
@@ -29,10 +34,25 @@ export const MedicationForm: React.FC<MedicationFormProps> = ({
   onSubmit,
   onCancel,
   initialData,
+  medicalInstitutions,
   className = '',
 }) => {
   const form = useMedicationForm({ onSubmit, initialData });
   const { isSubmitting, error, onSubmit: formSubmit, retry, control } = form;
+
+  const [selectedInstitution, setSelectedInstitution] = useState<MedicalInstitution | null>(null);
+
+  // 初期データがある場合の処理
+  useEffect(() => {
+    if (initialData?.prescribingInstitution && !selectedInstitution) {
+      const institution = medicalInstitutions.find(
+        (inst) => inst.institutionName === initialData.prescribingInstitution
+      );
+      if (institution) {
+        setSelectedInstitution(institution);
+      }
+    }
+  }, [initialData, medicalInstitutions, selectedInstitution]);
 
   const onFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -78,6 +98,26 @@ export const MedicationForm: React.FC<MedicationFormProps> = ({
 
             <FormField
               control={control}
+              name="thumbnailUrl"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>画像</FormLabel>
+                  <FormControl>
+                    <ImageUploadField
+                      value={field.value}
+                      onChange={field.onChange}
+                      disabled={isSubmitting}
+                      accept="image/*"
+                      placeholder="薬剤のサムネイル画像をアップロードしてください"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={control}
               name="medicationName"
               render={({ field }) => (
                 <FormItem>
@@ -97,9 +137,7 @@ export const MedicationForm: React.FC<MedicationFormProps> = ({
               name="dosageInstructions"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>
-                    用法・用量 <span className="text-red-500 ml-1">*</span>
-                  </FormLabel>
+                  <FormLabel>用法・用量</FormLabel>
                   <FormControl>
                     <Textarea
                       {...field}
@@ -113,41 +151,67 @@ export const MedicationForm: React.FC<MedicationFormProps> = ({
               )}
             />
 
+            <div className="flex gap-2">
+              <FormField
+                control={control}
+                name="startDate"
+                render={({ field }) => (
+                  <FormItem className="flex-1">
+                    <FormLabel>服用開始日</FormLabel>
+                    <FormControl>
+                      <DatePicker
+                        value={field.value}
+                        onChange={field.onChange}
+                        disabled={isSubmitting}
+                        placeholder="服用開始日を選択してください"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={control}
+                name="endDate"
+                render={({ field }) => (
+                  <FormItem className="flex-1">
+                    <FormLabel>服用終了日</FormLabel>
+                    <FormControl>
+                      <DatePicker
+                        value={field.value}
+                        onChange={field.onChange}
+                        disabled={isSubmitting}
+                        placeholder="服用終了日を選択してください"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+          </div>
+
+          {/* 処方医療機関・メモ */}
+          <div className="space-y-4">
+            <h3 className="text-sm font-semibold text-gray-700 border-b pb-1">
+              処方医療機関・メモ
+            </h3>
+
             <FormField
               control={control}
               name="prescribingInstitution"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>
-                    処方医療機関 <span className="text-red-500 ml-1">*</span>
-                  </FormLabel>
+                  <FormLabel>処方医療機関</FormLabel>
                   <FormControl>
-                    <Input {...field} placeholder="例：○○内科クリニック" disabled={isSubmitting} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-
-          {/* 服用期間・メモ */}
-          <div className="space-y-4">
-            <h3 className="text-sm font-semibold text-gray-700 border-b pb-1">服用期間・メモ</h3>
-
-            <FormField
-              control={control}
-              name="startDate"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>
-                    服用開始日 <span className="text-red-500 ml-1">*</span>
-                  </FormLabel>
-                  <FormControl>
-                    <DatePicker
-                      value={field.value}
-                      onChange={field.onChange}
+                    <ResidentMedicalInstitutionCombobox
+                      value={field.value || ''}
+                      onValueChange={field.onChange}
+                      onInstitutionSelect={setSelectedInstitution}
+                      medicalInstitutions={medicalInstitutions}
+                      placeholder="処方医療機関を選択してください"
                       disabled={isSubmitting}
-                      placeholder="服用開始日を選択してください"
                     />
                   </FormControl>
                   <FormMessage />
@@ -155,23 +219,10 @@ export const MedicationForm: React.FC<MedicationFormProps> = ({
               )}
             />
 
-            <FormField
-              control={control}
-              name="endDate"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>服用終了日</FormLabel>
-                  <FormControl>
-                    <DatePicker
-                      value={field.value}
-                      onChange={field.onChange}
-                      disabled={isSubmitting}
-                      placeholder="服用終了日を選択してください"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
+            {/* 医療機関情報表示エリア */}
+            <SelectedMedicalInstitutionInfo
+              institution={selectedInstitution}
+              showDoctorName={true}
             />
 
             <FormField

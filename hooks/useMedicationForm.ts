@@ -22,6 +22,7 @@ const initialFormData: MedicationFormData = {
   endDate: '',
   prescribingInstitution: '',
   notes: '',
+  thumbnailUrl: '',
 };
 
 export const useMedicationForm = ({ onSubmit, initialData = {} }: UseMedicationFormOptions) => {

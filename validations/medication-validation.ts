@@ -13,14 +13,12 @@ export const medicationFormSchema = z
       .string()
       .min(1, '薬剤名は必須です')
       .max(100, '薬剤名は100文字以内で入力してください'),
-    dosageInstructions: z
-      .string()
-      .min(1, '用法・用量は必須です')
-      .max(200, '用法・用量は200文字以内で入力してください'),
+    dosageInstructions: z.string().max(200, '用法・用量は200文字以内で入力してください').optional(),
     startDate: z
       .string()
-      .min(1, '服用開始日は必須です')
-      .regex(/^\d{4}-\d{2}-\d{2}$/, '有効な日付を入力してください（YYYY-MM-DD）'),
+      .regex(/^\d{4}-\d{2}-\d{2}$/, '有効な日付を入力してください（YYYY-MM-DD）')
+      .optional()
+      .or(z.literal('')),
     endDate: z
       .string()
       .regex(/^\d{4}-\d{2}-\d{2}$/, '有効な日付を入力してください（YYYY-MM-DD）')
@@ -28,13 +26,14 @@ export const medicationFormSchema = z
       .or(z.literal('')),
     prescribingInstitution: z
       .string()
-      .min(1, '処方医療機関は必須です')
-      .max(100, '処方医療機関は100文字以内で入力してください'),
+      .max(100, '処方医療機関は100文字以内で入力してください')
+      .optional(),
     notes: z.string().max(500, 'メモは500文字以内で入力してください').optional(),
+    thumbnailUrl: z.string().url('有効なURLを入力してください').optional().or(z.literal('')),
   })
   .refine(
     (data) => {
-      if (!data.endDate) return true;
+      if (!data.startDate || !data.endDate) return true;
       const startDate = new Date(data.startDate);
       const endDate = new Date(data.endDate);
       return endDate >= startDate;
@@ -55,9 +54,6 @@ export const validateMedicationForm = (data: unknown) => {
 // エラーメッセージ定数
 export const MEDICATION_ERROR_MESSAGES = {
   REQUIRED_MEDICATION_NAME: '薬剤名は必須です',
-  REQUIRED_DOSAGE_INSTRUCTIONS: '用法・用量は必須です',
-  REQUIRED_START_DATE: '服用開始日は必須です',
-  REQUIRED_PRESCRIBING_INSTITUTION: '処方医療機関は必須です',
   MEDICATION_NAME_TOO_LONG: '薬剤名は100文字以内で入力してください',
   DOSAGE_INSTRUCTIONS_TOO_LONG: '用法・用量は200文字以内で入力してください',
   PRESCRIBING_INSTITUTION_TOO_LONG: '処方医療機関は100文字以内で入力してください',

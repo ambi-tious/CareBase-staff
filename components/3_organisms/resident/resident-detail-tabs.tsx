@@ -26,6 +26,7 @@ import {
   type ResidentFilesTabContentRef,
 } from '@/components/3_organisms/resident-files/resident-files-tab-content';
 import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import type {
   ContactPerson,
@@ -73,6 +74,9 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
     resident.medicalHistory || []
   );
   const [medications, setMedications] = useState<Medication[]>(resident.medications || []);
+  const [showOngoingOnly, setShowOngoingOnly] = useState(true);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [duplicateData, setDuplicateData] = useState<MedicationFormData | undefined>(undefined);
 
   // 居宅介護支援事業所データを取得
   useEffect(() => {
@@ -133,7 +137,22 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
   };
 
   const handleAddMedication = () => {
+    setDuplicateData(undefined);
     setIsMedicationModalOpen(true);
+  };
+
+  const handleCreateModalClose = () => {
+    setIsCreateModalOpen(false);
+    setDuplicateData(undefined);
+  };
+
+  const handleCreateSubmit = async (data: MedicationFormData): Promise<boolean> => {
+    const success = await handleMedicationSubmit(data);
+    if (success) {
+      setIsCreateModalOpen(false);
+      setDuplicateData(undefined);
+    }
+    return success;
   };
 
   const handleContactSubmit = async (contactData: ContactFormData): Promise<boolean> => {
@@ -171,7 +190,7 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
 
   const handleMedicalInstitutionMasterRefresh = () => {
     // 医療機関マスタが更新された際の処理（必要に応じて実装）
-    console.log('Medical institution master refreshed');
+    // マスタデータ更新完了
   };
 
   const handleHomeCareOfficeMasterRefresh = () => {
@@ -224,6 +243,23 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
       console.error('Failed to create medication:', error);
       return false;
     }
+  };
+
+  const handleMedicationDuplicate = (medication: Medication) => {
+    // 複製時は服用終了日をリセットし、開始日を今日に設定
+    const duplicateData: MedicationFormData = {
+      medicationName: medication.medicationName,
+      dosageInstructions: medication.dosageInstructions,
+      startDate: new Date().toISOString().split('T')[0],
+      endDate: '',
+      prescribingInstitution: medication.prescribingInstitution,
+      notes: medication.notes || '',
+      thumbnailUrl: medication.thumbnailUrl || '',
+    };
+
+    // 複製モードで新規登録モーダルを開く
+    setIsCreateModalOpen(true);
+    setDuplicateData(duplicateData);
   };
 
   const handleContactUpdate = (updatedContact: ContactPerson) => {
@@ -489,26 +525,73 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
         </TabsContent>
 
         <TabsContent value="medicationInfo">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-            {medications.length > 0 ? (
-              medications.map((medication) => (
-                <NewMedicationCard
-                  key={medication.id}
-                  medication={medication}
-                  residentId={resident.id}
-                  residentName={resident.name}
-                  onMedicationUpdate={handleMedicationUpdate}
-                  onMedicationDelete={handleMedicationDelete}
+          <div className="space-y-4">
+            {/* フィルターオプション */}
+            {medications.length > 0 && (
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="ongoing-only"
+                  checked={showOngoingOnly}
+                  onCheckedChange={(checked) => setShowOngoingOnly(checked as boolean)}
                 />
-              ))
-            ) : resident.medicationInfo && resident.medicationInfo.length > 0 ? (
-              // Fallback to old medication info for backward compatibility
-              resident.medicationInfo.map((medication) => (
-                <OldMedicationCard key={medication.id} medication={medication} />
-              ))
-            ) : (
-              <p className="text-center text-gray-500 py-8 md:col-span-2">お薬情報はありません。</p>
+                <label
+                  htmlFor="ongoing-only"
+                  className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
+                >
+                  服用中のみ表示
+                </label>
+              </div>
             )}
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+              {medications.length > 0 ? (
+                (() => {
+                  const today = new Date();
+                  today.setHours(0, 0, 0, 0);
+
+                  const filteredMedications = showOngoingOnly
+                    ? medications.filter((medication) => {
+                        const endDate = medication.endDate ? new Date(medication.endDate) : null;
+                        if (endDate) {
+                          endDate.setHours(23, 59, 59, 999);
+                        }
+                        return !endDate || endDate >= today;
+                      })
+                    : medications;
+
+                  return filteredMedications.length > 0 ? (
+                    filteredMedications.map((medication) => (
+                      <NewMedicationCard
+                        key={medication.id}
+                        medication={medication}
+                        residentId={resident.id}
+                        residentName={resident.name}
+                        medicalInstitutions={medicalInstitutions}
+                        onMedicationUpdate={handleMedicationUpdate}
+                        onMedicationDelete={handleMedicationDelete}
+                        onMedicationDuplicate={handleMedicationDuplicate}
+                        isFiltered={showOngoingOnly}
+                      />
+                    ))
+                  ) : (
+                    <p className="text-center text-gray-500 py-8 md:col-span-2">
+                      {showOngoingOnly
+                        ? '服用中のお薬情報はありません。'
+                        : 'お薬情報はありません。'}
+                    </p>
+                  );
+                })()
+              ) : resident.medicationInfo && resident.medicationInfo.length > 0 ? (
+                // Fallback to old medication info for backward compatibility
+                resident.medicationInfo.map((medication) => (
+                  <OldMedicationCard key={medication.id} medication={medication} />
+                ))
+              ) : (
+                <p className="text-center text-gray-500 py-8 md:col-span-2">
+                  お薬情報はありません。
+                </p>
+              )}
+            </div>
           </div>
         </TabsContent>
 
@@ -600,7 +683,18 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
         onClose={() => setIsMedicationModalOpen(false)}
         onSubmit={handleMedicationSubmit}
         residentName={resident.name}
+        medicalInstitutions={medicalInstitutions}
         mode="create"
+      />
+
+      <MedicationModal
+        isOpen={isCreateModalOpen}
+        onClose={handleCreateModalClose}
+        onSubmit={handleCreateSubmit}
+        residentName={resident.name}
+        medicalInstitutions={medicalInstitutions}
+        mode="create"
+        initialData={duplicateData}
       />
     </>
   );

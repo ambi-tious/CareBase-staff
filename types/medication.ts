@@ -13,6 +13,7 @@ export interface Medication {
   endDate?: string;
   prescribingInstitution: string;
   notes?: string;
+  thumbnailUrl?: string;
   createdAt: string;
   updatedAt: string;
 }

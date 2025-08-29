@@ -1,6 +1,7 @@
 'use client';
 
 import { MedicationForm } from '@/components/2_molecules/forms/medication-form';
+import type { MedicalInstitution } from '@/mocks/residents-data';
 import type { Medication } from '@/types/medication';
 import type { MedicationFormData } from '@/validations/medication-validation';
 import type React from 'react';
@@ -13,6 +14,8 @@ interface MedicationModalProps {
   medication?: Medication;
   residentName?: string;
   mode: 'create' | 'edit';
+  initialData?: Partial<MedicationFormData>;
+  medicalInstitutions: MedicalInstitution[];
 }
 
 export const MedicationModal: React.FC<MedicationModalProps> = ({
@@ -22,17 +25,22 @@ export const MedicationModal: React.FC<MedicationModalProps> = ({
   medication,
   residentName,
   mode,
+  initialData: propInitialData,
+  medicalInstitutions,
 }) => {
-  const initialData = medication
-    ? {
-        medicationName: medication.medicationName,
-        dosageInstructions: medication.dosageInstructions,
-        startDate: medication.startDate,
-        endDate: medication.endDate || '',
-        prescribingInstitution: medication.prescribingInstitution,
-        notes: medication.notes || '',
-      }
-    : undefined;
+  const initialData =
+    propInitialData ||
+    (medication
+      ? {
+          medicationName: medication.medicationName,
+          dosageInstructions: medication.dosageInstructions,
+          startDate: medication.startDate,
+          endDate: medication.endDate || '',
+          prescribingInstitution: medication.prescribingInstitution,
+          notes: medication.notes || '',
+          thumbnailUrl: medication.thumbnailUrl || '',
+        }
+      : undefined);
 
   return (
     <GenericFormModal
@@ -43,7 +51,12 @@ export const MedicationModal: React.FC<MedicationModalProps> = ({
       residentName={residentName}
       testId="medication-modal"
     >
-      <MedicationForm onSubmit={onSubmit} onCancel={onClose} initialData={initialData} />
+      <MedicationForm
+        onSubmit={onSubmit}
+        onCancel={onClose}
+        initialData={initialData}
+        medicalInstitutions={medicalInstitutions}
+      />
     </GenericFormModal>
   );
 };
