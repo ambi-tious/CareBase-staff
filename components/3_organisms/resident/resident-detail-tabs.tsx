@@ -401,7 +401,9 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
                 />
               ))
             ) : (
-              <p className="text-center text-gray-500 py-8">ご家族情報はありません。</p>
+              <p className="text-center text-gray-500 py-8 md:col-span-2">
+                ご家族情報はありません。
+              </p>
             )}
           </div>
         </TabsContent>
@@ -422,7 +424,7 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
                 ))}
               </>
             ) : (
-              <p className="text-center text-gray-500 py-8">
+              <p className="text-center text-gray-500 py-8 md:col-span-2">
                 居宅介護支援事業所の情報はありません。
               </p>
             )}
@@ -443,7 +445,7 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
                 />
               ))
             ) : (
-              <p className="text-center text-gray-500 py-8">
+              <p className="text-center text-gray-500 py-8 md:col-span-2">
                 かかりつけ医療機関の情報はありません。
               </p>
             )}
@@ -479,7 +481,9 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
                   ))}
               </>
             ) : (
-              <p className="text-center text-gray-500 py-8">現病歴＆既往歴の情報はありません。</p>
+              <p className="text-center text-gray-500 py-8 md:col-span-2">
+                現病歴＆既往歴の情報はありません。
+              </p>
             )}
           </div>
         </TabsContent>
@@ -503,7 +507,7 @@ export const ResidentDetailTabs: React.FC<ResidentDetailTabsProps> = ({ resident
                 <OldMedicationCard key={medication.id} medication={medication} />
               ))
             ) : (
-              <p className="text-center text-gray-500 py-8">お薬情報はありません。</p>
+              <p className="text-center text-gray-500 py-8 md:col-span-2">お薬情報はありません。</p>
             )}
           </div>
         </TabsContent>
